@@ -2,7 +2,7 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.UserDto;
 import com.example.showcased.entity.User;
-import com.example.showcased.exception.ResourceNotFoundException;
+import com.example.showcased.exception.UserNotFoundException;
 import com.example.showcased.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class LoginService {
     // Function to retrieve user by id
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException(id));
         return modelMapper.map(user, UserDto.class);
     }
 }
