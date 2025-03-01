@@ -1,7 +1,9 @@
 package com.example.showcased.service;
 
+import com.example.showcased.dto.LoginRegisterDto;
 import com.example.showcased.dto.UserDto;
 import com.example.showcased.entity.User;
+import com.example.showcased.exception.InvalidLoginException;
 import com.example.showcased.exception.UserNotFoundException;
 import com.example.showcased.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -22,6 +24,13 @@ public class LoginService {
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+        return modelMapper.map(user, UserDto.class);
+    }
+
+    // Function that verifies that the login credentials are valid
+    public UserDto verifyUser(LoginRegisterDto loginDto) {
+        User user = userRepository.findByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword())
+                .orElseThrow(() -> new InvalidLoginException());
         return modelMapper.map(user, UserDto.class);
     }
 }
