@@ -31,4 +31,15 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> invalidLoginHandler(InvalidLoginException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler for register request with
+     * existing username along with a 409 status
+     * @param ex Username taken exception object
+     * @return JSON object with error attribute and associated message
+     */
+    @ExceptionHandler(UsernameTakenException.class)
+    ResponseEntity<ErrorResponse> usernameTakenHandler(UsernameTakenException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
 }
