@@ -25,7 +25,7 @@ public class SearchDto {
     }
 
     public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
+        this.posterPath = "https://image.tmdb.org/t/p/w92" + posterPath;
     }
 
     public String getTitle() {
@@ -49,7 +49,7 @@ public class SearchDto {
     }
 
     public void setStartYear(String startYear) {
-        this.startYear = startYear;
+        this.startYear = startYear.split("-")[0];
     }
 
     public String getEndYear() {

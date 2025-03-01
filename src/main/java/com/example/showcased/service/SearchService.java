@@ -41,12 +41,8 @@ public class SearchService {
             url = "https://api.themoviedb.org/3/tv/" + result.getId();
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
 
-            // Update the start year to only year instead of full date
-            result.setStartYear(result.getStartYear().split("-")[0]);
-
             // Parse the response and extract the last date
-            String responseBody = response.getBody();
-            JSONObject jsonResponse = new JSONObject(responseBody);
+            JSONObject jsonResponse = new JSONObject(response.getBody());
             String endYear = jsonResponse.optString("last_air_date").split("-")[0];
 
             // Update the result object to include the end year
