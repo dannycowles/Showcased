@@ -3,9 +3,10 @@ package com.example.showcased.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
-public class LoginRegisterDto {
-    private String username;
-    private String password;
+public class CastResponseDto {
+    private List<CastDto> cast;
 }
