@@ -19,6 +19,9 @@ public class ShowService {
     @Value("${tmdbApi}")
     private String tmdbKey;
 
+    @Value("${omdbApi}")
+    private String omdbKey;
+
     public ShowDto getShowById(String id) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -49,6 +52,30 @@ public class ShowService {
 
         // Store only the first 5 stars (can modify later)
         show.setCast(cast.getCast().stream().limit(5).collect(Collectors.toList()));
+
+        // Make request to OMDB show endpoint using the IMDB id
+        url = "https://www.omdbapi.com/?apikey=" + omdbKey + "&i=" + imdbId;
+        response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
+
+        // Parse the response and extract the following information:
+        // - Plot
+        // - Rated
+        // - Runtime
+        // - imdbRating
+        // - imdbVotes
+        jsonResponse = new JSONObject(response.getBody());
+        String plot = jsonResponse.optString("Plot");
+        String rating = jsonResponse.optString("Rated");
+        String averageRuntime = jsonResponse.optString("Runtime");
+        String imdbRating = jsonResponse.optString("imdbRating");
+        String imdbVotes = jsonResponse.optString("imdbVotes");
+
+        // Update the information in the show object
+        show.setPlot(plot);
+        show.setRating(rating);
+        show.setAverageRuntime(averageRuntime);
+        show.setImdbRating(imdbRating);
+        show.setImdbVotes(imdbVotes);
 
         return show;
     }
