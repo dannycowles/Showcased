@@ -9,6 +9,7 @@ CREATE TABLE reviews (
     id INT AUTO_INCREMENT,
     reviewer_id INT NOT NULL,
     show_id INT NOT NULL,
+    rating DOUBLE NOT NULL,
     commentary TEXT DEFAULT NULL,
     contains_spoilers BOOLEAN DEFAULT false,
     num_likes INT DEFAULT 0,

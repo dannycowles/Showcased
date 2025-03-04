@@ -1,5 +1,6 @@
 package com.example.showcased.service;
 
+import com.example.showcased.dto.ReviewWithUserInfoDto;
 import com.example.showcased.entity.Review;
 import com.example.showcased.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class ReviewService {
         this.reviewRepository = reviewRepository;
     }
 
-    public List<Review> getReviewsByShow(Long showId) {
+    public List<ReviewWithUserInfoDto> getReviewsByShow(Long showId) {
         return reviewRepository.findAllByShowId(showId);
     }
 

@@ -42,4 +42,15 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> usernameTakenHandler(UsernameTakenException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler for when a user performs an action
+     * they need to be logged in to take
+     * @param ex Not logged in exception object
+     * @return JSON object with error attribute and associate message
+     */
+    @ExceptionHandler(NotLoggedInException.class)
+    ResponseEntity<ErrorResponse> notLoggedInHandler(NotLoggedInException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    }
 }

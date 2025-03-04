@@ -16,6 +16,7 @@ public class Review {
     private Long id;
     private Long reviewerId;
     private Long showId;
+    private double rating;
     private String commentary;
     private boolean containsSpoilers;
     private Long numLikes = 0L;
