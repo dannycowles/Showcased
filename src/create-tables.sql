@@ -7,34 +7,34 @@ CREATE TABLE users (
 
 CREATE TABLE reviews (
     id INT AUTO_INCREMENT,
-    reviewerId INT NOT NULL,
-    showId INT NOT NULL,
+    reviewer_id INT NOT NULL,
+    show_id INT NOT NULL,
     commentary TEXT DEFAULT NULL,
-    containsSpoilers BOOLEAN DEFAULT false,
-    numLikes INT DEFAULT 0,
-    reviewDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    contains_spoilers BOOLEAN DEFAULT false,
+    num_likes INT DEFAULT 0,
+    review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    FOREIGN KEY (reviewerId) REFERENCES users(id)
+    FOREIGN KEY (reviewer_id) REFERENCES users(id)
 );
 
 CREATE TABLE currently_watching (
-    userId INT,
-    showId INT NOT NULL,
-    PRIMARY KEY (userId, showId),
-    FOREIGN KEY (userId) REFERENCES users(id)
+    user_id INT,
+    show_id INT NOT NULL,
+    PRIMARY KEY (user_id, show_id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE user_watchlist (
-    userId INT,
-    showId INT NOT NULL,
-    PRIMARY KEY (userId, showId),
-    FOREIGN KEY (userId) REFERENCES users(id)
+    user_id INT,
+    show_id INT NOT NULL,
+    PRIMARY KEY (user_id, show_id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE user_show_rankings (
-    userId INT,
-    showId INT NOT NULL,
-    rankNum INT NOT NULL,
-    PRIMARY KEY (userId, showId),
-    FOREIGN KEY (userId) REFERENCES users(id)
+    user_id INT,
+    show_id INT NOT NULL,
+    rank_num INT NOT NULL,
+    PRIMARY KEY (user_id, show_id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
