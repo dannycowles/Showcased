@@ -14,7 +14,7 @@ public class SeasonEpisodeDto {
     private String episodeNumber;
 
     private String name;
-    private String overview;
+    private String plot;
 
     @JsonProperty("still_path")
     private String stillPath;

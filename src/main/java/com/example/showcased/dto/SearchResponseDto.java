@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SearchResponse {
+public class SearchResponseDto {
     private List<SearchDto> results;
 }
