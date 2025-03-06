@@ -11,6 +11,8 @@ import com.example.showcased.repository.WatchingRepository;
 import com.example.showcased.repository.WatchlistRepository;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public class ProfileService {
     private final WatchingRepository watchingRepository;
     private final ModelMapper modelMapper;
     private final ShowRankingRepository showRankingRepository;
+    private final int numTopEntries = 10;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -36,9 +39,8 @@ public class ProfileService {
     }
 
     /**
-     * Whenever a user adds a show to any of their lists, the show info table
-     * might need to be updated to
-     * @param show
+     * Whenever a user adds a show to any of their lists,
+     * the show info table might need to be updated too
      */
     public void addToShowInfoRepository(WatchSendDto show) {
         if (!showInfoRepository.existsById(show.getShowId())) {
@@ -62,6 +64,15 @@ public class ProfileService {
         return watchlistRepository.findByUserId((Long) session.getAttribute("user"));
     }
 
+    public List<WatchReturnDto> getWatchlistTop(HttpSession session) {
+        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
+        Page<WatchReturnDto> page = watchlistRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
+        return page.getContent();
+    }
+
+
+
+
     public void addShowToWatchingList(WatchSendDto show, HttpSession session) {
         show.setUserId((Long) session.getAttribute("user"));
         addToShowInfoRepository(show);
@@ -76,6 +87,15 @@ public class ProfileService {
     public List<WatchReturnDto> getWatchingList(HttpSession session) {
         return watchingRepository.findByUserId((Long) session.getAttribute("user"));
     }
+
+    public List<WatchReturnDto> getWatchingListTop(HttpSession session) {
+        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
+        Page<WatchReturnDto> page = watchingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
+        return page.getContent();
+    }
+
+
+
 
     public void addShowToRankingList(WatchSendDto show, HttpSession session) {
         show.setUserId((Long) session.getAttribute("user"));
@@ -100,7 +120,12 @@ public class ProfileService {
     }
 
     public List<RankingReturnDto> getShowRankingList(HttpSession session) {
-        return showRankingRepository.findByUserIdOrderByRankNumDesc((Long) session.getAttribute("user"));
+        return showRankingRepository.findByUserId((Long) session.getAttribute("user"));
     }
 
+    public List<RankingReturnDto> getShowRankingListTop(HttpSession session) {
+        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
+        Page<RankingReturnDto> page = showRankingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
+        return page.getContent();
+    }
 }

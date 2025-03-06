@@ -33,6 +33,15 @@ public class ProfileController {
         return ResponseEntity.ok(watchlist);
     }
 
+    @GetMapping("/watchlist/top")
+    public ResponseEntity<List<WatchReturnDto>> getWatchlistTop(HttpSession session) {
+        List<WatchReturnDto> watchlist = profileService.getWatchlistTop(session);
+        return ResponseEntity.ok(watchlist);
+    }
+
+
+
+
     @PostMapping("/watching")
     public ResponseEntity<Void> addShowToWatchingList(@RequestBody WatchSendDto show, HttpSession session) {
         profileService.addShowToWatchingList(show, session);
@@ -45,6 +54,15 @@ public class ProfileController {
         return ResponseEntity.ok(watchlist);
     }
 
+    @GetMapping("/watching/top")
+    public ResponseEntity<List<WatchReturnDto>> getWatchingListTop(HttpSession session) {
+        List<WatchReturnDto> watchlist = profileService.getWatchingListTop(session);
+        return ResponseEntity.ok(watchlist);
+    }
+
+
+
+
     @PostMapping("/show-ranking")
     public ResponseEntity<Void> addShowToRankingList(@RequestBody WatchSendDto show, HttpSession session) {
         profileService.addShowToRankingList(show, session);
@@ -54,6 +72,12 @@ public class ProfileController {
     @GetMapping("/show-ranking")
     public ResponseEntity<List<RankingReturnDto>> getShowRankingList(HttpSession session) {
         List<RankingReturnDto> ranking = profileService.getShowRankingList(session);
+        return ResponseEntity.ok(ranking);
+    }
+
+    @GetMapping("/show-ranking/top")
+    public ResponseEntity<List<RankingReturnDto>> getShowRankingListTop(HttpSession session) {
+        List<RankingReturnDto> ranking = profileService.getShowRankingListTop(session);
         return ResponseEntity.ok(ranking);
     }
 }

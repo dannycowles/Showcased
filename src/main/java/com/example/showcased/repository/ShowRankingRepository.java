@@ -3,6 +3,8 @@ package com.example.showcased.repository;
 import com.example.showcased.dto.RankingReturnDto;
 import com.example.showcased.entity.ShowRanking;
 import com.example.showcased.entity.WatchId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,5 +18,9 @@ public interface ShowRankingRepository extends JpaRepository<ShowRanking, WatchI
 
     @Query("SELECT new com.example.showcased.dto.RankingReturnDto(s.showId, r.rankNum, s.title, s.posterPath)" +
             "FROM ShowInfo s JOIN ShowRanking r ON s.showId = r.id.showId AND r.id.userId = ?1 ORDER BY r.rankNum")
-    List<RankingReturnDto> findByUserIdOrderByRankNumDesc(Long user);
+    List<RankingReturnDto> findByUserId(Long user);
+
+    @Query("SELECT new com.example.showcased.dto.RankingReturnDto(s.showId, r.rankNum, s.title, s.posterPath)" +
+            "FROM ShowInfo s JOIN ShowRanking r ON s.showId = r.id.showId AND r.id.userId = ?1 ORDER BY r.rankNum")
+    Page<RankingReturnDto> findByUserIdTop(Long user, Pageable pageRequest);
 }
