@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class WatchlistReturnDto {
+public class WatchReturnDto {
     private Long showId;
     private String title;
     private String posterPath;

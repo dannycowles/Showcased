@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
-public class WatchlistId implements Serializable {
+public class WatchId implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private Long userId;

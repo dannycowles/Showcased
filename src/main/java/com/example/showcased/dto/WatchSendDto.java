@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class WatchlistSendDto {
+public class WatchSendDto {
     private Long userId;
     private Long showId;
     private String title;

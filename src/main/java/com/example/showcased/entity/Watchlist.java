@@ -10,5 +10,5 @@ import lombok.Setter;
 @Table(name = "user_watchlist")
 public class Watchlist {
     @EmbeddedId
-    private WatchlistId id;
+    private WatchId id;
 }

@@ -1,7 +1,7 @@
 package com.example.showcased.controller;
 
-import com.example.showcased.dto.WatchlistReturnDto;
-import com.example.showcased.dto.WatchlistSendDto;
+import com.example.showcased.dto.WatchSendDto;
+import com.example.showcased.dto.WatchReturnDto;
 import com.example.showcased.service.ProfileService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -21,14 +21,26 @@ public class ProfileController {
     }
 
     @PostMapping("/watchlist")
-    public ResponseEntity<Void> addShowToWatchlist(@RequestBody WatchlistSendDto show, HttpSession session) {
+    public ResponseEntity<Void> addShowToWatchlist(@RequestBody WatchSendDto show, HttpSession session) {
         profileService.addShowToWatchlist(show, session);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/watchlist")
-    public ResponseEntity<List<WatchlistReturnDto>> getWatchlist(HttpSession session) {
-        List<WatchlistReturnDto> watchlist = profileService.getWatchlist(session);
+    public ResponseEntity<List<WatchReturnDto>> getWatchlist(HttpSession session) {
+        List<WatchReturnDto> watchlist = profileService.getWatchlist(session);
+        return ResponseEntity.ok(watchlist);
+    }
+
+    @PostMapping("/watching")
+    public ResponseEntity<Void> addShowToWatchingList(@RequestBody WatchSendDto show, HttpSession session) {
+        profileService.addShowToWatchingList(show, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/watching")
+    public ResponseEntity<List<WatchReturnDto>> getWatchingList(HttpSession session) {
+        List<WatchReturnDto> watchlist = profileService.getWatchingList(session);
         return ResponseEntity.ok(watchlist);
     }
 
