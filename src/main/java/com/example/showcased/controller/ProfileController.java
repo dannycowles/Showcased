@@ -45,13 +45,13 @@ public class ProfileController {
         return ResponseEntity.ok(watchlist);
     }
 
-    @PostMapping("/showRanking")
+    @PostMapping("/show-ranking")
     public ResponseEntity<Void> addShowToRankingList(@RequestBody WatchSendDto show, HttpSession session) {
         profileService.addShowToRankingList(show, session);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/showRanking")
+    @GetMapping("/show-ranking")
     public ResponseEntity<List<RankingReturnDto>> getShowRankingList(HttpSession session) {
         List<RankingReturnDto> ranking = profileService.getShowRankingList(session);
         return ResponseEntity.ok(ranking);

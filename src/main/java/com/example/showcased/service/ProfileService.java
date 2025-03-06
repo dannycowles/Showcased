@@ -3,13 +3,11 @@ package com.example.showcased.service;
 import com.example.showcased.dto.RankingReturnDto;
 import com.example.showcased.dto.WatchSendDto;
 import com.example.showcased.dto.WatchReturnDto;
-import com.example.showcased.entity.ShowInfo;
-import com.example.showcased.entity.Watching;
-import com.example.showcased.entity.Watchlist;
-import com.example.showcased.entity.WatchId;
+import com.example.showcased.entity.*;
 import com.example.showcased.exception.AlreadyOnListException;
 import com.example.showcased.exception.NotLoggedInException;
 import com.example.showcased.repository.ShowInfoRepository;
+import com.example.showcased.repository.ShowRankingRepository;
 import com.example.showcased.repository.WatchingRepository;
 import com.example.showcased.repository.WatchlistRepository;
 import jakarta.servlet.http.HttpSession;
@@ -25,15 +23,17 @@ public class ProfileService {
     private final ShowInfoRepository showInfoRepository;
     private final WatchingRepository watchingRepository;
     private final ModelMapper modelMapper;
+    private final ShowRankingRepository showRankingRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
                           ModelMapper modelMapper,
-                          WatchingRepository watchingRepository) {
+                          WatchingRepository watchingRepository, ShowRankingRepository showRankingRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
         this.modelMapper = modelMapper;
+        this.showRankingRepository = showRankingRepository;
     }
 
     public void addShowToWatchlist(WatchSendDto show, HttpSession session) {
@@ -105,9 +105,22 @@ public class ProfileService {
             showInfoRepository.save(showInfo);
         }
 
-        // Get max of ranking list for the user, if no entries the rank should default to 1,
-        // else sequentially increment (add to end of list)
+        // Check if the show is already in the user's currently watching list, if so we throw an exception
+        if (showRankingRepository.existsById(new WatchId(show.getUserId(), show.getShowId()))) {
+            throw new AlreadyOnListException();
+        }
 
+        // Check if the user's ranking list is empty, if so it's rank number will be 1,
+        // else it wil be added to the end of the list
+        Integer maxRank = showRankingRepository.findMaxRankNumByUserId(show.getUserId());
+        ShowRanking ranking = new ShowRanking();
+        ranking.setId(new WatchId(show.getUserId(), show.getShowId()));
+        if (maxRank == null) {
+            ranking.setRankNum(1L);
+        } else {
+            ranking.setRankNum((long) (maxRank + 1));
+        }
+        showRankingRepository.save(ranking);
     }
 
     public List<RankingReturnDto> getShowRankingList(HttpSession session) {
@@ -115,8 +128,7 @@ public class ProfileService {
         if (session.getAttribute("user") == null) {
             throw new NotLoggedInException();
         }
-
-        return null;
+        return showRankingRepository.findByUserIdOrderByRankNumDesc((Long) session.getAttribute("user"));
     }
 
 }
