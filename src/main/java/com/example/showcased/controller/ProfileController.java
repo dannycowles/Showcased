@@ -1,5 +1,6 @@
 package com.example.showcased.controller;
 
+import com.example.showcased.dto.RankingReturnDto;
 import com.example.showcased.dto.WatchSendDto;
 import com.example.showcased.dto.WatchReturnDto;
 import com.example.showcased.service.ProfileService;
@@ -44,4 +45,15 @@ public class ProfileController {
         return ResponseEntity.ok(watchlist);
     }
 
+    @PostMapping("/showRanking")
+    public ResponseEntity<Void> addShowToRankingList(@RequestBody WatchSendDto show, HttpSession session) {
+        profileService.addShowToRankingList(show, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/showRanking")
+    public ResponseEntity<List<RankingReturnDto>> getShowRankingList(HttpSession session) {
+        List<RankingReturnDto> ranking = profileService.getShowRankingList(session);
+        return ResponseEntity.ok(ranking);
+    }
 }

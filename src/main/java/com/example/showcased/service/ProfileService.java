@@ -1,5 +1,6 @@
 package com.example.showcased.service;
 
+import com.example.showcased.dto.RankingReturnDto;
 import com.example.showcased.dto.WatchSendDto;
 import com.example.showcased.dto.WatchReturnDto;
 import com.example.showcased.entity.ShowInfo;
@@ -90,4 +91,32 @@ public class ProfileService {
         }
         return watchingRepository.findByUserId((Long) session.getAttribute("user"));
     }
+
+    public void addShowToRankingList(WatchSendDto show, HttpSession session) {
+        // If the user is not logged in they shouldn't be able to add to watchlist so we throw exception
+        if (session.getAttribute("user") == null) {
+            throw new NotLoggedInException();
+        }
+        show.setUserId((Long) session.getAttribute("user"));
+
+        // Check if the show already exists in the show info table, if not add it
+        if (!showInfoRepository.existsById(show.getShowId())) {
+            ShowInfo showInfo = modelMapper.map(show, ShowInfo.class);
+            showInfoRepository.save(showInfo);
+        }
+
+        // Get max of ranking list for the user, if no entries the rank should default to 1,
+        // else sequentially increment (add to end of list)
+
+    }
+
+    public List<RankingReturnDto> getShowRankingList(HttpSession session) {
+        // If the user is not logged in they shouldn't be able to add to watchlist so we throw exception
+        if (session.getAttribute("user") == null) {
+            throw new NotLoggedInException();
+        }
+
+        return null;
+    }
+
 }
