@@ -47,10 +47,21 @@ public class GlobalExceptionHandler {
      * Exception handler for when a user performs an action
      * they need to be logged in to take
      * @param ex Not logged in exception object
-     * @return JSON object with error attribute and associate message
+     * @return JSON object with error attribute and associated message
      */
     @ExceptionHandler(NotLoggedInException.class)
     ResponseEntity<ErrorResponse> notLoggedInHandler(NotLoggedInException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    /**
+     * Exception handler for when a user tries to add a show to their list
+     * that is already on their list
+     * @param ex Already on list exception object
+     * @return JSON object with error attribute and associated message
+     */
+    @ExceptionHandler(AlreadyOnListException.class)
+    ResponseEntity<ErrorResponse> alreadyOnListHandler(AlreadyOnListException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
 }

@@ -19,9 +19,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<UserDto> loginUser(@RequestBody LoginRegisterDto loginDto, HttpSession session) {
-        UserDto user = authService.loginUser(loginDto);
-        // "Log" the user in by setting the session attribute
-        session.setAttribute("user", user.getId());
+        UserDto user = authService.loginUser(loginDto, session);
         return ResponseEntity.ok(user);
     }
 

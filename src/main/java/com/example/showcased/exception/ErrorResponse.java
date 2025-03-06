@@ -1,6 +1,5 @@
 package com.example.showcased.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

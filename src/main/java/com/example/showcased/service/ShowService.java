@@ -2,7 +2,9 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.Review;
+import com.example.showcased.exception.NotLoggedInException;
 import com.example.showcased.repository.ReviewRepository;
+import jakarta.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -238,7 +240,11 @@ public class ShowService {
         return episode;
     }
 
-    public void addReviewToShow(Review review) {
+    public void addReviewToShow(Review review, HttpSession session) {
+        // If the user is not logged in they shouldn't be able to write a review so we throw an exception
+        if (session.getAttribute("user") == null) {
+            throw new NotLoggedInException();
+        }
         reviewRepository.save(review);
     }
 

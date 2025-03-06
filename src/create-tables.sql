@@ -39,3 +39,10 @@ CREATE TABLE user_show_rankings (
     PRIMARY KEY (user_id, show_id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE show_info (
+    show_id INT,
+    title TEXT,
+    poster_path TEXT,
+    PRIMARY KEY(show_id)
+);

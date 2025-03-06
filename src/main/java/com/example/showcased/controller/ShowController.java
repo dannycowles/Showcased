@@ -2,7 +2,6 @@ package com.example.showcased.controller;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.Review;
-import com.example.showcased.exception.NotLoggedInException;
 import com.example.showcased.service.ShowService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
@@ -46,12 +45,7 @@ public class ShowController {
 
     @PostMapping("/reviews")
     public ResponseEntity<Void> addReviewToShow(@RequestBody Review review, HttpSession session) {
-        // If the user is not logged in they shouldn't be able to write a review so we throw an exception
-        System.out.println(session.getAttribute("user"));
-        if (session.getAttribute("user") == null) {
-            throw new NotLoggedInException();
-        }
-        showService.addReviewToShow(review);
+        showService.addReviewToShow(review, session);
         return ResponseEntity.ok().build();
     }
 

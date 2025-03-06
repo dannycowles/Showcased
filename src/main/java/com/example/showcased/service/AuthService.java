@@ -6,6 +6,7 @@ import com.example.showcased.entity.User;
 import com.example.showcased.exception.InvalidLoginException;
 import com.example.showcased.exception.UsernameTakenException;
 import com.example.showcased.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,11 @@ public class AuthService {
     }
 
     // Function that verifies that the login credentials are valid
-    public UserDto loginUser(LoginRegisterDto loginDto) {
+    public UserDto loginUser(LoginRegisterDto loginDto, HttpSession session) {
         User user = userRepository.findByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword())
                 .orElseThrow(() -> new InvalidLoginException());
+        // "Log" the user in by setting the session attribute
+        session.setAttribute("user", user.getId());
         return modelMapper.map(user, UserDto.class);
     }
 
