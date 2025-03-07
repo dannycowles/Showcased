@@ -39,6 +39,12 @@ public class ProfileController {
         return ResponseEntity.ok(watchlist);
     }
 
+    @DeleteMapping("/watchlist/{id}")
+    public ResponseEntity<Void> removeFromWatchlist(@PathVariable("id") String id, HttpSession session) {
+        profileService.removeFromWatchlist(id, session);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 
@@ -60,6 +66,12 @@ public class ProfileController {
         return ResponseEntity.ok(watchlist);
     }
 
+    @DeleteMapping("/watching/{id}")
+    public ResponseEntity<Void> removeFromWatchingList(@PathVariable("id") String id, HttpSession session) {
+        profileService.removeFromWatchingList(id, session);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 
@@ -79,5 +91,11 @@ public class ProfileController {
     public ResponseEntity<List<RankingReturnDto>> getShowRankingListTop(HttpSession session) {
         List<RankingReturnDto> ranking = profileService.getShowRankingListTop(session);
         return ResponseEntity.ok(ranking);
+    }
+
+    @DeleteMapping("/show-ranking/{id}")
+    public ResponseEntity<Void> removeFromShowRankingList(@PathVariable("id") String id, HttpSession session) {
+        profileService.removeFromShowRankingList(id, session);
+        return ResponseEntity.noContent().build();
     }
 }

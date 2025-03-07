@@ -70,6 +70,10 @@ public class ProfileService {
         return page.getContent();
     }
 
+    public void removeFromWatchlist(String id, HttpSession session) {
+        watchlistRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+    }
+
 
 
 
@@ -92,6 +96,10 @@ public class ProfileService {
         PageRequest pageRequest = PageRequest.of(0, numTopEntries);
         Page<WatchReturnDto> page = watchingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
         return page.getContent();
+    }
+
+    public void removeFromWatchingList(String id, HttpSession session) {
+        watchingRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
     }
 
 
@@ -127,5 +135,18 @@ public class ProfileService {
         PageRequest pageRequest = PageRequest.of(0, numTopEntries);
         Page<RankingReturnDto> page = showRankingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
         return page.getContent();
+    }
+
+    public void removeFromShowRankingList(String id, HttpSession session) {
+        showRankingRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+
+        // After deleting from the ranking list we will need to adjust the ranking numbers to account for it
+        List<RankingReturnDto> rankings = showRankingRepository.findByUserId((Long) session.getAttribute("user"));
+        for (int i = 0; i < rankings.size(); i++) {
+            ShowRanking ranking = new ShowRanking();
+            ranking.setId(new WatchId((Long) session.getAttribute("user"), rankings.get(i).getShowId()));
+            ranking.setRankNum(i + 1L);
+            showRankingRepository.save(ranking);
+        }
     }
 }
