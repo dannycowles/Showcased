@@ -1,14 +1,12 @@
 package com.example.showcased.service;
 
 import com.example.showcased.dto.RankingReturnDto;
+import com.example.showcased.dto.ReviewWithUserInfoDto;
 import com.example.showcased.dto.WatchSendDto;
 import com.example.showcased.dto.WatchReturnDto;
 import com.example.showcased.entity.*;
 import com.example.showcased.exception.AlreadyOnListException;
-import com.example.showcased.repository.ShowInfoRepository;
-import com.example.showcased.repository.ShowRankingRepository;
-import com.example.showcased.repository.WatchingRepository;
-import com.example.showcased.repository.WatchlistRepository;
+import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -26,16 +24,18 @@ public class ProfileService {
     private final ModelMapper modelMapper;
     private final ShowRankingRepository showRankingRepository;
     private final int numTopEntries = 10;
+    private final ReviewRepository reviewRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
                           ModelMapper modelMapper,
-                          WatchingRepository watchingRepository, ShowRankingRepository showRankingRepository) {
+                          WatchingRepository watchingRepository, ShowRankingRepository showRankingRepository, ReviewRepository reviewRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
         this.modelMapper = modelMapper;
         this.showRankingRepository = showRankingRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     /**
@@ -148,5 +148,12 @@ public class ProfileService {
             ranking.setRankNum(i + 1L);
             showRankingRepository.save(ranking);
         }
+    }
+
+
+
+
+    public List<ReviewWithUserInfoDto> getReviews(HttpSession session) {
+        return reviewRepository.findByUserId((Long) session.getAttribute("user"));
     }
 }

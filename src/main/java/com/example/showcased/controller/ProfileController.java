@@ -1,6 +1,7 @@
 package com.example.showcased.controller;
 
 import com.example.showcased.dto.RankingReturnDto;
+import com.example.showcased.dto.ReviewWithUserInfoDto;
 import com.example.showcased.dto.WatchSendDto;
 import com.example.showcased.dto.WatchReturnDto;
 import com.example.showcased.service.ProfileService;
@@ -97,5 +98,14 @@ public class ProfileController {
     public ResponseEntity<Void> removeFromShowRankingList(@PathVariable("id") String id, HttpSession session) {
         profileService.removeFromShowRankingList(id, session);
         return ResponseEntity.noContent().build();
+    }
+
+
+
+
+    @GetMapping("/reviews")
+    public ResponseEntity<List<ReviewWithUserInfoDto>> getReviews(HttpSession session) {
+        List<ReviewWithUserInfoDto> reviews = profileService.getReviews(session);
+        return ResponseEntity.ok(reviews);
     }
 }
