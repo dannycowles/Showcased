@@ -40,9 +40,28 @@ CREATE TABLE user_show_rankings (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE user_episode_rankings (
+    user_id INT,
+    show_id INT NOT NULL,
+    season INT,
+    episode INT,
+    rank_num INT,
+    PRIMARY KEY(user_id, show_id, season, episode),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
 CREATE TABLE show_info (
     show_id INT,
     title TEXT,
     poster_path TEXT,
     PRIMARY KEY(show_id)
+);
+
+CREATE TABLE episode_info (
+    show_id INT,
+    title TEXT,
+    season INT,
+    episode INT,
+    poster_path TEXT,
+    PRIMARY KEY(show_id, season, episode)
 );

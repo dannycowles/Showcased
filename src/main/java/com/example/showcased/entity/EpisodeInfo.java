@@ -7,11 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Getter
 @Setter
-@Table(name = "user_show_rankings")
-public class ShowRanking {
+@Getter
+@Table(name = "episode_info")
+public class EpisodeInfo {
     @EmbeddedId
-    private WatchId id;
-    private Long rankNum;
+    private EpisodeInfoId id;
+    private String title;
+    private String posterPath;
 }

@@ -1,9 +1,6 @@
 package com.example.showcased.controller;
 
-import com.example.showcased.dto.RankingReturnDto;
-import com.example.showcased.dto.ReviewWithUserInfoDto;
-import com.example.showcased.dto.WatchSendDto;
-import com.example.showcased.dto.WatchReturnDto;
+import com.example.showcased.dto.*;
 import com.example.showcased.service.ProfileService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -112,6 +109,14 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
+
+
+
+    @PostMapping("/episode-ranking")
+    public ResponseEntity<Void> addEpisodeToRankingList(@RequestBody EpisodeRankingDto episode, HttpSession session) {
+        profileService.addEpisodeToRankingList(episode, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
 
 

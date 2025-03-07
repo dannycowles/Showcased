@@ -9,9 +9,9 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "user_show_rankings")
-public class ShowRanking {
+@Table(name = "user_episode_rankings")
+public class EpisodeRanking {
     @EmbeddedId
-    private WatchId id;
+    private EpisodeRankingId id;
     private Long rankNum;
 }
