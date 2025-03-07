@@ -74,6 +74,16 @@ public class ProfileService {
         watchlistRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
     }
 
+    public void moveToWatchingList(String id, HttpSession session) {
+        // First we need to delete the show from the user's watchlist
+        watchlistRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+
+        // Then, we add the show to the currently watching list
+        Watching watching = new Watching();
+        watching.setId(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+        watchingRepository.save(watching);
+    }
+
 
 
 
@@ -100,6 +110,24 @@ public class ProfileService {
 
     public void removeFromWatchingList(String id, HttpSession session) {
         watchingRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+    }
+
+    public void moveToRankingList(String id, HttpSession session) {
+        // First we need to delete the show from the user's currently watching list
+        watchingRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+
+        // Then, we add the show to the user's ranking list
+        // Check if the user's ranking list is empty, if so it's rank number will be 1,
+        // else it wil be added to the end of the list
+        Integer maxRank = showRankingRepository.findMaxRankNumByUserId((Long) session.getAttribute("user"));
+        ShowRanking ranking = new ShowRanking();
+        ranking.setId(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+        if (maxRank == null) {
+            ranking.setRankNum(1L);
+        } else {
+            ranking.setRankNum((long) (maxRank + 1));
+        }
+        showRankingRepository.save(ranking);
     }
 
 
