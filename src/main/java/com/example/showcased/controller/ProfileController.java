@@ -109,6 +109,12 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/show-ranking")
+    public ResponseEntity<Void> updateShowRankingList(@RequestBody List<UpdateShowRankingDto> shows, HttpSession session) {
+        profileService.updateShowRankingList(shows, session);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 
@@ -133,6 +139,12 @@ public class ProfileController {
     @DeleteMapping("/episode-ranking/show/{showId}/season/{seasonNumber}/episode/{episodeNumber}")
     public ResponseEntity<Void> removeFromEpisodeRankingList(@PathVariable("showId") Long showId, @PathVariable("seasonNumber") int seasonNumber, @PathVariable("episodeNumber") int episodeNumber, HttpSession session) {
         profileService.removeFromEpisodeRankingList(showId, seasonNumber, episodeNumber, session);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/episode-ranking")
+    public ResponseEntity<Void> updateEpisodeRankingList(@RequestBody List<UpdateEpisodeRankingDto> episodes, HttpSession session) {
+        profileService.updateEpisodeRankingList(episodes, session);
         return ResponseEntity.noContent().build();
     }
 

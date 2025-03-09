@@ -181,6 +181,14 @@ public class ProfileService {
         }
     }
 
+    public void updateShowRankingList(List<UpdateShowRankingDto> shows, HttpSession session) {
+        for (UpdateShowRankingDto show : shows) {
+            ShowRanking newRanking = modelMapper.map(show, ShowRanking.class);
+            newRanking.getId().setUserId((Long) session.getAttribute("user"));
+            showRankingRepository.save(newRanking);
+        }
+    }
+
 
 
 
@@ -239,6 +247,16 @@ public class ProfileService {
             episodeRankingRepository.save(ranking);
         }
     }
+
+    public void updateEpisodeRankingList(List<UpdateEpisodeRankingDto> episodes, HttpSession session) {
+        for (UpdateEpisodeRankingDto episode : episodes) {
+            EpisodeRanking newRanking = new EpisodeRanking();
+            newRanking.setId(new EpisodeRankingId((Long) session.getAttribute("user"), episode.getShowId(), episode.getSeason(), episode.getEpisode()));
+            newRanking.setRankNum(episode.getRankNum());
+            episodeRankingRepository.save(newRanking);
+        }
+    }
+
 
 
 
