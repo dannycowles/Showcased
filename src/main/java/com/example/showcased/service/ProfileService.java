@@ -56,7 +56,7 @@ public class ProfileService {
 
         // Check if the show is already in the user's watchlist, if so we throw an exception
         if (watchlistRepository.existsById(new WatchId(show.getUserId(), show.getShowId()))) {
-            throw new AlreadyOnListException();
+            throw new AlreadyOnListException("Show is already on watchlist");
         }
         watchlistRepository.save(modelMapper.map(show, Watchlist.class));
     }
@@ -95,7 +95,7 @@ public class ProfileService {
 
         // Check if the show is already in the user's currently watching list, if so we throw an exception
         if (watchingRepository.existsById(new WatchId(show.getUserId(), show.getShowId()))) {
-            throw new AlreadyOnListException();
+            throw new AlreadyOnListException("Show is already on watching list");
         }
         watchingRepository.save(modelMapper.map(show, Watching.class));
     }
@@ -142,7 +142,7 @@ public class ProfileService {
 
         // Check if the show is already in the user's show ranking list, if so we throw an exception
         if (showRankingRepository.existsById(new WatchId(show.getUserId(), show.getShowId()))) {
-            throw new AlreadyOnListException();
+            throw new AlreadyOnListException("Show is already on ranking list");
         }
 
         // Check if the user's show ranking list is empty, if so it's rank number will be 1,
@@ -164,8 +164,7 @@ public class ProfileService {
 
     public List<RankingReturnDto> getShowRankingListTop(HttpSession session) {
         PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        Page<RankingReturnDto> page = showRankingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
-        return page.getContent();
+        return showRankingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
     }
 
     public void removeFromShowRankingList(String id, HttpSession session) {
@@ -195,7 +194,8 @@ public class ProfileService {
         if (!episodeInfoRepository.existsById(new EpisodeInfoId(episode.getShowId(), episode.getSeason(), episode.getEpisode()))) {
             EpisodeInfo episodeInfo = new EpisodeInfo();
             episodeInfo.setId(new EpisodeInfoId(episode.getShowId(), episode.getSeason(), episode.getEpisode())); // Manually setting the composite key
-            episodeInfo.setTitle(episode.getTitle());
+            episodeInfo.setShowTitle(episode.getShowTitle());
+            episodeInfo.setEpisodeTitle(episode.getEpisodeTitle());
             episodeInfo.setPosterPath(episode.getPosterPath());
 
             episodeInfoRepository.save(episodeInfo);
@@ -203,7 +203,7 @@ public class ProfileService {
 
         // Check if the show is already in the user's episode ranking list, if so we throw an exception
         if (episodeRankingRepository.existsById(rankingId)) {
-            throw new AlreadyOnListException();
+            throw new AlreadyOnListException("Episode is already on ranking list");
         }
 
         // Check if the user's episode ranking list is empty, if so it's rank number will be 1,
@@ -215,6 +215,29 @@ public class ProfileService {
             ranking.setRankNum((long) (maxRank + 1));
         }
         episodeRankingRepository.save(ranking);
+    }
+
+    public List<EpisodeRankingReturnDto> getEpisodeRankingList(HttpSession session) {
+        return episodeRankingRepository.findByUserId((Long) session.getAttribute("user"));
+    }
+
+    public List<EpisodeRankingReturnDto> getEpisodeRankingListTop(HttpSession session) {
+        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
+        return episodeRankingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
+    }
+
+    public void removeFromEpisodeRankingList(Long showId, int seasonNumber, int episodeNumber, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        episodeRankingRepository.deleteById(new EpisodeRankingId(userId, showId, seasonNumber, episodeNumber));
+
+        // After deleting from the show ranking list we will need to adjust the ranking numbers to account for it
+        List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByUserId(userId);
+        for (int i = 0; i < rankings.size(); i++) {
+            EpisodeRanking ranking = new EpisodeRanking();
+            ranking.setId(new EpisodeRankingId(userId, rankings.get(i).getShowId(), rankings.get(i).getSeason(), rankings.get(i).getEpisode()));
+            ranking.setRankNum(i + 1L);
+            episodeRankingRepository.save(ranking);
+        }
     }
 
 

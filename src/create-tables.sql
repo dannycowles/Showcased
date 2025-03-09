@@ -59,7 +59,8 @@ CREATE TABLE show_info (
 
 CREATE TABLE episode_info (
     show_id INT,
-    title TEXT,
+    show_title TEXT,
+    episode_title TEXT,
     season INT,
     episode INT,
     poster_path TEXT,

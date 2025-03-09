@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EpisodeRankingDto {
+public class EpisodeRankingReturnDto {
     private Long showId;
+    private Long rankNum;
     private String showTitle;
     private String episodeTitle;
     private int season;

@@ -13,6 +13,7 @@ import lombok.Setter;
 public class EpisodeInfo {
     @EmbeddedId
     private EpisodeInfoId id;
-    private String title;
+    private String showTitle;
+    private String episodeTitle;
     private String posterPath;
 }

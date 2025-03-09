@@ -118,6 +118,24 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/episode-ranking")
+    public ResponseEntity<List<EpisodeRankingReturnDto>> getEpisodeRankingList(HttpSession session) {
+        List<EpisodeRankingReturnDto> ranking = profileService.getEpisodeRankingList(session);
+        return ResponseEntity.ok(ranking);
+    }
+
+    @GetMapping("/episode-ranking/top")
+    public ResponseEntity<List<EpisodeRankingReturnDto>> getEpisodeRankingListTop(HttpSession session) {
+        List<EpisodeRankingReturnDto> ranking = profileService.getEpisodeRankingListTop(session);
+        return ResponseEntity.ok(ranking);
+    }
+
+    @DeleteMapping("/episode-ranking/show/{showId}/season/{seasonNumber}/episode/{episodeNumber}")
+    public ResponseEntity<Void> removeFromEpisodeRankingList(@PathVariable("showId") Long showId, @PathVariable("seasonNumber") int seasonNumber, @PathVariable("episodeNumber") int episodeNumber, HttpSession session) {
+        profileService.removeFromEpisodeRankingList(showId, seasonNumber, episodeNumber, session);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
     @GetMapping("/reviews")
