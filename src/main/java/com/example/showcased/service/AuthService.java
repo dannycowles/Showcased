@@ -8,6 +8,7 @@ import com.example.showcased.exception.UsernameTakenException;
 import com.example.showcased.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,16 +16,24 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository, ModelMapper modelMapper) {
+    public AuthService(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Function that verifies that the login credentials are valid
     public UserDto loginUser(LoginRegisterDto loginDto, HttpSession session) {
-        User user = userRepository.findByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword())
+        User user = userRepository.findByUsername(loginDto.getUsername())
                 .orElseThrow(() -> new InvalidLoginException());
+
+        // Check if the provided password matches the stored encrypted password
+        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            throw new InvalidLoginException();
+        }
+
         // "Log" the user in by setting the session attribute
         session.setAttribute("user", user.getId());
         return modelMapper.map(user, UserDto.class);
@@ -37,7 +46,9 @@ public class AuthService {
         }
 
         // Create and save new user to repository
-        User user = new User(registerDto.getUsername(), registerDto.getPassword());
+        // Use the encryptor to encrypt the password before storing
+        String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
+        User user = new User(registerDto.getUsername(), encodedPassword);
         userRepository.save(user);
 
         // Map and return back the created user
