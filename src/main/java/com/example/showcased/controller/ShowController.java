@@ -43,9 +43,9 @@ public class ShowController {
         return ResponseEntity.ok(episode);
     }
 
-    @PostMapping("/reviews")
-    public ResponseEntity<Void> addReviewToShow(@RequestBody Review review, HttpSession session) {
-        showService.addReviewToShow(review, session);
+    @PostMapping("/{id}/reviews")
+    public ResponseEntity<Void> addReviewToShow(@PathVariable("id") Long id, @RequestBody ReviewDto review, HttpSession session) {
+        showService.addReviewToShow(id, review, session);
         return ResponseEntity.ok().build();
     }
 

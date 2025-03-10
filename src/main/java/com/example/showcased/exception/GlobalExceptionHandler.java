@@ -2,8 +2,12 @@ package com.example.showcased.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -11,9 +15,6 @@ public class GlobalExceptionHandler {
     /**
      * Exception handler for user not found, will
      * return the id of the user that wasn't found
-     * along with a 404 status
-     * @param ex User not found exception object
-     * @return JSON object with error attribute and associated message
      */
     @ExceptionHandler(UserNotFoundException.class)
     ResponseEntity<ErrorResponse> userNotFoundHandler(UserNotFoundException ex) {
@@ -23,9 +24,6 @@ public class GlobalExceptionHandler {
     /**
      * Exception handler for invalid login request
      * aka username/password were incorrect
-     * along with a 401 status
-     * @param ex Invalid login exception object
-     * @return JSON object with error attribute and associated message
      */
     @ExceptionHandler(InvalidLoginException.class)
     ResponseEntity<ErrorResponse> invalidLoginHandler(InvalidLoginException ex) {
@@ -34,9 +32,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Exception handler for register request with
-     * existing username along with a 409 status
-     * @param ex Username taken exception object
-     * @return JSON object with error attribute and associated message
+     * existing username
      */
     @ExceptionHandler(UsernameTakenException.class)
     ResponseEntity<ErrorResponse> usernameTakenHandler(UsernameTakenException ex) {
@@ -44,10 +40,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Exception handler for register request with
+     * existing email
+     */
+    @ExceptionHandler(EmailTakenException.class)
+    ResponseEntity<ErrorResponse> alreadyOnListHandler(EmailTakenException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    /**
      * Exception handler for when a user performs an action
      * they need to be logged in to take
-     * @param ex Not logged in exception object
-     * @return JSON object with error attribute and associated message
      */
     @ExceptionHandler(NotLoggedInException.class)
     ResponseEntity<ErrorResponse> notLoggedInHandler(NotLoggedInException ex) {
@@ -57,11 +60,20 @@ public class GlobalExceptionHandler {
     /**
      * Exception handler for when a user tries to add a show to their list
      * that is already on their list
-     * @param ex Already on list exception object
-     * @return JSON object with error attribute and associated message
      */
     @ExceptionHandler(AlreadyOnListException.class)
     ResponseEntity<ErrorResponse> alreadyOnListHandler(AlreadyOnListException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    /**
+     * Exception handler for validation errors, grabs the first one
+     * and sends it back
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        // Retrieve the first validation error message
+        String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorMessage));
     }
 }

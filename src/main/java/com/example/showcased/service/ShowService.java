@@ -7,6 +7,7 @@ import com.example.showcased.repository.ReviewRepository;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class ShowService {
 
+    private final ModelMapper modelMapper;
     @Value("${tmdbApi}")
     private String tmdbKey;
 
@@ -31,8 +33,9 @@ public class ShowService {
 
     private final ReviewRepository reviewRepository;
 
-    public ShowService(ReviewRepository reviewRepository) {
+    public ShowService(ReviewRepository reviewRepository, ModelMapper modelMapper) {
         this.reviewRepository = reviewRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<SearchDto> searchShows(String query) {
@@ -240,12 +243,11 @@ public class ShowService {
         return episode;
     }
 
-    public void addReviewToShow(Review review, HttpSession session) {
-        // If the user is not logged in they shouldn't be able to write a review so we throw an exception
-        if (session.getAttribute("user") == null) {
-            throw new NotLoggedInException();
-        }
-        reviewRepository.save(review);
+    public void addReviewToShow(Long id, ReviewDto review, HttpSession session) {
+        Review newReview = modelMapper.map(review, Review.class);
+        newReview.setShowId(id);
+        newReview.setReviewerId((Long) session.getAttribute("user"));
+        reviewRepository.save(newReview);
     }
 
     public List<ReviewWithUserInfoDto> getShowReviews(Long showId) {

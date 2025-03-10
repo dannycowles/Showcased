@@ -9,10 +9,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 /**
- * This filter is used whenever a user tries to call a profile api endpoint
- * These endpoints can only be accessed if the use is logged in to an account
+ * This filter is used whenever a user tries to add a review to a show
+ * if the user is not logged into an account, they will not be able to
+ * do so and will be redirected to the login page (update later)
  */
-public class ProfileFilter implements Filter {
+public class ShowReviewsFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -20,7 +21,7 @@ public class ProfileFilter implements Filter {
         HttpSession session = request.getSession();
 
         // If the user is not logged in we send an error and return
-        if (session.getAttribute("user") == null) {
+        if (request.getRequestURI().endsWith("/reviews") && request.getMethod().equals("POST") && session.getAttribute("user") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -28,7 +29,7 @@ public class ProfileFilter implements Filter {
             JSONObject responseObject = new JSONObject();
             responseObject.put("timestamp", java.time.Instant.now());
             responseObject.put("status", 401);
-            responseObject.put("message", "You must be logged in to access profile");
+            responseObject.put("message", "You must be logged in to post reviews");
             responseObject.put("path", request.getRequestURI());
             response.getWriter().write(responseObject.toString());
             return;
