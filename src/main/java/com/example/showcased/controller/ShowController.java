@@ -53,4 +53,17 @@ public class ShowController {
     public List<ReviewWithUserInfoDto> getShowReviews(@PathVariable Long id) {
         return showService.getShowReviews(id);
     }
+
+    @PatchMapping("/{reviewId}/like")
+    public ResponseEntity<Void> likeShowReview(@PathVariable Long reviewId, HttpSession session) {
+        showService.likeShowReview(reviewId, session);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{reviewId}/unlike")
+    public ResponseEntity<Void> unlikeShowReview(@PathVariable Long reviewId, HttpSession session) {
+        showService.unlikeShowReview(reviewId, session);
+        return ResponseEntity.ok().build();
+    }
+
 }

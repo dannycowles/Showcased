@@ -35,6 +35,21 @@ public class ShowReviewsFilter implements Filter {
             return;
         }
 
+        // If the user is not logged in and attempts to like/unlike a show review we send an error
+        if (request.getRequestURI().endsWith("/like") || request.getRequestURI().endsWith("/unlike") && session.getAttribute("user") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            JSONObject responseObject = new JSONObject();
+            responseObject.put("timestamp", java.time.Instant.now());
+            responseObject.put("status", 401);
+            responseObject.put("message", "You must be logged in to like/unlike show reviews");
+            responseObject.put("path", request.getRequestURI());
+            response.getWriter().write(responseObject.toString());
+            return;
+        }
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

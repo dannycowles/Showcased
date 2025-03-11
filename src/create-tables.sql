@@ -67,3 +67,10 @@ CREATE TABLE episode_info (
     poster_path TEXT,
     PRIMARY KEY(show_id, season, episode)
 );
+
+CREATE TABLE liked_reviews (
+    user_id INT,
+    review_id INT,
+    PRIMARY KEY(user_id, review_id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);

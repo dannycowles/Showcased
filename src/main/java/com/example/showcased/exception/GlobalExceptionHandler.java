@@ -76,4 +76,22 @@ public class GlobalExceptionHandler {
         String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorMessage));
     }
+
+    /**
+     * Exception handler for when a user tries to like a show
+     * review they already have
+     */
+    @ExceptionHandler(AlreadyLikedShowReviewException.class)
+    public ResponseEntity<ErrorResponse> alreadyLikedShowReviewHandler(AlreadyLikedShowReviewException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    /**
+     * Exception handler for when a user tries to unlike a show
+     * they haven't even liked
+     */
+    @ExceptionHandler(HaventLikedShowReviewException.class)
+    public ResponseEntity<ErrorResponse> haventLikedShowReviewHandler(HaventLikedShowReviewException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
 }

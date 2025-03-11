@@ -1,8 +1,12 @@
 package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
+import com.example.showcased.entity.LikedReviews;
+import com.example.showcased.entity.LikedReviewsId;
 import com.example.showcased.entity.Review;
-import com.example.showcased.exception.NotLoggedInException;
+import com.example.showcased.exception.AlreadyLikedShowReviewException;
+import com.example.showcased.exception.HaventLikedShowReviewException;
+import com.example.showcased.repository.LikedReviewsRepository;
 import com.example.showcased.repository.ReviewRepository;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONArray;
@@ -32,10 +36,12 @@ public class ShowService {
     private String omdbKey;
 
     private final ReviewRepository reviewRepository;
+    private final LikedReviewsRepository likedReviewsRepository;
 
-    public ShowService(ReviewRepository reviewRepository, ModelMapper modelMapper) {
+    public ShowService(ReviewRepository reviewRepository, ModelMapper modelMapper, LikedReviewsRepository likedReviewsRepository) {
         this.reviewRepository = reviewRepository;
         this.modelMapper = modelMapper;
+        this.likedReviewsRepository = likedReviewsRepository;
     }
 
     public List<SearchDto> searchShows(String query) {
@@ -252,5 +258,42 @@ public class ShowService {
 
     public List<ReviewWithUserInfoDto> getShowReviews(Long showId) {
         return reviewRepository.findAllByShowId(showId);
+    }
+
+    public void likeShowReview(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Check if the user has already liked the review, if so we throw an exception
+        LikedReviews likedReview = new LikedReviews(new LikedReviewsId(userId, reviewId));
+        if (likedReviewsRepository.existsById(likedReview.getId())) {
+            throw new AlreadyLikedShowReviewException("You have already liked this show review");
+        }
+
+        // Store the review like information in the DB
+        likedReviewsRepository.save(likedReview);
+
+        // Retrieve the review from the repository and increment the like count
+        Review review = reviewRepository.findByReviewId(reviewId);
+        review.setNumLikes(review.getNumLikes() + 1);
+        reviewRepository.save(review);
+    }
+
+    public void unlikeShowReview(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Check if the user has liked the review, if they haven't they can't unlike it so
+        // we throw an exception
+        LikedReviews likedReview = new LikedReviews(new LikedReviewsId(userId, reviewId));
+        if (!likedReviewsRepository.existsById(likedReview.getId())) {
+            throw new HaventLikedShowReviewException("You have not liked this show review");
+        }
+
+        // Delete the review like information from the DB
+        likedReviewsRepository.delete(likedReview);
+
+        // Retrieve the review from the repository and decrement the like count
+        Review review = reviewRepository.findByReviewId(reviewId);
+        review.setNumLikes(review.getNumLikes() - 1);
+        reviewRepository.save(review);
     }
 }
