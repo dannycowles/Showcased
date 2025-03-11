@@ -7,15 +7,16 @@ CREATE TABLE users (
 );
 
 CREATE TABLE reviews (
-    id INT AUTO_INCREMENT,
-    reviewer_id INT NOT NULL,
-    show_id INT NOT NULL,
+    review_id INT AUTO_INCREMENT,
+    reviewer_id INT,
+    show_id INT,
     rating DOUBLE NOT NULL,
     commentary TEXT DEFAULT NULL,
     contains_spoilers BOOLEAN DEFAULT false,
     num_likes INT DEFAULT 0,
     review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
+    PRIMARY KEY (reviewer_id, show_id),
+    UNIQUE (review_id),
     FOREIGN KEY (reviewer_id) REFERENCES users(id)
 );
 

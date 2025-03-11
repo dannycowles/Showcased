@@ -94,4 +94,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> haventLikedShowReviewHandler(HaventLikedShowReviewException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler for when a user tries to add multiple
+     * reviews to the same show
+     */
+    @ExceptionHandler(AlreadyReviewedShowException.class)
+    public ResponseEntity<ErrorResponse> alreadyReviewedShowHandler(AlreadyReviewedShowException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
+
 }

@@ -36,7 +36,7 @@ public class ShowReviewsFilter implements Filter {
         }
 
         // If the user is not logged in and attempts to like/unlike a show review we send an error
-        if (request.getRequestURI().endsWith("/like") || request.getRequestURI().endsWith("/unlike") && session.getAttribute("user") == null) {
+        if ((request.getRequestURI().endsWith("/like") || request.getRequestURI().endsWith("/unlike")) && session.getAttribute("user") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

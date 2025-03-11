@@ -4,7 +4,9 @@ import com.example.showcased.dto.*;
 import com.example.showcased.entity.LikedReviews;
 import com.example.showcased.entity.LikedReviewsId;
 import com.example.showcased.entity.Review;
+import com.example.showcased.entity.ReviewId;
 import com.example.showcased.exception.AlreadyLikedShowReviewException;
+import com.example.showcased.exception.AlreadyReviewedShowException;
 import com.example.showcased.exception.HaventLikedShowReviewException;
 import com.example.showcased.repository.LikedReviewsRepository;
 import com.example.showcased.repository.ReviewRepository;
@@ -251,8 +253,13 @@ public class ShowService {
 
     public void addReviewToShow(Long id, ReviewDto review, HttpSession session) {
         Review newReview = modelMapper.map(review, Review.class);
-        newReview.setShowId(id);
-        newReview.setReviewerId((Long) session.getAttribute("user"));
+        newReview.setId(new ReviewId((Long) session.getAttribute("user"), id));
+
+        // Check if the user has already added a review for this show, if so we throw an exception
+        if (reviewRepository.existsById(newReview.getId())) {
+            throw new AlreadyReviewedShowException("You have already reviewed this show");
+        }
+
         reviewRepository.save(newReview);
     }
 

@@ -11,11 +11,9 @@ import java.util.Date;
 @Setter
 @Table(name = "reviews")
 public class Review {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long reviewerId;
-    private Long showId;
+    @EmbeddedId
+    private ReviewId id;
+    private Long reviewId;
     private double rating;
     private String commentary;
     private boolean containsSpoilers;
