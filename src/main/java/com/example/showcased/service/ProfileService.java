@@ -6,7 +6,6 @@ import com.example.showcased.exception.AlreadyOnListException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -67,8 +66,7 @@ public class ProfileService {
 
     public List<WatchReturnDto> getWatchlistTop(HttpSession session) {
         PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        Page<WatchReturnDto> page = watchlistRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
-        return page.getContent();
+        return watchlistRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
     }
 
     public void removeFromWatchlist(String id, HttpSession session) {
@@ -106,8 +104,7 @@ public class ProfileService {
 
     public List<WatchReturnDto> getWatchingListTop(HttpSession session) {
         PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        Page<WatchReturnDto> page = watchingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
-        return page.getContent();
+        return watchingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
     }
 
     public void removeFromWatchingList(String id, HttpSession session) {

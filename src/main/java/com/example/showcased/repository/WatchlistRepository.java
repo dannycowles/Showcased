@@ -3,7 +3,6 @@ package com.example.showcased.repository;
 import com.example.showcased.dto.WatchReturnDto;
 import com.example.showcased.entity.Watchlist;
 import com.example.showcased.entity.WatchId;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,5 +19,5 @@ public interface WatchlistRepository extends JpaRepository<Watchlist, WatchId> {
 
     @Query("SELECT new com.example.showcased.dto.WatchReturnDto(s.showId, s.title, s.posterPath)" +
             "FROM ShowInfo s JOIN Watchlist w ON s.showId = w.id.showId AND w.id.userId = ?1")
-    Page<WatchReturnDto> findByUserIdTop(Long id, Pageable pageable);
+    List<WatchReturnDto> findByUserIdTop(Long id, Pageable pageable);
 }
