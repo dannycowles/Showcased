@@ -1,1 +1,23 @@
-<p>search-page works!</p>
+<h1>Search Page</h1>
+<input [(ngModel)]="searchString" (keyup.enter)="search()">
+<button (click)="search()">Search</button>
+
+@if (searchResults) {
+  @for (result of searchResults; track result.id) {
+    <h2>{{result.name}}</h2>
+
+    <!-- If the show didn't air for more than one year only display once -->
+    @if (!result.firstAirDate && !result.lastAirDate) {
+      <h3>Air Dates Unknown</h3>
+    } @else if (result.firstAirDate === result.lastAirDate) {
+      <h3>{{result.firstAirDate}}</h3>
+    } @else {
+      <h3>{{result.firstAirDate}} - {{result.lastAirDate}}</h3>
+    }
+
+    <!-- Poster images are sized w185, using 2:3 ratio -->
+    <img [ngSrc]="result.posterPath" alt="Show Poster Image" width="185" height="278">
+    <br>
+  }
+
+}

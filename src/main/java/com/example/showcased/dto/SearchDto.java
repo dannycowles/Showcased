@@ -22,7 +22,11 @@ public class SearchDto {
     private String endYear;
 
     public void setPosterPath(String posterPath) {
-        this.posterPath = "https://image.tmdb.org/t/p/w92" + posterPath;
+        if (posterPath != null) {
+            this.posterPath = "https://image.tmdb.org/t/p/w185" + posterPath;
+        } else {
+            this.posterPath = "default";
+        }
     }
 
     public void setStartYear(String startYear) {

@@ -71,7 +71,12 @@ public class ShowService {
 
                 // Parse the response and extract the last date
                 JSONObject jsonResponse = new JSONObject(response.getBody());
-                String endYear = jsonResponse.optString("last_air_date").split("-")[0];
+
+                // Check if the show is in production, if so leave the last_air_date blank
+                String endYear = "";
+                if (!jsonResponse.optBoolean("in_production")) {
+                    endYear = jsonResponse.optString("last_air_date").split("-")[0];
+                }
 
                 // Update the result object to include the end year
                 searchResult.setEndYear(endYear);

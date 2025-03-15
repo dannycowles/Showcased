@@ -14,6 +14,7 @@ import {UserPageComponent} from './pages/user-page/user-page.component';
 import {SearchPageComponent} from './pages/search-page/search-page.component';
 import {ShowPageComponent} from './pages/show-page/show-page.component';
 import {SeasonPageComponent} from './pages/season-page/season-page.component';
+import {NgOptimizedImage} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import {SeasonPageComponent} from './pages/season-page/season-page.component';
     BrowserModule,
     FormsModule,
     RouterModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgOptimizedImage
   ],
   providers: [],
   bootstrap: [AppComponent]
