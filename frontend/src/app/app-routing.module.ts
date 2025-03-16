@@ -18,7 +18,7 @@ const routes: Routes = [
     { path: 'user/:id', component: UserPageComponent},
     { path: 'search', component: SearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},
-    { path: 'show/:id/seasons', component: SeasonPageComponent},
+    { path: 'show/:id/season/:seasonNumber', component: SeasonPageComponent},
     { path: '**', component: PageNotFoundComponent}
 ];
 

@@ -1,8 +1,8 @@
 export class SearchResultData {
   id: number;
   name: string;
-  firstAirDate: string;
-  lastAirDate: string;
+  firstAirDate: number;
+  lastAirDate: number;
   posterPath: string;
 
   constructor(jsonObject: { [key: string]: any }) {

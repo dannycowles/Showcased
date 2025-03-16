@@ -25,29 +25,10 @@ export class SearchPageComponent implements OnInit {
         let response = await fetch(`http://localhost:8080/show/search?query=${encodeURIComponent(this.searchString)}`);
 
         let data = await response.json();
-        this.searchResults = data.map((result: SearchResultData) => new SearchResultData(result));
+        this.searchResults = data.map((result: {}) => new SearchResultData(result));
       } catch (error) {
         console.error(error);
       }
     }
-    console.log(this.searchResults);
-
-    const result = {
-      "id": "48477",
-      "name": "Several Questions That Makes Us Happy",
-      "firstAirDate": "",
-      "lastAirDate": "",
-      "posterPath": "no-poster.svg"
-    };
-
-    if (result.firstAirDate === "" && result.lastAirDate === "") {
-      console.log("Air Dates Unknown");
-    } else if (result.firstAirDate === result.lastAirDate) {
-      console.log(result.firstAirDate);
-    } else {
-      console.log(result.firstAirDate + " - " + result.lastAirDate);
-    }
-
   }
-
 }

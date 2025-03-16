@@ -1,0 +1,69 @@
+import {GenreData} from './genre-data';
+import {CreatorData} from './creator-data';
+import {CastData} from './cast-data';
+
+export class ShowData {
+  id: number;
+  imdbId: string;
+  imdbRating: number;
+  imdbVotes: number;
+  backdropPath: string;
+  posterPath: string;
+  name: string;
+  tagline: string;
+  plot: string;
+  rating: string;
+  averageRuntime: string;
+  firstAirDate: number;
+  lastAirDate: number;
+  numEpisodes: number;
+  numSeasons: number;
+  genres: GenreData[];
+  creators: CreatorData[];
+  cast: CastData[];
+
+  constructor(jsonObject: { [key: string]: any }) {
+    this.id = jsonObject['id'];
+    this.imdbId = jsonObject['imdbId'];
+    this.imdbRating = jsonObject['imdbRating'];
+    this.imdbVotes = jsonObject['imdbVotes'];
+
+    if (jsonObject['backdrop_path'] === "default") {
+      this.backdropPath = "no-backdrop.svg";
+    } else {
+      this.backdropPath = jsonObject['backdrop_path'];
+    }
+
+    if (jsonObject['poster_path'] === "default") {
+      this.posterPath = "no-poster-full.svg";
+    } else {
+      this.posterPath = jsonObject['poster_path'];
+    }
+
+    this.name = jsonObject['name'];
+    this.tagline = jsonObject['tagline'];
+    this.plot = jsonObject['plot'];
+    this.rating = jsonObject['rating'];
+    this.averageRuntime = jsonObject['average_runtime'];
+    this.firstAirDate = jsonObject['first_air_date'];
+    this.lastAirDate = jsonObject['last_air_date'];
+    this.numEpisodes = jsonObject['number_of_episodes'];
+    this.numSeasons = jsonObject['number_of_seasons'];
+
+    this.genres = jsonObject['genres'].map((genre: {} ) => {
+      return new GenreData(genre);
+    });
+
+    this.creators = jsonObject['created_by'].map((creator: {} ) => {
+      return new CreatorData(creator);
+    });
+
+    this.cast = jsonObject['cast'].map((cast: {} ) => {
+      return new CastData(cast);
+    });
+  }
+}
+
+
+
+

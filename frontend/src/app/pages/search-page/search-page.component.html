@@ -16,7 +16,7 @@
     }
 
     <!-- Poster images are sized w185, using 2:3 ratio -->
-    <img [ngSrc]="result.posterPath" alt="Show Poster Image" width="185" height="278">
+    <a href="/show/{{result.id}}"><img [ngSrc]="result.posterPath" alt="Poster Image" width="185" height="278"></a>
     <br>
   }
 

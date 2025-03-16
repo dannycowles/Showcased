@@ -42,7 +42,7 @@ public class ShowDto {
     private String startYear;
 
     @JsonProperty("last_air_date")
-    private String endYear;
+    private String endYear = "";
 
     @JsonProperty("number_of_episodes")
     private int numEpisodes;
@@ -59,19 +59,36 @@ public class ShowDto {
     @JsonProperty("cast")
     private List<CastDto> cast;
 
+    @JsonProperty("in_production")
+    private boolean inProduction;
+
     void setBackdropPath(String backdropPath) {
-        this.backdropPath = "https://image.tmdb.org/t/p/w1280" + backdropPath;
+        if (backdropPath != null) {
+            this.backdropPath = "https://image.tmdb.org/t/p/w1280" + backdropPath;
+        } else {
+            this.backdropPath = "default";
+        }
     }
 
     void setPosterPath(String posterPath) {
-        this.posterPath = "https://image.tmdb.org/t/p/w500" + posterPath;
+        if (posterPath != null) {
+            this.posterPath = "https://image.tmdb.org/t/p/w500" + posterPath;
+        } else {
+            this.posterPath = "default";
+        }
     }
 
     void setStartYear(String startYear) {
-        this.startYear = startYear.split("-")[0];
+        if (startYear != null) {
+            this.startYear = startYear.split("-")[0];
+        }
     }
 
     void setEndYear(String endYear) {
-        this.endYear = endYear.split("-")[0];
+        if (!this.inProduction) {
+            if (endYear != null) {
+                this.endYear = endYear.split("-")[0];
+            }
+        }
     }
 }
