@@ -62,6 +62,18 @@ export class ShowData {
       return new CastData(cast);
     });
   }
+
+  get genreString():string {
+    let returnStr:string = "";
+    for (let i = 0; i < this.genres.length; i++) {
+      returnStr += this.genres[i].name;
+
+      if (i < this.genres.length - 1) {
+        returnStr += ", ";
+      }
+    }
+    return returnStr;
+  }
 }
 
 
