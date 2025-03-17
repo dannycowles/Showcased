@@ -9,6 +9,7 @@ import {UserPageComponent} from "./pages/user-page/user-page.component";
 import {SearchPageComponent} from "./pages/search-page/search-page.component";
 import {ShowPageComponent} from "./pages/show-page/show-page.component";
 import {SeasonPageComponent} from "./pages/season-page/season-page.component";
+import {EpisodePageComponent} from './pages/episode-page/episode-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -19,6 +20,7 @@ const routes: Routes = [
     { path: 'search', component: SearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},
     { path: 'show/:id/season/:seasonNumber', component: SeasonPageComponent},
+    { path: 'show/:id/season/:seasonNumber/episode/:episodeNumber', component: EpisodePageComponent },
     { path: '**', component: PageNotFoundComponent}
 ];
 

@@ -16,6 +16,7 @@ import {ShowPageComponent} from './pages/show-page/show-page.component';
 import {SeasonPageComponent} from './pages/season-page/season-page.component';
 import {NgOptimizedImage} from '@angular/common';
 import {AngularToastifyModule, ToastService} from 'angular-toastify';
+import {EpisodePageComponent} from './pages/episode-page/episode-page.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import {AngularToastifyModule, ToastService} from 'angular-toastify';
     SearchPageComponent,
     ShowPageComponent,
     SeasonPageComponent,
+    EpisodePageComponent
   ],
   imports: [
     BrowserModule,
