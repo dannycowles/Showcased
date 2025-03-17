@@ -4,7 +4,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -21,16 +20,8 @@ public class ProfileFilter implements Filter {
 
         // If the user is not logged in we send an error and return
         if (session.getAttribute("user") == null) {
+            response.setHeader("Access-Control-Allow-Origin", "*");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            JSONObject responseObject = new JSONObject();
-            responseObject.put("timestamp", java.time.Instant.now());
-            responseObject.put("status", 401);
-            responseObject.put("message", "You must be logged in to access profile");
-            responseObject.put("path", request.getRequestURI());
-            response.getWriter().write(responseObject.toString());
             return;
         }
 

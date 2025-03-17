@@ -42,6 +42,16 @@
   <h3>Poster</h3>
   <img [ngSrc]="show.posterPath" alt="Poster Image" width="500" height="750" priority>
 
+  <br>
+  <br>
+  <button (click)="addShowToWatchlist()">Add to Watchlist</button>
+  <br>
+  <br>
+  <button (click)="addShowToWatchingList()">Add to Currently Watching</button>
+  <br>
+  <br>
+  <button (click)="addShowToRankingList()">Add to Ranking List</button>
+
   <h2>Cast</h2>
   @if (show.cast.length != 0) {
     @for (cast of show.cast; track cast.id) {

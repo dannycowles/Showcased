@@ -40,4 +40,49 @@ export class ShowPageComponent implements OnInit {
   seasonSelected(seasonNumber:string) {
     window.location.href = `${window.location.pathname}/season/${seasonNumber}`;
   }
+
+  // Adds the current show to the user's watchlist
+  async addShowToWatchlist() {
+    try {
+      let data = {
+        "showId": this.showId,
+        "title": this.show.name,
+        "posterPath": this.show.posterPath
+      };
+
+      await this.showService.addShowToWatchlist(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Adds the current show to the user's currently watching list
+  async addShowToWatchingList() {
+    try {
+      let data = {
+        "showId": this.showId,
+        "title": this.show.name,
+        "posterPath": this.show.posterPath
+      };
+
+      await this.showService.addShowToWatchingList(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Adds the current show to the user's ranking list
+  async addShowToRankingList() {
+    try {
+      let data = {
+        "showId": this.showId,
+        "title": this.show.name,
+        "posterPath": this.show.posterPath
+      };
+
+      await this.showService.addShowToRankingList(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
