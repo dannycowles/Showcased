@@ -37,17 +37,29 @@ export class ReviewData {
 
     let diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) {
-      return `${diffInMinutes} minutes ago`;
+      if (diffInMinutes === 1) {
+        return `${diffInMinutes} minute ago`;
+      } else {
+        return `${diffInMinutes} minutes ago`;
+      }
     }
 
     let diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) {
-      return `${diffInHours} hours ago`;
+      if (diffInHours === 1) {
+        return `${diffInHours} hour ago`;
+      } else {
+        return `${diffInHours} hours ago`;
+      }
     }
 
     let diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 7) {
-      return `${diffInDays} days ago`;
+      if (diffInDays === 1) {
+        return `${diffInDays} day ago`;
+      } else {
+        return `${diffInDays} days ago`;
+      }
     }
 
     return this.formattedDate;
