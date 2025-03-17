@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {ShowData} from '../../data/show-data';
 import {ReviewData} from '../../data/review-data';
 import {ShowService} from '../../services/show.service';
+import {ProfileService} from '../../services/profile.service';
 
 @Component({
   selector: 'app-show-page',
@@ -16,7 +17,8 @@ export class ShowPageComponent implements OnInit {
   reviews: ReviewData[];
 
   constructor(private route: ActivatedRoute,
-              private showService: ShowService) {
+              private showService: ShowService,
+              private profileService: ProfileService) {
   }
 
   async ngOnInit() {
@@ -50,7 +52,7 @@ export class ShowPageComponent implements OnInit {
         "posterPath": this.show.posterPath
       };
 
-      await this.showService.addShowToWatchlist(data);
+      await this.profileService.addShowToWatchlist(data);
     } catch (error) {
       console.error(error);
     }
@@ -65,7 +67,7 @@ export class ShowPageComponent implements OnInit {
         "posterPath": this.show.posterPath
       };
 
-      await this.showService.addShowToWatchingList(data);
+      await this.profileService.addShowToWatchingList(data);
     } catch (error) {
       console.error(error);
     }
@@ -80,7 +82,7 @@ export class ShowPageComponent implements OnInit {
         "posterPath": this.show.posterPath
       };
 
-      await this.showService.addShowToRankingList(data);
+      await this.profileService.addShowToRankingList(data);
     } catch (error) {
       console.error(error);
     }
