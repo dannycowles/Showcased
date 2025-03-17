@@ -27,7 +27,7 @@
 
   <!-- Display season dropdown -->
   <h3>Seasons: </h3>
-  <select [(ngModel)]="selectedSeason" (change)="seasonSelected()">
+  <select #seasonsDropdown (change)="seasonSelected(seasonsDropdown.value)">
     <option value="---"></option>
     @for (_ of [].constructor(show.numSeasons); let season = $index; track season) {
       <option [value]="season + 1">{{season + 1}}</option>
@@ -63,6 +63,25 @@
     }
   } @else {
     <h4>No Creators Found</h4>
+  }
+}
+
+@if (reviews) {
+  <h2>Reviews</h2>
+  @if (reviews.length != 0) {
+    @for (review of reviews; track review.id) {
+      <h4>Username: {{review.reviewerUsername}}</h4>
+      <h4>Date: {{review.formattedDate}}</h4>
+      <h4>Relative Time Since Review: {{review.relativeDate}}</h4>
+      <h4>Rating: {{review.rating}}</h4>
+      <h4>Commentary: {{review.commentary}}</h4>
+      <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
+      <h4>Likes: {{review.likes}}</h4>
+      <button>Like</button>
+      <br>
+    }
+  } @else {
+    <h4>No Reviews for this Show</h4>
   }
 
 }

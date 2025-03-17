@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ShowData} from '../../data/show-data';
+import {ReviewData} from '../../data/review-data';
 
 @Component({
   selector: 'app-show-page',
@@ -11,7 +12,7 @@ import {ShowData} from '../../data/show-data';
 export class ShowPageComponent implements OnInit {
   showId: number;
   show: ShowData;
-  selectedSeason: string;
+  reviews: ReviewData[];
 
   constructor(private route: ActivatedRoute) {
   }
@@ -19,6 +20,7 @@ export class ShowPageComponent implements OnInit {
   async ngOnInit() {
     this.showId = this.route.snapshot.params['id'];
 
+    // Retrieve show data from backend
     try {
       let response = await fetch(`http://localhost:8080/show/${this.showId}`);
 
@@ -28,10 +30,18 @@ export class ShowPageComponent implements OnInit {
       console.error(error);
     }
 
-    console.log(this.show);
+    // Retrieve review data for show from backend
+    try {
+      let response = await fetch(`http://localhost:8080/show/${this.showId}/reviews`);
+
+      let data = await response.json();
+      this.reviews = data.map((review: {}) => new ReviewData(review));
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  seasonSelected() {
-    window.location.href = `${window.location.pathname}/season/${this.selectedSeason}`;
+  seasonSelected(seasonNumber:string) {
+    window.location.href = `${window.location.pathname}/season/${seasonNumber}`;
   }
 }
