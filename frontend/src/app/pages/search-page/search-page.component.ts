@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {SearchResultData} from '../../data/search-result-data';
+import {ShowService} from '../../services/show.service';
 
 @Component({
   selector: 'app-search-page',
@@ -11,21 +12,17 @@ export class SearchPageComponent implements OnInit {
   searchString: string;
   searchResults: SearchResultData[];
 
-  constructor() {}
+  constructor(private showService: ShowService) {}
 
   ngOnInit() {
   }
 
   async search() {
 
-    // As long as the search is not blank, send a request to the backend search endpoint
-    // to retrieve results
+    // As long as the search is not blank, send a request to the backend to get results
     if (this.searchString) {
       try {
-        let response = await fetch(`http://localhost:8080/show/search?query=${encodeURIComponent(this.searchString)}`);
-
-        let data = await response.json();
-        this.searchResults = data.map((result: {}) => new SearchResultData(result));
+        this.searchResults = await this.showService.searchForShows(this.searchString);
       } catch (error) {
         console.error(error);
       }

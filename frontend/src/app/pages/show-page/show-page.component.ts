@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ShowData} from '../../data/show-data';
 import {ReviewData} from '../../data/review-data';
+import {ShowService} from '../../services/show.service';
 
 @Component({
   selector: 'app-show-page',
@@ -14,7 +15,8 @@ export class ShowPageComponent implements OnInit {
   show: ShowData;
   reviews: ReviewData[];
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute,
+              private showService: ShowService) {
   }
 
   async ngOnInit() {
@@ -22,20 +24,14 @@ export class ShowPageComponent implements OnInit {
 
     // Retrieve show data from backend
     try {
-      let response = await fetch(`http://localhost:8080/show/${this.showId}`);
-
-      let data = await response.json();
-      this.show = new ShowData(data);
+      this.show = await this.showService.fetchShowDetails(this.showId);
     } catch (error) {
       console.error(error);
     }
 
-    // Retrieve review data for show from backend
+    // Retrieve reviews for show from backend
     try {
-      let response = await fetch(`http://localhost:8080/show/${this.showId}/reviews`);
-
-      let data = await response.json();
-      this.reviews = data.map((review: {}) => new ReviewData(review));
+      this.reviews = await this.showService.fetchShowReviews(this.showId);
     } catch (error) {
       console.error(error);
     }
