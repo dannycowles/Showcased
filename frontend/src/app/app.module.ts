@@ -15,6 +15,7 @@ import {SearchPageComponent} from './pages/search-page/search-page.component';
 import {ShowPageComponent} from './pages/show-page/show-page.component';
 import {SeasonPageComponent} from './pages/season-page/season-page.component';
 import {NgOptimizedImage} from '@angular/common';
+import {AngularToastifyModule, ToastService} from 'angular-toastify';
 
 @NgModule({
   declarations: [
@@ -34,9 +35,10 @@ import {NgOptimizedImage} from '@angular/common';
     FormsModule,
     RouterModule,
     AppRoutingModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    AngularToastifyModule
   ],
-  providers: [],
+  providers: [ToastService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

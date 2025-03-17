@@ -4,6 +4,7 @@ import {ShowData} from '../../data/show-data';
 import {ReviewData} from '../../data/review-data';
 import {ShowService} from '../../services/show.service';
 import {ProfileService} from '../../services/profile.service';
+import {ToastDisplayService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-show-page',
@@ -18,7 +19,8 @@ export class ShowPageComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
-              private profileService: ProfileService) {
+              private profileService: ProfileService,
+              private toastService: ToastDisplayService) {
   }
 
   async ngOnInit() {
@@ -52,7 +54,10 @@ export class ShowPageComponent implements OnInit {
         "posterPath": this.show.posterPath
       };
 
-      await this.profileService.addShowToWatchlist(data);
+      // Display a toast that confirms the show was successfully added
+      this.toastService.addToWatchlistToast(this.show.name);
+
+      //await this.profileService.addShowToWatchlist(data);
     } catch (error) {
       console.error(error);
     }
@@ -67,7 +72,10 @@ export class ShowPageComponent implements OnInit {
         "posterPath": this.show.posterPath
       };
 
-      await this.profileService.addShowToWatchingList(data);
+      // Display a toast that confirms the show was successfully added
+      this.toastService.addToWatchingListToast(this.show.name);
+
+      //await this.profileService.addShowToWatchingList(data);
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +90,10 @@ export class ShowPageComponent implements OnInit {
         "posterPath": this.show.posterPath
       };
 
-      await this.profileService.addShowToRankingList(data);
+      // Display a toast that confirms the show was successfully added
+      this.toastService.addToShowRankingToast(this.show.name);
+
+      //await this.profileService.addShowToRankingList(data);
     } catch (error) {
       console.error(error);
     }
