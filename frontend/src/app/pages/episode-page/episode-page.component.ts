@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {ShowService} from '../../services/show.service';
 
 @Component({
   selector: 'app-episode-page',
@@ -7,8 +9,17 @@ import {Component, OnInit} from '@angular/core';
   standalone: false
 })
 export class EpisodePageComponent implements OnInit {
+  showId: number;
+  seasonNumber: number;
+  episodeNumber: number;
 
-  constructor() { }
+  constructor(private route: ActivatedRoute,
+              private showService: ShowService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.showId = this.route.snapshot.params['id'];
+    this.seasonNumber = this.route.snapshot.params['seasonNumber'];
+    this.episodeNumber = this.route.snapshot.params['episodeNumber'];
+
+  }
 }

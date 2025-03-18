@@ -1,9 +1,10 @@
-export class SeasonEpisode {
+export class EpisodeData {
   name: string;
   plot: string;
   imdbRating: string;
+  imdbVotes: number;
+  runtime: number;
   airDate: Date;
-  episodeNumber: number;
   stillPath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
@@ -16,8 +17,9 @@ export class SeasonEpisode {
       this.imdbRating = jsonObject['imdbRating'];
     }
 
+    this.imdbVotes = jsonObject['imdbVotes'];
+    this.runtime = jsonObject['runtime'];
     this.airDate = jsonObject['air_date'];
-    this.episodeNumber = jsonObject['episode_number'];
     this.stillPath = jsonObject['still_path'];
   }
 }

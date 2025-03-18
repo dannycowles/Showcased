@@ -206,7 +206,7 @@ public class ShowService {
         for (int i = 0; i < episodes.length(); i++) {
             JSONObject episode = episodes.getJSONObject(i);
             String rating = episode.optString("imdbRating");
-            season.setRating(i + 1, rating);
+            season.setRating(episode.optInt("Episode"), rating);
         }
 
         // For each of the episodes, extract the plot from the OMDB episode endpoint

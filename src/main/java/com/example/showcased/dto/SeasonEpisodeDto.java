@@ -11,7 +11,7 @@ public class SeasonEpisodeDto {
     private String airDate;
 
     @JsonProperty("episode_number")
-    private String episodeNumber;
+    private int episodeNumber;
 
     private String name;
     private String plot;

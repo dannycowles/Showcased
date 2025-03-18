@@ -20,7 +20,11 @@ public class SeasonDto {
     private List<SeasonEpisodeDto> episodes;
 
     public void setRating(int episodeNumber, String rating) {
-        episodes.get(episodeNumber - 1).setImdbRating(rating);
+        for (SeasonEpisodeDto seasonEpisodeDto : episodes) {
+            if (seasonEpisodeDto.getEpisodeNumber() == episodeNumber) {
+                seasonEpisodeDto.setImdbRating(rating);
+            }
+        }
     }
 
     public void setPosterPath(String posterPath) {
