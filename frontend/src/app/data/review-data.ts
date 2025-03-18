@@ -1,4 +1,4 @@
-import {retry} from 'rxjs';
+import {UtilsService} from '../services/utils.service';
 
 export class ReviewData {
   id: number;
@@ -9,8 +9,9 @@ export class ReviewData {
   containsSpoilers: boolean;
   likes: number;
   reviewDate: Date;
+  utilsService: UtilsService
 
-  constructor(jsonObject: { [key: string]: any }) {
+  constructor(jsonObject: { [key: string]: any }, utilsService: UtilsService) {
     this.id = jsonObject['id'];
     this.reviewerUsername = jsonObject['username'];
     this.reviewerId = jsonObject['reviewerId'];
@@ -19,10 +20,7 @@ export class ReviewData {
     this.containsSpoilers = jsonObject['containsSpoilers'];
     this.likes = jsonObject['numLikes'];
     this.reviewDate = new Date(jsonObject['reviewDate']);
-  }
-
-  get formattedDate():string {
-    return this.reviewDate.toLocaleString();
+    this.utilsService = utilsService;
   }
 
   /**
@@ -62,6 +60,6 @@ export class ReviewData {
       }
     }
 
-    return this.formattedDate;
+    return this.utilsService.getFormattedDate(this.reviewDate);
   }
 }

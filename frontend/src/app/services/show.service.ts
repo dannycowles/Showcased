@@ -4,6 +4,7 @@ import {ReviewData} from '../data/review-data';
 import {SearchResultData} from '../data/search-result-data';
 import {SeasonData} from '../data/season-data';
 import {EpisodeData} from '../data/episode-data';
+import {UtilsService} from './utils.service';
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +69,7 @@ export class ShowService {
 
       let data = await response.json();
       return data.map((review: {}) => {
-        return new ReviewData(review);
+        return new ReviewData(review, new UtilsService());
       });
     } catch (error) {
       throw error;

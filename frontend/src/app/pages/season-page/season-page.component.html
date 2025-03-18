@@ -19,7 +19,7 @@
   @for (episode of season.episodes; track episode.episodeNumber) {
     <h4>S{{seasonNumber}} E{{episode.episodeNumber}}</h4>
     <h4>Name: {{episode.name}}</h4>
-    <h4>Release Date: {{episode.airDate}}</h4>
+    <h4>Release Date: {{utilsService.getFormattedDate(episode.airDate)}}</h4>
     <h4>IMDb Rating: {{episode.imdbRating}}</h4>
     <h4>Plot: {{episode.overview}}</h4>
 

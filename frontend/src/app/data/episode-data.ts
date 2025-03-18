@@ -24,7 +24,7 @@ export class EpisodeData {
 
     this.imdbVotes = jsonObject['imdbVotes'];
     this.runtime = jsonObject['runtime'];
-    this.airDate = jsonObject['air_date'];
+    this.airDate = new Date(jsonObject['air_date']);
     this.stillPath = jsonObject['still_path'];
   }
 }

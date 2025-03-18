@@ -21,7 +21,7 @@ export class SeasonEpisode {
       this.imdbRating = jsonObject['imdbRating'];
     }
 
-    this.airDate = jsonObject['air_date'];
+    this.airDate = new Date(jsonObject['air_date']);
     this.episodeNumber = jsonObject['episode_number'];
     this.stillPath = jsonObject['still_path'];
   }

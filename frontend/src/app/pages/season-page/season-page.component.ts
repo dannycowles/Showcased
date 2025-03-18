@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {SeasonData} from '../../data/season-data';
 import {ShowService} from '../../services/show.service';
+import {UtilsService} from '../../services/utils.service';
 
 @Component({
   selector: 'app-season-page',
@@ -16,7 +17,8 @@ export class SeasonPageComponent implements OnInit {
   numSeasons: number;
 
   constructor(private route: ActivatedRoute,
-              private showService: ShowService) {}
+              private showService: ShowService,
+              public utilsService: UtilsService) {}
 
   async ngOnInit() {
     this.showId = this.route.snapshot.params['id'];

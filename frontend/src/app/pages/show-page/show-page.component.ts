@@ -5,6 +5,7 @@ import {ReviewData} from '../../data/review-data';
 import {ShowService} from '../../services/show.service';
 import {ProfileService} from '../../services/profile.service';
 import {ToastDisplayService} from '../../services/toast.service';
+import {UtilsService} from '../../services/utils.service';
 
 @Component({
   selector: 'app-show-page',
@@ -20,7 +21,8 @@ export class ShowPageComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
               private profileService: ProfileService,
-              private toastService: ToastDisplayService) {
+              private toastService: ToastDisplayService,
+              public utilsService: UtilsService) {
   }
 
   async ngOnInit() {

@@ -4,7 +4,7 @@
   <h2>Name: {{episode.name}}</h2>
 
   <h3>IMDb Rating: {{episode.imdbRating}} with {{episode.imdbVotes}} votes</h3>
-  <h3>Release Date: {{episode.airDate}}</h3>
+  <h3>Release Date: {{utilsService.getFormattedDate(episode.airDate)}}</h3>
   <h3>Runtime: {{episode.runtime}} minutes</h3>
   <h3>Plot: {{episode.overview}}</h3>
 

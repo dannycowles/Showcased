@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ShowService} from '../../services/show.service';
 import {EpisodeData} from '../../data/episode-data';
+import {UtilsService} from '../../services/utils.service';
 
 @Component({
   selector: 'app-episode-page',
@@ -16,7 +17,8 @@ export class EpisodePageComponent implements OnInit {
   episode: EpisodeData;
 
   constructor(private route: ActivatedRoute,
-              private showService: ShowService) { }
+              private showService: ShowService,
+              public utilsService: UtilsService) { }
 
   async ngOnInit() {
     this.showId = this.route.snapshot.params['id'];
