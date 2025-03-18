@@ -218,7 +218,9 @@ public class ShowService {
                 String url2 = "https://www.omdbapi.com/?apikey=" + omdbKey + "&i=" + imdbId + "&Season=" + seasonNumber + "&Episode=" + seasonEpisode.getEpisodeNumber();
                 ResponseEntity<String> response2 = restTemplate.exchange(url2, HttpMethod.GET, requestEntity, String.class);
                 JSONObject jsonResponse2 = new JSONObject(response2.getBody());
-                seasonEpisode.setPlot(jsonResponse2.optString("Plot"));
+                if (!jsonResponse2.optString("Plot").equals("N/A") && jsonResponse2.optBoolean("Plot")) {
+                    seasonEpisode.setPlot(jsonResponse2.optString("Plot"));
+                }
             });
             futures.add(future);
         }

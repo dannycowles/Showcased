@@ -1,6 +1,6 @@
 export class EpisodeData {
   name: string;
-  plot: string;
+  overview: string;
   imdbRating: string;
   imdbVotes: number;
   runtime: number;
@@ -9,7 +9,12 @@ export class EpisodeData {
 
   constructor(jsonObject: { [key: string]: any }) {
     this.name = jsonObject['name'];
-    this.plot = jsonObject['plot'];
+
+    if (jsonObject['overview'] === "N/A" || !jsonObject['overview']) {
+      this.overview = "Unknown";
+    } else {
+      this.overview = jsonObject['overview'];
+    }
 
     if (jsonObject['imdbRating'] === "N/A" || !jsonObject['imdbRating']) {
       this.imdbRating = "Unknown";
