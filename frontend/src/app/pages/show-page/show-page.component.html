@@ -87,7 +87,7 @@
       <h4>Commentary: {{review.commentary}}</h4>
       <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
       <h4>Likes: {{review.likes}}</h4>
-      <button>Like</button>
+      <button (click)="likeShowReview(review.id)">Like</button>
       <br>
     }
   } @else {

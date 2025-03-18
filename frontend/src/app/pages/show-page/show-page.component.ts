@@ -100,4 +100,13 @@ export class ShowPageComponent implements OnInit {
       console.error(error);
     }
   }
+
+  // Likes a show review
+  async likeShowReview(reviewId: number) {
+    try {
+      await this.showService.likeShowReview(reviewId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

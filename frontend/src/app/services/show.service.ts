@@ -77,6 +77,23 @@ export class ShowService {
   }
 
   /**
+   * Likes the show review by its ID
+   * @param reviewId
+   */
+  async likeShowReview(reviewId: number) {
+    try {
+      let response = await fetch(`${this.baseUrl}/${reviewId}/like`);
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = "/login";
+      }
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
    * Fetches the season details for a show given its ID and season number
    * @param showId
    * @param seasonNumber
