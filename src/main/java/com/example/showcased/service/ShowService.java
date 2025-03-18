@@ -265,11 +265,13 @@ public class ShowService {
         jsonResponse = new JSONObject(response.getBody());
         String imdbVotes = jsonResponse.optString("imdbVotes");
         String imdbRating = jsonResponse.optString("imdbRating");
-        String plot = jsonResponse.optString("Plot");
         episode.setImdbVotes(imdbVotes);
         episode.setImdbRating(imdbRating);
-        episode.setPlot(plot);
 
+        if (!jsonResponse.optString("Plot").equals("N/A") && jsonResponse.optBoolean("Plot")) {
+            String plot = jsonResponse.optString("Plot");
+            episode.setPlot(plot);
+        }
         return episode;
     }
 
