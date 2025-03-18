@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {ReviewData} from '../data/review-data';
 import {SearchResultData} from '../data/search-result-data';
 import {SeasonData} from '../data/season-data';
+import {EpisodeData} from '../data/episode-data';
 
 @Injectable({
   providedIn: 'root'
@@ -84,6 +85,23 @@ export class ShowService {
 
       let data = await response.json();
       return new SeasonData(data);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Fetches the details for an episode given the show's ID, season, and episode number
+   * @param showId
+   * @param seasonNumber
+   * @param episodeNumber
+   */
+  async fetchEpisodeDetails(showId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeData> {
+    try {
+      let response = await fetch(`http://localhost:8080/show/${showId}/season/${seasonNumber}/episode/${episodeNumber}`);
+
+      let data = await response.json();
+      return new EpisodeData(data);
     } catch (error) {
       throw error;
     }

@@ -24,6 +24,6 @@ public class EpisodeDto {
     private int runtime;
 
     public void setStillPath(String stillPath) {
-        this.stillPath = "https://image.tmdb.org/t/p/w185" + stillPath;
+        this.stillPath = "https://image.tmdb.org/t/p/w780" + stillPath;
     }
 }

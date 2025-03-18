@@ -1,1 +1,16 @@
+@if (episode) {
+  <button (click)="returnToSeasonDetails()">Return to Season Details</button>
+
+  <h2>Name: {{episode.name}}</h2>
+
+  <h3>IMDb Rating: {{episode.imdbRating}} with {{episode.imdbVotes}} votes</h3>
+  <h3>Release Date: {{episode.airDate}}</h3>
+  <h3>Runtime: {{episode.runtime}} minutes</h3>
+  <h3>Plot: {{episode.plot}}</h3>
+
+  <!-- Episode still is size w780, with 16:9 aspect ratio -->
+  <img [ngSrc]="episode.stillPath" alt="Episode Still" width="780" height="438" priority>
+
+}
+
 
