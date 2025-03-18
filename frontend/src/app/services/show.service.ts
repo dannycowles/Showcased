@@ -37,6 +37,11 @@ export class ShowService {
     try {
       let response = await fetch(`${this.baseUrl}/${showId}`);
 
+      // If the show was not found then redirect the user to the 404 page
+      if (response.status === 500) {
+        window.location.href = "/not-found";
+      }
+
       let data = await response.json();
       return new ShowData(data);
     } catch (error) {
@@ -102,6 +107,11 @@ export class ShowService {
     try {
       let response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}`);
 
+      // If the season was not found then redirect the user to the 404 page
+      if (response.status === 500) {
+        window.location.href = "/not-found";
+      }
+
       let data = await response.json();
       return new SeasonData(data);
     } catch (error) {
@@ -118,6 +128,11 @@ export class ShowService {
   async fetchEpisodeDetails(showId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeData> {
     try {
       let response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}/episode/${episodeNumber}`);
+
+      // If the episode was not found then redirect the user to the 404 page
+      if (response.status === 500) {
+        window.location.href = "/not-found";
+      }
 
       let data = await response.json();
       return new EpisodeData(data);
