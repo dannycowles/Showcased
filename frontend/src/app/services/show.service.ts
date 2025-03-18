@@ -42,6 +42,21 @@ export class ShowService {
   }
 
   /**
+   * Fetches the number of seasons by show ID
+   * @param showId
+   */
+  async fetchNumberOfSeasons(showId: number): Promise<number> {
+    try {
+      let response = await fetch(`http://localhost:8080/show/${showId}/num-seasons`);
+
+      let data = await response.json();
+      return data['number_of_seasons'];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Fetches the reviews for a show by its ID
    * @param showId
    */

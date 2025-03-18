@@ -1,7 +1,6 @@
 package com.example.showcased.controller;
 
 import com.example.showcased.dto.*;
-import com.example.showcased.entity.Review;
 import com.example.showcased.service.ShowService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +28,12 @@ public class ShowController {
     public ResponseEntity<ShowDto> getShowDetails(@PathVariable("id") String id) {
         ShowDto show = showService.getShowDetails(id);
         return ResponseEntity.ok(show);
+    }
+
+    @GetMapping("/{id}/num-seasons")
+    public ResponseEntity<NumSeasonsDto> getNumberOfSeasons(@PathVariable("id") int id) {
+        NumSeasonsDto numSeasons = showService.getNumberOfSeasons(id);
+        return ResponseEntity.ok(numSeasons);
     }
 
     @GetMapping("/{id}/season/{seasonNumber}")

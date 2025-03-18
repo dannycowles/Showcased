@@ -100,7 +100,7 @@ public class ShowService {
         // Create HttpEntity with headers
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
-        // Make request to TMDB show search endpoint
+        // Make request to TMDB show details endpoint
         String url = "https://api.themoviedb.org/3/tv/" + id;
         ShowDto show = restTemplate.exchange(url, HttpMethod.GET, requestEntity, ShowDto.class).getBody();
 
@@ -145,6 +145,21 @@ public class ShowService {
         show.setImdbVotes(imdbVotes);
 
         return show;
+    }
+
+    public NumSeasonsDto getNumberOfSeasons(int showId) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Define headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/json");
+        headers.set("Authorization", "Bearer " + tmdbKey);
+
+        // Create HttpEntity with headers
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+
+        String url = "https://api.themoviedb.org/3/tv/" + showId;
+        return restTemplate.exchange(url, HttpMethod.GET, requestEntity, NumSeasonsDto.class).getBody();
     }
 
     public SeasonDto getSeasonDetails(int seasonNumber, int showId) {

@@ -13,6 +13,7 @@ export class SeasonPageComponent implements OnInit {
   showId: number;
   seasonNumber: number;
   season: SeasonData
+  numSeasons: number;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService) {}
@@ -24,9 +25,13 @@ export class SeasonPageComponent implements OnInit {
     // Retrieve season details from backend
     try {
       this.season = await this.showService.fetchSeasonDetails(this.showId, this.seasonNumber);
+    } catch(error) {
+      console.error(error);
+    }
 
-      console.log(this.season);
-
+    // Retrieve number of seasons from backend
+    try {
+      this.numSeasons = await this.showService.fetchNumberOfSeasons(this.showId);
     } catch(error) {
       console.error(error);
     }
@@ -36,4 +41,10 @@ export class SeasonPageComponent implements OnInit {
     window.location.href = `${window.location.pathname}/episode/${episodeNumber}`;
   }
 
+  seasonSelected(seasonNumber: number) {
+    // Check if the user tries to select the same season they are already on
+    if (seasonNumber != this.seasonNumber) {
+      window.location.href = `show/${this.showId}/season/${seasonNumber}`;
+    }
+  }
 }

@@ -4,6 +4,13 @@
 
   <!-- Poster images are sized w342, with a 2:3 ratio -->
   <img [ngSrc]="season.posterPath" alt="Season Poster" width="342" height="513" priority>
+
+  @if (numSeasons) {
+    <h3>Season Select:</h3>
+    @for (_ of [].constructor(numSeasons); let season = $index; track season) {
+      <button (click)="seasonSelected(season + 1)">{{season + 1}}</button>
+    }
+  }
   <br>
   <br>
 
@@ -14,7 +21,7 @@
     <h4>IMDb Rating: {{episode.imdbRating}}</h4>
 
     <!-- Episode stills are sized w185, with a 16:9 ratio -->
-    <a (click)="episodeSelected(episode.episodeNumber)"><img [ngSrc]="episode.stillPath" alt="Episode Still" width="185" height="104" priority></a>
+    <a (click)="episodeSelected(episode.episodeNumber)"><img [ngSrc]="episode.stillPath" alt="Episode Still" width="185" height="104"></a>
     <br>
     <br>
   }
