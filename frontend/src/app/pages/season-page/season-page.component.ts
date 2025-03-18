@@ -47,4 +47,8 @@ export class SeasonPageComponent implements OnInit {
       window.location.href = `show/${this.showId}/season/${seasonNumber}`;
     }
   }
+
+  returnToShowDetails() {
+    window.location.href = `show/${this.showId}`;
+  }
 }
