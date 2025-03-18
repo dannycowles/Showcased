@@ -3,6 +3,8 @@ import {ActivatedRoute} from '@angular/router';
 import {ShowService} from '../../services/show.service';
 import {EpisodeData} from '../../data/episode-data';
 import {UtilsService} from '../../services/utils.service';
+import {ProfileService} from '../../services/profile.service';
+import {ToastDisplayService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-episode-page',
@@ -18,6 +20,8 @@ export class EpisodePageComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
+              private profileService: ProfileService,
+              private toastService: ToastDisplayService,
               public utilsService: UtilsService) { }
 
   async ngOnInit() {
@@ -35,5 +39,23 @@ export class EpisodePageComponent implements OnInit {
 
   returnToSeasonDetails() {
     window.location.href = `/show/${this.showId}/season/${this.seasonNumber}`;
+  }
+
+  // Add the episode to the user's ranking list
+  async addToRankingList() {
+    try {
+      let data = {
+        "showId": this.showId,
+        "episodeTitle": this.episode.name,
+        "season": this.seasonNumber,
+        "episode": this.episodeNumber,
+        "posterPath": this.episode.stillPath
+      };
+
+      this.toastService.addToEpisodeRankingToast(this.episode.name);
+
+      //await this.profileService.addEpisodeToRankingList(data);
+    } catch (error) {
+    console.error(error);}
   }
 }

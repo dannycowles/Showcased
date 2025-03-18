@@ -20,4 +20,7 @@ export class ToastDisplayService {
     this.toastService.success(`Added ${name} to your ranking list`);
   }
 
+  addToEpisodeRankingToast(name: string) {
+    this.toastService.success(`Added ${name} to your ranking list`);
+  }
 }
