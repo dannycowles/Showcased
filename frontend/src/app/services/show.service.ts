@@ -9,6 +9,7 @@ import {EpisodeData} from '../data/episode-data';
   providedIn: 'root'
 })
 export class ShowService {
+  baseUrl: string = "http://localhost:8080/show";
 
   /**
    * Fetches search results for a user query
@@ -16,7 +17,7 @@ export class ShowService {
    */
   async searchForShows(searchString: string): Promise<SearchResultData[]> {
     try {
-      let response = await fetch(`http://localhost:8080/show/search?query=${encodeURIComponent(searchString)}`);
+      let response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(searchString)}`);
 
       let data = await response.json();
       return data.map((result: {}) =>  {
@@ -33,7 +34,7 @@ export class ShowService {
    */
   async fetchShowDetails(showId: number): Promise<ShowData> {
     try {
-      let response = await fetch(`http://localhost:8080/show/${showId}`);
+      let response = await fetch(`${this.baseUrl}/${showId}`);
 
       let data = await response.json();
       return new ShowData(data);
@@ -48,7 +49,7 @@ export class ShowService {
    */
   async fetchNumberOfSeasons(showId: number): Promise<number> {
     try {
-      let response = await fetch(`http://localhost:8080/show/${showId}/num-seasons`);
+      let response = await fetch(`${this.baseUrl}/${showId}/num-seasons`);
 
       let data = await response.json();
       return data['number_of_seasons'];
@@ -63,7 +64,7 @@ export class ShowService {
    */
   async fetchShowReviews(showId: number): Promise<ReviewData[]> {
     try {
-      let response = await fetch(`http://localhost:8080/show/${showId}/reviews`);
+      let response = await fetch(`${this.baseUrl}/${showId}/reviews`);
 
       let data = await response.json();
       return data.map((review: {}) => {
@@ -81,7 +82,7 @@ export class ShowService {
    */
   async fetchSeasonDetails(showId: number, seasonNumber: number): Promise<SeasonData> {
     try {
-      let response = await fetch(`http://localhost:8080/show/${showId}/season/${seasonNumber}`);
+      let response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}`);
 
       let data = await response.json();
       return new SeasonData(data);
@@ -98,7 +99,7 @@ export class ShowService {
    */
   async fetchEpisodeDetails(showId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeData> {
     try {
-      let response = await fetch(`http://localhost:8080/show/${showId}/season/${seasonNumber}/episode/${episodeNumber}`);
+      let response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}/episode/${episodeNumber}`);
 
       let data = await response.json();
       return new EpisodeData(data);

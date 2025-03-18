@@ -4,6 +4,7 @@ import {Injectable} from "@angular/core";
   providedIn: 'root'
 })
 export class ProfileService {
+  baseUrl: string = "http://localhost:8080/profile";
 
   /**
    * Adds a show to the logged-in user's watchlist
@@ -11,7 +12,7 @@ export class ProfileService {
    */
   async addShowToWatchlist(data: {}) {
     try {
-      let response = await fetch(`http://localhost:8080/profile/watchlist`, {
+      let response = await fetch(`${this.baseUrl}/watchlist`, {
         method: 'POST',
         body: JSON.stringify(data)
       });
@@ -31,7 +32,7 @@ export class ProfileService {
    */
   async addShowToWatchingList(data: {}) {
     try {
-      let response = await fetch(`http://localhost:8080/profile/watching`, {
+      let response = await fetch(`${this.baseUrl}/watching`, {
         method: 'POST',
         body: JSON.stringify(data)
       });
@@ -51,7 +52,7 @@ export class ProfileService {
    */
   async addShowToRankingList(data: {}) {
     try {
-      let response = await fetch(`http://localhost:8080/profile/show-ranking`, {
+      let response = await fetch(`${this.baseUrl}/show-ranking`, {
         method: 'POST',
         body: JSON.stringify(data)
       });
