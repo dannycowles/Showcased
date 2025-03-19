@@ -45,5 +45,17 @@ export class AuthenticationService {
       throw new Error(text["error"]);
     }
   }
+
+  /**
+   * Checks if the provided username is taken
+   * @param username
+   */
+  async checkUsernameAvailability(username: string): Promise<boolean> {
+    let response = await fetch(`${this.baseUrl}/check-username/${username}`);
+
+    let text = await response.json();
+    return text["taken"];
+  }
+
 }
 

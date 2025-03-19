@@ -1,4 +1,4 @@
-<form id="register-form" novalidate>
+<form class="row g-3" id="register-form" novalidate>
   <div class="form-floating mb-3">
     <input type="email" class="form-control" id="emailInput" placeholder="Enter email" name="email" required autocomplete="email">
     <label for="emailInput" class="form-label">Email</label>
@@ -6,13 +6,17 @@
       Please enter an email
     </div>
   </div>
-  <div class="form-floating mb-3">
-    <input type="text" class="form-control" id="usernameInput" placeholder="Enter username" name="username" required autocomplete="username">
+  <div class="form-floating col-10 mb-3">
+    <input type="text" class="form-control" id="usernameInput" placeholder="Enter username" name="username" required autocomplete="username"
+    (input)="checkUsernameAvailability()">
     <label for="usernameInput" class="form-label">Username</label>
     <div class="invalid-feedback">
       Please choose a username
     </div>
   </div>
+
+  <p class="col-2" id="username-taken-message" hidden></p>
+
   <div class="form-floating mb-3">
     <input type="password" class="form-control" id="passwordInput" placeholder="Enter password" name="password" required autocomplete="new-password">
     <label for="passwordInput" class="form-label">Password</label>
@@ -23,5 +27,5 @@
 
   <p id="register-error-message" hidden></p>
 
-  <button type="submit" class="btn btn-primary">Log in</button>
+  <button type="submit" class="btn btn-primary col-2">Log in</button>
 </form>

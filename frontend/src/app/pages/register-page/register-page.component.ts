@@ -10,6 +10,7 @@ import 'jquery-serializejson';
   standalone: false
 })
 export class RegisterPageComponent implements OnInit {
+  usernameTimer: ReturnType<typeof setTimeout>;
 
   constructor(private authService: AuthenticationService) {};
 
@@ -42,9 +43,29 @@ export class RegisterPageComponent implements OnInit {
       // Update the error message with the provided message
       // @ts-ignore
       document.getElementById('register-error-message').innerText = error.message;
-      // @ts-ignore
       document.getElementById('register-error-message').removeAttribute("hidden");
     }
+  }
+
+  checkUsernameAvailability() {
+    clearTimeout(this.usernameTimer);
+    this.usernameTimer = setTimeout(async () => {
+      // @ts-ignore
+      let username = $("#register-form").serializeJSON()["username"];
+      if (username) {
+        let response = await this.authService.checkUsernameAvailability(username);
+
+        let usernameMessage = document.getElementById('username-taken-message');
+        usernameMessage.removeAttribute("hidden");
+        if (response) {
+          usernameMessage.innerText = "Taken";
+          usernameMessage.style.color = "red";
+        } else {
+          usernameMessage.innerText = "Available";
+          usernameMessage.style.color = "green";
+        }
+      }
+    }, 500);
   }
 
 }
