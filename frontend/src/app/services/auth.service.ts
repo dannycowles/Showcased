@@ -23,6 +23,27 @@ export class AuthenticationService {
       if (response.status === 401) {
         throw new Error("Invalid credentials");
       }
+  }
+
+  /**
+   * Attempts to register a user using given email, username, and password
+   * will provide feedback if username or email is taken
+   * @param data
+   */
+  async registerUser(data: {}) {
+    let response = await fetch(`${this.baseUrl}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    // If there is an email/username conflict return the error
+    if (response.status === 409) {
+      let text = await response.json();
+      throw new Error(text["error"]);
     }
   }
+}
 

@@ -33,7 +33,8 @@ export class LoginPageComponent implements OnInit {
 
   async loginValidationSuccess() {
     try {
-      let data = ($('#login-form') as any).serializeJSON();
+      // @ts-ignore
+      let data = $('#login-form').serializeJSON();
       await this.authService.loginUser(data);
 
       // If the login attempt was successful route the user back to the page they were previously on
