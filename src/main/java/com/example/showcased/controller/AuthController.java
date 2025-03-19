@@ -2,6 +2,7 @@ package com.example.showcased.controller;
 
 import com.example.showcased.dto.LoginDto;
 import com.example.showcased.dto.RegisterDto;
+import com.example.showcased.dto.UsernameCheckDto;
 import com.example.showcased.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -34,5 +35,11 @@ public class AuthController {
     ResponseEntity<Void> logoutUser(HttpSession session) {
         session.invalidate();
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/check-username/{username}")
+    ResponseEntity<UsernameCheckDto> checkUsernameAvailability(@PathVariable String username) {
+        UsernameCheckDto userCheck = authService.checkUsernameAvailability(username);
+        return ResponseEntity.ok(userCheck);
     }
 }

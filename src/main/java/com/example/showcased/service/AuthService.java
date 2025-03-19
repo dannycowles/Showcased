@@ -2,6 +2,7 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.LoginDto;
 import com.example.showcased.dto.RegisterDto;
+import com.example.showcased.dto.UsernameCheckDto;
 import com.example.showcased.entity.User;
 import com.example.showcased.exception.EmailTakenException;
 import com.example.showcased.exception.InvalidLoginException;
@@ -52,5 +53,11 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
         User user = new User(registerDto.getEmail(), registerDto.getUsername(), encodedPassword);
         userRepository.save(user);
+    }
+
+    public UsernameCheckDto checkUsernameAvailability(String username) {
+        UsernameCheckDto usernameCheckDto = new UsernameCheckDto();
+        usernameCheckDto.setTaken(userRepository.existsByUsername(username));
+        return usernameCheckDto;
     }
 }
