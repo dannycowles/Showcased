@@ -1,1 +1,20 @@
-<p>login-page works!</p>
+<form id="login-form" novalidate>
+  <div class="form-floating mb-3">
+    <input type="email" class="form-control" id="emailInput" placeholder="Enter email" name="email" required autocomplete="username">
+    <label for="emailInput" class="form-label">Email</label>
+    <div class="invalid-feedback">
+      Please enter an email
+    </div>
+  </div>
+  <div class="form-floating mb-3">
+    <input type="password" class="form-control" id="passwordInput" placeholder="Enter password" name="password" required autocomplete="current-password">
+    <label for="passwordInput" class="form-label">Password</label>
+    <div class="invalid-feedback">
+      Please enter a password
+    </div>
+  </div>
+
+  <p id="login-error-message" hidden>You have entered an invalid email or password</p>
+
+  <button type="submit" class="btn btn-primary">Log in</button>
+</form>

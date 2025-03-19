@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import {AuthenticationService} from '../../services/auth.service';
+import $ from 'jquery';
+import 'jquery-serializejson';
 
 @Component({
   selector: 'app-login-page',
@@ -8,9 +11,37 @@ import {Component, OnInit} from '@angular/core';
 })
 export class LoginPageComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthenticationService) { }
 
   ngOnInit() {
+    (() => {
+      'use strict'
+
+      const loginForm = document.getElementById('login-form') as HTMLFormElement;
+
+      loginForm.addEventListener('submit', async event => {
+        if (!loginForm.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        } else {
+          await this.loginValidationSuccess();
+        }
+        loginForm.classList.add('was-validated')
+      }, false)
+    })();
   }
 
+  async loginValidationSuccess() {
+    try {
+      let data = ($('#login-form') as any).serializeJSON();
+      await this.authService.loginUser(data);
+
+      // If the login attempt was successful route the user back to the page they were previously on
+      window.history.back();
+    } catch (error) {
+      // If there was a login error, we show the error message
+      // @ts-ignore
+      document.getElementById("login-error-message").removeAttribute("hidden");
+    }
+  }
 }
