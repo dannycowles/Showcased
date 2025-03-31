@@ -19,6 +19,12 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
+    @GetMapping("/details")
+    public ResponseEntity<ProfileDetails> getProfileDetails(HttpSession session) {
+        ProfileDetails profileDetails = profileService.getProfileDetails(session);
+        return ResponseEntity.ok(profileDetails);
+    }
+
     @PostMapping("/watchlist")
     public ResponseEntity<Void> addShowToWatchlist(@RequestBody WatchSendDto show, HttpSession session) {
         profileService.addShowToWatchlist(show, session);

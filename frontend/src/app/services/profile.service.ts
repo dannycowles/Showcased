@@ -1,10 +1,30 @@
 import {Injectable} from "@angular/core";
+import {ProfileData} from '../data/profile-data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
   baseUrl: string = "http://localhost:8080/profile";
+
+  /**
+   * Retrieves all profile information including:
+   * - username
+   * - profile picture
+   * - watchlist top
+   * - watching top
+   * - show ranking top
+   * - episode ranking top
+   */
+  async getProfileDetails(): Promise<ProfileData> {
+    try {
+      let response = await fetch(`${this.baseUrl}/details`);
+      let data = await response.json();
+      return new ProfileData(data);
+    } catch (error) {
+      throw error;
+    }
+  }
 
   /**
    * Adds a show to the logged-in user's watchlist

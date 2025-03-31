@@ -49,6 +49,17 @@ public class ProfileService {
         }
     }
 
+    public ProfileDetails getProfileDetails(HttpSession session) {
+        ProfileDetails profileDetails = new ProfileDetails();
+        profileDetails.setUsername(session.getAttribute("user").toString()); // TODO: fix this "user" is ID not username
+
+        profileDetails.setWatchlistTop(getWatchlistTop(session));
+        profileDetails.setWatchingTop(getWatchingListTop(session));
+        profileDetails.setShowRankingTop(getShowRankingListTop(session));
+        profileDetails.setEpisodeRankingTop(getEpisodeRankingListTop(session));
+        return profileDetails;
+    }
+
     public void addShowToWatchlist(WatchSendDto show, HttpSession session) {
         show.setUserId((Long) session.getAttribute("user"));
         addToShowInfoRepository(show);

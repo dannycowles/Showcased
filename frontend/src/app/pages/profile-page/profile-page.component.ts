@@ -7,7 +7,11 @@ import {Component, OnInit} from '@angular/core';
   standalone: false
 })
 export class ProfilePageComponent implements OnInit {
+  username: string;
+  profilePicture: string;
 
-  ngOnInit() { }
+  ngOnInit() {
+
+  }
 
 }
