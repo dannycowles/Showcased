@@ -3,6 +3,7 @@ package com.example.showcased.service;
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
 import com.example.showcased.exception.AlreadyOnListException;
+import com.example.showcased.exception.UserNotFoundException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProfileService {
@@ -23,11 +25,17 @@ public class ProfileService {
     private final ReviewRepository reviewRepository;
     private final EpisodeInfoRepository episodeInfoRepository;
     private final EpisodeRankingRepository episodeRankingRepository;
+    private final UserRepository userRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
                           ModelMapper modelMapper,
-                          WatchingRepository watchingRepository, ShowRankingRepository showRankingRepository, ReviewRepository reviewRepository, EpisodeInfoRepository episodeInfoRepository, EpisodeRankingRepository episodeRankingRepository) {
+                          WatchingRepository watchingRepository,
+                          ShowRankingRepository showRankingRepository,
+                          ReviewRepository reviewRepository,
+                          EpisodeInfoRepository episodeInfoRepository,
+                          EpisodeRankingRepository episodeRankingRepository,
+                          UserRepository userRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -36,6 +44,7 @@ public class ProfileService {
         this.reviewRepository = reviewRepository;
         this.episodeInfoRepository = episodeInfoRepository;
         this.episodeRankingRepository = episodeRankingRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -50,9 +59,15 @@ public class ProfileService {
     }
 
     public ProfileDetails getProfileDetails(HttpSession session) {
-        ProfileDetails profileDetails = new ProfileDetails();
-        profileDetails.setUsername(session.getAttribute("user").toString()); // TODO: fix this "user" is ID not username
+        Long id = (Long) session.getAttribute("user");
+        Optional<User> user = this.userRepository.findById(id);
 
+        if (user.isEmpty()) {
+            throw new UserNotFoundException(id);
+        }
+
+        ProfileDetails profileDetails = new ProfileDetails();
+        profileDetails.setUsername(user.get().getUsername());
         profileDetails.setWatchlistTop(getWatchlistTop(session));
         profileDetails.setWatchingTop(getWatchingListTop(session));
         profileDetails.setShowRankingTop(getShowRankingListTop(session));
