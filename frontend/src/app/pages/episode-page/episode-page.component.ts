@@ -51,10 +51,11 @@ export class EpisodePageComponent implements OnInit {
         "episode": this.episodeNumber,
         "posterPath": this.episode.stillPath
       };
+      let response = await this.profileService.addEpisodeToRankingList(data);
 
-      this.toastService.addToEpisodeRankingToast(this.episode.name);
-
-      //await this.profileService.addEpisodeToRankingList(data);
+      if (response.status === 201) {
+        this.toastService.addToEpisodeRankingToast(this.episode.name);
+      }
     } catch (error) {
     console.error(error);}
   }

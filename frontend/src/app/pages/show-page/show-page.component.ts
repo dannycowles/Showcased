@@ -93,10 +93,12 @@ export class ShowPageComponent implements OnInit {
         "title": this.show.name,
         "posterPath": this.show.posterPath
       };
-      await this.profileService.addShowToRankingList(data);
+      let response = await this.profileService.addShowToRankingList(data);
 
-      // Display a toast that confirms the show was successfully added
-      this.toastService.addToShowRankingToast(this.show.name);
+      if (response.status == 201) {
+        // Display a toast that confirms the show was successfully added
+        this.toastService.addToShowRankingToast(this.show.name);
+      }
     } catch (error) {
       console.error(error);
     }

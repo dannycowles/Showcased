@@ -88,11 +88,14 @@ export class ProfileService {
    * Adds a show to the logged-in user's ranking list
    * @param data
    */
-  async addShowToRankingList(data: {}) {
+  async addShowToRankingList(data: {}): Promise<Response> {
     try {
       let response = await fetch(`${this.baseUrl}/show-ranking`, {
         method: 'POST',
         credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
       });
 
@@ -100,6 +103,7 @@ export class ProfileService {
       if (response.status === 401) {
         window.location.href = '/login';
       }
+      return response;
     } catch(error) {
       throw error;
     }
@@ -109,11 +113,14 @@ export class ProfileService {
    * Adds an episode to the logged-in user's ranking list
    * @param data
    */
-  async addEpisodeToRankingList(data: {}) {
+  async addEpisodeToRankingList(data: {}): Promise<Response> {
     try {
       let response = await fetch(`${this.baseUrl}/episode-ranking`, {
         method: 'POST',
         credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
       });
 
@@ -121,6 +128,7 @@ export class ProfileService {
       if (response.status === 401) {
         window.location.href = '/login';
       }
+      return response;
     } catch(error) {
       throw error;
     }
