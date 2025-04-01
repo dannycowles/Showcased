@@ -55,11 +55,12 @@ export class ShowPageComponent implements OnInit {
         "title": this.show.name,
         "posterPath": this.show.posterPath
       };
+      let response = await this.profileService.addShowToWatchlist(data);
 
-      // Display a toast that confirms the show was successfully added
-      this.toastService.addToWatchlistToast(this.show.name);
-
-      //await this.profileService.addShowToWatchlist(data);
+      if (response.status == 201) {
+        // Display a toast that confirms the show was successfully added
+        this.toastService.addToWatchlistToast(this.show.name);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -73,11 +74,10 @@ export class ShowPageComponent implements OnInit {
         "title": this.show.name,
         "posterPath": this.show.posterPath
       };
+      await this.profileService.addShowToWatchingList(data);
 
       // Display a toast that confirms the show was successfully added
       this.toastService.addToWatchingListToast(this.show.name);
-
-      //await this.profileService.addShowToWatchingList(data);
     } catch (error) {
       console.error(error);
     }
@@ -91,11 +91,10 @@ export class ShowPageComponent implements OnInit {
         "title": this.show.name,
         "posterPath": this.show.posterPath
       };
+      await this.profileService.addShowToRankingList(data);
 
       // Display a toast that confirms the show was successfully added
       this.toastService.addToShowRankingToast(this.show.name);
-
-      //await this.profileService.addShowToRankingList(data);
     } catch (error) {
       console.error(error);
     }

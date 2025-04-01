@@ -14,6 +14,6 @@ export class EpisodeRankingData {
     this.episodeTitle = jsonObject['episodeTitle'];
     this.season = jsonObject['season'];
     this.episode = jsonObject['episode'];
-    this.posterPath = jsonObject['poster_path'];
+    this.posterPath = jsonObject['posterPath'];
   }
 }

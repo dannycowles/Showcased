@@ -6,6 +6,6 @@ export class WatchingData {
   constructor(jsonObject: { [key : string]: any }) {
     this.showId = jsonObject['showId'];
     this.title = jsonObject['title'];
-    this.posterPath = jsonObject['poster_path'];
+    this.posterPath = jsonObject['posterPath'];
   }
 }

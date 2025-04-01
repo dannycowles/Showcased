@@ -8,6 +8,6 @@ export class ShowRankingData {
     this.showId = jsonObject['showId'];
     this.rankNum = jsonObject['rankNum'];
     this.title = jsonObject['title'];
-    this.posterPath = jsonObject['poster_path'];
+    this.posterPath = jsonObject['posterPath'];
   }
 }

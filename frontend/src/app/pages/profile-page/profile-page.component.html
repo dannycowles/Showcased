@@ -4,17 +4,19 @@
   <h3>Profile Picture: TODO</h3>
 
   <h3>Watchlist</h3>
-  @if (profileData.watchlistTop) {
+  @if (profileData.watchlistTop.length != 0) {
     @for (show of profileData.watchlistTop; track show.showId) {
       <p>Title: {{show.title}}</p>
-      <p>Poster: TODO</p>
+
+      <!-- Poster images are sized w185, using 2:3 ratio -->
+      <img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
     }
   } @else {
     <p>Nothing on watchlist yet!</p>
   }
 
   <h3>Currently Watching</h3>
-  @if (profileData.watchingTop) {
+  @if (profileData.watchingTop.length != 0) {
     @for (show of profileData.watchingTop; track show.showId) {
       <p>Title: {{show.title}}</p>
       <p>Poster: TODO</p>
@@ -24,7 +26,7 @@
   }
 
   <h3>Favorite Shows</h3>
-  @if (profileData.showRankingTop) {
+  @if (profileData.showRankingTop.length != 0) {
     @for (show of profileData.showRankingTop; track show.showId) {
       <p>Rank: {{show.rankNum}}</p>
       <p>Title: {{show.title}}</p>
@@ -35,7 +37,7 @@
   }
 
   <h3>Favorite Episodes</h3>
-  @if (profileData.episodeRankingTop) {
+  @if (profileData.episodeRankingTop.length != 0) {
     @for (show of profileData.episodeRankingTop; track show.showId) {
       <p>Rank: {{show.rankNum}}</p>
       <p>Show Title: {{show.showTitle}}</p>

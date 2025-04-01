@@ -38,10 +38,14 @@ export class ProfileService {
    * Adds a show to the logged-in user's watchlist
    * @param data
    */
-  async addShowToWatchlist(data: {}) {
+  async addShowToWatchlist(data: {}): Promise<Response> {
     try {
       let response = await fetch(`${this.baseUrl}/watchlist`, {
         method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
       });
 
@@ -49,6 +53,7 @@ export class ProfileService {
       if (response.status === 401) {
         window.location.href = '/login';
       }
+      return response;
     } catch(error) {
       throw error;
     }
@@ -62,6 +67,7 @@ export class ProfileService {
     try {
       let response = await fetch(`${this.baseUrl}/watching`, {
         method: 'POST',
+        credentials: 'include',
         body: JSON.stringify(data)
       });
 
@@ -82,6 +88,7 @@ export class ProfileService {
     try {
       let response = await fetch(`${this.baseUrl}/show-ranking`, {
         method: 'POST',
+        credentials: 'include',
         body: JSON.stringify(data)
       });
 
@@ -102,6 +109,7 @@ export class ProfileService {
     try {
       let response = await fetch(`${this.baseUrl}/episode-ranking`, {
         method: 'POST',
+        credentials: 'include',
         body: JSON.stringify(data)
       });
 
