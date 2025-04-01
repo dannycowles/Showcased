@@ -63,11 +63,14 @@ export class ProfileService {
    * Adds a show to the logged-in user's currently watching list
    * @param data
    */
-  async addShowToWatchingList(data: {}) {
+  async addShowToWatchingList(data: {}): Promise<Response> {
     try {
       let response = await fetch(`${this.baseUrl}/watching`, {
         method: 'POST',
         credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
       });
 
@@ -75,6 +78,7 @@ export class ProfileService {
       if (response.status === 401) {
         window.location.href = '/login';
       }
+      return response;
     } catch(error) {
       throw error;
     }
