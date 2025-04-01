@@ -18,7 +18,15 @@ export class ProfileService {
    */
   async getProfileDetails(): Promise<ProfileData> {
     try {
-      let response = await fetch(`${this.baseUrl}/details`);
+      let response = await fetch(`${this.baseUrl}/details`, {
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+
       let data = await response.json();
       return new ProfileData(data);
     } catch (error) {
