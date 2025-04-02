@@ -263,10 +263,14 @@ public class ShowService {
         // - IMDB votes
         // - Plot
         jsonResponse = new JSONObject(response.getBody());
-        String imdbVotes = jsonResponse.optString("imdbVotes");
-        String imdbRating = jsonResponse.optString("imdbRating");
-        episode.setImdbVotes(imdbVotes);
-        episode.setImdbRating(imdbRating);
+        episode.setImdbVotes(jsonResponse.optString("imdbVotes"));
+        episode.setImdbRating(jsonResponse.optString("imdbRating"));
+
+        // Make request to TMDB show endpoint to retrieve show title
+        url = "https://api.themoviedb.org/3/tv/" + showId;
+        response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
+        jsonResponse = new JSONObject(response.getBody());
+        episode.setShowTitle(jsonResponse.optString("name"));
 
         if (!jsonResponse.optString("Plot").equals("N/A") && jsonResponse.optBoolean("Plot")) {
             String plot = jsonResponse.optString("Plot");

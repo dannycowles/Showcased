@@ -46,6 +46,7 @@ export class EpisodePageComponent implements OnInit {
     try {
       let data = {
         "showId": this.showId,
+        "showTitle": this.episode.showName,
         "episodeTitle": this.episode.name,
         "season": this.seasonNumber,
         "episode": this.episodeNumber,

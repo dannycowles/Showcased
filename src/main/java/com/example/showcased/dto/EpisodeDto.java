@@ -13,7 +13,10 @@ public class EpisodeDto {
     @JsonProperty("episode_number")
     private String episodeNumber;
 
-    private String name;
+    @JsonProperty("name")
+    private String episodeTitle;
+
+    private String showTitle;
 
     @JsonProperty("overview")
     private String plot;
