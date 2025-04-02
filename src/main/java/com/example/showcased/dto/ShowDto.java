@@ -64,6 +64,10 @@ public class ShowDto {
 
     private String awards;
 
+    private List<WatchOptionDto> streamOptions;
+
+    private List<WatchOptionDto> buyOptions;
+
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {
             this.backdropPath = "https://image.tmdb.org/t/p/w1280" + backdropPath;

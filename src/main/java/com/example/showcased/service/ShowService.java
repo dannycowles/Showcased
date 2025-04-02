@@ -139,6 +139,32 @@ public class ShowService {
         show.setImdbVotes(jsonResponse.optString("imdbVotes"));
         show.setAwards(jsonResponse.optString("Awards"));
 
+        // Make request to TMDB watch providers endpoint
+        url = "https://api.themoviedb.org/3/tv/" + id + "/watch/providers";
+        response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
+        jsonResponse = new JSONObject(response.getBody());
+
+        // Retrieve the US based results for simplicity
+        JSONObject results = jsonResponse.optJSONObject("results");
+        results = results.optJSONObject("US");
+
+        // Parse and set the streaming and buy options for the show
+        JSONArray streaming = results.optJSONArray("flatrate");
+        List<WatchOptionDto> streamingOptions = new ArrayList<>();
+        for (int i = 0; i < streaming.length(); i++) {
+            JSONObject streamingOption = streaming.getJSONObject(i);
+            streamingOptions.add(new WatchOptionDto(streamingOption.optString("provider_name"), streamingOption.optString("logo_path")));
+        }
+
+        JSONArray buy = results.optJSONArray("buy");
+        List<WatchOptionDto> buyOptions = new ArrayList<>();
+        for (int i = 0; i < buy.length(); i++) {
+            JSONObject buyOption = buy.optJSONObject(i);
+            buyOptions.add(new WatchOptionDto(buyOption.optString("provider_name"), buyOption.optString("logo_path")));
+        }
+        show.setStreamOptions(streamingOptions);
+        show.setBuyOptions(buyOptions);
+
         return show;
     }
 
