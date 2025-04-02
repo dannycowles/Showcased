@@ -130,19 +130,14 @@ public class ShowService {
         // - Runtime
         // - imdbRating
         // - imdbVotes
+        // - Awards
         jsonResponse = new JSONObject(response.getBody());
-        String plot = jsonResponse.optString("Plot");
-        String rating = jsonResponse.optString("Rated");
-        String averageRuntime = jsonResponse.optString("Runtime");
-        String imdbRating = jsonResponse.optString("imdbRating");
-        String imdbVotes = jsonResponse.optString("imdbVotes");
-
-        // Update the information in the show object
-        show.setPlot(plot);
-        show.setRating(rating);
-        show.setAverageRuntime(averageRuntime);
-        show.setImdbRating(imdbRating);
-        show.setImdbVotes(imdbVotes);
+        show.setPlot(jsonResponse.optString("Plot"));
+        show.setRating(jsonResponse.optString("Rated"));
+        show.setAverageRuntime(jsonResponse.optString("Runtime"));
+        show.setImdbRating(jsonResponse.optString("imdbRating"));
+        show.setImdbVotes(jsonResponse.optString("imdbVotes"));
+        show.setAwards(jsonResponse.optString("Awards"));
 
         return show;
     }

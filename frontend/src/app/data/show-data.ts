@@ -10,6 +10,7 @@ export class ShowData {
   backdropPath: string;
   posterPath: string;
   name: string;
+  awards: string;
   tagline: string;
   plot: string;
   rating: string;
@@ -27,6 +28,7 @@ export class ShowData {
     this.imdbId = jsonObject['imdbId'];
     this.imdbRating = jsonObject['imdbRating'];
     this.imdbVotes = jsonObject['imdbVotes'];
+    this.awards = jsonObject['awards'];
 
     if (jsonObject['backdrop_path'] === "default") {
       this.backdropPath = "no-backdrop.svg";

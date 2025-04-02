@@ -62,6 +62,8 @@ public class ShowDto {
     @JsonProperty("in_production")
     private boolean inProduction;
 
+    private String awards;
+
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {
             this.backdropPath = "https://image.tmdb.org/t/p/w1280" + backdropPath;
