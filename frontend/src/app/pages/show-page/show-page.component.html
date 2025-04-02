@@ -20,6 +20,26 @@
 
   <h3>Awards: {{show.awards}}</h3>
 
+  <h3>Watch Options:</h3>
+
+  <h5>Stream:</h5>
+  @if (show.streamingOptions.length != 0) {
+    @for (service of show.streamingOptions; track service.name) {
+      <img [ngSrc]="service.logoPath" alt="Service Logo" width="100" height="100">
+    }
+  } @else {
+    <p>Unknown</p>
+  }
+
+  <h5>Buy:</h5>
+  @if (show.buyOptions.length != 0) {
+    @for (service of show.buyOptions; track service.name) {
+      <img [ngSrc]="service.logoPath" alt="Service Logo" width="100" height="100">
+    }    
+  } @else {
+    <p>Unknown</p>
+  }
+
   @if (show.averageRuntime !== "N/A") {
     <h3>Average Episode Runtime: {{show.averageRuntime}}</h3>
   } @else {

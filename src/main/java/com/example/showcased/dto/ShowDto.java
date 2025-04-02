@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -64,9 +65,9 @@ public class ShowDto {
 
     private String awards;
 
-    private List<WatchOptionDto> streamOptions;
+    private List<WatchOptionDto> streamOptions = new ArrayList<>();
 
-    private List<WatchOptionDto> buyOptions;
+    private List<WatchOptionDto> buyOptions = new ArrayList<>();
 
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {

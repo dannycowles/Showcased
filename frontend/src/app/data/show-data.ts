@@ -1,6 +1,7 @@
 import {GenreData} from './genre-data';
 import {CreatorData} from './creator-data';
 import {CastData} from './cast-data';
+import {WatchOptionData} from './watch-option-data';
 
 export class ShowData {
   id: number;
@@ -22,6 +23,8 @@ export class ShowData {
   genres: GenreData[];
   creators: CreatorData[];
   cast: CastData[];
+  streamingOptions: WatchOptionData[];
+  buyOptions: WatchOptionData[];
 
   constructor(jsonObject: { [key: string]: any }) {
     this.id = jsonObject['id'];
@@ -63,6 +66,14 @@ export class ShowData {
     this.cast = jsonObject['cast'].map((cast: {} ) => {
       return new CastData(cast);
     });
+
+    this.streamingOptions = jsonObject['streamOptions'].map((option: {}) => {
+      return new WatchOptionData(option);
+    });
+
+    this.buyOptions = jsonObject['buyOptions'].map((option: {}) => {
+      return new WatchOptionData(option);
+    })
   }
 
   get genreString():string {

@@ -147,6 +147,9 @@ public class ShowService {
         // Retrieve the US based results for simplicity
         JSONObject results = jsonResponse.optJSONObject("results");
         results = results.optJSONObject("US");
+        if (results == null) {
+            return show;
+        }
 
         // Parse and set the streaming and buy options for the show
         JSONArray streaming = results.optJSONArray("flatrate");
