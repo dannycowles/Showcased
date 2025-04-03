@@ -154,17 +154,22 @@ public class ShowService {
         // Parse and set the streaming and buy options for the show
         JSONArray streaming = results.optJSONArray("flatrate");
         List<WatchOptionDto> streamingOptions = new ArrayList<>();
-        for (int i = 0; i < streaming.length(); i++) {
-            JSONObject streamingOption = streaming.getJSONObject(i);
-            streamingOptions.add(new WatchOptionDto(streamingOption.optString("provider_name"), streamingOption.optString("logo_path")));
+        if (streaming != null) {
+            for (int i = 0; i < streaming.length(); i++) {
+                JSONObject streamingOption = streaming.getJSONObject(i);
+                streamingOptions.add(new WatchOptionDto(streamingOption.optString("provider_name"), streamingOption.optString("logo_path")));
+            }
         }
 
         JSONArray buy = results.optJSONArray("buy");
         List<WatchOptionDto> buyOptions = new ArrayList<>();
-        for (int i = 0; i < buy.length(); i++) {
-            JSONObject buyOption = buy.optJSONObject(i);
-            buyOptions.add(new WatchOptionDto(buyOption.optString("provider_name"), buyOption.optString("logo_path")));
+        if (buy != null) {
+            for (int i = 0; i < buy.length(); i++) {
+                JSONObject buyOption = buy.optJSONObject(i);
+                buyOptions.add(new WatchOptionDto(buyOption.optString("provider_name"), buyOption.optString("logo_path")));
+            }
         }
+
         show.setStreamOptions(streamingOptions);
         show.setBuyOptions(buyOptions);
 
