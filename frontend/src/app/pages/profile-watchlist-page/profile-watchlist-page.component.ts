@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../services/profile.service';
+import {WatchlistData} from '../../data/watchlist-data';
 
 @Component({
   selector: 'app-profile-watchlist-page',
@@ -8,11 +9,18 @@ import {ProfileService} from '../../services/profile.service';
   standalone: false
 })
 export class ProfileWatchlistPageComponent implements OnInit {
+  watchlistData: WatchlistData;
 
   constructor(private profileService: ProfileService) { };
 
-  ngOnInit() {
+  async ngOnInit() {
 
+    // Retrieve watchlist details for profile
+    try {
+      this.watchlistData = await this.profileService.getFullWatchlist();
+    } catch(error) {
+      console.error(error)
+    }
   }
 
 }

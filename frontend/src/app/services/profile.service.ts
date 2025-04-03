@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {ProfileData} from '../data/profile-data';
+import {WatchlistData} from '../data/watchlist-data';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,25 @@ export class ProfileService {
         window.location.href = '/login';
       }
       return response;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the full watchlist for the profile
+   */
+  async getFullWatchlist(): Promise<WatchlistData> {
+    try {
+      let response = await fetch(`${this.baseUrl}/watchlist`, {
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+      return new WatchlistData(response);
     } catch(error) {
       throw error;
     }
