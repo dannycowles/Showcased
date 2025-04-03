@@ -35,7 +35,7 @@
   @if (show.buyOptions.length != 0) {
     @for (service of show.buyOptions; track service.name) {
       <img [ngSrc]="service.logoPath" alt="Service Logo" width="100" height="100">
-    }    
+    }
   } @else {
     <p>Unknown</p>
   }

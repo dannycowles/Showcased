@@ -15,7 +15,7 @@
     }
     <br>
     <br>
-    <button>Manage Watchlist</button>
+    <button (click)="manageWatchlistPressed()">Manage Watchlist</button>
     <br>
     <br>
 
@@ -33,7 +33,7 @@
     }
     <br>
     <br>
-    <button>Manage Currently Watching</button>
+    <button (click)="manageWatchingPressed()">Manage Currently Watching</button>
     <br>
     <br>
   } @else {
@@ -51,7 +51,7 @@
     }
     <br>
     <br>
-    <button>Manage Favorite Shows</button>
+    <button (click)="manageShowRankingPressed()">Manage Favorite Shows</button>
     <br>
     <br>
   } @else {
@@ -71,7 +71,7 @@
     }
     <br>
     <br>
-    <button>Manage Favorite Episodes</button>
+    <button (click)="manageEpisodeRankingPressed()">Manage Favorite Episodes</button>
     <br>
     <br>
   } @else {

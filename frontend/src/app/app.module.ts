@@ -17,6 +17,12 @@ import {SeasonPageComponent} from './pages/season-page/season-page.component';
 import {NgOptimizedImage} from '@angular/common';
 import {AngularToastifyModule, ToastService} from 'angular-toastify';
 import {EpisodePageComponent} from './pages/episode-page/episode-page.component';
+import {ProfileWatchlistPageComponent} from './pages/profile-watchlist-page/profile-watchlist-page.component';
+import {ProfileWatchingPageComponent} from './pages/profile-watching-page/profile-watching-page.component';
+import {ProfileShowRankingPageComponent} from './pages/profile-show-ranking-page/profile-show-ranking-page.component';
+import {
+  ProfileEpisodeRankingPageComponent
+} from './pages/profile-episode-ranking-page/profile-episode-ranking-page.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +36,11 @@ import {EpisodePageComponent} from './pages/episode-page/episode-page.component'
     SearchPageComponent,
     ShowPageComponent,
     SeasonPageComponent,
-    EpisodePageComponent
+    EpisodePageComponent,
+    ProfileWatchlistPageComponent,
+    ProfileWatchingPageComponent,
+    ProfileShowRankingPageComponent,
+    ProfileEpisodeRankingPageComponent
   ],
   imports: [
     BrowserModule,

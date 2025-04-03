@@ -10,12 +10,22 @@ import {SearchPageComponent} from "./pages/search-page/search-page.component";
 import {ShowPageComponent} from "./pages/show-page/show-page.component";
 import {SeasonPageComponent} from "./pages/season-page/season-page.component";
 import {EpisodePageComponent} from './pages/episode-page/episode-page.component';
+import {ProfileWatchlistPageComponent} from './pages/profile-watchlist-page/profile-watchlist-page.component';
+import {ProfileWatchingPageComponent} from './pages/profile-watching-page/profile-watching-page.component';
+import {ProfileShowRankingPageComponent} from './pages/profile-show-ranking-page/profile-show-ranking-page.component';
+import {
+  ProfileEpisodeRankingPageComponent
+} from './pages/profile-episode-ranking-page/profile-episode-ranking-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
     { path: 'login', component: LoginPageComponent},
     { path: 'register', component: RegisterPageComponent},
     { path: 'profile', component: ProfilePageComponent},
+    { path: 'profile/watchlist', component: ProfileWatchlistPageComponent},
+    { path: 'profile/watching', component: ProfileWatchingPageComponent},
+    { path: 'profile/show-ranking', component: ProfileShowRankingPageComponent},
+    { path: 'profile/episode-ranking', component: ProfileEpisodeRankingPageComponent},
     { path: 'user/:id', component: UserPageComponent},
     { path: 'search', component: SearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},

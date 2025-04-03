@@ -22,4 +22,20 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
+  manageWatchlistPressed() {
+    window.location.href = 'profile/watchlist';
+  }
+
+  manageWatchingPressed() {
+    window.location.href = 'profile/watching';
+  }
+
+  manageShowRankingPressed() {
+    window.location.href = 'profile/show-ranking';
+  }
+
+  manageEpisodeRankingPressed() {
+    window.location.href = 'profile/episode-ranking';
+  }
+
 }
