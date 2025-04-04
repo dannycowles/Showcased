@@ -3,6 +3,7 @@ import {ProfileData} from '../data/profile-data';
 import {WatchlistData} from '../data/watchlist-data';
 import {WatchingData} from '../data/watching-data';
 import {ShowRankingData} from '../data/show-ranking-data';
+import {EpisodeRankingData} from '../data/episode-ranking-data';
 
 @Injectable({
   providedIn: 'root'
@@ -304,6 +305,52 @@ export class ProfileService {
         window.location.href = '/login';
       }
       return response;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the full episode ranking list for the profile
+   */
+  async getFullEpisodeRankingList() {
+    try {
+      let response = await fetch(`${this.baseUrl}/episode-ranking`, {
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+
+      let data = await response.json();
+
+      return data.map((show: {}) => {
+        return new EpisodeRankingData(show);
+      })
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Removes an episode from ranking list by ID, season #, and episode #
+   * @param id
+   * @param season
+   * @param episode
+   */
+  async removeEpisodeFromRankingList(id: number, season: number, episode: number) {
+    try {
+      let response = await fetch(`${this.baseUrl}/episode-ranking/show/${id}/season/${season}/episode/${episode}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
     } catch(error) {
       throw error;
     }
