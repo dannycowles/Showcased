@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {ProfileData} from '../data/profile-data';
 import {WatchlistData} from '../data/watchlist-data';
 import {WatchingData} from '../data/watching-data';
+import {ShowRankingData} from '../data/show-ranking-data';
 
 @Injectable({
   providedIn: 'root'
@@ -234,6 +235,50 @@ export class ProfileService {
         window.location.href = '/login';
       }
       return response;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the full show ranking list for the profile
+   */
+  async getFullShowRankingList(): Promise<ShowRankingData[]> {
+    try {
+      let response = await fetch(`${this.baseUrl}/show-ranking`, {
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+
+      let data = await response.json();
+
+      return data.map((show: {}) => {
+        return new ShowRankingData(show);
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Removes a show from ranking list by ID
+   * @param id
+   */
+  async removeShowFromRankingList(id: number) {
+    try {
+      let response = await fetch(`${this.baseUrl}/show-ranking/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
     } catch(error) {
       throw error;
     }
