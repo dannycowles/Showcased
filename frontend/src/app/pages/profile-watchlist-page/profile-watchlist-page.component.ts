@@ -38,4 +38,15 @@ export class ProfileWatchlistPageComponent implements OnInit {
     }
   }
 
+  async moveShowToWatchingList(moveId: number) {
+    try {
+      await this.profileService.moveShowToWatchingList(moveId);
+
+      // Remove the show from the entries shown to the user
+      this.watchlistEntries = this.watchlistEntries.filter(show => show.showId != moveId);
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
 }

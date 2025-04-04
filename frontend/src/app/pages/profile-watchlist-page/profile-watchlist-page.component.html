@@ -10,5 +10,6 @@
     <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
 
     <button (click)="removeShowFromWatchlist(show.showId)">Remove Show</button>
+    <button (click)="moveShowToWatchingList(show.showId)">Move Show to Watching</button>
   }
 }

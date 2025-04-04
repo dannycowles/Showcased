@@ -84,10 +84,34 @@ export class ProfileService {
     }
   }
 
+  /**
+   * Removes a show from profile watchlist by ID
+   * @param id
+   */
   async removeShowFromWatchlist(id: number) {
     try {
       let response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
         method: 'DELETE',
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Moves a show from watchlist to watching list by ID
+   * @param id
+   */
+  async moveShowToWatchingList(id: number) {
+    try {
+      let response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
+        method: 'PUT',
         credentials: 'include'
       });
 
