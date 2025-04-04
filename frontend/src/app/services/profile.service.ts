@@ -63,7 +63,7 @@ export class ProfileService {
   /**
    * Retrieves the full watchlist for the profile
    */
-  async getFullWatchlist(): Promise<WatchlistData> {
+  async getFullWatchlist(): Promise<WatchlistData[]> {
     try {
       let response = await fetch(`${this.baseUrl}/watchlist`, {
         credentials: 'include'
@@ -73,7 +73,28 @@ export class ProfileService {
       if (response.status === 401) {
         window.location.href = '/login';
       }
-      return new WatchlistData(response);
+
+      let data = await response.json();
+
+      return data.map((show: {}) => {
+        return new WatchlistData(show);
+      })
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  async removeShowFromWatchlist(id: number) {
+    try {
+      let response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
     } catch(error) {
       throw error;
     }

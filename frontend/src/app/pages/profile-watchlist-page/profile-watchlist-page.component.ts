@@ -9,17 +9,32 @@ import {WatchlistData} from '../../data/watchlist-data';
   standalone: false
 })
 export class ProfileWatchlistPageComponent implements OnInit {
-  watchlistData: WatchlistData;
+  watchlistEntries: WatchlistData[];
 
   constructor(private profileService: ProfileService) { };
 
   async ngOnInit() {
 
-    // Retrieve watchlist details for profile
+    // Retrieve all watchlist entries for profile
     try {
-      this.watchlistData = await this.profileService.getFullWatchlist();
+      this.watchlistEntries = await this.profileService.getFullWatchlist();
     } catch(error) {
-      console.error(error)
+      console.error(error);
+    }
+  }
+
+  returnToProfilePressed() {
+    window.location.href = "profile";
+  }
+
+  async removeShowFromWatchlist(removeId: number) {
+    try {
+      await this.profileService.removeShowFromWatchlist(removeId);
+
+      // Remove the show from the entries shown to the user
+      this.watchlistEntries = this.watchlistEntries.filter(show => show.showId != removeId);
+    } catch(error) {
+      console.error(error);
     }
   }
 
