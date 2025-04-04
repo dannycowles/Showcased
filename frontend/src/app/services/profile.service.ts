@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {ProfileData} from '../data/profile-data';
 import {WatchlistData} from '../data/watchlist-data';
+import {WatchingData} from '../data/watching-data';
 
 @Injectable({
   providedIn: 'root'
@@ -144,6 +145,70 @@ export class ProfileService {
         window.location.href = '/login';
       }
       return response;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the full watching list for the profile
+   */
+  async getFullWatchingList(): Promise<WatchingData[]> {
+    try {
+      let response = await fetch(`${this.baseUrl}/watching`, {
+        credentials: 'include'
+      });
+
+      let data = await response.json();
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+
+      return data.map((show: {}) => {
+        return new WatchingData(show);
+      })
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Removes a show from watching list by ID
+   * @param id
+   */
+  async removeShowFromWatchingList(id: number) {
+    try {
+      let response = await fetch(`${this.baseUrl}/watching/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Moves a show from currently watching to ranking list by ID
+   * @param id
+   */
+  async moveShowToRankingList(id: number) {
+    try {
+      let response = await fetch(`${this.baseUrl}/watching/${id}`, {
+        method: 'PUT',
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
     } catch(error) {
       throw error;
     }
