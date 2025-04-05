@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileData} from '../../data/profile-data';
 import {ProfileService} from '../../services/profile.service';
+import {UtilsService} from '../../services/utils.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -11,7 +12,8 @@ import {ProfileService} from '../../services/profile.service';
 export class ProfilePageComponent implements OnInit {
   profileData: ProfileData;
 
-  constructor(private profileService: ProfileService) { }
+  constructor(private profileService: ProfileService,
+              public utilsService: UtilsService) { }
 
   async ngOnInit() {
     // Retrieve profile data from backend
