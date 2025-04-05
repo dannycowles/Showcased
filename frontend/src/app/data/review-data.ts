@@ -2,6 +2,7 @@ import {UtilsService} from '../services/utils.service';
 
 export class ReviewData {
   id: number;
+  showTitle: string;
   reviewerUsername: string;
   reviewerId: number;
   rating: number;
@@ -13,6 +14,7 @@ export class ReviewData {
 
   constructor(jsonObject: { [key: string]: any }, utilsService: UtilsService) {
     this.id = jsonObject['id'];
+    this.showTitle = jsonObject['showTitle'];
     this.reviewerUsername = jsonObject['username'];
     this.reviewerId = jsonObject['reviewerId'];
     this.rating = jsonObject['rating'];

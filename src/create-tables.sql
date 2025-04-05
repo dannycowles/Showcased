@@ -11,6 +11,7 @@ CREATE TABLE reviews (
     review_id INT AUTO_INCREMENT,
     reviewer_id INT,
     show_id INT,
+    show_title TEXT,
     rating DOUBLE NOT NULL,
     commentary TEXT DEFAULT NULL,
     contains_spoilers BOOLEAN DEFAULT false,

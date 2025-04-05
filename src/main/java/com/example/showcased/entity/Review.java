@@ -13,6 +13,7 @@ import java.util.Date;
 public class Review {
     @EmbeddedId
     private ReviewId id;
+    private String showTitle;
     private Long reviewId;
     private double rating;
     private String commentary;

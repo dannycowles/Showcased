@@ -14,6 +14,7 @@ public class ReviewWithUserInfoDto {
     private String username;
     private Long reviewerId;
     private Long showId;
+    private String showTitle;
     private double rating;
     private String commentary;
     private boolean containsSpoilers;

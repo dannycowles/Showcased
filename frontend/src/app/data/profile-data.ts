@@ -2,6 +2,8 @@ import {WatchlistData} from './watchlist-data';
 import {WatchingData} from './watching-data';
 import {ShowRankingData} from './show-ranking-data';
 import {EpisodeRankingData} from './episode-ranking-data';
+import {ReviewData} from './review-data';
+import {UtilsService} from '../services/utils.service';
 
 export class ProfileData {
   username: string; // TODO
@@ -10,6 +12,7 @@ export class ProfileData {
   watchingTop: WatchingData[];
   showRankingTop: ShowRankingData[];
   episodeRankingTop: EpisodeRankingData[];
+  reviews: ReviewData[];
 
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username'];
@@ -26,8 +29,12 @@ export class ProfileData {
       return new ShowRankingData(show);
     });
 
-    this.episodeRankingTop = jsonObject['episodeRankingTop'].map(( show: {} ) => {
-      return new EpisodeRankingData(show);
+    this.episodeRankingTop = jsonObject['episodeRankingTop'].map(( episode: {} ) => {
+      return new EpisodeRankingData(episode);
+    });
+
+    this.reviews = jsonObject['reviews'].map(( review: {} ) => {
+      return new ReviewData(review, new UtilsService());
     });
   }
 }

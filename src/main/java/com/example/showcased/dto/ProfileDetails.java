@@ -12,4 +12,5 @@ public class ProfileDetails {
     List<WatchReturnDto> watchingTop;
     List<RankingReturnDto> showRankingTop;
     List<EpisodeRankingReturnDto> episodeRankingTop;
+    List<ReviewWithUserInfoDto> reviews;
 }

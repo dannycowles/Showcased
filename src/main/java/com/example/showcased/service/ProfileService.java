@@ -72,6 +72,7 @@ public class ProfileService {
         profileDetails.setWatchingTop(getWatchingListTop(session));
         profileDetails.setShowRankingTop(getShowRankingListTop(session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingListTop(session));
+        profileDetails.setReviews(getReviews(session));
         return profileDetails;
     }
 
