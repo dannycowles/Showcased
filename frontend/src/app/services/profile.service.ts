@@ -380,4 +380,28 @@ export class ProfileService {
       throw error;
     }
   }
+
+  /**
+   * Updates the episode ranking list, in particular it updates the rank numbers of each episode
+   * @param data
+   */
+  async updateEpisodeRankingList(data: {}) {
+    try {
+      let response = await fetch(`${this.baseUrl}/episode-ranking`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+    } catch(error) {
+      throw error;
+    }
+  }
 }

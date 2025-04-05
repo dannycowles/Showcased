@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ProfileService} from '../../services/profile.service';
 import {EpisodeRankingData} from '../../data/episode-ranking-data';
 
@@ -33,6 +34,30 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
 
       // Remove the episode from entries shown to the user
       this.rankingEntries = this.rankingEntries.filter(show => !(show.showId == removeId && show.season == season && show.episode == episode));
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.rankingEntries, event.previousIndex, event.currentIndex);
+
+    // Update the rank numbers based on the index within the updated list
+    this.rankingEntries.forEach((episode, index) => {
+      episode.rankNum = index + 1;
+    });
+    this.updateEpisodeRankingList();
+  }
+
+  async updateEpisodeRankingList() {
+    try {
+      let updates = this.rankingEntries.map(show => ({
+        "showId": show.showId,
+        "rankNum": show.rankNum,
+        "season": show.season,
+        "episode": show.episode
+      }));
+      await this.profileService.updateEpisodeRankingList(updates);
     } catch(error) {
       console.error(error);
     }
