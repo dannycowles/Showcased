@@ -1,6 +1,7 @@
 package com.example.showcased.controller;
 
 import com.example.showcased.dto.LoginDto;
+import com.example.showcased.dto.LoginStatusDto;
 import com.example.showcased.dto.RegisterDto;
 import com.example.showcased.dto.UsernameCheckDto;
 import com.example.showcased.service.AuthService;
@@ -23,6 +24,11 @@ public class AuthController {
     public ResponseEntity<Void> loginUser(@RequestBody LoginDto loginDto, HttpSession session) {
         authService.loginUser(loginDto, session);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/login-status")
+    public ResponseEntity<LoginStatusDto> loginStatus(HttpSession session) {
+        return ResponseEntity.ok(authService.loginStatus(session));
     }
 
     @PostMapping("/register")

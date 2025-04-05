@@ -6,6 +6,7 @@ import {ShowService} from '../../services/show.service';
 import {ProfileService} from '../../services/profile.service';
 import {ToastDisplayService} from '../../services/toast.service';
 import {UtilsService} from '../../services/utils.service';
+import {AuthenticationService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-show-page',
@@ -22,7 +23,8 @@ export class ShowPageComponent implements OnInit {
               private showService: ShowService,
               private profileService: ProfileService,
               private toastService: ToastDisplayService,
-              public utilsService: UtilsService) {
+              public utilsService: UtilsService,
+              private authService: AuthenticationService) {
   }
 
   async ngOnInit() {
@@ -109,6 +111,22 @@ export class ShowPageComponent implements OnInit {
     try {
       await this.showService.likeShowReview(reviewId);
     } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Adds a show review
+  async addReviewPressed() {
+    try {
+      let loginStatus = await this.authService.loginStatus();
+
+      if (loginStatus) {
+        console.log("logged in");
+        // TODO: show review modal and have users fill it out, then submit and call the endpoint
+      } else {
+        window.location.href = "login";
+      }
+    } catch(error) {
       console.error(error);
     }
   }

@@ -82,6 +82,31 @@ export class ShowService {
   }
 
   /**
+   * Adds a review to a show
+   * @param showId
+   * @param data
+   */
+  async addShowReview(showId:number, data: {}) {
+    try {
+      let response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = "/login";
+      }
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
    * Likes the show review by its ID
    * @param reviewId
    */

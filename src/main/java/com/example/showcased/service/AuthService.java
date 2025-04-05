@@ -1,6 +1,7 @@
 package com.example.showcased.service;
 
 import com.example.showcased.dto.LoginDto;
+import com.example.showcased.dto.LoginStatusDto;
 import com.example.showcased.dto.RegisterDto;
 import com.example.showcased.dto.UsernameCheckDto;
 import com.example.showcased.entity.User;
@@ -35,6 +36,13 @@ public class AuthService {
 
         // "Log" the user in by setting the session attribute
         session.setAttribute("user", user.getId());
+    }
+
+    public LoginStatusDto loginStatus(HttpSession session) {
+        Long id = (Long) session.getAttribute("user");
+        LoginStatusDto loginStatusDto = new LoginStatusDto();
+        loginStatusDto.setLoggedIn(id != null);
+        return loginStatusDto;
     }
 
     public void registerUser(RegisterDto registerDto) {

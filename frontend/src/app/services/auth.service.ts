@@ -27,6 +27,22 @@ export class AuthenticationService {
   }
 
   /**
+   * Returns true/false if the user is currently logged in
+   */
+  async loginStatus(): Promise<boolean> {
+    try {
+      let response = await fetch(`${this.baseUrl}/login-status`, {
+        credentials: 'include'
+      });
+
+      let data = await response.json();
+      return data["loggedIn"];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Attempts to register a user using given email, username, and password
    * will provide feedback if username or email is taken
    * @param data
