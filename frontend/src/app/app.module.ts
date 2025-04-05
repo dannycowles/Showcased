@@ -23,6 +23,7 @@ import {ProfileShowRankingPageComponent} from './pages/profile-show-ranking-page
 import {
   ProfileEpisodeRankingPageComponent
 } from './pages/profile-episode-ranking-page/profile-episode-ranking-page.component';
+import { DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import {
     RouterModule,
     AppRoutingModule,
     NgOptimizedImage,
-    AngularToastifyModule
+    AngularToastifyModule,
+    DragDropModule
   ],
   providers: [ToastService],
   bootstrap: [AppComponent]

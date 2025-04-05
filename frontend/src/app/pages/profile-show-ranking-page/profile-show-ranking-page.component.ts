@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ProfileService} from '../../services/profile.service';
 import {ShowRankingData} from '../../data/show-ranking-data';
 
@@ -36,6 +37,12 @@ export class ProfileShowRankingPageComponent implements OnInit {
     } catch(error) {
       console.error(error);
     }
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.rankingEntries, event.previousIndex, event.currentIndex);
+
+    // TODO: here run a loop to update the ranking entries rank number before calling service update method
   }
 
 }
