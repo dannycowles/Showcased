@@ -309,14 +309,16 @@ public class ShowService {
     }
 
     public void addReviewToShow(Long id, ReviewDto review, HttpSession session) {
-        Review newReview = modelMapper.map(review, Review.class);
-        newReview.setId(new ReviewId((Long) session.getAttribute("user"), id));
+        Long userId = (Long) session.getAttribute("user");
+        ReviewId reviewId = new ReviewId(userId, id);
 
-        // Check if the user has already added a review for this show, if so we throw an exception
-        if (reviewRepository.existsById(newReview.getId())) {
-            throw new AlreadyReviewedShowException("You have already reviewed this show");
+        // Delete existing review if it exists
+        if (reviewRepository.existsById(reviewId)) {
+            reviewRepository.deleteById(reviewId);
         }
 
+        Review newReview = modelMapper.map(review, Review.class);
+        newReview.setId(reviewId);
         reviewRepository.save(newReview);
     }
 

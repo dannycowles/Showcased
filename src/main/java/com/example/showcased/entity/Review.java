@@ -1,14 +1,12 @@
 package com.example.showcased.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "reviews")
 public class Review {
     @EmbeddedId
