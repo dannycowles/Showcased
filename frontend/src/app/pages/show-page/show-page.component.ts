@@ -7,6 +7,8 @@ import {ProfileService} from '../../services/profile.service';
 import {ToastDisplayService} from '../../services/toast.service';
 import {UtilsService} from '../../services/utils.service';
 import {AuthenticationService} from '../../services/auth.service';
+import $ from 'jquery';
+import 'jquery-serializejson';
 
 @Component({
   selector: 'app-show-page',
@@ -115,19 +117,41 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  // Adds a show review
+  // If the user is not logged in they are redirected, else the review modal will appear
   async addReviewPressed() {
     try {
       let loginStatus = await this.authService.loginStatus();
 
-      if (loginStatus) {
-        console.log("logged in");
-        // TODO: show review modal and have users fill it out, then submit and call the endpoint
-      } else {
+      if (!loginStatus) {
         window.location.href = "login";
       }
     } catch(error) {
       console.error(error);
     }
   }
+
+  // Triggered when the user enters or pastes into the review commentary box, computes and display the remaining characters
+  displayCommentaryCharactersLeft() {
+    let commentaryTextArea = document.getElementById("commentaryInput") as HTMLTextAreaElement ;
+    document.getElementById("commentaryHelpBlock").innerText = String(5000 - commentaryTextArea.value.length) + " characters left";
+  }
+
+  // Triggered when the user submits a review, it will format and send the data to the backend
+  async reviewSubmitted() {
+    // @ts-ignore
+    let reviewForm = $("#review-form").serializeJSON();
+    let data = {
+      "rating": reviewForm["rating"],
+      "showTitle": this.show.name,
+      "commentary": reviewForm["commentary"],
+      "containsSpoilers": "spoilers" in reviewForm
+    };
+
+    try {
+      await this.showService.addShowReview(this.showId, data);
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
 }

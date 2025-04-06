@@ -75,7 +75,43 @@
   <button (click)="addShowToRankingList()">Add to Ranking List</button>
   <br>
   <br>
-  <button (click)="addReviewPressed()">Add Review</button>
+  <button (click)="addReviewPressed()" type="button" data-bs-toggle="modal" data-bs-target="#reviewModal">
+    Add Review
+  </button>
+
+  <div class="modal fade" id="reviewModal" aria-labelledby="reviewModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="reviewModalLabel">New Review for {{show.name}}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="review-form">
+            <div class="mb-3">
+              <label for="ratingInput" class="form-label">Rating</label>
+              <input type="range" value="0" max="10" step="0.1" oninput="num.value = this.value" class="form-range" id="ratingInput" name="rating">
+              <output id="num">0</output>
+            </div>
+            <div class="mb-3">
+              <label for="commentaryInput" class="form-label">Commentary</label>
+              <textarea class="form-control" id="commentaryInput" name="commentary" rows="10" maxlength="5000" aria-describedby="commentaryHelpBlock"
+                        (keyup)="displayCommentaryCharactersLeft()" (input)="displayCommentaryCharactersLeft()"></textarea>
+              <div id="commentaryHelpBlock" class="form-text">5000 characters remaining</div>
+            </div>
+            <div class="mb-3 form-check">
+              <label for="spoilersCheck" class="form-check-label">Contains Spoilers</label>
+              <input type="checkbox" class="form-check-input" id="spoilersCheck" name="spoilers">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="reviewSubmitted()" data-bs-dismiss="modal">Add Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <h2>Cast</h2>
   @if (show.cast.length != 0) {
