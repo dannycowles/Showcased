@@ -26,6 +26,7 @@ import {
 import { DragDropModule} from '@angular/cdk/drag-drop';
 import {UserSearchPageComponent} from './pages/user-search-page/user-search-page.component';
 import {UserWatchlistPageComponent} from './pages/user-watchlist-page/user-watchlist-page.component';
+import {UserWatchingPageComponent} from './pages/user-watching-page/user-watching-page.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {UserWatchlistPageComponent} from './pages/user-watchlist-page/user-watch
     ProfileShowRankingPageComponent,
     ProfileEpisodeRankingPageComponent,
     UserSearchPageComponent,
-    UserWatchlistPageComponent
+    UserWatchlistPageComponent,
+    UserWatchingPageComponent,
   ],
   imports: [
     BrowserModule,

@@ -34,6 +34,7 @@ export class UserPageComponent implements OnInit {
     window.location.href += '/watchlist';
   }
 
-
-
+  viewFullWatchingList() {
+    window.location.href += '/watching';
+  }
 }
