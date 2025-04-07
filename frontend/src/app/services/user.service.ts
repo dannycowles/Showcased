@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {UserSearchData} from '../data/user-search-data';
 import {ProfileData} from '../data/profile-data';
 import {WatchlistData} from '../data/watchlist-data';
+import {WatchingData} from '../data/watching-data';
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +52,23 @@ export class UserService {
 
       return data.map((show: {}) => {
         return new WatchlistData(show);
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the full watching list for the user with the specified id
+   * @param id
+   */
+  async getFullWatchingList(id:number): Promise<WatchingData[]> {
+    try {
+      let response: Response = await fetch(`${this.baseUrl}/${id}/watching`);
+      let data: [] = await response.json();
+
+      return data.map((show: {}) => {
+        return new WatchingData(show);
       });
     } catch(error) {
       throw error;
