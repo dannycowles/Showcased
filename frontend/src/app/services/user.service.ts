@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {UserSearchData} from '../data/user-search-data';
 import {ProfileData} from '../data/profile-data';
+import {WatchlistData} from '../data/watchlist-data';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,23 @@ export class UserService {
       let response: Response = await fetch(`${this.baseUrl}/${id}/details`);
       let data: {} = await response.json();
       return new ProfileData(data);
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the full watchlist for the user with the specified id
+   * @param id
+   */
+  async getFullWatchlist(id: number): Promise<WatchlistData[]> {
+    try {
+      let response: Response = await fetch(`${this.baseUrl}/${id}/watchlist`);
+      let data: [] = await response.json();
+
+      return data.map((show: {}) => {
+        return new WatchlistData(show);
+      });
     } catch(error) {
       throw error;
     }

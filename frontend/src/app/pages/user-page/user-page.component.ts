@@ -30,6 +30,10 @@ export class UserPageComponent implements OnInit {
     }
   }
 
+  viewFullWatchlist() {
+    window.location.href += '/watchlist';
+  }
+
 
 
 }

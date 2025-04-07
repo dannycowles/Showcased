@@ -17,6 +17,7 @@ import {
   ProfileEpisodeRankingPageComponent
 } from './pages/profile-episode-ranking-page/profile-episode-ranking-page.component';
 import {UserSearchPageComponent} from './pages/user-search-page/user-search-page.component';
+import {UserWatchlistPageComponent} from './pages/user-watchlist-page/user-watchlist-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -28,6 +29,7 @@ const routes: Routes = [
     { path: 'profile/show-ranking', component: ProfileShowRankingPageComponent},
     { path: 'profile/episode-ranking', component: ProfileEpisodeRankingPageComponent},
     { path: 'user/:id', component: UserPageComponent},
+    { path: 'user/:id/watchlist', component: UserWatchlistPageComponent},
     { path: 'search', component: SearchPageComponent},
     { path: 'search-users', component: UserSearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},

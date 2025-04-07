@@ -1,0 +1,16 @@
+<button (click)="returnToUserProfile()">Return to User Profile</button>
+
+@if (watchlistEntries) {
+  <h3>Watchlist</h3>
+  @if (watchlistEntries.length != 0) {
+    @for (show of watchlistEntries; track show.showId) {
+      <h5>{{show.title}}</h5>
+
+      <!-- Poster images are sized w185, using 2:3 ratio -->
+      <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+    }
+  } @else {
+    <p>Nothing on watchlist yet!</p>
+  }
+}
+
