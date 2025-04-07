@@ -1,1 +1,97 @@
-<p>user-page works! with user id {{userId}}</p>
+@if (userDetails) {
+  <h1>{{userDetails.username}}</h1>
+  <br>
+  <h3>TODO: Profile Picture</h3>
+
+  <br>
+  <br>
+  <h3>Watchlist</h3>
+  @if (userDetails.watchlistTop.length != 0) {
+    @for (show of userDetails.watchlistTop; track show.showId) {
+      <h5>{{show.title}}</h5>
+
+      <!-- Poster images are sized w185, using 2:3 ratio -->
+      <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+    }
+    <br>
+    <br>
+    <button>View Full List</button>
+    <br>
+    <br>
+
+  } @else {
+    <p>Nothing on watchlist yet!</p>
+  }
+
+  <h3>Currently Watching</h3>
+  @if (userDetails.watchingTop.length != 0) {
+    @for (show of userDetails.watchingTop; track show.showId) {
+      <h5>{{show.title}}</h5>
+
+      <!-- Poster images are sized w185, using 2:3 ratio -->
+      <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+    }
+    <br>
+    <br>
+    <button>View Full List</button>
+    <br>
+    <br>
+  } @else {
+    <p>Not watching anything!</p>
+  }
+
+  <h3>Favorite Shows</h3>
+  @if (userDetails.showRankingTop.length != 0) {
+    @for (show of userDetails.showRankingTop; track show.showId) {
+      <h5>{{show.rankNum}}</h5>
+      <h5>{{show.title}}</h5>
+
+      <!-- Poster images are sized w185, using 2:3 ratio -->
+      <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+    }
+    <br>
+    <br>
+    <button>View Full List</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
+  <h3>Favorite Episodes</h3>
+  @if (userDetails.episodeRankingTop.length != 0) {
+    @for (show of userDetails.episodeRankingTop; track show.showId) {
+      <h5>{{show.rankNum}}</h5>
+      <h5>Show: {{show.showTitle}}</h5>
+      <h5>Episode: {{show.episodeTitle}}</h5>
+      <h5>S{{show.season}} E{{show.episode}}</h5>
+
+      <!-- Episode stills are sized w185, with a 16:9 ratio -->
+      <a [href]="'/show/' + show.showId + '/season/' + show.season + '/episode/' + show.episode"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="104" priority></a>
+    }
+    <br>
+    <br>
+    <button>View Full List</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
+  <h3>Reviews</h3>
+  @if (userDetails.reviews.length != 0) {
+    @for (review of userDetails.reviews; track review.id) {
+      <h4>Date: {{utilsService.getFormattedDate(review.reviewDate)}}</h4>
+      <h4>Relative Time Since Review: {{review.relativeDate}}</h4>
+      <h4>Show: {{review.showTitle}}</h4>
+      <h4>Rating: {{review.rating}}</h4>
+      <h4>Commentary: {{review.commentary}}</h4>
+      <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
+      <h4>Likes: {{review.likes}}</h4>
+      <br>
+    }
+  } @else {
+    <p>No reviews yet!</p>
+  }
+
+}
