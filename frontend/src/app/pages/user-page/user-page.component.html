@@ -72,14 +72,14 @@
 
   <h3>Favorite Episodes</h3>
   @if (userDetails.episodeRankingTop.length != 0) {
-    @for (show of userDetails.episodeRankingTop; track show.showId) {
-      <h5>{{show.rankNum}}</h5>
-      <h5>Show: {{show.showTitle}}</h5>
-      <h5>Episode: {{show.episodeTitle}}</h5>
-      <h5>S{{show.season}} E{{show.episode}}</h5>
+    @for (episode of userDetails.episodeRankingTop; track episode.showId) {
+      <h5>{{episode.rankNum}}</h5>
+      <h5>Show: {{episode.showTitle}}</h5>
+      <h5>Episode: {{episode.episodeTitle}}</h5>
+      <h5>S{{episode.season}} E{{episode.episode}}</h5>
 
       <!-- Episode stills are sized w185, with a 16:9 ratio -->
-      <a [href]="'/show/' + show.showId + '/season/' + show.season + '/episode/' + show.episode"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="104" priority></a>
+      <a [href]="'/show/' + episode.showId + '/season/' + episode.season + '/episode/' + episode.episode"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
     }
     <br>
     <br>

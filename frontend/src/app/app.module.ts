@@ -28,6 +28,7 @@ import {UserSearchPageComponent} from './pages/user-search-page/user-search-page
 import {UserWatchlistPageComponent} from './pages/user-watchlist-page/user-watchlist-page.component';
 import {UserWatchingPageComponent} from './pages/user-watching-page/user-watching-page.component';
 import {UserShowRankingPageComponent} from './pages/user-show-ranking-page/user-show-ranking-page.component';
+import {UserEpisodeRankingPageComponent} from './pages/user-episode-ranking-page/user-episode-ranking-page.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import {UserShowRankingPageComponent} from './pages/user-show-ranking-page/user-
     UserSearchPageComponent,
     UserWatchlistPageComponent,
     UserWatchingPageComponent,
-    UserShowRankingPageComponent
+    UserShowRankingPageComponent,
+    UserEpisodeRankingPageComponent
   ],
   imports: [
     BrowserModule,
