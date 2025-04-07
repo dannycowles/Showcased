@@ -1,3 +1,17 @@
 <h1>User Search Page</h1>
 <input type="text" [(ngModel)]="searchString" (keyup.enter)="search()">
 <button (click)="search()">Search</button>
+<br>
+<br>
+
+@if (this.searchResults) {
+  @if (this.searchResults.length != 0) {
+    @for (user of this.searchResults; track user.id) {
+      <a href="/user/{{user.id}}"><p>{{user.username}}</p></a>
+      <p>TODO: profile picture</p>
+      <br>
+    }
+  } @else {
+    <p>No results found!</p>
+  }
+}
