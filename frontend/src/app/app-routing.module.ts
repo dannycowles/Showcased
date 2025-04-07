@@ -19,6 +19,7 @@ import {
 import {UserSearchPageComponent} from './pages/user-search-page/user-search-page.component';
 import {UserWatchlistPageComponent} from './pages/user-watchlist-page/user-watchlist-page.component';
 import {UserWatchingPageComponent} from './pages/user-watching-page/user-watching-page.component';
+import {UserShowRankingPageComponent} from './pages/user-show-ranking-page/user-show-ranking-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -32,6 +33,7 @@ const routes: Routes = [
     { path: 'user/:id', component: UserPageComponent},
     { path: 'user/:id/watchlist', component: UserWatchlistPageComponent},
     { path: 'user/:id/watching', component: UserWatchingPageComponent},
+    { path: 'user/:id/show-ranking', component: UserShowRankingPageComponent},
     { path: 'search', component: SearchPageComponent},
     { path: 'search-users', component: UserSearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},

@@ -3,6 +3,7 @@ import {UserSearchData} from '../data/user-search-data';
 import {ProfileData} from '../data/profile-data';
 import {WatchlistData} from '../data/watchlist-data';
 import {WatchingData} from '../data/watching-data';
+import {ShowRankingData} from '../data/show-ranking-data';
 
 @Injectable({
   providedIn: 'root'
@@ -69,6 +70,23 @@ export class UserService {
 
       return data.map((show: {}) => {
         return new WatchingData(show);
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the full show ranking list for the user with the specified id
+   * @param id
+   */
+  async getFullShowRankingList(id:number): Promise<ShowRankingData[]> {
+    try {
+      let response: Response = await fetch(`${this.baseUrl}/${id}/show-ranking`);
+      let data: [] = await response.json();
+
+      return data.map((show: {}) => {
+        return new ShowRankingData(show);
       });
     } catch(error) {
       throw error;
