@@ -15,7 +15,11 @@
     }
     <br>
     <br>
-    <button>View Full List</button>
+
+    @if (userDetails.moreWatchlist) {
+      <button>View Full List</button>
+    }
+
     <br>
     <br>
 
@@ -33,7 +37,11 @@
     }
     <br>
     <br>
-    <button>View Full List</button>
+
+    @if (userDetails.moreWatching) {
+      <button>View Full List</button>
+    }
+
     <br>
     <br>
   } @else {
@@ -51,7 +59,11 @@
     }
     <br>
     <br>
-    <button>View Full List</button>
+
+    @if (userDetails.moreShowRanking) {
+      <button>View Full List</button>
+    }
+
     <br>
     <br>
   } @else {
@@ -71,7 +83,11 @@
     }
     <br>
     <br>
-    <button>View Full List</button>
+
+    @if (userDetails.moreEpisodeRanking) {
+      <button>View Full List</button>
+    }
+
     <br>
     <br>
   } @else {

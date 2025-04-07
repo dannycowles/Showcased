@@ -20,4 +20,6 @@ public interface WatchlistRepository extends JpaRepository<Watchlist, WatchId> {
     @Query("SELECT new com.example.showcased.dto.WatchReturnDto(s.showId, s.title, s.posterPath)" +
             "FROM ShowInfo s JOIN Watchlist w ON s.showId = w.id.showId AND w.id.userId = ?1")
     List<WatchReturnDto> findByUserIdTop(Long id, Pageable pageable);
+
+    int countByIdUserId(Long userId);
 }

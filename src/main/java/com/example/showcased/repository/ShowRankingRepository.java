@@ -22,4 +22,6 @@ public interface ShowRankingRepository extends JpaRepository<ShowRanking, WatchI
     @Query("SELECT new com.example.showcased.dto.RankingReturnDto(s.showId, r.rankNum, s.title, s.posterPath)" +
             "FROM ShowInfo s JOIN ShowRanking r ON s.showId = r.id.showId AND r.id.userId = ?1 ORDER BY r.rankNum")
     List<RankingReturnDto> findByUserIdTop(Long user, Pageable pageRequest);
+
+    int countByIdUserId(Long userId);
 }

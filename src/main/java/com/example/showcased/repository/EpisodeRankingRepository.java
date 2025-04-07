@@ -20,4 +20,6 @@ public interface EpisodeRankingRepository extends JpaRepository<EpisodeRanking, 
     @Query("SELECT new com.example.showcased.dto.EpisodeRankingReturnDto(e.id.showId, r.rankNum, e.showTitle, e.episodeTitle, r.id.season, r.id.episode, e.posterPath)" +
             "FROM EpisodeInfo e JOIN EpisodeRanking r ON e.id.showId = r.id.showId AND e.id.season = r.id.season AND e.id.episode = r.id.episode AND r.id.userId = ?1 ORDER BY r.rankNum")
     List<EpisodeRankingReturnDto> findByUserIdTop(Long userId, Pageable pageable);
+
+    int countByIdUserId(Long userId);
 }

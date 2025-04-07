@@ -19,4 +19,6 @@ public interface WatchingRepository extends JpaRepository<Watching, WatchId> {
     @Query("SELECT new com.example.showcased.dto.WatchReturnDto(s.showId, s.title, s.posterPath)" +
             "FROM ShowInfo s JOIN Watching w ON s.showId = w.id.showId AND w.id.userId = ?1")
     List<WatchReturnDto> findByUserIdTop(Long user, Pageable pageRequest);
+
+    int countByIdUserId(Long userId);
 }

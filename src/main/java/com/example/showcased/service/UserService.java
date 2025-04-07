@@ -55,10 +55,31 @@ public class UserService {
             throw new UserNotFoundException(userId);
         } else {
             userDetails.setUsername(user.get().getUsername());
+
             userDetails.setWatchlistTop(getUserWatchlistTop(userId));
+            // If the user has more than num top entries in their watchlist toggle the flag
+            if (watchlistRepository.countByIdUserId(userId) > numTopEntries) {
+                userDetails.setMoreWatchlist(true);
+            }
+
             userDetails.setWatchingTop(getUserWatchingListTop(userId));
+            // If the user has more than num top entries in their watching list toggle the flag
+            if (watchingRepository.countByIdUserId(userId) > numTopEntries) {
+                userDetails.setMoreWatching(true);
+            }
+
             userDetails.setShowRankingTop(getUserShowRankingsTop(userId));
+            // If the user has more than num top entries in their show ranking list toggle the flag
+            if (showRankingRepository.countByIdUserId(userId) > numTopEntries) {
+                userDetails.setMoreShowRanking(true);
+            }
+
             userDetails.setEpisodeRankingTop(getUserEpisodeRankingsTop(userId));
+            // If the user has more than num top entries in their episode ranking list toggle the flag
+            if (episodeRankingRepository.countByIdUserId(userId) > numTopEntries) {
+                userDetails.setMoreEpisodeRanking(true);
+            }
+
             userDetails.setReviews(getUserReviews(userId));
         }
         return userDetails;
