@@ -1,9 +1,6 @@
 package com.example.showcased.controller;
 
-import com.example.showcased.dto.EpisodeRankingReturnDto;
-import com.example.showcased.dto.RankingReturnDto;
-import com.example.showcased.dto.UserSearchDto;
-import com.example.showcased.dto.WatchReturnDto;
+import com.example.showcased.dto.*;
 import com.example.showcased.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +22,13 @@ public class UserController {
         List<UserSearchDto> searchResults = userService.searchUsers(query);
         return ResponseEntity.ok(searchResults);
     }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<ProfileDetailsDto> getUserDetails(@PathVariable("id") Long id) {
+        ProfileDetailsDto userDetails = userService.getUserDetails(id);
+        return ResponseEntity.ok(userDetails);
+    }
+
 
     @GetMapping("/{id}/watchlist")
     public ResponseEntity<List<WatchReturnDto>> getUserWatchlist(@PathVariable Long id) {
@@ -81,5 +85,13 @@ public class UserController {
     public ResponseEntity<List<EpisodeRankingReturnDto>> getUserEpisodeRankingsTop(@PathVariable Long id) {
         List<EpisodeRankingReturnDto> rankings = userService.getUserEpisodeRankingsTop(id);
         return ResponseEntity.ok(rankings);
+    }
+
+
+
+    @GetMapping("/{id}/reviews")
+    public ResponseEntity<List<ReviewWithUserInfoDto>> getUserReviews(@PathVariable Long id) {
+        List<ReviewWithUserInfoDto> reviews = userService.getUserReviews(id);
+        return ResponseEntity.ok(reviews);
     }
 }
