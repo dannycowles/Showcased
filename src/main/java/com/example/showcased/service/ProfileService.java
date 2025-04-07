@@ -58,7 +58,7 @@ public class ProfileService {
         }
     }
 
-    public ProfileDetails getProfileDetails(HttpSession session) {
+    public ProfileDetailsDto getProfileDetails(HttpSession session) {
         Long id = (Long) session.getAttribute("user");
         Optional<User> user = this.userRepository.findById(id);
 
@@ -66,7 +66,7 @@ public class ProfileService {
             throw new UserNotFoundException(id);
         }
 
-        ProfileDetails profileDetails = new ProfileDetails();
+        ProfileDetailsDto profileDetails = new ProfileDetailsDto();
         profileDetails.setUsername(user.get().getUsername());
         profileDetails.setWatchlistTop(getWatchlistTop(session));
         profileDetails.setWatchingTop(getWatchingListTop(session));

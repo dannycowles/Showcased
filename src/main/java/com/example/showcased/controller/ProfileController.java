@@ -20,8 +20,8 @@ public class ProfileController {
     }
 
     @GetMapping("/details")
-    public ResponseEntity<ProfileDetails> getProfileDetails(HttpSession session) {
-        ProfileDetails profileDetails = profileService.getProfileDetails(session);
+    public ResponseEntity<ProfileDetailsDto> getProfileDetails(HttpSession session) {
+        ProfileDetailsDto profileDetails = profileService.getProfileDetails(session);
         return ResponseEntity.ok(profileDetails);
     }
 

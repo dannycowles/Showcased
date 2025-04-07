@@ -24,6 +24,7 @@ import {
   ProfileEpisodeRankingPageComponent
 } from './pages/profile-episode-ranking-page/profile-episode-ranking-page.component';
 import { DragDropModule} from '@angular/cdk/drag-drop';
+import {UserSearchPageComponent} from './pages/user-search-page/user-search-page.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { DragDropModule} from '@angular/cdk/drag-drop';
     ProfileWatchlistPageComponent,
     ProfileWatchingPageComponent,
     ProfileShowRankingPageComponent,
-    ProfileEpisodeRankingPageComponent
+    ProfileEpisodeRankingPageComponent,
+    UserSearchPageComponent
   ],
   imports: [
     BrowserModule,

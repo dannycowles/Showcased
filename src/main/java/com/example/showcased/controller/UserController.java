@@ -2,13 +2,11 @@ package com.example.showcased.controller;
 
 import com.example.showcased.dto.EpisodeRankingReturnDto;
 import com.example.showcased.dto.RankingReturnDto;
+import com.example.showcased.dto.UserSearchDto;
 import com.example.showcased.dto.WatchReturnDto;
 import com.example.showcased.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +18,12 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserSearchDto>> searchUsers(@RequestParam String query) {
+        List<UserSearchDto> searchResults = userService.searchUsers(query);
+        return ResponseEntity.ok(searchResults);
     }
 
     @GetMapping("/{id}/watchlist")

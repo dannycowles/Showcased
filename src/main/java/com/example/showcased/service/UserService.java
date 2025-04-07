@@ -2,15 +2,15 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.EpisodeRankingReturnDto;
 import com.example.showcased.dto.RankingReturnDto;
+import com.example.showcased.dto.UserSearchDto;
 import com.example.showcased.dto.WatchReturnDto;
-import com.example.showcased.repository.EpisodeRankingRepository;
-import com.example.showcased.repository.ShowRankingRepository;
-import com.example.showcased.repository.WatchingRepository;
-import com.example.showcased.repository.WatchlistRepository;
+import com.example.showcased.repository.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -20,15 +20,27 @@ public class UserService {
     private final WatchlistRepository watchlistRepository;
     private final WatchingRepository watchingRepository;
     private final int numTopEntries = 10;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
                        WatchlistRepository watchlistRepository,
-                       WatchingRepository watchingRepository) {
+                       WatchingRepository watchingRepository,
+                       UserRepository userRepository,
+                       ModelMapper modelMapper) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
         this.watchingRepository = watchingRepository;
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+    }
+
+    public List<UserSearchDto> searchUsers(String query) {
+        return userRepository.findByUsernameContainingIgnoreCase(query).stream()
+                .map(user -> modelMapper.map(user, UserSearchDto.class))
+                .collect(Collectors.toList());
     }
 
     public List<WatchReturnDto> getUserWatchlist(Long userId) {

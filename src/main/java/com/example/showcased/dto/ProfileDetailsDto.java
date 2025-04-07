@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ProfileDetails {
+public class ProfileDetailsDto {
     private String username;
     private String profilePicture;
     List<WatchReturnDto> watchlistTop;
