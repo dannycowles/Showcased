@@ -21,11 +21,13 @@ import {UserWatchlistPageComponent} from './pages/user/user-watchlist-page/user-
 import {UserWatchingPageComponent} from './pages/user/user-watching-page/user-watching-page.component';
 import {UserShowRankingPageComponent} from './pages/user/user-show-ranking-page/user-show-ranking-page.component';
 import {UserEpisodeRankingPageComponent} from './pages/user/user-episode-ranking-page/user-episode-ranking-page.component';
+import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset-password-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
     { path: 'login', component: LoginPageComponent},
     { path: 'register', component: RegisterPageComponent},
+    { path: 'reset-password', component: ResetPasswordPageComponent},
     { path: 'profile', component: ProfilePageComponent},
     { path: 'profile/watchlist', component: ProfileWatchlistPageComponent},
     { path: 'profile/watching', component: ProfileWatchingPageComponent},

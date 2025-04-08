@@ -29,6 +29,7 @@ import {UserWatchlistPageComponent} from './pages/user/user-watchlist-page/user-
 import {UserWatchingPageComponent} from './pages/user/user-watching-page/user-watching-page.component';
 import {UserShowRankingPageComponent} from './pages/user/user-show-ranking-page/user-show-ranking-page.component';
 import {UserEpisodeRankingPageComponent} from './pages/user/user-episode-ranking-page/user-episode-ranking-page.component';
+import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset-password-page.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import {UserEpisodeRankingPageComponent} from './pages/user/user-episode-ranking
     UserWatchlistPageComponent,
     UserWatchingPageComponent,
     UserShowRankingPageComponent,
-    UserEpisodeRankingPageComponent
+    UserEpisodeRankingPageComponent,
+    ResetPasswordPageComponent
   ],
   imports: [
     BrowserModule,
