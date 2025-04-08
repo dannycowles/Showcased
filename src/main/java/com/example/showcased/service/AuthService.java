@@ -21,13 +21,16 @@ public class AuthService {
     private final UserRepository userRepository;
     private final OtpRequestRepository otpRequestRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       OtpRequestRepository otpRequestRepository) {
+                       OtpRequestRepository otpRequestRepository,
+                       EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.otpRequestRepository = otpRequestRepository;
+        this.emailService = emailService;
     }
 
     // Function that verifies that the login credentials are valid
@@ -71,7 +74,8 @@ public class AuthService {
         int otp = random.nextInt(1000000);
         String otpPadded = String.format("%06d", otp);
 
-        // TODO: send email to user's email with otpPadded
+        // Send reset password email to user
+        emailService.sendPasswordResetEmail(email, otpPadded);
 
         // Save the new entry to the database, expiration time is 5 minutes after creation
         OtpRequest newOtpRequest = new OtpRequest();
