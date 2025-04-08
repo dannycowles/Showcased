@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {UserSearchData} from '../data/user-search-data';
 import {ProfileData} from '../data/profile-data';
-import {WatchlistData} from '../data/watchlist-data';
-import {WatchingData} from '../data/watching-data';
-import {ShowRankingData} from '../data/show-ranking-data';
-import {EpisodeRankingData} from '../data/episode-ranking-data';
+import {WatchlistData} from '../data/lists/watchlist-data';
+import {WatchingData} from '../data/lists/watching-data';
+import {ShowRankingData} from '../data/lists/show-ranking-data';
+import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
 
 @Injectable({
   providedIn: 'root'

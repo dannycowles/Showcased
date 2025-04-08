@@ -1,9 +1,9 @@
-import {WatchlistData} from './watchlist-data';
-import {WatchingData} from './watching-data';
-import {ShowRankingData} from './show-ranking-data';
-import {EpisodeRankingData} from './episode-ranking-data';
 import {ReviewData} from './review-data';
 import {UtilsService} from '../services/utils.service';
+import {WatchlistData} from './lists/watchlist-data';
+import {WatchingData} from './lists/watching-data';
+import {ShowRankingData} from './lists/show-ranking-data';
+import {EpisodeRankingData} from './lists/episode-ranking-data';
 
 export class ProfileData {
   username: string; // TODO
