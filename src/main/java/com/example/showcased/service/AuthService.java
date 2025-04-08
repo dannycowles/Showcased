@@ -1,14 +1,9 @@
 package com.example.showcased.service;
 
-import com.example.showcased.dto.LoginDto;
-import com.example.showcased.dto.LoginStatusDto;
-import com.example.showcased.dto.RegisterDto;
-import com.example.showcased.dto.UsernameCheckDto;
+import com.example.showcased.dto.*;
 import com.example.showcased.entity.OtpRequest;
 import com.example.showcased.entity.User;
-import com.example.showcased.exception.EmailTakenException;
-import com.example.showcased.exception.InvalidLoginException;
-import com.example.showcased.exception.UsernameTakenException;
+import com.example.showcased.exception.*;
 import com.example.showcased.repository.OtpRequestRepository;
 import com.example.showcased.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -84,6 +79,31 @@ public class AuthService {
         newOtpRequest.setOtp(otpPadded);
         newOtpRequest.setExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5)));
         otpRequestRepository.save(newOtpRequest);
+    }
+
+    public void validateOTP(ValidateOTPDto validateOTPDto) {
+        // Find the user associated with the specified email
+        // If there isn't one, still return error message for security purposes
+        User user = userRepository.findByEmail(validateOTPDto.getEmail())
+                .orElseThrow(() -> new OTPValidationException("The code you entered is incorrect. Please try again."));
+
+        // Retrieve the OTP request associated with the account
+        OtpRequest otpRequest = otpRequestRepository.findById(user.getId())
+                .orElseThrow(() -> new OTPValidationException("The code you entered is incorrect. Please try again."));
+
+        // Check if the code entered matches the one in DB, if not we return error message
+        if (!validateOTPDto.getOtp().equals(otpRequest.getOtp())) {
+            throw new OTPValidationException("The code you entered is incorrect. Please try again.");
+        }
+
+        if (otpRequest.getExpiresAt().before(new Date())) {
+            // Clean up expired OTP
+            otpRequestRepository.delete(otpRequest);
+            throw new OTPValidationException("The code you have entered is expired. Please request a new one.");
+        }
+
+        // At this point, we know the codes match so we can clean up OTP from DB
+        otpRequestRepository.delete(otpRequest);
     }
 
     public void registerUser(RegisterDto registerDto) {

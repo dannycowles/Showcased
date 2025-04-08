@@ -6,9 +6,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -102,6 +99,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AlreadyReviewedShowException.class)
     public ResponseEntity<ErrorResponse> alreadyReviewedShowHandler(AlreadyReviewedShowException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    /**
+     * Exception handler for when a user enters invalid or expired OTP code
+     */
+    @ExceptionHandler(OTPValidationException.class)
+    public ResponseEntity<ErrorResponse> otpValidationHandler(OTPValidationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
     }
 
 }
