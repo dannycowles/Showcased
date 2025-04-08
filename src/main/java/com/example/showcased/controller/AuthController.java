@@ -39,9 +39,9 @@ public class AuthController {
         - OTP itself
         - expiration time
     */
-    @GetMapping("/request-otp")
-    public ResponseEntity<Void> requestOTP(HttpSession session) {
-        authService.requestOTP();
+    @PostMapping("/request-otp")
+    public ResponseEntity<Void> requestOTP(@RequestBody String email) {
+        authService.requestOTP(email);
         return ResponseEntity.ok().build();
     }
 

@@ -77,3 +77,11 @@ CREATE TABLE liked_reviews (
     PRIMARY KEY(user_id, review_id),
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
+
+CREATE TABLE otp_requests (
+    user_id INT,
+    otp VARCHAR(6),
+    expires_at DATETIME,
+    PRIMARY KEY(user_id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
