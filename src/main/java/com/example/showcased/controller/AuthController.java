@@ -31,6 +31,31 @@ public class AuthController {
         return ResponseEntity.ok(authService.loginStatus(session));
     }
 
+    /* TODO: change to POST, this endpoint should take in a DTO with email
+        then check users table and see if email exists, if so we generate OTP
+        send user email with that OTP and store OTP details in database table
+        database table otp_requests should have:
+        - ID of user OTP was generated for as PK
+        - OTP itself
+        - expiration time
+    */
+    @GetMapping("/request-otp")
+    public ResponseEntity<Void> requestOTP(HttpSession session) {
+        authService.requestOTP();
+        return ResponseEntity.ok().build();
+    }
+
+    /*
+        TODO: change to POST, this endpoint should take in a DTO with email and OTP
+         then checks the otp_requests database. if the credentials match return success
+         message and delete the entry. if the OTP has expired return message letting them know
+         the code is expired and delete the entry. if the credentials are wrong return error message
+     */
+    @GetMapping("/validate-otp")
+    public ResponseEntity<Void> validateOTP(HttpSession session) {
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/register")
     ResponseEntity<Void> registerUser(@Valid @RequestBody RegisterDto registerDto) {
         authService.registerUser(registerDto);

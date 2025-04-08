@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+
 @Service
 public class AuthService {
 
@@ -43,6 +45,13 @@ public class AuthService {
         LoginStatusDto loginStatusDto = new LoginStatusDto();
         loginStatusDto.setLoggedIn(id != null);
         return loginStatusDto;
+    }
+
+    public String requestOTP() {
+        SecureRandom random = new SecureRandom();
+        // Generate a random 6-digit number
+        int otp = random.nextInt(1000000);
+        return String.format("%06d", otp);
     }
 
     public void registerUser(RegisterDto registerDto) {
