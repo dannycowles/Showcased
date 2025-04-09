@@ -74,5 +74,40 @@ export class AuthenticationService {
     return text["taken"];
   }
 
+  /**
+   * Generates an OTP for password reset
+   * @param email
+   */
+  async generateOTP(email: string) {
+    try {
+      await fetch(`${this.baseUrl}/request-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: email
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Validates the given OTP against the backend DB
+   * @param data
+   */
+  async validateOTP(data: {}): Promise<Response> {
+    try {
+      return await fetch(`${this.baseUrl}/validate-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
 }
 

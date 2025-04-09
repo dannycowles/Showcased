@@ -30,6 +30,7 @@ import {UserWatchingPageComponent} from './pages/user/user-watching-page/user-wa
 import {UserShowRankingPageComponent} from './pages/user/user-show-ranking-page/user-show-ranking-page.component';
 import {UserEpisodeRankingPageComponent} from './pages/user/user-episode-ranking-page/user-episode-ranking-page.component';
 import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset-password-page.component';
+import {NgOtpInputModule} from 'ng-otp-input';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset
     AppRoutingModule,
     NgOptimizedImage,
     AngularToastifyModule,
-    DragDropModule
+    DragDropModule,
+    NgOtpInputModule
   ],
   providers: [ToastService],
   bootstrap: [AppComponent]

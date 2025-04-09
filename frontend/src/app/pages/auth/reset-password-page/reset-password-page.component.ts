@@ -40,12 +40,13 @@ export class ResetPasswordPageComponent implements OnInit {
       };
       let response: Response = await this.authService.validateOTP(data);
 
+      // If successful, update page to new password section, else display error message
       if (response.ok) {
-        console.log("matched!")
+        this.formNumber = 3;
       } else {
-        console.log(response.text());
+        let text = await response.json();
+        document.getElementById("otp-error-message").innerText = text["error"];
       }
-
     } catch(error) {
       console.error(error);
     }
