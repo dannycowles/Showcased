@@ -85,7 +85,7 @@ public class AuthService {
         otpRequestRepository.save(newOtpRequest);
     }
 
-    public void validateOTP(ValidateOTPDto validateOTPDto) {
+    public void validateOTP(ValidateOTPDto validateOTPDto, HttpSession session) {
         // Find the user associated with the specified email
         // If there isn't one, still return error message for security purposes
         User user = userRepository.findByEmail(validateOTPDto.getEmail())
@@ -106,8 +106,30 @@ public class AuthService {
             throw new OTPValidationException("The code you have entered is expired. Please request a new one.");
         }
 
+        // Add session attribute for password reset security
+        session.setAttribute("otpVerifiedEmail", validateOTPDto.getEmail());
+
         // At this point, we know the codes match so we can clean up OTP from DB
         otpRequestRepository.delete(otpRequest);
+    }
+
+    public void changePassword(NewPasswordDto newPasswordDto, HttpSession session) {
+        // Retrieve and verify that the session attribute emails match
+        String verifiedEmail = (String) session.getAttribute("otpVerifiedEmail");
+        if (verifiedEmail == null || !verifiedEmail.equals(newPasswordDto.getEmail())) {
+            throw new NotVerifiedException("You are not verified");
+        }
+
+        User user = userRepository.findByEmail(newPasswordDto.getEmail())
+                .orElseThrow(() -> new NotVerifiedException("You are not verified"));
+
+        // Update and save new encoded password
+        String encodedPassword = passwordEncoder.encode(newPasswordDto.getNewPassword());
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+
+        // Remove the session attribute
+        session.removeAttribute("otpVerifiedEmail");
     }
 
     public void registerUser(RegisterDto registerDto) {

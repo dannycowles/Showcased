@@ -103,11 +103,38 @@ export class AuthenticationService {
         headers: {
           "Content-Type": "application/json"
         },
+        credentials: 'include',
         body: JSON.stringify(data)
       });
     } catch(error) {
       throw error;
     }
   }
+
+  /**
+   * Used to change/reset a user's password
+   * @param data
+   */
+  async changePassword(data: {}) {
+    try {
+      let response = await fetch(`${this.baseUrl}/change-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+
+      // Upon successful update redirect the user to the login page
+      if (response.ok) {
+        window.location.href = "/login";
+      }
+
+    } catch(error) {
+      throw error;
+    }
+  }
+
 }
 

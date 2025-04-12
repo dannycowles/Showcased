@@ -35,8 +35,14 @@ public class AuthController {
     }
 
     @PostMapping("/validate-otp")
-    public ResponseEntity<Void> validateOTP(@RequestBody ValidateOTPDto validateOTPDto) {
-        authService.validateOTP(validateOTPDto);
+    public ResponseEntity<Void> validateOTP(@RequestBody ValidateOTPDto validateOTPDto, HttpSession session) {
+        authService.validateOTP(validateOTPDto, session);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody NewPasswordDto newPasswordDto, HttpSession session) {
+        authService.changePassword(newPasswordDto, session);
         return ResponseEntity.ok().build();
     }
 

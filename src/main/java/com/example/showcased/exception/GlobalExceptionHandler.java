@@ -109,4 +109,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
     }
 
+    /**
+     * Exception handler for invalid change password attempt
+     */
+    @ExceptionHandler(NotVerifiedException.class)
+    public ResponseEntity<ErrorResponse> notVerifiedHandler(NotVerifiedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    }
+
 }
