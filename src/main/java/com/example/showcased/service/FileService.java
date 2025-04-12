@@ -45,7 +45,6 @@ public class FileService {
                 .build();
     }
 
-
     public String uploadProfilePicture(MultipartFile file, HttpSession session) {
         // Retrieve user's ID and format file name/location in S3 bucket
         String id = session.getAttribute("user").toString();

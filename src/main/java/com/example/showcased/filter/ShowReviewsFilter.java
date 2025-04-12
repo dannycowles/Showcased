@@ -21,14 +21,12 @@ public class ShowReviewsFilter implements Filter {
 
         // If the user is not logged in we send an error and return
         if (request.getRequestURI().endsWith("/reviews") && request.getMethod().equals("POST") && session.getAttribute("user") == null) {
-            response.setHeader("Access-Control-Allow-Origin", "*");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         // If the user is not logged in and attempts to like/unlike a show review we send an error
         if ((request.getRequestURI().endsWith("/like") || request.getRequestURI().endsWith("/unlike")) && session.getAttribute("user") == null) {
-            response.setHeader("Access-Control-Allow-Origin", "*");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
