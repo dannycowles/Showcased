@@ -1,11 +1,13 @@
 package com.example.showcased.controller;
 
 import com.example.showcased.dto.*;
+import com.example.showcased.service.FileService;
 import com.example.showcased.service.ProfileService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,9 +16,12 @@ import java.util.List;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final FileService fileService;
 
-    public ProfileController(ProfileService profileService) {
+    public ProfileController(ProfileService profileService,
+                             FileService fileService) {
         this.profileService = profileService;
+        this.fileService = fileService;
     }
 
     @GetMapping("/details")
@@ -160,5 +165,11 @@ public class ProfileController {
     public ResponseEntity<List<ReviewWithUserInfoDto>> getReviews(HttpSession session) {
         List<ReviewWithUserInfoDto> reviews = profileService.getReviews(session);
         return ResponseEntity.ok(reviews);
+    }
+
+    @PostMapping("/profile-picture")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, HttpSession session) {
+        String fileUrl = fileService.uploadFile(file, session);
+        return ResponseEntity.ok(fileUrl);
     }
 }

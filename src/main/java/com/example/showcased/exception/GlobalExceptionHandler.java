@@ -117,4 +117,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
     }
 
+    /**
+     * Exception handler for invalid file type for profile picture upload
+     */
+    @ExceptionHandler(InvalidFileType.class)
+    ResponseEntity<ErrorResponse> invalidFileTypeHandler(InvalidFileType ex) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(new ErrorResponse(ex.getMessage()));
+    }
+
 }
