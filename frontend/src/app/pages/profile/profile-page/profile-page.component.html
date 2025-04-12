@@ -1,7 +1,7 @@
 @if (profileData) {
   <h3>{{profileData.username}}</h3>
   <br>
-  <img [ngSrc]="profileData.profilePicture" alt="Profile Picture" width="500" height="500">
+  <img id="profile-picture" [ngSrc]="profileData.profilePicture" alt="Profile Picture" width="500" height="500" priority>
 
   <br>
   <br>
