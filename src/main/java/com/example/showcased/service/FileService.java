@@ -6,7 +6,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.example.showcased.entity.User;
 import com.example.showcased.exception.InvalidFileType;
+import com.example.showcased.exception.UserNotFoundException;
+import com.example.showcased.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +30,11 @@ public class FileService {
     private String secretKey;
 
     private AmazonS3 s3Client;
+    private final UserRepository userRepository;
+
+    public FileService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @PostConstruct
     private void initialize() {
@@ -38,7 +46,7 @@ public class FileService {
     }
 
 
-    public String uploadFile(MultipartFile file, HttpSession session) {
+    public String uploadProfilePicture(MultipartFile file, HttpSession session) {
         // Retrieve user's ID and format file name/location in S3 bucket
         String id = session.getAttribute("user").toString();
         String fileName = "users/" + id;
@@ -58,7 +66,15 @@ public class FileService {
                 s3Client.deleteObject(bucketName, fileName);
             }
             s3Client.putObject(bucketName, fileName, file.getInputStream(), metadata);
-            return s3Client.getUrl(bucketName, fileName).toString();
+
+            // Retrieve the generated url and store it in the user table
+            String profilePictureUrl = s3Client.getUrl(bucketName, fileName).toString();
+            User user = userRepository.findById(Long.parseLong(id)).
+                    orElseThrow(() -> new UserNotFoundException(Long.parseLong(id)));
+            user.setProfilePicture(profilePictureUrl);
+            userRepository.save(user);
+
+            return profilePictureUrl;
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload file", e);
         }

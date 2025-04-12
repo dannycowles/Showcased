@@ -168,8 +168,8 @@ public class ProfileController {
     }
 
     @PostMapping("/profile-picture")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, HttpSession session) {
-        String fileUrl = fileService.uploadFile(file, session);
+    public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, HttpSession session) {
+        String fileUrl = fileService.uploadProfilePicture(file, session);
         return ResponseEntity.ok(fileUrl);
     }
 }
