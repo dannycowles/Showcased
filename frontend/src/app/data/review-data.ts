@@ -4,6 +4,7 @@ export class ReviewData {
   id: number;
   showTitle: string;
   reviewerUsername: string;
+  reviewerProfilePicture: string;
   reviewerId: number;
   rating: number;
   commentary: string;
@@ -16,6 +17,7 @@ export class ReviewData {
     this.id = jsonObject['id'];
     this.showTitle = jsonObject['showTitle'];
     this.reviewerUsername = jsonObject['username'];
+    this.reviewerProfilePicture = jsonObject['profilePicture'];
     this.reviewerId = jsonObject['reviewerId'];
     this.rating = jsonObject['rating'];
     this.commentary = jsonObject['commentary'];

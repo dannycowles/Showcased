@@ -12,11 +12,11 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, ReviewId> {
 
-    @Query("SELECT new com.example.showcased.dto.ReviewWithUserInfoDto(r.reviewId, u.username, r.id.reviewerId, r.id.showId, r.showTitle, r.rating, r.commentary, r.containsSpoilers, r.numLikes, r.reviewDate) " +
+    @Query("SELECT new com.example.showcased.dto.ReviewWithUserInfoDto(r.reviewId, u.username, u.profilePicture, r.id.reviewerId, r.id.showId, r.showTitle, r.rating, r.commentary, r.containsSpoilers, r.numLikes, r.reviewDate) " +
             "FROM Review r JOIN User u ON r.id.reviewerId = u.id WHERE r.id.showId = ?1")
     List<ReviewWithUserInfoDto> findAllByShowId(Long showId);
 
-    @Query("SELECT new com.example.showcased.dto.ReviewWithUserInfoDto(r.reviewId, u.username, r.id.reviewerId, r.id.showId, r.showTitle, r.rating, r.commentary, r.containsSpoilers, r.numLikes, r.reviewDate) " +
+    @Query("SELECT new com.example.showcased.dto.ReviewWithUserInfoDto(r.reviewId, u.username, u.profilePicture, r.id.reviewerId, r.id.showId, r.showTitle, r.rating, r.commentary, r.containsSpoilers, r.numLikes, r.reviewDate) " +
             "FROM Review r JOIN User u ON r.id.reviewerId = u.id WHERE r.id.reviewerId = ?1 ORDER BY r.reviewDate DESC")
     List<ReviewWithUserInfoDto> findByUserId(Long id);
 

@@ -6,7 +6,6 @@ import com.example.showcased.entity.LikedReviewsId;
 import com.example.showcased.entity.Review;
 import com.example.showcased.entity.ReviewId;
 import com.example.showcased.exception.AlreadyLikedShowReviewException;
-import com.example.showcased.exception.AlreadyReviewedShowException;
 import com.example.showcased.exception.HaventLikedShowReviewException;
 import com.example.showcased.repository.LikedReviewsRepository;
 import com.example.showcased.repository.ReviewRepository;

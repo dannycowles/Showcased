@@ -12,6 +12,7 @@ import java.util.Date;
 public class ReviewWithUserInfoDto {
     private Long id;
     private String username;
+    private String profilePicture;
     private Long reviewerId;
     private Long showId;
     private String showTitle;
