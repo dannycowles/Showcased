@@ -9,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,42 +45,39 @@ public class UserService {
     }
 
     public ProfileDetailsDto getUserDetails(Long userId) {
-
-        Optional<User> user = userRepository.findById(userId);
         ProfileDetailsDto userDetails = new ProfileDetailsDto();
 
-        // If the user was not found we throw an exception
-        if (user.isEmpty()) {
-            throw new UserNotFoundException(userId);
-        } else {
-            userDetails.setUsername(user.get().getUsername());
+        // Throw exception if the user was not found by ID
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
-            userDetails.setWatchlistTop(getUserWatchlistTop(userId));
-            // If the user has more than num top entries in their watchlist toggle the flag
-            if (watchlistRepository.countByIdUserId(userId) > numTopEntries) {
-                userDetails.setMoreWatchlist(true);
-            }
-
-            userDetails.setWatchingTop(getUserWatchingListTop(userId));
-            // If the user has more than num top entries in their watching list toggle the flag
-            if (watchingRepository.countByIdUserId(userId) > numTopEntries) {
-                userDetails.setMoreWatching(true);
-            }
-
-            userDetails.setShowRankingTop(getUserShowRankingsTop(userId));
-            // If the user has more than num top entries in their show ranking list toggle the flag
-            if (showRankingRepository.countByIdUserId(userId) > numTopEntries) {
-                userDetails.setMoreShowRanking(true);
-            }
-
-            userDetails.setEpisodeRankingTop(getUserEpisodeRankingsTop(userId));
-            // If the user has more than num top entries in their episode ranking list toggle the flag
-            if (episodeRankingRepository.countByIdUserId(userId) > numTopEntries) {
-                userDetails.setMoreEpisodeRanking(true);
-            }
-
-            userDetails.setReviews(getUserReviews(userId));
+        userDetails.setUsername(user.getUsername());
+        userDetails.setProfilePicture(user.getProfilePicture());
+        userDetails.setWatchlistTop(getUserWatchlistTop(userId));
+        // If the user has more than num top entries in their watchlist toggle the flag
+        if (watchlistRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setMoreWatchlist(true);
         }
+
+        userDetails.setWatchingTop(getUserWatchingListTop(userId));
+        // If the user has more than num top entries in their watching list toggle the flag
+        if (watchingRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setMoreWatching(true);
+        }
+
+        userDetails.setShowRankingTop(getUserShowRankingsTop(userId));
+        // If the user has more than num top entries in their show ranking list toggle the flag
+        if (showRankingRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setMoreShowRanking(true);
+        }
+
+        userDetails.setEpisodeRankingTop(getUserEpisodeRankingsTop(userId));
+        // If the user has more than num top entries in their episode ranking list toggle the flag
+        if (episodeRankingRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setMoreEpisodeRanking(true);
+        }
+
+        userDetails.setReviews(getUserReviews(userId));
         return userDetails;
     }
 

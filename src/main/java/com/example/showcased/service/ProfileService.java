@@ -60,14 +60,12 @@ public class ProfileService {
 
     public ProfileDetailsDto getProfileDetails(HttpSession session) {
         Long id = (Long) session.getAttribute("user");
-        Optional<User> user = this.userRepository.findById(id);
-
-        if (user.isEmpty()) {
-            throw new UserNotFoundException(id);
-        }
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
 
         ProfileDetailsDto profileDetails = new ProfileDetailsDto();
-        profileDetails.setUsername(user.get().getUsername());
+        profileDetails.setUsername(user.getUsername());
+        profileDetails.setProfilePicture(user.getProfilePicture());
         profileDetails.setWatchlistTop(getWatchlistTop(session));
         profileDetails.setWatchingTop(getWatchingListTop(session));
         profileDetails.setShowRankingTop(getShowRankingListTop(session));

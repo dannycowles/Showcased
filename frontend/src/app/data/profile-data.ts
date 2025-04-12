@@ -7,7 +7,7 @@ import {EpisodeRankingData} from './lists/episode-ranking-data';
 
 export class ProfileData {
   username: string; // TODO
-  profilePicture: string; // TODO
+  profilePicture: string;
   watchlistTop: WatchlistData[];
   moreWatchlist: boolean;
   watchingTop: WatchingData[];
@@ -20,6 +20,7 @@ export class ProfileData {
 
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username'];
+    this.profilePicture = jsonObject['profilePicture'];
 
     this.watchlistTop = jsonObject['watchlistTop'].map(( show: {} ) => {
       return new WatchlistData(show);
