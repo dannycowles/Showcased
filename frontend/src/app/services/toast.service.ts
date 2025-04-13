@@ -23,4 +23,8 @@ export class ToastDisplayService {
   addToEpisodeRankingToast(name: string) {
     this.toastService.success(`Added ${name} to your ranking list`);
   }
+
+  addConflictToast(name: string) {
+    this.toastService.error(`${name} is already on one of your lists`);
+  }
 }

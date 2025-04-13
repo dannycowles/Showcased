@@ -25,8 +25,8 @@ public class ShowController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShowDto> getShowDetails(@PathVariable("id") String id) {
-        ShowDto show = showService.getShowDetails(id);
+    public ResponseEntity<ShowDto> getShowDetails(@PathVariable("id") String id, HttpSession session) {
+        ShowDto show = showService.getShowDetails(id, session);
         return ResponseEntity.ok(show);
     }
 

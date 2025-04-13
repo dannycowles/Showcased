@@ -25,6 +25,9 @@ export class ShowData {
   cast: CastData[];
   streamingOptions: WatchOptionData[];
   buyOptions: WatchOptionData[];
+  onWatchlist: boolean;
+  onWatchingList: boolean;
+  onRankingList: boolean;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.id = jsonObject['id'];
@@ -73,7 +76,11 @@ export class ShowData {
 
     this.buyOptions = jsonObject['buyOptions'].map((option: {}) => {
       return new WatchOptionData(option);
-    })
+    });
+
+    this.onWatchlist = jsonObject['onWatchlist'];
+    this.onWatchingList = jsonObject['onWatchingList'];
+    this.onRankingList = jsonObject['onRankingList'];
   }
 
   get genreString():string {

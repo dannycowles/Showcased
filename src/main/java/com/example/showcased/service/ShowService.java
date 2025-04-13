@@ -1,14 +1,10 @@
 package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
-import com.example.showcased.entity.LikedReviews;
-import com.example.showcased.entity.LikedReviewsId;
-import com.example.showcased.entity.Review;
-import com.example.showcased.entity.ReviewId;
+import com.example.showcased.entity.*;
 import com.example.showcased.exception.AlreadyLikedShowReviewException;
 import com.example.showcased.exception.HaventLikedShowReviewException;
-import com.example.showcased.repository.LikedReviewsRepository;
-import com.example.showcased.repository.ReviewRepository;
+import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -38,11 +35,22 @@ public class ShowService {
 
     private final ReviewRepository reviewRepository;
     private final LikedReviewsRepository likedReviewsRepository;
+    private final WatchlistRepository watchlistRepository;
+    private final WatchingRepository watchingRepository;
+    private final ShowRankingRepository showRankingRepository;
 
-    public ShowService(ReviewRepository reviewRepository, ModelMapper modelMapper, LikedReviewsRepository likedReviewsRepository) {
+    public ShowService(ReviewRepository reviewRepository,
+                       ModelMapper modelMapper,
+                       LikedReviewsRepository likedReviewsRepository,
+                       WatchlistRepository watchlistRepository,
+                       WatchingRepository watchingRepository,
+                       ShowRankingRepository showRankingRepository) {
         this.reviewRepository = reviewRepository;
         this.modelMapper = modelMapper;
         this.likedReviewsRepository = likedReviewsRepository;
+        this.watchlistRepository = watchlistRepository;
+        this.watchingRepository = watchingRepository;
+        this.showRankingRepository = showRankingRepository;
     }
 
     public List<SearchDto> searchShows(String query) {
@@ -88,7 +96,7 @@ public class ShowService {
         return results;
     }
 
-    public ShowDto getShowDetails(String id) {
+    public ShowDto getShowDetails(String id, HttpSession session) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Define headers
@@ -171,6 +179,14 @@ public class ShowService {
 
         show.setStreamOptions(streamingOptions);
         show.setBuyOptions(buyOptions);
+
+        // Check if the user is logged in, if so, check if the show is on watchlist/watching/ranking
+        Long userId = (Long) session.getAttribute("user");
+        if (userId != null) {
+            show.setOnWatchlist(watchlistRepository.existsById(new WatchId(userId, Long.parseLong(id))));
+            show.setOnWatchingList(watchingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
+            show.setOnRankingList(showRankingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
+        }
 
         return show;
     }

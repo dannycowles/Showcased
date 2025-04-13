@@ -35,7 +35,9 @@ export class ShowService {
    */
   async fetchShowDetails(showId: number): Promise<ShowData> {
     try {
-      let response = await fetch(`${this.baseUrl}/${showId}`);
+      let response = await fetch(`${this.baseUrl}/${showId}`, {
+        credentials: 'include'
+      });
 
       // If the show was not found then redirect the user to the 404 page
       if (response.status === 500) {

@@ -66,16 +66,34 @@
 
   <br>
   <br>
-  <button (click)="addShowToWatchlist()">Add to Watchlist</button>
+
+  @if (show.onWatchlist) {
+    <button class="btn btn-danger" (click)="removeShowFromWatchlist()">Remove from Watchlist</button>
+  } @else {
+    <button class="btn btn-success" (click)="addShowToWatchlist()">Add to Watchlist</button>
+  }
+  
   <br>
   <br>
-  <button (click)="addShowToWatchingList()">Add to Currently Watching</button>
+
+  @if (show.onWatchingList) {
+    <button class="btn btn-danger" (click)="removeShowFromWatchingList()">Remove from Currently Watching</button>
+  } @else {
+    <button class="btn btn-success" (click)="addShowToWatchingList()">Add to Currently Watching</button>
+  }
+
   <br>
   <br>
-  <button (click)="addShowToRankingList()">Add to Ranking List</button>
+
+  @if (show.onRankingList) {
+    <button class="btn btn-danger" (click)="removeShowFromRankingList()">Remove from Ranking List</button>
+  } @else {
+    <button class="btn btn-success" (click)="addShowToRankingList()">Add to Ranking List</button>
+  }
+
   <br>
   <br>
-  <button (click)="addReviewPressed()" type="button" data-bs-toggle="modal" data-bs-target="#reviewModal">
+  <button class="btn btn-primary" (click)="addReviewPressed()" type="button" data-bs-toggle="modal" data-bs-target="#reviewModal">
     Add Review
   </button>
 

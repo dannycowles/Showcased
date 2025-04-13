@@ -69,6 +69,10 @@ public class ShowDto {
 
     private List<WatchOptionDto> buyOptions = new ArrayList<>();
 
+    private boolean onWatchlist = false;
+    private boolean onWatchingList = false;
+    private boolean onRankingList = false;
+
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {
             this.backdropPath = "https://image.tmdb.org/t/p/w1280" + backdropPath;

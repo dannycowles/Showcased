@@ -54,6 +54,11 @@ export class ShowPageComponent implements OnInit {
 
   // Adds the current show to the user's watchlist
   async addShowToWatchlist() {
+    if (this.isUserListConflict()) {
+      this.toastService.addConflictToast(this.show.name);
+      return;
+    }
+
     try {
       let data = {
         "showId": this.showId,
@@ -65,14 +70,29 @@ export class ShowPageComponent implements OnInit {
       if (response.status == 201) {
         // Display a toast that confirms the show was successfully added
         this.toastService.addToWatchlistToast(this.show.name);
+        this.show.onWatchlist = true;
       }
     } catch (error) {
       console.error(error);
     }
   }
 
+  async removeShowFromWatchlist() {
+    try {
+      await this.profileService.removeShowFromWatchlist(this.showId);
+      this.show.onWatchlist = false;
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
   // Adds the current show to the user's currently watching list
   async addShowToWatchingList() {
+    if (this.isUserListConflict()) {
+      this.toastService.addConflictToast(this.show.name);
+      return;
+    }
+
     try {
       let data = {
         "showId": this.showId,
@@ -84,14 +104,29 @@ export class ShowPageComponent implements OnInit {
       if (response.status == 201) {
         // Display a toast that confirms the show was successfully added
         this.toastService.addToWatchingListToast(this.show.name);
+        this.show.onWatchingList = true;
       }
     } catch (error) {
       console.error(error);
     }
   }
 
+  async removeShowFromWatchingList() {
+    try {
+      await this.profileService.removeShowFromWatchingList(this.showId);
+      this.show.onWatchingList = false;
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
   // Adds the current show to the user's ranking list
   async addShowToRankingList() {
+    if (this.isUserListConflict()) {
+      this.toastService.addConflictToast(this.show.name);
+      return;
+    }
+
     try {
       let data = {
         "showId": this.showId,
@@ -103,8 +138,18 @@ export class ShowPageComponent implements OnInit {
       if (response.status == 201) {
         // Display a toast that confirms the show was successfully added
         this.toastService.addToShowRankingToast(this.show.name);
+        this.show.onRankingList = true;
       }
     } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async removeShowFromRankingList() {
+    try {
+      await this.profileService.removeShowFromRankingList(this.showId);
+      this.show.onRankingList = false;
+    } catch(error) {
       console.error(error);
     }
   }
@@ -129,6 +174,13 @@ export class ShowPageComponent implements OnInit {
     } catch(error) {
       console.error(error);
     }
+  }
+
+  // This method is called whenever a user attempts to add a show to any of their lists
+  // If the user already has a show on ANY of their lists it cannot be added to another one
+  // It wouldn't make sense for a show to be both on watchlist and currently watching for instance
+  isUserListConflict(): boolean {
+    return (this.show.onWatchingList || this.show.onWatchlist || this.show.onRankingList);
   }
 
   // Triggered when the user enters or pastes into the review commentary box, computes and display the remaining characters
