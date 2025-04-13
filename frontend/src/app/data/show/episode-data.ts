@@ -1,12 +1,12 @@
 export class EpisodeData {
-  name: string;
-  showName: string;
-  overview: string;
-  imdbRating: string;
-  imdbVotes: number;
-  runtime: number;
-  airDate: Date;
-  stillPath: string;
+  readonly name: string;
+  readonly showName: string;
+  readonly overview: string;
+  readonly imdbRating: string;
+  readonly imdbVotes: number;
+  readonly runtime: number;
+  readonly airDate: Date;
+  readonly stillPath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.name = jsonObject['name'];

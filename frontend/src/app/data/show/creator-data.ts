@@ -1,7 +1,7 @@
 export class CreatorData {
-  id: number;
-  name: string;
-  profilePath: string;
+  readonly id: number;
+  readonly name: string;
+  readonly profilePath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.id = jsonObject['id'];

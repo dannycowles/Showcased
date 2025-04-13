@@ -10,15 +10,15 @@ import {UserService} from '../../../services/user.service';
   standalone: false
 })
 export class UserShowRankingPageComponent implements OnInit {
-  userId: number;
+  readonly userId: number;
   rankingEntries: ShowRankingData[];
 
   constructor(private route: ActivatedRoute,
-              private userService: UserService) { };
+              private userService: UserService) {
+    this.userId = this.route.snapshot.params['id'];
+  };
 
   async ngOnInit() {
-    this.userId = this.route.snapshot.params['id'];
-
     // Retrieve full show ranking list for user
     try {
       this.rankingEntries = await this.userService.getFullShowRankingList(this.userId);

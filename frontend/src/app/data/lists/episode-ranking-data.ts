@@ -1,11 +1,11 @@
 export class EpisodeRankingData {
-  showId: number;
+  readonly showId: number;
   rankNum: number;
-  showTitle: string;
-  episodeTitle: string;
-  season: number;
-  episode: number;
-  posterPath: string;
+  readonly showTitle: string;
+  readonly episodeTitle: string;
+  readonly season: number;
+  readonly episode: number;
+  readonly posterPath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.showId = jsonObject['showId'];

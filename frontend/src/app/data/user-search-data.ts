@@ -1,7 +1,7 @@
 export class UserSearchData {
-  id: number;
-  username: string;
-  profilePicture: string;
+  readonly id: number;
+  readonly username: string;
+  readonly profilePicture: string;
 
   constructor(jsonObject: { [key: string]: any })  {
     this.id = jsonObject['id'];

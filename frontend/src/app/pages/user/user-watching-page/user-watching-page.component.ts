@@ -10,15 +10,15 @@ import {UserService} from '../../../services/user.service';
   standalone: false
 })
 export class UserWatchingPageComponent implements OnInit {
-  userId: number;
+  readonly userId: number;
   watchingEntries: WatchingData[];
 
   constructor(private route: ActivatedRoute,
-              private userService: UserService) { };
+              private userService: UserService) {
+    this.userId = this.route.snapshot.params['id'];
+  };
 
   async ngOnInit() {
-    this.userId = this.route.snapshot.params['id'];
-
     // Retrieve full watching list for the user
     try {
       this.watchingEntries = await this.userService.getFullWatchingList(this.userId);

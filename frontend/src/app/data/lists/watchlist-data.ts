@@ -1,7 +1,7 @@
 export class WatchlistData {
-  showId: number;
-  title: string;
-  posterPath: string;
+  readonly showId: number;
+  readonly title: string;
+  readonly posterPath: string;
 
   constructor(jsonObject: { [key : string]: any }) {
     this.showId = jsonObject['showId'];

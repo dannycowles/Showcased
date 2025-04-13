@@ -12,19 +12,19 @@ import {UtilsService} from '../../../services/utils.service';
   standalone: false
 })
 export class SeasonPageComponent implements OnInit {
-  showId: number;
-  seasonNumber: number;
+  readonly showId: number;
+  readonly seasonNumber: number;
   season: SeasonData
   numSeasons: number;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
-              public utilsService: UtilsService) {}
-
-  async ngOnInit() {
+              public utilsService: UtilsService) {
     this.showId = this.route.snapshot.params['id'];
     this.seasonNumber = this.route.snapshot.params['seasonNumber'];
+  }
 
+  async ngOnInit() {
     // Retrieve season details from backend
     try {
       this.season = await this.showService.fetchSeasonDetails(this.showId, this.seasonNumber);

@@ -1,10 +1,10 @@
 import {SeasonEpisode} from './season-episode';
 
 export class SeasonData {
-  overview: string;
-  seasonNumber: number;
-  posterPath: string;
-  episodes: SeasonEpisode[];
+  readonly overview: string;
+  readonly seasonNumber: number;
+  readonly posterPath: string;
+  readonly episodes: SeasonEpisode[];
 
   constructor(jsonObject: { [key: string]: any }) {
     this.overview = jsonObject['overview'];

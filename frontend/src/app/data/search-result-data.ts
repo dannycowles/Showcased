@@ -1,9 +1,9 @@
 export class SearchResultData {
-  id: number;
-  name: string;
-  firstAirDate: number;
-  lastAirDate: number;
-  posterPath: string;
+  readonly id: number;
+  readonly name: string;
+  readonly firstAirDate: number;
+  readonly lastAirDate: number;
+  readonly posterPath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.id = jsonObject['id'];

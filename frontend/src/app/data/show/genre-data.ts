@@ -1,6 +1,6 @@
 export class GenreData {
-  id: number;
-  name: string;
+  readonly id: number;
+  readonly name: string;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.id = jsonObject['id'];

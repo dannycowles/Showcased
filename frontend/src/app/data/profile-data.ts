@@ -6,17 +6,17 @@ import {ShowRankingData} from './lists/show-ranking-data';
 import {EpisodeRankingData} from './lists/episode-ranking-data';
 
 export class ProfileData {
-  username: string; // TODO
+  readonly username: string;
   profilePicture: string;
-  watchlistTop: WatchlistData[];
-  moreWatchlist: boolean;
-  watchingTop: WatchingData[];
-  moreWatching: boolean;
-  showRankingTop: ShowRankingData[];
-  moreShowRanking: boolean;
-  episodeRankingTop: EpisodeRankingData[];
-  moreEpisodeRanking: boolean;
-  reviews: ReviewData[];
+  readonly watchlistTop: WatchlistData[];
+  readonly moreWatchlist: boolean;
+  readonly watchingTop: WatchingData[];
+  readonly moreWatching: boolean;
+  readonly showRankingTop: ShowRankingData[];
+  readonly moreShowRanking: boolean;
+  readonly episodeRankingTop: EpisodeRankingData[];
+  readonly moreEpisodeRanking: boolean;
+  readonly reviews: ReviewData[];
 
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username'];

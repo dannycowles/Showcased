@@ -1,8 +1,8 @@
 export class ShowRankingData {
-  showId: number;
+  readonly showId: number;
   rankNum: number;
-  title: string;
-  posterPath: string;
+  readonly title: string;
+  readonly posterPath: string;
 
   constructor(jsonObject: { [key : string]: any }) {
     this.showId = jsonObject['showId'];

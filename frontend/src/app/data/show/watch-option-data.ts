@@ -1,6 +1,6 @@
 export class WatchOptionData {
-  name: string;
-  logoPath: string;
+  readonly name: string;
+  readonly logoPath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.name = jsonObject['name'];

@@ -18,7 +18,7 @@ import {ShowData} from '../../../data/show/show-data';
   standalone: false
 })
 export class ShowPageComponent implements OnInit {
-  showId: number;
+  readonly showId: number;
   show: ShowData;
   reviews: ReviewData[];
 
@@ -28,11 +28,10 @@ export class ShowPageComponent implements OnInit {
               private toastService: ToastDisplayService,
               public utilsService: UtilsService,
               private authService: AuthenticationService) {
+    this.showId = this.route.snapshot.params['id'];
   }
 
   async ngOnInit() {
-    this.showId = this.route.snapshot.params['id'];
-
     // Retrieve show data from backend
     try {
       this.show = await this.showService.fetchShowDetails(this.showId);

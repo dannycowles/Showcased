@@ -1,8 +1,8 @@
 export class CastData {
-  id: number;
-  name: string;
-  character: string;
-  profilePath: string;
+  readonly id: number;
+  readonly name: string;
+  readonly character: string;
+  readonly profilePath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.id = jsonObject['id'];

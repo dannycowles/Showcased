@@ -14,22 +14,22 @@ import {UtilsService} from '../../../services/utils.service';
   standalone: false
 })
 export class EpisodePageComponent implements OnInit {
-  showId: number;
-  seasonNumber: number;
-  episodeNumber: number;
+  readonly showId: number;
+  readonly seasonNumber: number;
+  readonly episodeNumber: number;
   episode: EpisodeData;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
               private profileService: ProfileService,
               private toastService: ToastDisplayService,
-              public utilsService: UtilsService) { }
-
-  async ngOnInit() {
+              public utilsService: UtilsService) {
     this.showId = this.route.snapshot.params['id'];
     this.seasonNumber = this.route.snapshot.params['seasonNumber'];
     this.episodeNumber = this.route.snapshot.params['episodeNumber'];
+  }
 
+  async ngOnInit() {
     // Fetch episode details from the backend
     try {
       this.episode = await this.showService.fetchEpisodeDetails(this.showId, this.seasonNumber, this.episodeNumber);

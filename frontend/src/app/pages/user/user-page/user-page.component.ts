@@ -11,17 +11,17 @@ import {UtilsService} from '../../../services/utils.service';
   standalone: false
 })
 export class UserPageComponent implements OnInit {
-  userId: number;
+  readonly userId: number;
   userDetails: ProfileData;
-  numTop: number = 10; // Holds the number of entries shown per list on showcase page
+  readonly numTop: number = 10; // Holds the number of entries shown per list on showcase page
 
   constructor(private route: ActivatedRoute,
               private userService: UserService,
-              public utilsService: UtilsService) {}
+              public utilsService: UtilsService) {
+    this.userId = this.route.snapshot.params['id'];
+  }
 
   async ngOnInit() {
-    this.userId = this.route.snapshot.params['id'];
-
     // Retrieve user details from the backend
     try {
       this.userDetails = await this.userService.getUserDetails(this.userId);

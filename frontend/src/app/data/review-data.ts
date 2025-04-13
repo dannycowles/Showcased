@@ -1,17 +1,17 @@
 import {UtilsService} from '../services/utils.service';
 
 export class ReviewData {
-  id: number;
-  showTitle: string;
-  reviewerUsername: string;
-  reviewerProfilePicture: string;
-  reviewerId: number;
-  rating: number;
-  commentary: string;
-  containsSpoilers: boolean;
+  readonly id: number;
+  readonly showTitle: string;
+  readonly reviewerUsername: string;
+  readonly reviewerProfilePicture: string;
+  readonly reviewerId: number;
+  readonly rating: number;
+  readonly commentary: string;
+  readonly containsSpoilers: boolean;
   likes: number;
-  reviewDate: Date;
-  utilsService: UtilsService
+  readonly reviewDate: Date;
+  readonly utilsService: UtilsService
 
   constructor(jsonObject: { [key: string]: any }, utilsService: UtilsService) {
     this.id = jsonObject['id'];
