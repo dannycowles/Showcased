@@ -5,6 +5,10 @@
 
   <br>
   <br>
+  <input type="file" accept="image/jpeg, image/png" required (change)="onFileSelected($event)">
+
+  <br>
+  <br>
   <h3>Watchlist</h3>
   @if (profileData.watchlistTop.length != 0) {
     @for (show of profileData.watchlistTop; track show.showId) {

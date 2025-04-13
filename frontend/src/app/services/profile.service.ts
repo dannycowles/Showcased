@@ -38,6 +38,19 @@ export class ProfileService {
     }
   }
 
+  async uploadProfilePicture(formData: FormData): Promise<string> {
+    try {
+      let response = await fetch(`${this.baseUrl}/profile-picture`, {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      });
+      return await response.text();
+    } catch(error) {
+      throw error;
+    }
+  }
+
   /**
    * Adds a show to the logged-in user's watchlist
    * @param data

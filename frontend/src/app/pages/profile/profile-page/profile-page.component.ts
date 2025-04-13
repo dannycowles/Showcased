@@ -11,6 +11,7 @@ import {UtilsService} from '../../../services/utils.service';
 })
 export class ProfilePageComponent implements OnInit {
   profileData: ProfileData;
+  objectUrl: string | null = null;
 
   constructor(private profileService: ProfileService,
               public utilsService: UtilsService) { }
@@ -21,6 +22,28 @@ export class ProfilePageComponent implements OnInit {
       this.profileData = await this.profileService.getProfileDetails();
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async onFileSelected(event: any) {
+    let file: File = event.target.files[0];
+
+    // Immediately show the preview image without waiting for S3
+    this.objectUrl = URL.createObjectURL(file);
+    this.profileData.profilePicture = this.objectUrl;
+
+    if (file) {
+      let formData: FormData = new FormData();
+      formData.append('file', file);
+
+      try {
+        this.profileData.profilePicture = await this.profileService.uploadProfilePicture(formData) + "?t=" + new Date().getTime();
+
+        // Clean up the object URL
+        URL.revokeObjectURL(this.objectUrl);
+      } catch(error) {
+        console.error(error);
+      }
     }
   }
 
