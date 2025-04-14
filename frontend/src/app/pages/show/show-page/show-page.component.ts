@@ -21,6 +21,7 @@ export class ShowPageComponent implements OnInit {
   readonly showId: number;
   show: ShowData;
   reviews: ReviewData[];
+  readonly heartSize: number = 100;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
@@ -153,29 +154,16 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  // Likes a show review
-  async likeShowReview(reviewId: number) {
+  async toggleLikeState(review: ReviewData) {
     try {
-      await this.showService.likeShowReview(reviewId);
-
-      // Update the frontend for the user, increment the review's like count by 1 and raise liked flag
-      let review: ReviewData = this.reviews.find((r) => r.id === reviewId);
-      review.likes++;
-      review.likedByUser = true;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  // Unlikes a show review
-  async unlikeShowReview(reviewId: number) {
-    try {
-      await this.showService.unlikeShowReview(reviewId);
-
-      // Update the frontend for the user, decrement the review's like count by 1 and lower liked flag
-      let review: ReviewData = this.reviews.find((r) => r.id === reviewId);
-      review.likes--;
-      review.likedByUser = false;
+      review.likedByUser = !review.likedByUser;
+      if (review.likedByUser) {
+        await this.showService.likeShowReview(review.id);
+        review.likes++;
+      } else {
+        await this.showService.unlikeShowReview(review.id);
+        review.likes--;
+      }
     } catch (error) {
       console.error(error);
     }

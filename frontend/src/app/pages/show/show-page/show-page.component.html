@@ -167,11 +167,7 @@
       <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
 
       <div id="like-div">
-        @if (review.likedByUser) {
-          <i class="bi bi-heart-fill review-heart fs-3" (click)="unlikeShowReview(review.id)"></i>
-        } @else {
-          <i class="bi bi-heart review-heart fs-3" (click)="likeShowReview(review.id)"></i>
-        }
+        <yt-button-heart [isLiked]="review.likedByUser" [size]="heartSize" (click)="toggleLikeState(review)"></yt-button-heart>
         <div id="like-count">{{review.likes}}</div>
       </div>
       <br>

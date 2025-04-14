@@ -16,10 +16,8 @@
 #like-div {
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
 #like-count {
-  vertical-align: middle;
   font-size: 1.5rem;
 }

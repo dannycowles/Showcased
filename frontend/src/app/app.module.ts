@@ -31,6 +31,8 @@ import {UserShowRankingPageComponent} from './pages/user/user-show-ranking-page/
 import {UserEpisodeRankingPageComponent} from './pages/user/user-episode-ranking-page/user-episode-ranking-page.component';
 import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset-password-page.component';
 import {NgOtpInputModule} from 'ng-otp-input';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ButtonHeartComponent} from './pages/show/button-heart.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +67,9 @@ import {NgOtpInputModule} from 'ng-otp-input';
     AngularToastifyModule,
     DragDropModule,
     NgOtpInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    ButtonHeartComponent
   ],
   providers: [ToastService],
   bootstrap: [AppComponent]
