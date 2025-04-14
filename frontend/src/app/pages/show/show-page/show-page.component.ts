@@ -157,6 +157,25 @@ export class ShowPageComponent implements OnInit {
   async likeShowReview(reviewId: number) {
     try {
       await this.showService.likeShowReview(reviewId);
+
+      // Update the frontend for the user, increment the review's like count by 1 and raise liked flag
+      let review: ReviewData = this.reviews.find((r) => r.id === reviewId);
+      review.likes++;
+      review.likedByUser = true;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Unlikes a show review
+  async unlikeShowReview(reviewId: number) {
+    try {
+      await this.showService.unlikeShowReview(reviewId);
+
+      // Update the frontend for the user, decrement the review's like count by 1 and lower liked flag
+      let review: ReviewData = this.reviews.find((r) => r.id === reviewId);
+      review.likes--;
+      review.likedByUser = false;
     } catch (error) {
       console.error(error);
     }

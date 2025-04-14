@@ -72,7 +72,7 @@
   } @else {
     <button class="btn btn-success" (click)="addShowToWatchlist()">Add to Watchlist</button>
   }
-  
+
   <br>
   <br>
 
@@ -134,7 +134,7 @@
   <h2>Cast</h2>
   @if (show.cast.length != 0) {
     @for (cast of show.cast; track cast.id) {
-      <h4>Actor: {{cast.name}} as {{cast.character}}</h4>
+      <h4>{{cast.name}} as {{cast.character}}</h4>
       <!-- Profile images are sized w185, using 2:3 ratio -->
       <img [ngSrc]="cast.profilePath" alt="Actor Picture" width="185" height="278" priority>
     }
@@ -146,7 +146,7 @@
   <h2>Creator(s)</h2>
   @if (show.creators.length != 0) {
     @for (creator of show.creators; track creator.id) {
-      <h4>Name: {{creator.name}}</h4>
+      <h4>{{creator.name}}</h4>
       <!-- Profile images are sized w185, using 2:3 ratio -->
       <img [ngSrc]="creator.profilePath" alt="Actor Picture" width="185" height="278" priority>
     }
@@ -159,19 +159,24 @@
   <h2>Reviews</h2>
   @if (reviews.length != 0) {
     @for (review of reviews; track review.id) {
-      <h4>Username: {{review.reviewerUsername}}</h4>
+      <h4>{{review.reviewerUsername}}</h4>
+      <h4>{{review.relativeDate}}</h4>
       <img id="profile-picture" [ngSrc]="review.reviewerProfilePicture" alt="Profile Picture" width="100" height="100">
-      <h4>Date: {{utilsService.getFormattedDate(review.reviewDate)}}</h4>
-      <h4>Relative Time Since Review: {{review.relativeDate}}</h4>
       <h4>Rating: {{review.rating}}</h4>
       <h4>Commentary: {{review.commentary}}</h4>
       <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
-      <h4>Likes: {{review.likes}}</h4>
-      <button (click)="likeShowReview(review.id)">Like</button>
+
+      <div id="like-div">
+        @if (review.likedByUser) {
+          <i class="bi bi-heart-fill review-heart fs-3" (click)="unlikeShowReview(review.id)"></i>
+        } @else {
+          <i class="bi bi-heart review-heart fs-3" (click)="likeShowReview(review.id)"></i>
+        }
+        <div id="like-count">{{review.likes}}</div>
+      </div>
       <br>
     }
   } @else {
     <h4>No Reviews for this Show</h4>
   }
-
 }

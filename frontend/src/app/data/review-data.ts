@@ -11,7 +11,8 @@ export class ReviewData {
   readonly containsSpoilers: boolean;
   likes: number;
   readonly reviewDate: Date;
-  readonly utilsService: UtilsService
+  readonly utilsService: UtilsService;
+  likedByUser: boolean;
 
   constructor(jsonObject: { [key: string]: any }, utilsService: UtilsService) {
     this.id = jsonObject['id'];
@@ -25,6 +26,7 @@ export class ReviewData {
     this.likes = jsonObject['numLikes'];
     this.reviewDate = new Date(jsonObject['reviewDate']);
     this.utilsService = utilsService;
+    this.likedByUser = jsonObject['likedByUser'];
   }
 
   /**

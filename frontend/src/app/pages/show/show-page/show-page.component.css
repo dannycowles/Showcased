@@ -4,3 +4,22 @@
   object-fit: cover;
   object-position: center;
 }
+
+.review-heart {
+  color: red;
+}
+
+.review-heart:hover {
+  cursor: pointer;
+}
+
+#like-div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#like-count {
+  vertical-align: middle;
+  font-size: 1.5rem;
+}
