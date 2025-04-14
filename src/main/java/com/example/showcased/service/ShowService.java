@@ -337,8 +337,20 @@ public class ShowService {
         reviewRepository.save(newReview);
     }
 
-    public List<ReviewWithUserInfoDto> getShowReviews(Long showId) {
-        return reviewRepository.findAllByShowId(showId);
+    public List<ReviewWithUserInfoDto> getShowReviews(Long showId, HttpSession session) {
+        List<ReviewWithUserInfoDto> reviews = reviewRepository.findAllByShowId(showId);
+
+        // If the user is logged in, we will check which review(s) are liked by them and update the list as necessary
+        Long userId = (Long) session.getAttribute("user");
+        if (userId != null) {
+            List<Long> likedReviewIds = likedReviewsRepository.findReviewIdsLikedByUserAndShow(userId, showId);
+            for (ReviewWithUserInfoDto review : reviews) {
+                if (likedReviewIds.contains(review.getId())) {
+                    review.setLikedByUser(true);
+                }
+            }
+        }
+        return reviews;
     }
 
     public void likeShowReview(Long reviewId, HttpSession session) {

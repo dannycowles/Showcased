@@ -21,4 +21,5 @@ public class ReviewWithUserInfoDto {
     private boolean containsSpoilers;
     private Long numLikes;
     private Date reviewDate;
+    private boolean likedByUser;
 }

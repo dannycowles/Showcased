@@ -55,8 +55,8 @@ public class ShowController {
     }
 
     @GetMapping("/{id}/reviews")
-    public List<ReviewWithUserInfoDto> getShowReviews(@PathVariable Long id) {
-        return showService.getShowReviews(id);
+    public List<ReviewWithUserInfoDto> getShowReviews(@PathVariable Long id, HttpSession session) {
+        return showService.getShowReviews(id, session);
     }
 
     @PatchMapping("/{reviewId}/like")
