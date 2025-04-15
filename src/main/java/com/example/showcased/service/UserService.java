@@ -1,9 +1,12 @@
 package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
+import com.example.showcased.entity.Follower;
+import com.example.showcased.entity.FollowerId;
 import com.example.showcased.entity.User;
 import com.example.showcased.exception.UserNotFoundException;
 import com.example.showcased.repository.*;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,13 +25,17 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final ReviewRepository reviewRepository;
+    private final FollowersRepository followRepository;
+    private final FollowersRepository followersRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
                        WatchlistRepository watchlistRepository,
                        WatchingRepository watchingRepository,
                        UserRepository userRepository,
-                       ModelMapper modelMapper, ReviewRepository reviewRepository) {
+                       ModelMapper modelMapper,
+                       ReviewRepository reviewRepository,
+                       FollowersRepository followRepository, FollowersRepository followersRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -36,6 +43,8 @@ public class UserService {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.reviewRepository = reviewRepository;
+        this.followRepository = followRepository;
+        this.followersRepository = followersRepository;
     }
 
     public List<UserSearchDto> searchUsers(String query) {
@@ -132,5 +141,16 @@ public class UserService {
 
     public List<ReviewWithUserInfoDto> getUserReviews(Long userId) {
         return reviewRepository.findByUserId(userId);
+    }
+
+    public void followUser(Long followId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        Follower followEntry = new Follower(new FollowerId(userId, followId));
+        followersRepository.save(followEntry);
+    }
+
+    public void unfollowUser(Long unfollowId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        followersRepository.deleteById(new FollowerId(userId, unfollowId));
     }
 }

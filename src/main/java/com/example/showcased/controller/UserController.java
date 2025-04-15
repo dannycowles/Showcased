@@ -2,6 +2,7 @@ package com.example.showcased.controller;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,5 +94,17 @@ public class UserController {
     public ResponseEntity<List<ReviewWithUserInfoDto>> getUserReviews(@PathVariable Long id) {
         List<ReviewWithUserInfoDto> reviews = userService.getUserReviews(id);
         return ResponseEntity.ok(reviews);
+    }
+
+    @PostMapping("{id}/follow")
+    public ResponseEntity<Void> followUser(@PathVariable("id") Long followId, HttpSession session) {
+        userService.followUser(followId, session);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("{id}/unfollow")
+    public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId, HttpSession session) {
+        userService.unfollowUser(unfollowId, session);
+        return ResponseEntity.ok().build();
     }
 }

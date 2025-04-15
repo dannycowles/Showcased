@@ -85,3 +85,11 @@ CREATE TABLE otp_requests (
     PRIMARY KEY(user_id),
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
+
+CREATE TABLE followers (
+    follower_id INT,
+    following_id INT,
+    PRIMARY KEY(follower_id, following_id),
+    FOREIGN KEY(follower_id) REFERENCES users(id),
+    FOREIGN KEY (following_id) REFERENCES users(id)
+)

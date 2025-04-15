@@ -2,6 +2,7 @@ package com.example.showcased.config;
 
 import com.example.showcased.filter.ProfileFilter;
 import com.example.showcased.filter.ShowReviewsFilter;
+import com.example.showcased.filter.UserFilter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,6 +51,15 @@ public class FilterConfig {
         registrationBean.setFilter(new ShowReviewsFilter());
         registrationBean.addUrlPatterns("/show/*");
         registrationBean.setOrder(2);
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<UserFilter> userFilter() {
+        FilterRegistrationBean<UserFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new UserFilter());
+        registrationBean.addUrlPatterns("/user/*");
+        registrationBean.setOrder(3);
         return registrationBean;
     }
 }
