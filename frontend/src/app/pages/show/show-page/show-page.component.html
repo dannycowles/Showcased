@@ -61,39 +61,39 @@
   <img [ngSrc]="show.backdropPath" alt="Show Backdrop" width="1280" height="720" priority>
 
   <!-- Poster images are sized w500, using 2:3 ratio -->
-  <h3>Poster</h3>
-  <img [ngSrc]="show.posterPath" alt="Poster Image" width="500" height="750" priority>
+  <h3 class="ms-2">Poster</h3>
+  <img class="ms-2" [ngSrc]="show.posterPath" alt="Poster Image" width="500" height="750" priority>
 
   <br>
   <br>
 
   @if (show.onWatchlist) {
-    <button class="btn btn-danger" (click)="removeShowFromWatchlist()">Remove from Watchlist</button>
+    <button class="btn btn-danger ms-2" (click)="removeShowFromWatchlist()">Remove from Watchlist</button>
   } @else {
-    <button class="btn btn-success" (click)="addShowToWatchlist()">Add to Watchlist</button>
+    <button class="btn btn-success ms-2" (click)="addShowToWatchlist()">Add to Watchlist</button>
   }
 
   <br>
   <br>
 
   @if (show.onWatchingList) {
-    <button class="btn btn-danger" (click)="removeShowFromWatchingList()">Remove from Currently Watching</button>
+    <button class="btn btn-danger ms-2" (click)="removeShowFromWatchingList()">Remove from Currently Watching</button>
   } @else {
-    <button class="btn btn-success" (click)="addShowToWatchingList()">Add to Currently Watching</button>
+    <button class="btn btn-success ms-2" (click)="addShowToWatchingList()">Add to Currently Watching</button>
   }
 
   <br>
   <br>
 
   @if (show.onRankingList) {
-    <button class="btn btn-danger" (click)="removeShowFromRankingList()">Remove from Ranking List</button>
+    <button class="btn btn-danger ms-2" (click)="removeShowFromRankingList()">Remove from Ranking List</button>
   } @else {
-    <button class="btn btn-success" (click)="addShowToRankingList()">Add to Ranking List</button>
+    <button class="btn btn-success ms-2" (click)="addShowToRankingList()">Add to Ranking List</button>
   }
 
   <br>
   <br>
-  <button class="btn btn-primary" (click)="addReviewPressed()" type="button" data-bs-toggle="modal" data-bs-target="#reviewModal">
+  <button class="btn btn-primary ms-2" (click)="addReviewPressed()" type="button" data-bs-toggle="modal" data-bs-target="#reviewModal">
     Add Review
   </button>
 
@@ -131,48 +131,75 @@
     </div>
   </div>
 
-  <h2>Cast</h2>
-  @if (show.cast.length != 0) {
-    @for (cast of show.cast; track cast.id) {
-      <h4>{{cast.name}} as {{cast.character}}</h4>
-      <!-- Profile images are sized w185, using 2:3 ratio -->
-      <img [ngSrc]="cast.profilePath" alt="Actor Picture" width="185" height="278" priority>
-    }
-  } @else {
-    <h4>No Cast Found</h4>
-  }
+  <h2 class="ms-2">Cast</h2>
+  <div class="container ms-0">
+    <div class="row">
+      @if (show.cast.length != 0) {
+        @for (cast of show.cast; track cast.id) {
+          <div class="col-4 col-sm-4 col-md-3 col-lg-2 mb-4 me-4 d-flex flex-column">
+            <div class="flex-grow-1">
+              <h5>{{cast.name}}</h5>
+              <p class="text-muted mb-0">as {{cast.character}}</p>
+            </div>
+            <div class="mt-auto">
+              <!-- Profile images are sized w185, using 2:3 ratio -->
+              <img [ngSrc]="cast.profilePath" alt="Actor Picture" width="185" height="278" priority>
+            </div>
+          </div>
+        }
+      } @else {
+        <h4 class="ms-2">No Cast Found</h4>
+      }
+    </div>
+  </div>
 
 
-  <h2>Creator(s)</h2>
-  @if (show.creators.length != 0) {
-    @for (creator of show.creators; track creator.id) {
-      <h4>{{creator.name}}</h4>
-      <!-- Profile images are sized w185, using 2:3 ratio -->
-      <img [ngSrc]="creator.profilePath" alt="Actor Picture" width="185" height="278" priority>
-    }
-  } @else {
-    <h4>No Creators Found</h4>
-  }
+  <h2 class="ms-2">Creator(s)</h2>
+  <div class="container ms-0">
+    <div class="row">
+      @if (show.creators.length != 0) {
+        @for (creator of show.creators; track creator.id) {
+          <div class="col-4 col-sm-4 col-md-3 col-lg-2 mb-4 me-4 d-flex flex-column">
+            <div class="flex-grow-1">
+              <h4>{{creator.name}}</h4>
+            </div>
+            <div class="mt-auto">
+              <!-- Profile images are sized w185, using 2:3 ratio -->
+              <img [ngSrc]="creator.profilePath" alt="Actor Picture" width="185" height="278" priority>
+            </div>
+          </div>
+        }
+      } @else {
+        <h4 class="ms-2">No Creators Found</h4>
+      }
+    </div>
+  </div>
 }
 
 @if (reviews) {
-  <h2>Reviews</h2>
+  <h2 class="ms-2 mb-4">Reviews</h2>
   @if (reviews.length != 0) {
     @for (review of reviews; track review.id) {
-      <h4>{{review.reviewerUsername}}</h4>
-      <h4>{{review.relativeDate}}</h4>
-      <img id="profile-picture" [ngSrc]="review.reviewerProfilePicture" alt="Profile Picture" width="100" height="100">
-      <h4>Rating: {{review.rating}}</h4>
-      <h4>Commentary: {{review.commentary}}</h4>
-      <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
-
-      <div id="like-div">
-        <yt-button-heart [isLiked]="review.likedByUser" [size]="heartSize" (click)="toggleLikeState(review)"></yt-button-heart>
-        <div id="like-count">{{review.likes}}</div>
+      <div class="mb-5 ms-2 d-flex flex-row align-items-start">
+        <img id="profile-picture" [ngSrc]="review.reviewerProfilePicture" alt="Profile Picture" width="100" height="100">
+        <div class="ms-3">
+          <div>
+            <h4><a href="/user/{{review.reviewerId}}" class="text-dark">{{review.reviewerUsername}}</a></h4>
+            <p>{{review.relativeDate}}</p>
+          </div>
+          <div>
+            <p>{{review.rating}}/10</p>
+            <p>{{review.commentary}}</p>
+            <p>Contains Spoilers: {{review.containsSpoilers}}</p>
+          </div>
+        </div>
+        <div class="ms-auto me-5 d-flex align-items-center">
+          <yt-button-heart [isLiked]="review.likedByUser" [size]="heartSize" (click)="toggleLikeState(review)"></yt-button-heart>
+          <div id="like-count">{{review.likes}}</div>
+        </div>
       </div>
-      <br>
     }
   } @else {
-    <h4>No Reviews for this Show</h4>
+    <h4 class="ms-2">No Reviews for this Show</h4>
   }
 }

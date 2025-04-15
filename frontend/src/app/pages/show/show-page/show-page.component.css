@@ -3,6 +3,7 @@
   height: 100px;
   object-fit: cover;
   object-position: center;
+  border-radius: 50%;
 }
 
 .review-heart {
@@ -11,11 +12,6 @@
 
 .review-heart:hover {
   cursor: pointer;
-}
-
-#like-div {
-  display: flex;
-  align-items: center;
 }
 
 #like-count {
