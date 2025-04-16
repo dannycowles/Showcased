@@ -108,10 +108,22 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{id}/followers")
+    public ResponseEntity<List<UserSearchDto>> getFollowers(@PathVariable("id") Long id) {
+        List<UserSearchDto> followers = userService.getFollowers(id);
+        return ResponseEntity.ok(followers);
+    }
+
     @GetMapping("/{id}/followers/count")
     public ResponseEntity<Long> getFollowersCount(@PathVariable("id") Long id) {
         Long followersCount = userService.getFollowersCount(id);
         return ResponseEntity.ok(followersCount);
+    }
+
+    @GetMapping("/{id}/following")
+    public ResponseEntity<List<UserSearchDto>> getFollowing(@PathVariable("id") Long id) {
+        List<UserSearchDto> following = userService.getFollowing(id);
+        return ResponseEntity.ok(following);
     }
 
     @GetMapping("/{id}/following/count")

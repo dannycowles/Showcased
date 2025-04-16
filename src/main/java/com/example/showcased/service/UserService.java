@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +26,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final ReviewRepository reviewRepository;
-    private final FollowersRepository followRepository;
     private final FollowersRepository followersRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
@@ -37,7 +35,7 @@ public class UserService {
                        UserRepository userRepository,
                        ModelMapper modelMapper,
                        ReviewRepository reviewRepository,
-                       FollowersRepository followRepository, FollowersRepository followersRepository) {
+                       FollowersRepository followersRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -45,7 +43,6 @@ public class UserService {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.reviewRepository = reviewRepository;
-        this.followRepository = followRepository;
         this.followersRepository = followersRepository;
     }
 
@@ -162,6 +159,14 @@ public class UserService {
         followersRepository.deleteById(new FollowerId(userId, unfollowId));
     }
 
+    public List<UserSearchDto> getFollowers(Long userId) {
+        // Check to make sure user exists in system
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+        return followersRepository.getFollowersByIdFollowingId(userId);
+    }
+
     public Long getFollowersCount(Long userId) {
         // Check to make sure user exists in system
         if (!userRepository.existsById(userId)) {
@@ -170,11 +175,19 @@ public class UserService {
         return followersRepository.countByIdFollowingId(userId);
     }
 
+    public List<UserSearchDto> getFollowing(Long userId) {
+        // Check to make sure user exists in system
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+        return followersRepository.getFollowingByIdFollowerId(userId);
+    }
+
     public Long getFollowingCount(Long userId) {
         // Check to make sure user exists in system
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
-        return followRepository.countByIdFollowerId(userId);
+        return followersRepository.countByIdFollowerId(userId);
     }
 }
