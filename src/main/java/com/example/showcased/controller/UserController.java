@@ -99,12 +99,24 @@ public class UserController {
     @PostMapping("{id}/follow")
     public ResponseEntity<Void> followUser(@PathVariable("id") Long followId, HttpSession session) {
         userService.followUser(followId, session);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("{id}/unfollow")
     public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId, HttpSession session) {
         userService.unfollowUser(unfollowId, session);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/followers/count")
+    public ResponseEntity<Long> getFollowersCount(@PathVariable("id") Long id) {
+        Long followersCount = userService.getFollowersCount(id);
+        return ResponseEntity.ok(followersCount);
+    }
+
+    @GetMapping("/{id}/following/count")
+    public ResponseEntity<Long> getFollowingCount(@PathVariable("id") Long id) {
+        Long followingCount = userService.getFollowingCount(id);
+        return ResponseEntity.ok(followingCount);
     }
 }

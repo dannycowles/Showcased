@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FollowersRepository extends JpaRepository<Follower, FollowerId> {
+    Long countByIdFollowingId(Long followingId);
+    Long countByIdFollowerId(Long followerId);
 }

@@ -125,4 +125,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(new ErrorResponse(ex.getMessage()));
     }
 
+    /**
+     * Exception handler for trying to follow yourself
+     */
+    @ExceptionHandler(FollowSelfException.class)
+    ResponseEntity<ErrorResponse> followSelfHandler(FollowSelfException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
+
 }

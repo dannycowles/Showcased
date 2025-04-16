@@ -4,6 +4,7 @@ import com.example.showcased.dto.*;
 import com.example.showcased.entity.Follower;
 import com.example.showcased.entity.FollowerId;
 import com.example.showcased.entity.User;
+import com.example.showcased.exception.FollowSelfException;
 import com.example.showcased.exception.UserNotFoundException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -145,6 +147,12 @@ public class UserService {
 
     public void followUser(Long followId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
+
+        // Preventive code for if user tries to follow themselves
+        if (userId.equals(followId)) {
+            throw new FollowSelfException("A user cannot follow themselves.");
+        }
+
         Follower followEntry = new Follower(new FollowerId(userId, followId));
         followersRepository.save(followEntry);
     }
@@ -152,5 +160,21 @@ public class UserService {
     public void unfollowUser(Long unfollowId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         followersRepository.deleteById(new FollowerId(userId, unfollowId));
+    }
+
+    public Long getFollowersCount(Long userId) {
+        // Check to make sure user exists in system
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+        return followersRepository.countByIdFollowingId(userId);
+    }
+
+    public Long getFollowingCount(Long userId) {
+        // Check to make sure user exists in system
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+        return followRepository.countByIdFollowerId(userId);
     }
 }
