@@ -5,7 +5,11 @@
 
   <br>
   <br>
-  <input type="file" accept="image/jpeg, image/png" required (change)="onFileSelected($event)">
+  <input type="file" accept="image/jpeg, image/png" required (change)="onFileSelected($event)">\
+
+  <br>
+  <p>Followers: {{profileData.numFollowers}}</p>
+  <p>Following: {{profileData.numFollowing}}</p>
 
   <br>
   <br>

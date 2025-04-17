@@ -25,6 +25,7 @@ public class ProfileService {
     private final EpisodeInfoRepository episodeInfoRepository;
     private final EpisodeRankingRepository episodeRankingRepository;
     private final UserRepository userRepository;
+    private final FollowersRepository followersRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -34,7 +35,8 @@ public class ProfileService {
                           ReviewRepository reviewRepository,
                           EpisodeInfoRepository episodeInfoRepository,
                           EpisodeRankingRepository episodeRankingRepository,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          FollowersRepository followersRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -44,6 +46,7 @@ public class ProfileService {
         this.episodeInfoRepository = episodeInfoRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.userRepository = userRepository;
+        this.followersRepository = followersRepository;
     }
 
     /**
@@ -70,6 +73,8 @@ public class ProfileService {
         profileDetails.setShowRankingTop(getShowRankingListTop(session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingListTop(session));
         profileDetails.setReviews(getReviews(session));
+        profileDetails.setNumFollowers(getFollowersCount(session));
+        profileDetails.setNumFollowing(getFollowingCount(session));
         return profileDetails;
     }
 
@@ -283,5 +288,21 @@ public class ProfileService {
 
     public List<ReviewWithUserInfoDto> getReviews(HttpSession session) {
         return reviewRepository.findByUserId((Long) session.getAttribute("user"));
+    }
+
+    public List<UserSearchDto> getFollowers(HttpSession session) {
+        return followersRepository.getFollowersByIdFollowingId((Long) session.getAttribute("user"));
+    }
+
+    public Long getFollowersCount(HttpSession session) {
+        return followersRepository.countByIdFollowingId((Long) session.getAttribute("user"));
+    }
+
+    public List<UserSearchDto> getFollowing(HttpSession session) {
+        return followersRepository.getFollowingByIdFollowerId((Long) session.getAttribute("user"));
+    }
+
+    public Long getFollowingCount(HttpSession session) {
+        return followersRepository.countByIdFollowerId((Long) session.getAttribute("user"));
     }
 }

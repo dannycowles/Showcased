@@ -3,6 +3,7 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.FileService;
 import com.example.showcased.service.ProfileService;
+import com.example.showcased.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -171,5 +172,29 @@ public class ProfileController {
     public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, HttpSession session) {
         String fileUrl = fileService.uploadProfilePicture(file, session);
         return ResponseEntity.ok(fileUrl);
+    }
+
+    @GetMapping("/followers")
+    public ResponseEntity<List<UserSearchDto>> getFollowers(HttpSession session) {
+        List<UserSearchDto> followers = profileService.getFollowers(session);
+        return ResponseEntity.ok(followers);
+    }
+
+    @GetMapping("/followers/count")
+    public ResponseEntity<Long> getFollowersCount(HttpSession session) {
+        Long followersCount = profileService.getFollowersCount(session);
+        return ResponseEntity.ok(followersCount);
+    }
+
+    @GetMapping("/following")
+    public ResponseEntity<List<UserSearchDto>> getFollowing(HttpSession session) {
+        List<UserSearchDto> following = profileService.getFollowing(session);
+        return ResponseEntity.ok(following);
+    }
+
+    @GetMapping("/following/count")
+    public ResponseEntity<Long> getFollowingCount(HttpSession session) {
+        Long followingCount = profileService.getFollowingCount(session);
+        return ResponseEntity.ok(followingCount);
     }
 }

@@ -17,6 +17,8 @@ export class ProfileData {
   readonly episodeRankingTop: EpisodeRankingData[];
   readonly moreEpisodeRanking: boolean;
   readonly reviews: ReviewData[];
+  numFollowers: number;
+  numFollowing: number;
 
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username'];
@@ -45,5 +47,8 @@ export class ProfileData {
     this.reviews = jsonObject['reviews'].map(( review: {} ) => {
       return new ReviewData(review, new UtilsService());
     });
+
+    this.numFollowers = jsonObject['numFollowers'];
+    this.numFollowing = jsonObject['numFollowing'];
   }
 }
