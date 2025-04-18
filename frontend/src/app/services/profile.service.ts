@@ -4,6 +4,8 @@ import {WatchlistData} from '../data/lists/watchlist-data';
 import {WatchingData} from '../data/lists/watching-data';
 import {ShowRankingData} from '../data/lists/show-ranking-data';
 import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
+import {error} from 'jquery';
+import {UserSearchData} from '../data/user-search-data';
 
 @Injectable({
   providedIn: 'root'
@@ -417,4 +419,51 @@ export class ProfileService {
       throw error;
     }
   }
+
+  /**
+   * Retrieves a list of all the users currently following the logged-in user
+   */
+  async getFollowersList(): Promise<UserSearchData[]> {
+    try {
+      let response = await fetch(`${this.baseUrl}/followers`, {
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+
+      let data = await response.json();
+      return data.map((user: {}) => {
+        return new UserSearchData(user);
+      });
+    }catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves a list of all the users the logged-in user is following
+   */
+  async getFollowingList(): Promise<UserSearchData[]> {
+    try {
+      let response = await fetch(`${this.baseUrl}/following`, {
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+
+      let data = await response.json();
+      return data.map((user: {}) => {
+        return new UserSearchData(user);
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
+
 }

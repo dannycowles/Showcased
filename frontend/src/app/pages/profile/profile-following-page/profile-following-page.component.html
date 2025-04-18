@@ -1,0 +1,10 @@
+<h1>Profile Following Page</h1>
+
+@if (followingEntries?.length != 0) {
+    @for (user of followingEntries; track user.id) {
+      <h3>{{user.username}}</h3>
+      <img [ngSrc]="user.profilePicture" alt="User Profile Picture" width="100" height="100">
+    }
+} @else {
+  <p>Not following anyone yet!</p>
+}

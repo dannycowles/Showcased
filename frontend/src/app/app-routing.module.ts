@@ -22,6 +22,8 @@ import {UserWatchingPageComponent} from './pages/user/user-watching-page/user-wa
 import {UserShowRankingPageComponent} from './pages/user/user-show-ranking-page/user-show-ranking-page.component';
 import {UserEpisodeRankingPageComponent} from './pages/user/user-episode-ranking-page/user-episode-ranking-page.component';
 import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset-password-page.component';
+import {ProfileFollowersPageComponent} from './pages/profile/profile-followers-page/profile-followers-page.component';
+import {ProfileFollowingPageComponent} from './pages/profile/profile-following-page/profile-following-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -33,6 +35,8 @@ const routes: Routes = [
     { path: 'profile/watching', component: ProfileWatchingPageComponent},
     { path: 'profile/show-ranking', component: ProfileShowRankingPageComponent},
     { path: 'profile/episode-ranking', component: ProfileEpisodeRankingPageComponent},
+    { path: 'profile/followers', component: ProfileFollowersPageComponent},
+    { path: 'profile/following', component: ProfileFollowingPageComponent},
     { path: 'user/:id', component: UserPageComponent},
     { path: 'user/:id/watchlist', component: UserWatchlistPageComponent},
     { path: 'user/:id/watching', component: UserWatchingPageComponent},

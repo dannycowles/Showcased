@@ -33,6 +33,8 @@ import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset
 import {NgOtpInputModule} from 'ng-otp-input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ButtonHeartComponent} from './pages/show/button-heart.component';
+import {ProfileFollowingPageComponent} from './pages/profile/profile-following-page/profile-following-page.component';
+import {ProfileFollowersPageComponent} from './pages/profile/profile-followers-page/profile-followers-page.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +58,9 @@ import {ButtonHeartComponent} from './pages/show/button-heart.component';
     UserWatchingPageComponent,
     UserShowRankingPageComponent,
     UserEpisodeRankingPageComponent,
-    ResetPasswordPageComponent
+    ResetPasswordPageComponent,
+    ProfileFollowingPageComponent,
+    ProfileFollowersPageComponent
   ],
   imports: [
     BrowserModule,
