@@ -20,5 +20,4 @@ export class ProfileFollowersPageComponent implements OnInit {
       console.error(error);
     }
   };
-
 }

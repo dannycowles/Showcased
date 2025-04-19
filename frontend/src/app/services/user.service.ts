@@ -110,4 +110,20 @@ export class UserService {
       throw error;
     }
   }
+
+  /**
+   * Unfollows the user with the specified id
+   * @param id
+   */
+  async unfollowUser(id: number) {
+    try {
+      let response: Response = await fetch(`${this.baseUrl}/${id}/unfollow`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
