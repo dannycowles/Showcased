@@ -8,8 +8,17 @@
   <input type="file" accept="image/jpeg, image/png" required (change)="onFileSelected($event)">\
 
   <br>
-  <p>Followers: {{profileData.numFollowers}}</p>
-  <p>Following: {{profileData.numFollowing}}</p>
+
+  <div class="d-flex m-3 gap-5">
+    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/profile/followers">
+      <h3>{{profileData.numFollowers}}</h3>
+      <h4>Followers</h4>
+    </a>
+    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/profile/following">
+      <h3>{{profileData.numFollowing}}</h3>
+      <h4>Following</h4>
+    </a>
+  </div>
 
   <br>
   <br>
