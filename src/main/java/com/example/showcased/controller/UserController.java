@@ -114,6 +114,12 @@ public class UserController {
         return ResponseEntity.ok(followers);
     }
 
+    @DeleteMapping("/followers/{id}")
+    public ResponseEntity<Void> removeFollower(@PathVariable("id") Long id, HttpSession session) {
+        userService.removeFollower(id, session);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}/followers/count")
     public ResponseEntity<Long> getFollowersCount(@PathVariable("id") Long id) {
         Long followersCount = userService.getFollowersCount(id);

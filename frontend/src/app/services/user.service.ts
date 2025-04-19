@@ -126,4 +126,34 @@ export class UserService {
     }
   }
 
+  /**
+   * Follows the user with the specified id
+   * @param id
+   */
+  async followUser(id: number) {
+    try {
+      let response: Response = await fetch(`${this.baseUrl}/${id}/follow`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Removes the specified id from the logged-in user's following list
+   * @param id
+   */
+  async removeFollower(id: number) {
+    try {
+      let response: Response = await fetch(`${this.baseUrl}/followers/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

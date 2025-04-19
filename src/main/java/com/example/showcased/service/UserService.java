@@ -179,6 +179,12 @@ public class UserService {
         followersRepository.deleteById(new FollowerId(userId, unfollowId));
     }
 
+    public void removeFollower(Long removeId, HttpSession session) {
+        ensureUserExists(removeId);
+        Long userId = (Long) session.getAttribute("user");
+        followersRepository.deleteById(new FollowerId(removeId, userId));
+    }
+
     public List<UserSearchDto> getFollowers(Long userId) {
         ensureUserExists(userId);
         return followersRepository.getFollowersByIdFollowingId(userId);
