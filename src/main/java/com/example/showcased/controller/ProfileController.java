@@ -3,7 +3,6 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.FileService;
 import com.example.showcased.service.ProfileService;
-import com.example.showcased.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -159,6 +158,22 @@ public class ProfileController {
         profileService.updateEpisodeRankingList(episodes, session);
         return ResponseEntity.noContent().build();
     }
+
+
+
+
+    @PostMapping("/season-ranking")
+    public ResponseEntity<Void> addSeasonToRankingList(@RequestBody SeasonRankingDto season, HttpSession session) {
+        profileService.addSeasonToRankingList(season, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/season-ranking")
+    public ResponseEntity<List<SeasonRankingReturnDto>> getSeasonRankingList(HttpSession session) {
+        List<SeasonRankingReturnDto> ranking = profileService.getSeasonRankingList(session);
+        return ResponseEntity.ok(ranking);
+    }
+
 
 
 

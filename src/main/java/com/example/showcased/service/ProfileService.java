@@ -26,6 +26,7 @@ public class ProfileService {
     private final EpisodeRankingRepository episodeRankingRepository;
     private final UserRepository userRepository;
     private final FollowersRepository followersRepository;
+    private final SeasonRankingRepository seasonRankingRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -36,7 +37,8 @@ public class ProfileService {
                           EpisodeInfoRepository episodeInfoRepository,
                           EpisodeRankingRepository episodeRankingRepository,
                           UserRepository userRepository,
-                          FollowersRepository followersRepository) {
+                          FollowersRepository followersRepository,
+                          SeasonRankingRepository seasonRankingRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -47,6 +49,7 @@ public class ProfileService {
         this.episodeRankingRepository = episodeRankingRepository;
         this.userRepository = userRepository;
         this.followersRepository = followersRepository;
+        this.seasonRankingRepository = seasonRankingRepository;
     }
 
     /**
@@ -281,6 +284,31 @@ public class ProfileService {
             newRanking.setRankNum(episode.getRankNum());
             episodeRankingRepository.save(newRanking);
         }
+    }
+
+
+
+
+    public void addSeasonToRankingList(SeasonRankingDto season, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        SeasonRanking ranking = new SeasonRanking();
+        ranking.setId(new SeasonRankingId(userId, season.getShowId(), season.getSeason()));
+        ranking.setPosterPath(season.getPosterPath());
+
+        // Check if the user's season ranking list is empty, if so it's rank number will be 1,
+        // else it wil be added to the end of the list
+        Integer maxRank = seasonRankingRepository.findMaxRankNumByUserId(userId);
+        if (maxRank == null) {
+            ranking.setRankNum(1L);
+        } else {
+            ranking.setRankNum((long) maxRank + 1L);
+        }
+        seasonRankingRepository.save(ranking);
+    }
+
+    public List<SeasonRankingReturnDto> getSeasonRankingList(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return seasonRankingRepository.findByIdUserId(userId);
     }
 
 

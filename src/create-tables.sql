@@ -92,4 +92,14 @@ CREATE TABLE followers (
     PRIMARY KEY(follower_id, following_id),
     FOREIGN KEY(follower_id) REFERENCES users(id),
     FOREIGN KEY (following_id) REFERENCES users(id)
-)
+);
+
+CREATE TABLE user_season_rankings (
+    user_id INT,
+    show_id INT,
+    season INT,
+    rank_num INT NOT NULL,
+    poster_path TEXT NOT NULL,
+    PRIMARY KEY(user_id, show_id, season),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
