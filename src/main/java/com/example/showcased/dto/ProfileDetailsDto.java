@@ -8,15 +8,16 @@ import java.util.List;
 public class ProfileDetailsDto {
     private String username;
     private String profilePicture;
-    List<WatchReturnDto> watchlistTop;
-    boolean moreWatchlist = false;
-    List<WatchReturnDto> watchingTop;
+    private List<WatchReturnDto> watchlistTop;
+    private boolean moreWatchlist = false;
+    private List<WatchReturnDto> watchingTop;
     boolean moreWatching = false;
-    List<RankingReturnDto> showRankingTop;
-    boolean moreShowRanking = false;
-    List<EpisodeRankingReturnDto> episodeRankingTop;
-    boolean moreEpisodeRanking = false;
-    List<ReviewWithUserInfoDto> reviews;
+    private List<RankingReturnDto> showRankingTop;
+    private boolean moreShowRanking = false;
+    private List<EpisodeRankingReturnDto> episodeRankingTop;
+    private boolean moreEpisodeRanking = false;
+    private List<ReviewWithUserInfoDto> reviews;
     private Long numFollowers;
     private Long numFollowing;
+    private boolean isFollowing = false;
 }

@@ -19,6 +19,7 @@ export class ProfileData {
   readonly reviews: ReviewData[];
   numFollowers: number;
   numFollowing: number;
+  isFollowing: boolean;
 
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username'];
@@ -50,5 +51,6 @@ export class ProfileData {
 
     this.numFollowers = jsonObject['numFollowers'];
     this.numFollowing = jsonObject['numFollowing'];
+    this.isFollowing = jsonObject['following'];
   }
 }

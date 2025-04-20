@@ -30,6 +30,32 @@ export class UserPageComponent implements OnInit {
     }
   }
 
+  async followUser() {
+    try {
+      const response: Response = await this.userService.followUser(this.userId);
+
+      if (response.ok) {
+        this.userDetails.isFollowing = true;
+        this.userDetails.numFollowers += 1;
+      }
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  async unfollowUser() {
+    try {
+      const response: Response = await this.userService.unfollowUser(this.userId);
+
+      if (response.ok) {
+        this.userDetails.isFollowing = false;
+        this.userDetails.numFollowers -= 1;
+      }
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
   viewFullWatchlist() {
     window.location.href += '/watchlist';
   }

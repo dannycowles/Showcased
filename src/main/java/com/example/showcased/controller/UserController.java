@@ -25,8 +25,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/details")
-    public ResponseEntity<ProfileDetailsDto> getUserDetails(@PathVariable("id") Long id) {
-        ProfileDetailsDto userDetails = userService.getUserDetails(id);
+    public ResponseEntity<ProfileDetailsDto> getUserDetails(@PathVariable("id") Long id, HttpSession session) {
+        ProfileDetailsDto userDetails = userService.getUserDetails(id, session);
         return ResponseEntity.ok(userDetails);
     }
 

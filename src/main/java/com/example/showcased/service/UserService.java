@@ -59,7 +59,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public ProfileDetailsDto getUserDetails(Long userId) {
+    public ProfileDetailsDto getUserDetails(Long userId, HttpSession session) {
         ProfileDetailsDto userDetails = new ProfileDetailsDto();
 
         // Throw exception if the user was not found by ID
@@ -95,6 +95,12 @@ public class UserService {
         userDetails.setReviews(getUserReviews(userId));
         userDetails.setNumFollowers(getFollowersCount(userId));
         userDetails.setNumFollowing(getFollowingCount(userId));
+
+        // Check if the user is logged in, if so we check they are following this user
+        Long loggedInUserId = (Long) session.getAttribute("user");
+        if (loggedInUserId != null) {
+            userDetails.setFollowing(followersRepository.existsById(new FollowerId(loggedInUserId, userId)));
+        }
         return userDetails;
     }
 

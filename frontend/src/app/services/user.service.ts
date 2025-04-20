@@ -35,7 +35,9 @@ export class UserService {
    */
   async getUserDetails(id: number): Promise<ProfileData> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/details`);
+      let response: Response = await fetch(`${this.baseUrl}/${id}/details`, {
+        credentials: 'include'
+      });
       let data: {} = await response.json();
       return new ProfileData(data);
     } catch(error) {
@@ -115,12 +117,18 @@ export class UserService {
    * Unfollows the user with the specified id
    * @param id
    */
-  async unfollowUser(id: number) {
+  async unfollowUser(id: number): Promise<Response> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/unfollow`, {
+      const response: Response = await fetch(`${this.baseUrl}/${id}/unfollow`, {
         method: 'DELETE',
         credentials: 'include'
       });
+
+      // Redirect to login page if unauthorized
+      if (response.status == 401) {
+        window.location.href = "/login";
+      }
+      return response;
     } catch (error) {
       throw error;
     }
@@ -130,12 +138,18 @@ export class UserService {
    * Follows the user with the specified id
    * @param id
    */
-  async followUser(id: number) {
+  async followUser(id: number): Promise<Response> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/follow`, {
+      const response: Response = await fetch(`${this.baseUrl}/${id}/follow`, {
         method: 'POST',
         credentials: 'include'
       });
+
+      // Redirect to login page if unauthorized
+      if (response.status == 401) {
+        window.location.href = "/login";
+      }
+      return response;
     } catch (error) {
       throw error;
     }
