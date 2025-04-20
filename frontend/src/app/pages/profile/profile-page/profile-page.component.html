@@ -1,23 +1,19 @@
 @if (profileData) {
-  <h3>{{profileData.username}}</h3>
-  <br>
-  <img id="profile-picture" [ngSrc]="profileData.profilePicture" alt="Profile Picture" width="500" height="500" priority>
+  <div class="d-flex flex-column align-items-center mt-5">
+    <h3 class="mb-3">{{profileData.username}}</h3>
+    <img class="mb-3" id="profile-picture" [ngSrc]="profileData.profilePicture" alt="Profile Picture" width="500" height="500" priority>
+    <input class="mb-3" type="file" accept="image/jpeg, image/png" required (change)="onFileSelected($event)">
 
-  <br>
-  <br>
-  <input type="file" accept="image/jpeg, image/png" required (change)="onFileSelected($event)">\
-
-  <br>
-
-  <div class="d-flex m-3 gap-5">
-    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/profile/followers">
-      <h3>{{profileData.numFollowers}}</h3>
-      <h4>Followers</h4>
-    </a>
-    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/profile/following">
-      <h3>{{profileData.numFollowing}}</h3>
-      <h4>Following</h4>
-    </a>
+    <div class="d-flex m-3 gap-5">
+      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/profile/followers">
+        <h3>{{profileData.numFollowers}}</h3>
+        <h4>Followers</h4>
+      </a>
+      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/profile/following">
+        <h3>{{profileData.numFollowing}}</h3>
+        <h4>Following</h4>
+      </a>
+    </div>
   </div>
 
   <br>
