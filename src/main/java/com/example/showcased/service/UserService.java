@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -100,6 +101,7 @@ public class UserService {
         Long loggedInUserId = (Long) session.getAttribute("user");
         if (loggedInUserId != null) {
             userDetails.setFollowing(followersRepository.existsById(new FollowerId(loggedInUserId, userId)));
+            userDetails.setOwnProfile(loggedInUserId.equals(userId));
         }
         return userDetails;
     }
@@ -191,9 +193,22 @@ public class UserService {
         followersRepository.deleteById(new FollowerId(removeId, userId));
     }
 
-    public List<UserSearchDto> getFollowers(Long userId) {
+    public List<UserSearchDto> getFollowers(Long userId, HttpSession session) {
         ensureUserExists(userId);
-        return followersRepository.getFollowersByIdFollowingId(userId);
+        List<UserSearchDto> followers = followersRepository.getFollowersByIdFollowingId(userId);
+
+        Long loggedInUserId = (Long) session.getAttribute("user");
+        if (loggedInUserId != null) {
+            Set<Long> followedUsers = followersRepository.getFollowingIds(loggedInUserId);
+
+            // Iterate through followers list and check if set contains that id
+            followers.forEach(user -> {
+               user.setFollowing(followedUsers.contains(user.getId()));
+               user.setOwnProfile(loggedInUserId.equals(user.getId()));
+            });
+        }
+
+        return followers;
     }
 
     public Long getFollowersCount(Long userId) {
@@ -201,9 +216,22 @@ public class UserService {
         return followersRepository.countByIdFollowingId(userId);
     }
 
-    public List<UserSearchDto> getFollowing(Long userId) {
+    public List<UserSearchDto> getFollowing(Long userId, HttpSession session) {
         ensureUserExists(userId);
-        return followersRepository.getFollowingByIdFollowerId(userId);
+        List<UserSearchDto> following = followersRepository.getFollowingByIdFollowerId(userId);
+
+        Long loggedInUserId = (Long) session.getAttribute("user");
+        if (loggedInUserId != null) {
+            Set<Long> followedUsers = followersRepository.getFollowingIds(loggedInUserId);
+
+            // Iterate through followers list and check if set contains that id
+            following.forEach(user -> {
+                user.setFollowing(followedUsers.contains(user.getId()));
+                user.setOwnProfile(loggedInUserId.equals(user.getId()));
+            });
+        }
+
+        return following;
     }
 
     public Long getFollowingCount(Long userId) {

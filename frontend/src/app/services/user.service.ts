@@ -176,7 +176,9 @@ export class UserService {
    */
   async getFollowersList(id: number): Promise<UserSearchData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/followers`);
+      let response: Response = await fetch(`${this.baseUrl}/${id}/followers`, {
+        credentials: 'include'
+      });
       let data: [] = await response.json();
       return data.map((user: {}) => {
         return new UserSearchData(user);
@@ -192,7 +194,9 @@ export class UserService {
    */
   async getFollowingList(id: number): Promise<UserSearchData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/following`);
+      let response: Response = await fetch(`${this.baseUrl}/${id}/following`, {
+        credentials: 'include'
+      });
       let data: [] = await response.json();
       return data.map((user: {}) => {
         return new UserSearchData(user);

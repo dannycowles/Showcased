@@ -109,8 +109,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/followers")
-    public ResponseEntity<List<UserSearchDto>> getFollowers(@PathVariable("id") Long id) {
-        List<UserSearchDto> followers = userService.getFollowers(id);
+    public ResponseEntity<List<UserSearchDto>> getFollowers(@PathVariable("id") Long id, HttpSession session) {
+        List<UserSearchDto> followers = userService.getFollowers(id, session);
         return ResponseEntity.ok(followers);
     }
 
@@ -127,8 +127,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/following")
-    public ResponseEntity<List<UserSearchDto>> getFollowing(@PathVariable("id") Long id) {
-        List<UserSearchDto> following = userService.getFollowing(id);
+    public ResponseEntity<List<UserSearchDto>> getFollowing(@PathVariable("id") Long id, HttpSession session) {
+        List<UserSearchDto> following = userService.getFollowing(id, session);
         return ResponseEntity.ok(following);
     }
 

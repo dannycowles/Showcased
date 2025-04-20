@@ -6,7 +6,15 @@
     <div class="d-flex align-items-center ms-5 mb-4 me-5">
       <img class="rounded-circle object-fit-cover" [ngSrc]="user.profilePicture" alt="User Profile Picture" width="100" height="100">
       <h3 class="ms-5"><a href="/user/{{user.id}}" class="text-dark">{{user.username}}</a></h3>
-      <button class="btn btn-outline-danger ms-auto">Remove</button>
+
+      @if (!user.isOwnProfile) {
+        @if (user.isFollowing) {
+          <button class="btn btn-outline-danger ms-auto" (click)="unfollowUser(user)">Unfollow</button>
+        } @else {
+          <button class="btn btn-outline-success ms-auto" (click)="followUser(user)">Follow</button>
+        }
+      }
+
     </div>
   }
 } @else {

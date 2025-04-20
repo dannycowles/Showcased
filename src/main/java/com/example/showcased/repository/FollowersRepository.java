@@ -9,19 +9,25 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface FollowersRepository extends JpaRepository<Follower, FollowerId> {
     Long countByIdFollowingId(Long followingId);
     Long countByIdFollowerId(Long followerId);
 
-    @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture) " +
+    @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
             "FROM Follower f JOIN User u ON f.id.followerId = u.id " +
             "WHERE f.id.followingId = :followingId")
     List<UserSearchDto> getFollowersByIdFollowingId(@Param("followingId") Long followingId);
 
-    @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture) " +
+    @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
             "FROM Follower f JOIN User u ON f.id.followingId = u.id " +
             "WHERE f.id.followerId = :followerId")
     List<UserSearchDto> getFollowingByIdFollowerId(@Param("followerId") Long followerId);
+
+    @Query("SELECT f.id.followingId " +
+            "FROM Follower f " +
+            "WHERE f.id.followerId = :userId")
+    Set<Long> getFollowingIds(@Param("userId") Long userId);
 }

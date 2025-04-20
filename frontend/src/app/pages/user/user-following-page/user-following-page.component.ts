@@ -25,4 +25,28 @@ export class UserFollowingPageComponent implements OnInit {
       console.error(error);
     }
   };
+
+  async followUser(user: UserSearchData) {
+    try {
+      const response: Response = await this.userService.followUser(user.id);
+
+      if (response.ok) {
+        user.isFollowing = true;
+      }
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  async unfollowUser(user: UserSearchData) {
+    try {
+      const response: Response = await this.userService.unfollowUser(user.id);
+
+      if (response.ok) {
+        user.isFollowing = false;
+      }
+    } catch(error) {
+      console.error(error);
+    }
+  }
 }

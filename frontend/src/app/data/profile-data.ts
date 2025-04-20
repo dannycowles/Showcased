@@ -20,6 +20,7 @@ export class ProfileData {
   numFollowers: number;
   numFollowing: number;
   isFollowing: boolean;
+  isOwnProfile: boolean;
 
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username'];
@@ -52,5 +53,6 @@ export class ProfileData {
     this.numFollowers = jsonObject['numFollowers'];
     this.numFollowing = jsonObject['numFollowing'];
     this.isFollowing = jsonObject['following'];
+    this.isOwnProfile = jsonObject['ownProfile'];
   }
 }

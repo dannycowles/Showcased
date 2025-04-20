@@ -20,4 +20,5 @@ public class ProfileDetailsDto {
     private Long numFollowers;
     private Long numFollowing;
     private boolean isFollowing = false;
+    private boolean isOwnProfile = false;
 }
