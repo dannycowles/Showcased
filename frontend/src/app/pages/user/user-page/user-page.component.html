@@ -1,10 +1,20 @@
 @if (userDetails) {
-  <h1>{{userDetails.username}}</h1>
-  <br>
-  <img id="profile-picture" [ngSrc]="userDetails.profilePicture" alt="Profile Picture" width="500" height="500" priority>
+  <div class="d-flex flex-column align-items-center mt-5">
+    <h3 class="mb-3">{{userDetails.username}}</h3>
+    <img class="mb-3 rounded-circle object-fit-cover" id="profile-picture" [ngSrc]="userDetails.profilePicture" alt="Profile Picture" width="500" height="500" priority>
 
-  <p>Followers: {{userDetails.numFollowers}}</p>
-  <p>Following: {{userDetails.numFollowing}}</p>
+    <button class="btn btn-outline-success">Follow</button>
+    <div class="d-flex m-3 gap-5">
+      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/user/{{this.userId}}/followers">
+        <h3>{{userDetails.numFollowers}}</h3>
+        <h4>Followers</h4>
+      </a>
+      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/user/{{this.userId}}/following">
+        <h3>{{userDetails.numFollowing}}</h3>
+        <h4>Following</h4>
+      </a>
+    </div>
+  </div>
 
   <br>
   <br>

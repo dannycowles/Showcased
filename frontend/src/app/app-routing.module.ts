@@ -24,6 +24,8 @@ import {UserEpisodeRankingPageComponent} from './pages/user/user-episode-ranking
 import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset-password-page.component';
 import {ProfileFollowersPageComponent} from './pages/profile/profile-followers-page/profile-followers-page.component';
 import {ProfileFollowingPageComponent} from './pages/profile/profile-following-page/profile-following-page.component';
+import {UserFollowersPageComponent} from './pages/user/user-followers-page/user-followers-page.component';
+import {UserFollowingPageComponent} from './pages/user/user-following-page/user-following-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -42,6 +44,8 @@ const routes: Routes = [
     { path: 'user/:id/watching', component: UserWatchingPageComponent},
     { path: 'user/:id/show-ranking', component: UserShowRankingPageComponent},
     { path: 'user/:id/episode-ranking', component: UserEpisodeRankingPageComponent},
+    { path: 'user/:id/followers', component: UserFollowersPageComponent},
+    { path: 'user/:id/following', component: UserFollowingPageComponent},
     { path: 'search', component: SearchPageComponent},
     { path: 'search-users', component: UserSearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},

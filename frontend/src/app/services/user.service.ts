@@ -156,4 +156,36 @@ export class UserService {
     }
   }
 
+  /**
+   * Retrieves the followers list for user with the specified id
+   * @param id
+   */
+  async getFollowersList(id: number): Promise<UserSearchData[]> {
+    try {
+      let response: Response = await fetch(`${this.baseUrl}/${id}/followers`);
+      let data: [] = await response.json();
+      return data.map((user: {}) => {
+        return new UserSearchData(user);
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the following list for user with the specified id
+   * @param id
+   */
+  async getFollowingList(id: number): Promise<UserSearchData[]> {
+    try {
+      let response: Response = await fetch(`${this.baseUrl}/${id}/following`);
+      let data: [] = await response.json();
+      return data.map((user: {}) => {
+        return new UserSearchData(user);
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
+
 }

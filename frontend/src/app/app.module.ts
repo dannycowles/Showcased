@@ -35,6 +35,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ButtonHeartComponent} from './pages/show/button-heart.component';
 import {ProfileFollowingPageComponent} from './pages/profile/profile-following-page/profile-following-page.component';
 import {ProfileFollowersPageComponent} from './pages/profile/profile-followers-page/profile-followers-page.component';
+import {UserFollowersPageComponent} from './pages/user/user-followers-page/user-followers-page.component';
+import {UserFollowingPageComponent} from './pages/user/user-following-page/user-following-page.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,9 @@ import {ProfileFollowersPageComponent} from './pages/profile/profile-followers-p
     UserEpisodeRankingPageComponent,
     ResetPasswordPageComponent,
     ProfileFollowingPageComponent,
-    ProfileFollowersPageComponent
+    ProfileFollowersPageComponent,
+    UserFollowersPageComponent,
+    UserFollowingPageComponent
   ],
   imports: [
     BrowserModule,
