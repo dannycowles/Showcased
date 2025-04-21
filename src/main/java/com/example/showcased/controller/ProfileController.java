@@ -136,14 +136,8 @@ public class ProfileController {
     }
 
     @GetMapping("/episode-ranking")
-    public ResponseEntity<List<EpisodeRankingReturnDto>> getEpisodeRankingList(HttpSession session) {
-        List<EpisodeRankingReturnDto> ranking = profileService.getEpisodeRankingList(session);
-        return ResponseEntity.ok(ranking);
-    }
-
-    @GetMapping("/episode-ranking/top")
-    public ResponseEntity<List<EpisodeRankingReturnDto>> getEpisodeRankingListTop(HttpSession session) {
-        List<EpisodeRankingReturnDto> ranking = profileService.getEpisodeRankingListTop(session);
+    public ResponseEntity<List<EpisodeRankingReturnDto>> getEpisodeRankingList(@RequestParam(value = "limit", required = false) Integer limit, HttpSession session) {
+        List<EpisodeRankingReturnDto> ranking = profileService.getEpisodeRankingList(limit, session);
         return ResponseEntity.ok(ranking);
     }
 

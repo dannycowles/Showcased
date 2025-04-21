@@ -78,7 +78,7 @@ public class ProfileService {
         profileDetails.setWatchlistTop(getWatchlistTop(session));
         profileDetails.setWatchingTop(getWatchingListTop(session));
         profileDetails.setShowRankingTop(getShowRankingListTop(session));
-        profileDetails.setEpisodeRankingTop(getEpisodeRankingListTop(session));
+        profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
         profileDetails.setReviews(getReviews(session));
         profileDetails.setNumFollowers(getFollowersCount(session));
         profileDetails.setNumFollowing(getFollowingCount(session));
@@ -259,13 +259,17 @@ public class ProfileService {
         episodeRankingRepository.save(ranking);
     }
 
-    public List<EpisodeRankingReturnDto> getEpisodeRankingList(HttpSession session) {
-        return episodeRankingRepository.findByUserId((Long) session.getAttribute("user"));
-    }
+    public List<EpisodeRankingReturnDto> getEpisodeRankingList(Integer limit, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
 
-    public List<EpisodeRankingReturnDto> getEpisodeRankingListTop(HttpSession session) {
-        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        return episodeRankingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
+        // If a limit was provided, use that, else retrieve the entire ranking list
+        Pageable pageRequest;
+        if (limit != null) {
+            pageRequest = PageRequest.of(0, limit);
+        } else {
+            pageRequest = Pageable.unpaged();
+        }
+        return episodeRankingRepository.findByIdUserId(userId, pageRequest);
     }
 
     public void removeFromEpisodeRankingList(Long showId, int seasonNumber, int episodeNumber, HttpSession session) {
@@ -273,7 +277,7 @@ public class ProfileService {
         episodeRankingRepository.deleteById(new EpisodeRankingId(userId, showId, seasonNumber, episodeNumber));
 
         // After deleting from the show ranking list we will need to adjust the ranking numbers to account for it
-        List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByUserId(userId);
+        List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByIdUserId(userId, Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             EpisodeRanking ranking = new EpisodeRanking();
             ranking.setId(new EpisodeRankingId(userId, rankings.get(i).getShowId(), rankings.get(i).getSeason(), rankings.get(i).getEpisode()));
