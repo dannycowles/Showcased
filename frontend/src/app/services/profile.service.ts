@@ -4,8 +4,8 @@ import {WatchlistData} from '../data/lists/watchlist-data';
 import {WatchingData} from '../data/lists/watching-data';
 import {ShowRankingData} from '../data/lists/show-ranking-data';
 import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
-import {error} from 'jquery';
 import {UserSearchData} from '../data/user-search-data';
+import {SeasonRankingData} from '../data/lists/season-ranking-data';
 
 @Injectable({
   providedIn: 'root'
@@ -467,6 +467,25 @@ export class ProfileService {
   }
 
   /**
+   * Retrieves the full season ranking list for the logged-in user
+   */
+  async getSeasonRankingList(): Promise<SeasonRankingData[]> {
+    try {
+      let response = await fetch(`${this.baseUrl}/season-rankings`, {
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Retrieves a list of all the users currently following the logged-in user
    */
   async getFollowersList(): Promise<UserSearchData[]> {
@@ -485,6 +504,30 @@ export class ProfileService {
         return new UserSearchData(user);
       });
     }catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Updates the season ranking list for the logged-in user, in particular the rank nums
+   * @param data
+   */
+  async updateSeasonRankingList(data: {}) {
+    try {
+      let response = await fetch(`${this.baseUrl}/season-rankings`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+    } catch(error) {
       throw error;
     }
   }
