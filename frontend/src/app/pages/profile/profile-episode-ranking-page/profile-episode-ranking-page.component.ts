@@ -24,10 +24,6 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
     }
   }
 
-  returnToProfilePressed() {
-    window.location.href = "profile";
-  }
-
   async removeEpisodeFromRankingList(removeId: number, season: number, episode: number) {
     try {
       await this.profileService.removeEpisodeFromRankingList(removeId, season, episode);

@@ -1,20 +1,20 @@
-<button (click)="returnToProfilePressed()">Return to Profile</button>
+<button routerLink="/profile">Return to Profile</button>
 
 @if (rankingEntries) {
   <h1>Episode Ranking</h1>
 
   <div cdkDropList class="episode-list" (cdkDropListDropped)="drop($event)">
-    @for (show of rankingEntries; track show.showId; let rank = $index) {
+    @for (episode of rankingEntries; track episode.showId; let rank = $index) {
       <div class="episode-box" cdkDrag>
         <h5>{{rank + 1}}</h5>
-        <h5>Show: {{show.showTitle}}</h5>
-        <h5>Episode: {{show.episodeTitle}}</h5>
-        <h5>S{{show.season}} E{{show.episode}}</h5>
+        <h5>Show: {{episode.showTitle}}</h5>
+        <h5>Episode: {{episode.episodeTitle}}</h5>
+        <h5>S{{episode.season}} E{{episode.episode}}</h5>
 
         <!-- Episode stills are sized w185, with a 16:9 ratio -->
-        <a [href]="'/show/' + show.showId + '/season/' + show.season + '/episode/' + show.episode"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="104" priority></a>
+        <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
 
-        <button (click)="removeEpisodeFromRankingList(show.showId, show.season, show.episode)">Remove Episode</button>
+        <button (click)="removeEpisodeFromRankingList(episode.showId, episode.season, episode.episode)">Remove Episode</button>
       </div>
     }
   </div>

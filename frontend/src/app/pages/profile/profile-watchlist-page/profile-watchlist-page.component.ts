@@ -23,10 +23,6 @@ export class ProfileWatchlistPageComponent implements OnInit {
     }
   }
 
-  returnToProfilePressed() {
-    window.location.href = "profile";
-  }
-
   async removeShowFromWatchlist(removeId: number) {
     try {
       await this.profileService.removeShowFromWatchlist(removeId);

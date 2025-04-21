@@ -24,10 +24,6 @@ export class ProfileShowRankingPageComponent implements OnInit {
     }
   }
 
-  returnToProfilePressed() {
-    window.location.href = "profile";
-  }
-
   async removeShowFromRankingList(removeId: number) {
     try {
       await this.profileService.removeShowFromRankingList(removeId);

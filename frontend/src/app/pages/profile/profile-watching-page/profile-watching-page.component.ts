@@ -23,10 +23,6 @@ export class ProfileWatchingPageComponent implements OnInit {
     }
   }
 
-  returnToProfilePressed() {
-    window.location.href = "profile";
-  }
-
   async removeShowFromWatchingList(removeId: number) {
     try {
       await this.profileService.removeShowFromWatchingList(removeId);
