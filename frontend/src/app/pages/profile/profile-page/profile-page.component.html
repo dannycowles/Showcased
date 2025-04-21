@@ -71,6 +71,25 @@
     <p>Nothing ranked yet!</p>
   }
 
+  <h3>Favorite Seasons</h3>
+  @if (profileData.seasonRankingTop.length != 0) {
+    @for (season of profileData.seasonRankingTop; track season.id) {
+      <h5>{{season.rankNum}}</h5>
+      <h5>{{season.showTitle}} Season {{season.season}}</h5>
+
+      <!-- Poster images are sized w185, using 2:3 ratio -->
+      <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Season Poster" width="185" height="278" priority></a>
+    }
+
+    <br>
+    <br>
+    <button routerLink="/profile/season-ranking">Manage Favorite Seasons</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
   <h3>Favorite Episodes</h3>
   @if (profileData.episodeRankingTop.length != 0) {
     @for (show of profileData.episodeRankingTop; track show.showId) {
