@@ -6,8 +6,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SeasonRankingReturnDto {
+    private Long id;
     private Long showId;
     private int season;
     private Long rankNum;
     private String posterPath;
+    private String showTitle;
 }

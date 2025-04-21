@@ -162,16 +162,28 @@ public class ProfileController {
 
 
 
-    @PostMapping("/season-ranking")
+    @PostMapping("/season-rankings")
     public ResponseEntity<Void> addSeasonToRankingList(@RequestBody SeasonRankingDto season, HttpSession session) {
         profileService.addSeasonToRankingList(season, session);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/season-ranking")
-    public ResponseEntity<List<SeasonRankingReturnDto>> getSeasonRankingList(HttpSession session) {
-        List<SeasonRankingReturnDto> ranking = profileService.getSeasonRankingList(session);
+    @GetMapping("/season-rankings")
+    public ResponseEntity<List<SeasonRankingReturnDto>> getSeasonRankingList(@RequestParam(value = "limit", required = false) Integer limit, HttpSession session) {
+        List<SeasonRankingReturnDto> ranking = profileService.getSeasonRankingList(limit, session);
         return ResponseEntity.ok(ranking);
+    }
+
+    @DeleteMapping("/season-rankings/{id}")
+    public ResponseEntity<Void> removeFromSeasonRankingList(@PathVariable("id") Long seasonId, HttpSession session) {
+        profileService.removeFromSeasonRankingList(seasonId, session);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/season-rankings")
+    public ResponseEntity<Void> updateSeasonRankingList(@RequestBody List<UpdateSeasonRankingDto> seasons, HttpSession session) {
+        profileService.updateSeasonRankingList(seasons, session);
+        return ResponseEntity.noContent().build();
     }
 
 

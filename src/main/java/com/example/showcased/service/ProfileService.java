@@ -8,6 +8,7 @@ import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final FollowersRepository followersRepository;
     private final SeasonRankingRepository seasonRankingRepository;
+    private final SeasonInfoRepository seasonInfoRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -38,7 +40,8 @@ public class ProfileService {
                           EpisodeRankingRepository episodeRankingRepository,
                           UserRepository userRepository,
                           FollowersRepository followersRepository,
-                          SeasonRankingRepository seasonRankingRepository) {
+                          SeasonRankingRepository seasonRankingRepository,
+                          SeasonInfoRepository seasonInfoRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -50,6 +53,7 @@ public class ProfileService {
         this.userRepository = userRepository;
         this.followersRepository = followersRepository;
         this.seasonRankingRepository = seasonRankingRepository;
+        this.seasonInfoRepository = seasonInfoRepository;
     }
 
     /**
@@ -292,23 +296,65 @@ public class ProfileService {
     public void addSeasonToRankingList(SeasonRankingDto season, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         SeasonRanking ranking = new SeasonRanking();
-        ranking.setId(new SeasonRankingId(userId, season.getShowId(), season.getSeason()));
-        ranking.setPosterPath(season.getPosterPath());
+        SeasonRankingId rankingId = new SeasonRankingId(userId, season.getId());
+        ranking.setId(rankingId);
 
-        // Check if the user's season ranking list is empty, if so it's rank number will be 1,
-        // else it wil be added to the end of the list
+        // If season doesn't exist in season info table add it
+        if (!seasonInfoRepository.existsById(season.getId())) {
+            SeasonInfo seasonInfo = modelMapper.map(season, SeasonInfo.class);
+            seasonInfoRepository.save(seasonInfo);
+        }
+
+        // If the season is already on the user's ranking list throw exception
+        if (seasonRankingRepository.existsById(rankingId)) {
+            throw new AlreadyOnListException("Season is already on ranking list");
+        }
+
+        // If user's ranking list is empty, rank will start at 1 else append to end
         Integer maxRank = seasonRankingRepository.findMaxRankNumByUserId(userId);
         if (maxRank == null) {
             ranking.setRankNum(1L);
         } else {
-            ranking.setRankNum((long) maxRank + 1L);
+            ranking.setRankNum(maxRank + 1L);
         }
         seasonRankingRepository.save(ranking);
     }
 
-    public List<SeasonRankingReturnDto> getSeasonRankingList(HttpSession session) {
+    public List<SeasonRankingReturnDto> getSeasonRankingList(Integer limit, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return seasonRankingRepository.findByIdUserId(userId);
+
+        // If a limit was provided, use that, else retrieve the entire ranking list
+        Pageable pageRequest;
+        if (limit != null) {
+            pageRequest = PageRequest.of(0, limit);
+        } else {
+            pageRequest = Pageable.unpaged();
+        }
+        return seasonRankingRepository.findByIdUserId(userId, pageRequest);
+    }
+
+    public void removeFromSeasonRankingList(Long seasonId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        seasonRankingRepository.deleteById(new SeasonRankingId(userId, seasonId));
+
+        // After deleting the season we need to adjust all the rank numbers to account for it
+        List<SeasonRankingReturnDto> rankings = seasonRankingRepository.findByIdUserId(userId, Pageable.unpaged());
+        for (int i = 0; i < rankings.size(); i++) {
+            SeasonRanking newRanking = new SeasonRanking();
+            newRanking.setId(new SeasonRankingId(userId, rankings.get(i).getId()));
+            newRanking.setRankNum(i + 1L);
+            seasonRankingRepository.save(newRanking);
+        }
+    }
+
+    public void updateSeasonRankingList(List<UpdateSeasonRankingDto> seasons, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        seasons.forEach(season -> {
+            SeasonRanking newRanking = modelMapper.map(season, SeasonRanking.class);
+            newRanking.setId(new SeasonRankingId(userId, season.getId()));
+            newRanking.setRankNum(season.getRankNum());
+            seasonRankingRepository.save(newRanking);
+        });
     }
 
 

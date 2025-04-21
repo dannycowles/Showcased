@@ -16,6 +16,5 @@ public class SeasonRankingId implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private Long userId;
-    private Long showId;
-    private int season;
+    private Long seasonId;
 }
