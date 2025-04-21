@@ -13,6 +13,13 @@ import {SeasonRankingData} from '../data/lists/season-ranking-data';
 export class ProfileService {
   baseUrl: string = "http://localhost:8080/profile";
 
+  // If the user is unauthorized, we redirect them to the login page
+  checkUnauthorizedUser(response: Response): void {
+    if (response.status === 401) {
+      window.location.href = '/login';
+    }
+  }
+
   /**
    * Retrieves all profile information including:
    * - username
@@ -24,31 +31,32 @@ export class ProfileService {
    */
   async getProfileDetails(): Promise<ProfileData> {
     try {
-      let response = await fetch(`${this.baseUrl}/details`, {
+      const response = await fetch(`${this.baseUrl}/details`, {
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-
-      let data = await response.json();
-      return new ProfileData(data);
+      this.checkUnauthorizedUser(response);
+      return await response.json();
     } catch (error) {
       throw error;
     }
   }
 
+  /**
+   * Uploads a profile picture for the logged-in user
+   * @param formData
+   */
   async uploadProfilePicture(formData: FormData): Promise<string> {
     try {
-      let response = await fetch(`${this.baseUrl}/profile-picture`, {
+      const response = await fetch(`${this.baseUrl}/profile-picture`, {
         method: 'POST',
         credentials: 'include',
         body: formData
       });
+
+      this.checkUnauthorizedUser(response);
       return await response.text();
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -59,7 +67,7 @@ export class ProfileService {
    */
   async addShowToWatchlist(data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/watchlist`, {
+      const response = await fetch(`${this.baseUrl}/watchlist`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -68,12 +76,9 @@ export class ProfileService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
+      this.checkUnauthorizedUser(response);
       return response;
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -83,21 +88,13 @@ export class ProfileService {
    */
   async getFullWatchlist(): Promise<WatchlistData[]> {
     try {
-      let response = await fetch(`${this.baseUrl}/watchlist`, {
+      const response = await fetch(`${this.baseUrl}/watchlist`, {
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-
-      let data = await response.json();
-
-      return data.map((show: {}) => {
-        return new WatchlistData(show);
-      })
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return await response.json();
+    } catch (error) {
       throw error;
     }
   }
@@ -106,18 +103,16 @@ export class ProfileService {
    * Removes a show from profile watchlist by ID
    * @param id
    */
-  async removeShowFromWatchlist(id: number) {
+  async removeShowFromWatchlist(id: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
+      const response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -126,18 +121,16 @@ export class ProfileService {
    * Moves a show from watchlist to watching list by ID
    * @param id
    */
-  async moveShowToWatchingList(id: number) {
+  async moveShowToWatchingList(id: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
+      const response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
         method: 'PUT',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -148,7 +141,7 @@ export class ProfileService {
    */
   async addShowToWatchingList(data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/watching`, {
+      const response = await fetch(`${this.baseUrl}/watching`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -157,12 +150,9 @@ export class ProfileService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
+      this.checkUnauthorizedUser(response);
       return response;
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -172,21 +162,13 @@ export class ProfileService {
    */
   async getFullWatchingList(): Promise<WatchingData[]> {
     try {
-      let response = await fetch(`${this.baseUrl}/watching`, {
+      const response = await fetch(`${this.baseUrl}/watching`, {
         credentials: 'include'
       });
 
-      let data = await response.json();
-
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-
-      return data.map((show: {}) => {
-        return new WatchingData(show);
-      })
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return await response.json();
+    } catch (error) {
       throw error;
     }
   }
@@ -195,18 +177,16 @@ export class ProfileService {
    * Removes a show from watching list by ID
    * @param id
    */
-  async removeShowFromWatchingList(id: number) {
+  async removeShowFromWatchingList(id: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/watching/${id}`, {
+      const response = await fetch(`${this.baseUrl}/watching/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -215,18 +195,16 @@ export class ProfileService {
    * Moves a show from currently watching to ranking list by ID
    * @param id
    */
-  async moveShowToRankingList(id: number) {
+  async moveShowToRankingList(id: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/watching/${id}`, {
+      const response = await fetch(`${this.baseUrl}/watching/${id}`, {
         method: 'PUT',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -237,7 +215,7 @@ export class ProfileService {
    */
   async addShowToRankingList(data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/show-ranking`, {
+      const response = await fetch(`${this.baseUrl}/show-ranking`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -246,12 +224,9 @@ export class ProfileService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
+      this.checkUnauthorizedUser(response);
       return response;
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -261,21 +236,13 @@ export class ProfileService {
    */
   async getFullShowRankingList(): Promise<ShowRankingData[]> {
     try {
-      let response = await fetch(`${this.baseUrl}/show-ranking`, {
+      const response = await fetch(`${this.baseUrl}/show-ranking`, {
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-
-      let data = await response.json();
-
-      return data.map((show: {}) => {
-        return new ShowRankingData(show);
-      });
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return await response.json();
+    } catch (error) {
       throw error;
     }
   }
@@ -284,18 +251,16 @@ export class ProfileService {
    * Removes a show from ranking list by ID
    * @param id
    */
-  async removeShowFromRankingList(id: number) {
+  async removeShowFromRankingList(id: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/show-ranking/${id}`, {
+      const response = await fetch(`${this.baseUrl}/show-ranking/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -304,9 +269,9 @@ export class ProfileService {
    * Updates the show ranking list, in particular it updates the rank numbers of each show
    * @param data
    */
-  async updateShowRankingList(data: {}) {
+  async updateShowRankingList(data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/show-ranking`, {
+      const response = await fetch(`${this.baseUrl}/show-ranking`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -315,12 +280,9 @@ export class ProfileService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -331,7 +293,7 @@ export class ProfileService {
    */
   async addEpisodeToRankingList(data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/episode-ranking`, {
+      const response = await fetch(`${this.baseUrl}/episode-ranking`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -340,12 +302,9 @@ export class ProfileService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
+      this.checkUnauthorizedUser(response);
       return response;
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -353,23 +312,15 @@ export class ProfileService {
   /**
    * Retrieves the full episode ranking list for the profile
    */
-  async getFullEpisodeRankingList() {
+  async getFullEpisodeRankingList(): Promise<EpisodeRankingData[]> {
     try {
-      let response = await fetch(`${this.baseUrl}/episode-ranking`, {
+      const response = await fetch(`${this.baseUrl}/episode-ranking`, {
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-
-      let data = await response.json();
-
-      return data.map((show: {}) => {
-        return new EpisodeRankingData(show);
-      })
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return await response.json();
+    } catch (error) {
       throw error;
     }
   }
@@ -380,18 +331,16 @@ export class ProfileService {
    * @param season
    * @param episode
    */
-  async removeEpisodeFromRankingList(id: number, season: number, episode: number) {
+  async removeEpisodeFromRankingList(id: number, season: number, episode: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/episode-ranking/show/${id}/season/${season}/episode/${episode}`, {
+      const response = await fetch(`${this.baseUrl}/episode-ranking/show/${id}/season/${season}/episode/${episode}`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -400,9 +349,9 @@ export class ProfileService {
    * Updates the episode ranking list, in particular it updates the rank numbers of each episode
    * @param data
    */
-  async updateEpisodeRankingList(data: {}) {
+  async updateEpisodeRankingList(data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/episode-ranking`, {
+      const response = await fetch(`${this.baseUrl}/episode-ranking`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -411,11 +360,9 @@ export class ProfileService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -426,7 +373,7 @@ export class ProfileService {
    */
   async addSeasonToRankingList(data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/season-rankings`, {
+      const response = await fetch(`${this.baseUrl}/season-rankings`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -435,12 +382,9 @@ export class ProfileService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
+      this.checkUnauthorizedUser(response);
       return response;
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -451,17 +395,14 @@ export class ProfileService {
    */
   async removeSeasonFromRankingList(id: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/season-rankings/${id}`, {
+      const response = await fetch(`${this.baseUrl}/season-rankings/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
+      this.checkUnauthorizedUser(response);
       return response;
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -471,14 +412,11 @@ export class ProfileService {
    */
   async getSeasonRankingList(): Promise<SeasonRankingData[]> {
     try {
-      let response = await fetch(`${this.baseUrl}/season-rankings`, {
+      const response = await fetch(`${this.baseUrl}/season-rankings`, {
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
+      this.checkUnauthorizedUser(response);
       return await response.json();
     } catch (error) {
       throw error;
@@ -490,20 +428,13 @@ export class ProfileService {
    */
   async getFollowersList(): Promise<UserSearchData[]> {
     try {
-      let response = await fetch(`${this.baseUrl}/followers`, {
+      const response = await fetch(`${this.baseUrl}/followers`, {
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-
-      let data = await response.json();
-      return data.map((user: {}) => {
-        return new UserSearchData(user);
-      });
-    }catch(error) {
+      this.checkUnauthorizedUser(response);
+      return await response.json();
+    } catch (error) {
       throw error;
     }
   }
@@ -512,9 +443,9 @@ export class ProfileService {
    * Updates the season ranking list for the logged-in user, in particular the rank nums
    * @param data
    */
-  async updateSeasonRankingList(data: {}) {
+  async updateSeasonRankingList(data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/season-rankings`, {
+      const response = await fetch(`${this.baseUrl}/season-rankings`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -523,11 +454,9 @@ export class ProfileService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
       throw error;
     }
   }
@@ -537,22 +466,14 @@ export class ProfileService {
    */
   async getFollowingList(): Promise<UserSearchData[]> {
     try {
-      let response = await fetch(`${this.baseUrl}/following`, {
+      const response = await fetch(`${this.baseUrl}/following`, {
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = '/login';
-      }
-
-      let data = await response.json();
-      return data.map((user: {}) => {
-        return new UserSearchData(user);
-      });
-    } catch(error) {
+      this.checkUnauthorizedUser(response);
+      return await response.json();
+    } catch (error) {
       throw error;
     }
   }
-
 }
