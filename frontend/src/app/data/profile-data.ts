@@ -4,6 +4,7 @@ import {WatchlistData} from './lists/watchlist-data';
 import {WatchingData} from './lists/watching-data';
 import {ShowRankingData} from './lists/show-ranking-data';
 import {EpisodeRankingData} from './lists/episode-ranking-data';
+import {SeasonRankingData} from './lists/season-ranking-data';
 
 export class ProfileData {
   readonly username: string;
@@ -21,6 +22,7 @@ export class ProfileData {
   numFollowing: number;
   isFollowing: boolean;
   isOwnProfile: boolean;
+  readonly seasonRankingTop: SeasonRankingData[];
 
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username'];
@@ -54,5 +56,9 @@ export class ProfileData {
     this.numFollowing = jsonObject['numFollowing'];
     this.isFollowing = jsonObject['following'];
     this.isOwnProfile = jsonObject['ownProfile'];
+
+    this.seasonRankingTop = jsonObject['seasonRankingTop'].map(( season: {} ) => {
+      return new SeasonRankingData(season);
+    });
   }
 }

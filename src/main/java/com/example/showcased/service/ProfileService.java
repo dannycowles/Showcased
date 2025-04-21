@@ -82,6 +82,7 @@ public class ProfileService {
         profileDetails.setReviews(getReviews(session));
         profileDetails.setNumFollowers(getFollowersCount(session));
         profileDetails.setNumFollowing(getFollowingCount(session));
+        profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
         return profileDetails;
     }
 
