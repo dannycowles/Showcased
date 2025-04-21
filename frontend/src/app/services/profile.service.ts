@@ -421,6 +421,52 @@ export class ProfileService {
   }
 
   /**
+   * Adds a season to the logged-in user's ranking list
+   * @param data
+   */
+  async addSeasonToRankingList(data: {}): Promise<Response> {
+    try {
+      let response = await fetch(`${this.baseUrl}/season-rankings`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+      return response;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Removes season from the logged-in user's ranking list by ID
+   * @param id
+   */
+  async removeSeasonFromRankingList(id: number): Promise<Response> {
+    try {
+      let response = await fetch(`${this.baseUrl}/season-rankings/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      // If the user is unauthorized, we redirect them to the login page
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+      return response;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
    * Retrieves a list of all the users currently following the logged-in user
    */
   async getFollowersList(): Promise<UserSearchData[]> {

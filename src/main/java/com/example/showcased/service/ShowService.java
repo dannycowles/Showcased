@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -38,19 +37,22 @@ public class ShowService {
     private final WatchlistRepository watchlistRepository;
     private final WatchingRepository watchingRepository;
     private final ShowRankingRepository showRankingRepository;
+    private final SeasonRankingRepository seasonRankingRepository;
 
     public ShowService(ReviewRepository reviewRepository,
                        ModelMapper modelMapper,
                        LikedReviewsRepository likedReviewsRepository,
                        WatchlistRepository watchlistRepository,
                        WatchingRepository watchingRepository,
-                       ShowRankingRepository showRankingRepository) {
+                       ShowRankingRepository showRankingRepository,
+                       SeasonRankingRepository seasonRankingRepository) {
         this.reviewRepository = reviewRepository;
         this.modelMapper = modelMapper;
         this.likedReviewsRepository = likedReviewsRepository;
         this.watchlistRepository = watchlistRepository;
         this.watchingRepository = watchingRepository;
         this.showRankingRepository = showRankingRepository;
+        this.seasonRankingRepository = seasonRankingRepository;
     }
 
     public List<SearchDto> searchShows(String query) {
@@ -206,7 +208,7 @@ public class ShowService {
         return restTemplate.exchange(url, HttpMethod.GET, requestEntity, NumSeasonsDto.class).getBody();
     }
 
-    public SeasonDto getSeasonDetails(int seasonNumber, int showId) {
+    public SeasonDto getSeasonDetails(int seasonNumber, int showId, HttpSession session) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Define headers
@@ -236,6 +238,7 @@ public class ShowService {
         // Parse the response and extract the array of episodes
         jsonResponse = new JSONObject(response.getBody());
         JSONArray episodes = jsonResponse.getJSONArray("Episodes");
+        season.setShowTitle(jsonResponse.optString("Title"));
 
         // This check ensures that unaired episodes don't appear
         // on both OMDB and TMDB don't cause alignment and indexing issues
@@ -271,6 +274,12 @@ public class ShowService {
         // Wait for all API calls to complete
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         season.setEpisodes(seasonEpisodes);
+
+        // If the user is logged in, check whether season is on their ranking list
+        Long userId = (Long) session.getAttribute("user");
+        if (userId != null) {
+            season.setOnRankingList(seasonRankingRepository.existsById(new SeasonRankingId(userId, season.getId())));;
+        }
 
         return season;
     }

@@ -1,14 +1,14 @@
 package com.example.showcased.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 public class SeasonDto {
+    private String showTitle;
+    private Long id;
     @JsonProperty("season_number")
     private int seasonNumber;
     private String overview;
@@ -18,6 +18,7 @@ public class SeasonDto {
 
     @JsonProperty("episodes")
     private List<SeasonEpisodeDto> episodes;
+    private boolean onRankingList = false;
 
     public void setRating(int episodeNumber, String rating) {
         for (SeasonEpisodeDto seasonEpisodeDto : episodes) {

@@ -37,8 +37,8 @@ public class ShowController {
     }
 
     @GetMapping("/{id}/season/{seasonNumber}")
-    public ResponseEntity<SeasonDto> getSeasonDetails(@PathVariable int seasonNumber, @PathVariable int id) {
-        SeasonDto season = showService.getSeasonDetails(seasonNumber, id);
+    public ResponseEntity<SeasonDto> getSeasonDetails(@PathVariable int seasonNumber, @PathVariable int id, HttpSession session) {
+        SeasonDto season = showService.getSeasonDetails(seasonNumber, id, session);
         return ResponseEntity.ok(season);
     }
 

@@ -157,7 +157,9 @@ export class ShowService {
    */
   async fetchSeasonDetails(showId: number, seasonNumber: number): Promise<SeasonData> {
     try {
-      let response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}`);
+      let response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}`, {
+        credentials: 'include'
+      });
 
       // If the season was not found then redirect the user to the 404 page
       if (response.status === 500) {
