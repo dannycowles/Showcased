@@ -70,14 +70,8 @@ public class ProfileController {
     }
 
     @GetMapping("/watching")
-    public ResponseEntity<List<WatchReturnDto>> getWatchingList(HttpSession session) {
-        List<WatchReturnDto> watchlist = profileService.getWatchingList(session);
-        return ResponseEntity.ok(watchlist);
-    }
-
-    @GetMapping("/watching/top")
-    public ResponseEntity<List<WatchReturnDto>> getWatchingListTop(HttpSession session) {
-        List<WatchReturnDto> watchlist = profileService.getWatchingListTop(session);
+    public ResponseEntity<List<WatchReturnDto>> getWatchingList(@RequestParam(value = "limit", required = false) Integer limit, HttpSession session) {
+        List<WatchReturnDto> watchlist = profileService.getWatchingList(limit, session);
         return ResponseEntity.ok(watchlist);
     }
 

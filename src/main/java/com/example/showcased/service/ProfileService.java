@@ -76,7 +76,7 @@ public class ProfileService {
         profileDetails.setUsername(user.getUsername());
         profileDetails.setProfilePicture(user.getProfilePicture());
         profileDetails.setWatchlistTop(getWatchlistTop(session));
-        profileDetails.setWatchingTop(getWatchingListTop(session));
+        profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
         profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
         profileDetails.setReviews(getReviews(session));
@@ -135,13 +135,17 @@ public class ProfileService {
         watchingRepository.save(modelMapper.map(show, Watching.class));
     }
 
-    public List<WatchReturnDto> getWatchingList(HttpSession session) {
-        return watchingRepository.findByUserId((Long) session.getAttribute("user"));
-    }
+    public List<WatchReturnDto> getWatchingList(Integer limit, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
 
-    public List<WatchReturnDto> getWatchingListTop(HttpSession session) {
-        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        return watchingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
+        // If a limit was provided, use that, else retrieve the entire ranking list
+        Pageable pageRequest;
+        if (limit != null) {
+            pageRequest = PageRequest.of(0, limit);
+        } else {
+            pageRequest = Pageable.unpaged();
+        }
+        return watchingRepository.findByIdUserId(userId, pageRequest);
     }
 
     public void removeFromWatchingList(String id, HttpSession session) {
