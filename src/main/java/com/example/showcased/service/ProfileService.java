@@ -77,7 +77,7 @@ public class ProfileService {
         profileDetails.setProfilePicture(user.getProfilePicture());
         profileDetails.setWatchlistTop(getWatchlistTop(session));
         profileDetails.setWatchingTop(getWatchingListTop(session));
-        profileDetails.setShowRankingTop(getShowRankingListTop(session));
+        profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
         profileDetails.setReviews(getReviews(session));
         profileDetails.setNumFollowers(getFollowersCount(session));
@@ -192,13 +192,17 @@ public class ProfileService {
         showRankingRepository.save(ranking);
     }
 
-    public List<RankingReturnDto> getShowRankingList(HttpSession session) {
-        return showRankingRepository.findByUserId((Long) session.getAttribute("user"));
-    }
+    public List<RankingReturnDto> getShowRankingList(Integer limit, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
 
-    public List<RankingReturnDto> getShowRankingListTop(HttpSession session) {
-        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        return showRankingRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
+        // If a limit was provided, use that, else retrieve the entire ranking list
+        Pageable pageRequest;
+        if (limit != null) {
+            pageRequest = PageRequest.of(0, limit);
+        } else {
+            pageRequest = Pageable.unpaged();
+        }
+        return showRankingRepository.findByIdUserId(userId, pageRequest);
     }
 
     public void removeFromShowRankingList(String id, HttpSession session) {
@@ -206,7 +210,7 @@ public class ProfileService {
         showRankingRepository.deleteById(new WatchId(userId, Long.valueOf(id)));
 
         // After deleting from the show ranking list we will need to adjust the ranking numbers to account for it
-        List<RankingReturnDto> rankings = showRankingRepository.findByUserId(userId);
+        List<RankingReturnDto> rankings = showRankingRepository.findByIdUserId(userId, Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             ShowRanking ranking = new ShowRanking();
             ranking.setId(new WatchId(userId, rankings.get(i).getShowId()));
