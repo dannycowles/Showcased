@@ -24,11 +24,11 @@
       <h5>{{show.title}}</h5>
 
       <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
     }
     <br>
     <br>
-    <button (click)="manageWatchlistPressed()">Manage Watchlist</button>
+    <button routerLink="/profile/watchlist">Manage Watchlist</button>
     <br>
     <br>
 
@@ -42,11 +42,11 @@
       <h5>{{show.title}}</h5>
 
       <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
     }
     <br>
     <br>
-    <button (click)="manageWatchingPressed()">Manage Currently Watching</button>
+    <button routerLink="/profile/watching">Manage Currently Watching</button>
     <br>
     <br>
   } @else {
@@ -60,11 +60,11 @@
       <h5>{{show.title}}</h5>
 
       <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
     }
     <br>
     <br>
-    <button (click)="manageShowRankingPressed()">Manage Favorite Shows</button>
+    <button routerLink="/profile/show-ranking">Manage Favorite Shows</button>
     <br>
     <br>
   } @else {
@@ -92,18 +92,18 @@
 
   <h3>Favorite Episodes</h3>
   @if (profileData.episodeRankingTop.length != 0) {
-    @for (show of profileData.episodeRankingTop; track show.showId) {
-      <h5>{{show.rankNum}}</h5>
-      <h5>Show: {{show.showTitle}}</h5>
-      <h5>Episode: {{show.episodeTitle}}</h5>
-      <h5>S{{show.season}} E{{show.episode}}</h5>
+    @for (episode of profileData.episodeRankingTop; track episode.showId) {
+      <h5>{{episode.rankNum}}</h5>
+      <h5>Show: {{episode.showTitle}}</h5>
+      <h5>Episode: {{episode.episodeTitle}}</h5>
+      <h5>S{{episode.season}} E{{episode.episode}}</h5>
 
       <!-- Episode stills are sized w185, with a 16:9 ratio -->
-      <a [href]="'/show/' + show.showId + '/season/' + show.season + '/episode/' + show.episode"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="104" priority></a>
+      <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
     }
     <br>
     <br>
-    <button (click)="manageEpisodeRankingPressed()">Manage Favorite Episodes</button>
+    <button routerLink="/profile/episode-ranking">Manage Favorite Episodes</button>
     <br>
     <br>
   } @else {
