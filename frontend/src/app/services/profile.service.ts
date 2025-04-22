@@ -498,4 +498,22 @@ export class ProfileService {
       throw error;
     }
   }
+
+  /**
+   * Removes the specified id from the logged-in user's following list
+   * @param id
+   */
+  async removeFollower(id: number): Promise<Response> {
+    try {
+      const response: Response = await fetch(`${this.baseUrl}/followers/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

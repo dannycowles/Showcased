@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserSearchData} from '../../../data/user-search-data';
 import {ProfileService} from '../../../services/profile.service';
-import {UserService} from '../../../services/user.service';
 
 @Component({
   selector: 'app-profile-followers-page',
@@ -12,8 +11,7 @@ import {UserService} from '../../../services/user.service';
 export class ProfileFollowersPageComponent implements OnInit {
   followersEntries: UserSearchData[];
 
-  constructor(private profileService: ProfileService,
-              private userService: UserService) {};
+  constructor(private profileService: ProfileService) {};
 
   async ngOnInit() {
     try {
@@ -25,7 +23,7 @@ export class ProfileFollowersPageComponent implements OnInit {
 
   async removeFollower(followerId: number) {
     try {
-      await this.userService.removeFollower(followerId);
+      await this.profileService.removeFollower(followerId);
       this.followersEntries = this.followersEntries.filter(user => user.id != followerId);
     } catch(error) {
       console.error(error);

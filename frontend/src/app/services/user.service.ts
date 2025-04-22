@@ -12,15 +12,22 @@ import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
 export class UserService {
   baseUrl: string = "http://localhost:8080/user";
 
+  // If the user is unauthorized, we redirect them to the login page
+  checkUnauthorizedUser(response: Response): void {
+    if (response.status === 401) {
+      window.location.href = '/login';
+    }
+  }
+
   /**
    * Searches for users given a query
    * @param query
    */
   async searchUsers(query: string): Promise<UserSearchData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(query)}`);
-      let data: [] = await response.json();
+      const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(query)}`);
 
+      const data: [] = await response.json();
       return data.map((result: {}) => {
         return new UserSearchData(result);
       });
@@ -35,10 +42,11 @@ export class UserService {
    */
   async getUserDetails(id: number): Promise<ProfileData> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/details`, {
+      const response = await fetch(`${this.baseUrl}/${id}/details`, {
         credentials: 'include'
       });
-      let data: {} = await response.json();
+
+      const data= await response.json();
       return new ProfileData(data);
     } catch(error) {
       throw error;
@@ -51,9 +59,9 @@ export class UserService {
    */
   async getFullWatchlist(id: number): Promise<WatchlistData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/watchlist`);
-      let data: [] = await response.json();
+      const response = await fetch(`${this.baseUrl}/${id}/watchlist`);
 
+      const data = await response.json();
       return data.map((show: {}) => {
         return new WatchlistData(show);
       });
@@ -68,9 +76,9 @@ export class UserService {
    */
   async getFullWatchingList(id:number): Promise<WatchingData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/watching`);
-      let data: [] = await response.json();
+      const response = await fetch(`${this.baseUrl}/${id}/currently-watching`);
 
+      const data = await response.json();
       return data.map((show: {}) => {
         return new WatchingData(show);
       });
@@ -85,9 +93,9 @@ export class UserService {
    */
   async getFullShowRankingList(id:number): Promise<ShowRankingData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/show-ranking`);
-      let data: [] = await response.json();
+      const response = await fetch(`${this.baseUrl}/${id}/show-rankings`);
 
+      const data = await response.json();
       return data.map((show: {}) => {
         return new ShowRankingData(show);
       });
@@ -102,9 +110,9 @@ export class UserService {
    */
   async getFullEpisodeRankingList(id:number): Promise<EpisodeRankingData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/episode-ranking`);
-      let data: [] = await response.json();
+      const response = await fetch(`${this.baseUrl}/${id}/episode-rankings`);
 
+      const data = await response.json();
       return data.map((show: {}) => {
         return new EpisodeRankingData(show);
       });
@@ -119,15 +127,12 @@ export class UserService {
    */
   async unfollowUser(id: number): Promise<Response> {
     try {
-      const response: Response = await fetch(`${this.baseUrl}/${id}/unfollow`, {
+      const response = await fetch(`${this.baseUrl}/${id}/followers`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
-      // Redirect to login page if unauthorized
-      if (response.status == 401) {
-        window.location.href = "/login";
-      }
+      this.checkUnauthorizedUser(response);
       return response;
     } catch (error) {
       throw error;
@@ -140,31 +145,13 @@ export class UserService {
    */
   async followUser(id: number): Promise<Response> {
     try {
-      const response: Response = await fetch(`${this.baseUrl}/${id}/follow`, {
+      const response = await fetch(`${this.baseUrl}/${id}/followers`, {
         method: 'POST',
         credentials: 'include'
       });
 
-      // Redirect to login page if unauthorized
-      if (response.status == 401) {
-        window.location.href = "/login";
-      }
+      this.checkUnauthorizedUser(response);
       return response;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  /**
-   * Removes the specified id from the logged-in user's following list
-   * @param id
-   */
-  async removeFollower(id: number) {
-    try {
-      let response: Response = await fetch(`${this.baseUrl}/followers/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
     } catch (error) {
       throw error;
     }
@@ -176,10 +163,11 @@ export class UserService {
    */
   async getFollowersList(id: number): Promise<UserSearchData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/followers`, {
+      const response = await fetch(`${this.baseUrl}/${id}/followers`, {
         credentials: 'include'
       });
-      let data: [] = await response.json();
+
+      const data = await response.json();
       return data.map((user: {}) => {
         return new UserSearchData(user);
       });
@@ -194,10 +182,11 @@ export class UserService {
    */
   async getFollowingList(id: number): Promise<UserSearchData[]> {
     try {
-      let response: Response = await fetch(`${this.baseUrl}/${id}/following`, {
+      const response = await fetch(`${this.baseUrl}/${id}/following`, {
         credentials: 'include'
       });
-      let data: [] = await response.json();
+
+      const data = await response.json();
       return data.map((user: {}) => {
         return new UserSearchData(user);
       });
@@ -205,5 +194,4 @@ export class UserService {
       throw error;
     }
   }
-
 }
