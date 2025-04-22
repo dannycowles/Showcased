@@ -1,1 +1,17 @@
-<p>user-season-ranking-page works!</p>
+<button [routerLink]="['../']">Return to User Profile</button>
+
+@if (rankingEntries) {
+  <h3>Favorite Seasons</h3>
+  @if (rankingEntries.length != 0) {
+    @for (season of rankingEntries; track season.id) {
+      <h5>{{season.rankNum}}</h5>
+      <h5>{{season.showTitle}} S{{season.season}}</h5>
+
+      <!-- Poster images are sized w185, using 2:3 ratio -->
+      <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+    }
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+}
+

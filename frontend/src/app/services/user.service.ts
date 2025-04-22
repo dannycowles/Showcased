@@ -5,6 +5,7 @@ import {WatchlistData} from '../data/lists/watchlist-data';
 import {WatchingData} from '../data/lists/watching-data';
 import {ShowRankingData} from '../data/lists/show-ranking-data';
 import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
+import {SeasonRankingData} from '../data/lists/season-ranking-data';
 
 @Injectable({
   providedIn: 'root'
@@ -115,6 +116,23 @@ export class UserService {
       const data = await response.json();
       return data.map((show: {}) => {
         return new EpisodeRankingData(show);
+      });
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the full season ranking list for the user with the specified id
+   * @param id
+   */
+  async getFullSeasonRankingList(id:number): Promise<SeasonRankingData[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${id}/season-rankings`);
+
+      const data = await response.json();
+      return data.map((season: {}) => {
+        return new SeasonRankingData(season);
       });
     } catch(error) {
       throw error;
