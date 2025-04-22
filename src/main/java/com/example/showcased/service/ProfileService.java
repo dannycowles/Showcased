@@ -365,4 +365,9 @@ public class ProfileService {
     public Long getFollowingCount(HttpSession session) {
         return followersRepository.countByIdFollowerId((Long) session.getAttribute("user"));
     }
+
+    public void removeFollower(Long removeId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        followersRepository.deleteById(new FollowerId(removeId, userId));
+    }
 }

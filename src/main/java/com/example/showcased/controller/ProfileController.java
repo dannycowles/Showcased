@@ -68,6 +68,12 @@ public class ProfileController {
         return ResponseEntity.ok(followingCount);
     }
 
+    @DeleteMapping("/followers/{id}")
+    public ResponseEntity<Void> removeFollower(@PathVariable("id") Long id, HttpSession session) {
+        profileService.removeFollower(id, session);
+        return ResponseEntity.noContent().build();
+    }
+
 
     // ========= WATCHLIST ==========
 

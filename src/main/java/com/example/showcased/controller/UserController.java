@@ -98,21 +98,15 @@ public class UserController {
 
     // ========== SOCIAL ==========
 
-    @PostMapping("{id}/follow")
+    @PostMapping("{id}/followers")
     public ResponseEntity<Void> followUser(@PathVariable("id") Long followId, HttpSession session) {
         userService.followUser(followId, session);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{id}/unfollow")
+    @DeleteMapping("{id}/followers")
     public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId, HttpSession session) {
         userService.unfollowUser(unfollowId, session);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/followers/{id}")
-    public ResponseEntity<Void> removeFollower(@PathVariable("id") Long id, HttpSession session) {
-        userService.removeFollower(id, session);
         return ResponseEntity.noContent().build();
     }
 }
