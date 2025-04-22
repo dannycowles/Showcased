@@ -26,9 +26,4 @@ export class UserWatchlistPageComponent implements OnInit {
       console.error(error);
     }
   };
-
-  returnToUserProfile() {
-    window.location.href = `/user/${this.userId}`;
-  }
-
 }

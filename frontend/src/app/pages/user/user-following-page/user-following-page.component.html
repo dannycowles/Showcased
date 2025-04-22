@@ -1,11 +1,11 @@
-<a class="btn btn-primary" href="/user/{{this.userId}}">Return to User Profile</a>
+<a class="btn btn-primary" [routerLink]="['../']">Return to User Profile</a>
 <h1>User Following Page</h1>
 
 @if (followingEntries?.length != 0) {
   @for (user of followingEntries; track user.id) {
     <div class="d-flex align-items-center ms-5 mb-4 me-5">
       <img class="rounded-circle object-fit-cover" [ngSrc]="user.profilePicture" alt="User Profile Picture" width="100" height="100">
-      <h3 class="ms-5"><a href="/user/{{user.id}}" class="text-dark">{{user.username}}</a></h3>
+      <h3 class="ms-5"><a [routerLink]="['/user', user.id]" class="text-dark">{{user.username}}</a></h3>
 
       @if (!user.isOwnProfile) {
         @if (user.isFollowing) {

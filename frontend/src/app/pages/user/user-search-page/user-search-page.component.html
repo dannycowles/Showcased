@@ -7,7 +7,7 @@
 @if (this.searchResults) {
   @if (this.searchResults.length != 0) {
     @for (user of this.searchResults; track user.id) {
-      <a href="/user/{{user.id}}"><p>{{user.username}}</p></a>
+      <a [routerLink]="['/user', user.id]"><p>{{user.username}}</p></a>
       <p>TODO: profile picture</p>
       <br>
     }

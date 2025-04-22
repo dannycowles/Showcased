@@ -1,4 +1,4 @@
-<button (click)="returnToUserProfile()">Return to User Profile</button>
+<button [routerLink]="['../']">Return to User Profile</button>
 
 @if (rankingEntries) {
   <h3>Favorite Shows</h3>
@@ -8,7 +8,7 @@
       <h5>{{show.title}}</h5>
 
       <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [href]="'/show/' + show.showId"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
     }
   } @else {
     <p>Nothing ranked yet!</p>

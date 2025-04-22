@@ -12,11 +12,11 @@
     }
 
     <div class="d-flex m-3 gap-5">
-      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/user/{{this.userId}}/followers">
+      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" routerLink="followers">
         <h3>{{userDetails.numFollowers}}</h3>
         <h4>Followers</h4>
       </a>
-      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" href="/user/{{this.userId}}/following">
+      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" routerLink="following">
         <h3>{{userDetails.numFollowing}}</h3>
         <h4>Following</h4>
       </a>
