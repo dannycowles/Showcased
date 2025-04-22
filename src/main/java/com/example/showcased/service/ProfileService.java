@@ -75,7 +75,7 @@ public class ProfileService {
         ProfileDetailsDto profileDetails = new ProfileDetailsDto();
         profileDetails.setUsername(user.getUsername());
         profileDetails.setProfilePicture(user.getProfilePicture());
-        profileDetails.setWatchlistTop(getWatchlistTop(session));
+        profileDetails.setWatchlistTop(getWatchlist(numTopEntries, session));
         profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
         profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
@@ -97,13 +97,17 @@ public class ProfileService {
         watchlistRepository.save(modelMapper.map(show, Watchlist.class));
     }
 
-    public List<WatchReturnDto> getWatchlist(HttpSession session) {
-        return watchlistRepository.findByUserId((Long) session.getAttribute("user"));
-    }
+    public List<WatchReturnDto> getWatchlist(Integer limit, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
 
-    public List<WatchReturnDto> getWatchlistTop(HttpSession session) {
-        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        return watchlistRepository.findByUserIdTop((Long) session.getAttribute("user"), pageRequest);
+        // If a limit was provided, use that, else retrieve the entire ranking list
+        Pageable pageRequest;
+        if (limit != null) {
+            pageRequest = PageRequest.of(0, limit);
+        } else {
+            pageRequest = Pageable.unpaged();
+        }
+        return watchlistRepository.findByIdUserId(userId, pageRequest);
     }
 
     public void removeFromWatchlist(String id, HttpSession session) {
