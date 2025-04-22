@@ -18,6 +18,8 @@ public class UserController {
         this.userService = userService;
     }
 
+    // ========== USER DETAILS ==========
+
     @GetMapping("/search")
     public ResponseEntity<List<UserSearchDto>> searchUsers(@RequestParam String query) {
         List<UserSearchDto> searchResults = userService.searchUsers(query);
@@ -30,94 +32,10 @@ public class UserController {
         return ResponseEntity.ok(userDetails);
     }
 
-
-    @GetMapping("/{id}/watchlist")
-    public ResponseEntity<List<WatchReturnDto>> getUserWatchlist(@PathVariable Long id) {
-        List<WatchReturnDto> watchlist = userService.getUserWatchlist(id);
-        return ResponseEntity.ok(watchlist);
-    }
-
-    @GetMapping("/{id}/watchlist/top")
-    public ResponseEntity<List<WatchReturnDto>> getUserWatchlistTop(@PathVariable Long id) {
-        List<WatchReturnDto> watchlist = userService.getUserWatchlistTop(id);
-        return ResponseEntity.ok(watchlist);
-    }
-
-
-
-
-    @GetMapping("/{id}/watching")
-    public ResponseEntity<List<WatchReturnDto>> getUserWatchingList(@PathVariable Long id) {
-        List<WatchReturnDto> watchingList = userService.getUserWatchingList(id);
-        return ResponseEntity.ok(watchingList);
-    }
-
-    @GetMapping("/{id}/watching/top")
-    public ResponseEntity<List<WatchReturnDto>> getUserWatchingListTop(@PathVariable Long id) {
-        List<WatchReturnDto> watchingList = userService.getUserWatchingListTop(id);
-        return ResponseEntity.ok(watchingList);
-    }
-
-
-
-
-    @GetMapping("/{id}/show-ranking")
-    public ResponseEntity<List<RankingReturnDto>> getUserShowRankings(@PathVariable Long id) {
-        List<RankingReturnDto> rankings =  userService.getUserShowRankings(id);
-        return ResponseEntity.ok(rankings);
-    }
-
-    @GetMapping("/{id}/show-ranking/top")
-    public ResponseEntity<List<RankingReturnDto>> getUserShowRankingsTop(@PathVariable Long id) {
-        List<RankingReturnDto> rankings =  userService.getUserShowRankingsTop(id);
-        return ResponseEntity.ok(rankings);
-    }
-
-
-
-
-    @GetMapping("/{id}/episode-ranking")
-    public ResponseEntity<List<EpisodeRankingReturnDto>> getUserEpisodeRankings(@PathVariable Long id) {
-        List<EpisodeRankingReturnDto> rankings = userService.getUserEpisodeRankings(id);
-        return ResponseEntity.ok(rankings);
-    }
-
-    @GetMapping("{id}/episode-ranking/top")
-    public ResponseEntity<List<EpisodeRankingReturnDto>> getUserEpisodeRankingsTop(@PathVariable Long id) {
-        List<EpisodeRankingReturnDto> rankings = userService.getUserEpisodeRankingsTop(id);
-        return ResponseEntity.ok(rankings);
-    }
-
-
-
     @GetMapping("/{id}/reviews")
     public ResponseEntity<List<ReviewWithUserInfoDto>> getUserReviews(@PathVariable Long id) {
         List<ReviewWithUserInfoDto> reviews = userService.getUserReviews(id);
         return ResponseEntity.ok(reviews);
-    }
-
-    @PostMapping("{id}/follow")
-    public ResponseEntity<Void> followUser(@PathVariable("id") Long followId, HttpSession session) {
-        userService.followUser(followId, session);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("{id}/unfollow")
-    public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId, HttpSession session) {
-        userService.unfollowUser(unfollowId, session);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{id}/followers")
-    public ResponseEntity<List<UserSearchDto>> getFollowers(@PathVariable("id") Long id, HttpSession session) {
-        List<UserSearchDto> followers = userService.getFollowers(id, session);
-        return ResponseEntity.ok(followers);
-    }
-
-    @DeleteMapping("/followers/{id}")
-    public ResponseEntity<Void> removeFollower(@PathVariable("id") Long id, HttpSession session) {
-        userService.removeFollower(id, session);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/followers/count")
@@ -136,5 +54,65 @@ public class UserController {
     public ResponseEntity<Long> getFollowingCount(@PathVariable("id") Long id) {
         Long followingCount = userService.getFollowingCount(id);
         return ResponseEntity.ok(followingCount);
+    }
+
+    @GetMapping("/{id}/followers")
+    public ResponseEntity<List<UserSearchDto>> getFollowers(@PathVariable("id") Long id, HttpSession session) {
+        List<UserSearchDto> followers = userService.getFollowers(id, session);
+        return ResponseEntity.ok(followers);
+    }
+
+
+    // ========== USER LISTS ==========
+
+    @GetMapping("/{id}/watchlist")
+    public ResponseEntity<List<WatchReturnDto>> getUserWatchlist(@PathVariable Long id, @RequestParam(value = "limit", required = false) Integer limit) {
+        List<WatchReturnDto> watchlist = userService.getUserWatchlist(id, limit);
+        return ResponseEntity.ok(watchlist);
+    }
+
+    @GetMapping("/{id}/currently-watching")
+    public ResponseEntity<List<WatchReturnDto>> getUserWatchingList(@PathVariable Long id, @RequestParam(value = "limit", required = false) Integer limit) {
+        List<WatchReturnDto> watchingList = userService.getUserWatchingList(id, limit);
+        return ResponseEntity.ok(watchingList);
+    }
+
+    @GetMapping("/{id}/show-rankings")
+    public ResponseEntity<List<RankingReturnDto>> getUserShowRankings(@PathVariable Long id, @RequestParam(value = "limit", required = false) Integer limit) {
+        List<RankingReturnDto> rankings =  userService.getUserShowRankings(id, limit);
+        return ResponseEntity.ok(rankings);
+    }
+
+    @GetMapping("/{id}/episode-rankings")
+    public ResponseEntity<List<EpisodeRankingReturnDto>> getUserEpisodeRankings(@PathVariable Long id, @RequestParam(value = "limit", required = false) Integer limit) {
+        List<EpisodeRankingReturnDto> rankings = userService.getUserEpisodeRankings(id, limit);
+        return ResponseEntity.ok(rankings);
+    }
+
+    @GetMapping("/{id}/season-rankings")
+    public ResponseEntity<List<SeasonRankingReturnDto>> getUserSeasonRankings(@PathVariable Long id, @RequestParam(value = "limit", required = false) Integer limit) {
+        List<SeasonRankingReturnDto> rankings = userService.getUserSeasonRankings(id, limit);
+        return ResponseEntity.ok(rankings);
+    }
+
+
+    // ========== SOCIAL ==========
+
+    @PostMapping("{id}/follow")
+    public ResponseEntity<Void> followUser(@PathVariable("id") Long followId, HttpSession session) {
+        userService.followUser(followId, session);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{id}/unfollow")
+    public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId, HttpSession session) {
+        userService.unfollowUser(unfollowId, session);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/followers/{id}")
+    public ResponseEntity<Void> removeFollower(@PathVariable("id") Long id, HttpSession session) {
+        userService.removeFollower(id, session);
+        return ResponseEntity.noContent().build();
     }
 }

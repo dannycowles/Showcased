@@ -60,7 +60,7 @@ public class ProfileService {
      * Whenever a user adds a show to any of their lists,
      * the show info table might need to be updated too
      */
-    public void addToShowInfoRepository(WatchSendDto show) {
+    private void addToShowInfoRepository(WatchSendDto show) {
         if (!showInfoRepository.existsById(show.getShowId())) {
             ShowInfo showInfo = modelMapper.map(show, ShowInfo.class);
             showInfoRepository.save(showInfo);
@@ -97,17 +97,18 @@ public class ProfileService {
         watchlistRepository.save(modelMapper.map(show, Watchlist.class));
     }
 
+    // If a limit was provided, use that, else retrieve the entire ranking list
+    private Pageable getPageRequest(Integer limit) {
+        if (limit != null) {
+            return PageRequest.of(0, limit);
+        } else {
+            return Pageable.unpaged();
+        }
+    }
+
     public List<WatchReturnDto> getWatchlist(Integer limit, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-
-        // If a limit was provided, use that, else retrieve the entire ranking list
-        Pageable pageRequest;
-        if (limit != null) {
-            pageRequest = PageRequest.of(0, limit);
-        } else {
-            pageRequest = Pageable.unpaged();
-        }
-        return watchlistRepository.findByIdUserId(userId, pageRequest);
+        return watchlistRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
     public void removeFromWatchlist(String id, HttpSession session) {
@@ -141,15 +142,7 @@ public class ProfileService {
 
     public List<WatchReturnDto> getWatchingList(Integer limit, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-
-        // If a limit was provided, use that, else retrieve the entire ranking list
-        Pageable pageRequest;
-        if (limit != null) {
-            pageRequest = PageRequest.of(0, limit);
-        } else {
-            pageRequest = Pageable.unpaged();
-        }
-        return watchingRepository.findByIdUserId(userId, pageRequest);
+        return watchingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
     public void removeFromWatchingList(String id, HttpSession session) {
@@ -202,15 +195,7 @@ public class ProfileService {
 
     public List<RankingReturnDto> getShowRankingList(Integer limit, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-
-        // If a limit was provided, use that, else retrieve the entire ranking list
-        Pageable pageRequest;
-        if (limit != null) {
-            pageRequest = PageRequest.of(0, limit);
-        } else {
-            pageRequest = Pageable.unpaged();
-        }
-        return showRankingRepository.findByIdUserId(userId, pageRequest);
+        return showRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
     public void removeFromShowRankingList(String id, HttpSession session) {
@@ -273,15 +258,7 @@ public class ProfileService {
 
     public List<EpisodeRankingReturnDto> getEpisodeRankingList(Integer limit, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-
-        // If a limit was provided, use that, else retrieve the entire ranking list
-        Pageable pageRequest;
-        if (limit != null) {
-            pageRequest = PageRequest.of(0, limit);
-        } else {
-            pageRequest = Pageable.unpaged();
-        }
-        return episodeRankingRepository.findByIdUserId(userId, pageRequest);
+        return episodeRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
     public void removeFromEpisodeRankingList(Long showId, int seasonNumber, int episodeNumber, HttpSession session) {
@@ -339,15 +316,7 @@ public class ProfileService {
 
     public List<SeasonRankingReturnDto> getSeasonRankingList(Integer limit, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-
-        // If a limit was provided, use that, else retrieve the entire ranking list
-        Pageable pageRequest;
-        if (limit != null) {
-            pageRequest = PageRequest.of(0, limit);
-        } else {
-            pageRequest = Pageable.unpaged();
-        }
-        return seasonRankingRepository.findByIdUserId(userId, pageRequest);
+        return seasonRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
     public void removeFromSeasonRankingList(Long seasonId, HttpSession session) {

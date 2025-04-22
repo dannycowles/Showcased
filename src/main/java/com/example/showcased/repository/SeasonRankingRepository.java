@@ -21,4 +21,6 @@ public interface SeasonRankingRepository extends JpaRepository<SeasonRanking, Se
             "FROM SeasonRanking s JOIN SeasonInfo i ON s.id.seasonId = i.id " +
             "WHERE s.id.userId = :userId ORDER BY s.rankNum")
     List<SeasonRankingReturnDto> findByIdUserId(@Param("userId") Long userId, Pageable pageable);
+
+    int countByIdUserId(Long userId);
 }

@@ -10,6 +10,7 @@ import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final ReviewRepository reviewRepository;
     private final FollowersRepository followersRepository;
+    private final SeasonRankingRepository seasonRankingRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -36,7 +38,7 @@ public class UserService {
                        UserRepository userRepository,
                        ModelMapper modelMapper,
                        ReviewRepository reviewRepository,
-                       FollowersRepository followersRepository) {
+                       FollowersRepository followersRepository, SeasonRankingRepository seasonRankingRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -45,6 +47,7 @@ public class UserService {
         this.modelMapper = modelMapper;
         this.reviewRepository = reviewRepository;
         this.followersRepository = followersRepository;
+        this.seasonRankingRepository = seasonRankingRepository;
     }
 
     public void ensureUserExists(Long userId) {
@@ -69,28 +72,29 @@ public class UserService {
 
         userDetails.setUsername(user.getUsername());
         userDetails.setProfilePicture(user.getProfilePicture());
-        userDetails.setWatchlistTop(getUserWatchlistTop(userId));
-        // If the user has more than num top entries in their watchlist toggle the flag
+        userDetails.setWatchlistTop(getUserWatchlist(userId, numTopEntries));
         if (watchlistRepository.countByIdUserId(userId) > numTopEntries) {
             userDetails.setMoreWatchlist(true);
         }
 
-        userDetails.setWatchingTop(getUserWatchingListTop(userId));
-        // If the user has more than num top entries in their watching list toggle the flag
+        userDetails.setWatchingTop(getUserWatchingList(userId, numTopEntries));
         if (watchingRepository.countByIdUserId(userId) > numTopEntries) {
             userDetails.setMoreWatching(true);
         }
 
-        userDetails.setShowRankingTop(getUserShowRankingsTop(userId));
-        // If the user has more than num top entries in their show ranking list toggle the flag
+        userDetails.setShowRankingTop(getUserShowRankings(userId, numTopEntries));
         if (showRankingRepository.countByIdUserId(userId) > numTopEntries) {
             userDetails.setMoreShowRanking(true);
         }
 
-        userDetails.setEpisodeRankingTop(getUserEpisodeRankingsTop(userId));
-        // If the user has more than num top entries in their episode ranking list toggle the flag
+        userDetails.setEpisodeRankingTop(getUserEpisodeRankings(userId, numTopEntries));
         if (episodeRankingRepository.countByIdUserId(userId) > numTopEntries) {
             userDetails.setMoreEpisodeRanking(true);
+        }
+
+        userDetails.setSeasonRankingTop(getUserSeasonRankings(userId, numTopEntries));
+        if (seasonRankingRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setMoreSeasonRanking(true);
         }
 
         userDetails.setReviews(getUserReviews(userId));
@@ -106,58 +110,38 @@ public class UserService {
         return userDetails;
     }
 
-
-    public List<WatchReturnDto> getUserWatchlist(Long userId) {
-        ensureUserExists(userId);
-        return watchlistRepository.findByUserId(userId);
+    // If a limit was provided, use that, else retrieve the entire ranking list
+    private Pageable getPageRequest(Integer limit) {
+        if (limit != null) {
+            return PageRequest.of(0, limit);
+        } else {
+            return Pageable.unpaged();
+        }
     }
 
-    public List<WatchReturnDto> getUserWatchlistTop(Long userId) {
+    public List<WatchReturnDto> getUserWatchlist(Long userId, Integer limit) {
         ensureUserExists(userId);
-        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        return watchlistRepository.findByUserIdTop(userId, pageRequest);
+        return watchlistRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
-
-
-
-    public List<WatchReturnDto> getUserWatchingList(Long userId) {
+    public List<WatchReturnDto> getUserWatchingList(Long userId, Integer limit) {
         ensureUserExists(userId);
-        return watchingRepository.findByUserId(userId);
+        return watchingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
-    public List<WatchReturnDto> getUserWatchingListTop(Long userId) {
+    public List<RankingReturnDto> getUserShowRankings(Long userId, Integer limit) {
         ensureUserExists(userId);
-        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        return watchingRepository.findByUserIdTop(userId, pageRequest);
+        return showRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
-
-
-
-    public List<RankingReturnDto> getUserShowRankings(Long userId) {
+    public List<EpisodeRankingReturnDto> getUserEpisodeRankings(Long userId, Integer limit) {
         ensureUserExists(userId);
-        return showRankingRepository.findByUserId(userId);
+        return episodeRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
-    public List<RankingReturnDto> getUserShowRankingsTop(Long userId) {
+    public List<SeasonRankingReturnDto> getUserSeasonRankings(Long userId, Integer limit) {
         ensureUserExists(userId);
-        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        return showRankingRepository.findByUserIdTop(userId, pageRequest);
-    }
-
-
-
-
-    public List<EpisodeRankingReturnDto> getUserEpisodeRankings(Long userId) {
-        ensureUserExists(userId);
-        return episodeRankingRepository.findByUserId(userId);
-    }
-
-    public List<EpisodeRankingReturnDto> getUserEpisodeRankingsTop(Long userId) {
-        ensureUserExists(userId);
-        PageRequest pageRequest = PageRequest.of(0, numTopEntries);
-        return episodeRankingRepository.findByUserIdTop(userId, pageRequest);
+        return seasonRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
 

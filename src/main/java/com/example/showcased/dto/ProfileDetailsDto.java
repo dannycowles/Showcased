@@ -22,4 +22,5 @@ public class ProfileDetailsDto {
     private boolean isFollowing = false;
     private boolean isOwnProfile = false;
     private List<SeasonRankingReturnDto> seasonRankingTop;
+    private boolean moreSeasonRanking = false;
 }
