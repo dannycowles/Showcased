@@ -38,6 +38,7 @@ import {ProfileFollowersPageComponent} from './pages/profile/profile-followers-p
 import {UserFollowersPageComponent} from './pages/user/user-followers-page/user-followers-page.component';
 import {UserFollowingPageComponent} from './pages/user/user-following-page/user-following-page.component';
 import {ProfileSeasonRankingPageComponent} from './pages/profile/profile-season-ranking-page/profile-season-ranking-page.component';
+import {UserSeasonRankingPageComponent} from './pages/user/user-season-ranking-page/user-season-ranking-page.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import {ProfileSeasonRankingPageComponent} from './pages/profile/profile-season-
     ProfileFollowersPageComponent,
     UserFollowersPageComponent,
     UserFollowingPageComponent,
-    ProfileSeasonRankingPageComponent
+    ProfileSeasonRankingPageComponent,
+    UserSeasonRankingPageComponent,
   ],
   imports: [
     BrowserModule,

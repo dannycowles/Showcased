@@ -13,7 +13,6 @@ import {UtilsService} from '../../../services/utils.service';
 export class UserPageComponent implements OnInit {
   readonly userId: number;
   userDetails: ProfileData;
-  readonly numTop: number = 10; // Holds the number of entries shown per list on showcase page
 
   constructor(private route: ActivatedRoute,
               private userService: UserService,
@@ -32,7 +31,7 @@ export class UserPageComponent implements OnInit {
 
   async followUser() {
     try {
-      const response: Response = await this.userService.followUser(this.userId);
+      const response = await this.userService.followUser(this.userId);
 
       if (response.ok) {
         this.userDetails.isFollowing = true;
@@ -45,7 +44,7 @@ export class UserPageComponent implements OnInit {
 
   async unfollowUser() {
     try {
-      const response: Response = await this.userService.unfollowUser(this.userId);
+      const response = await this.userService.unfollowUser(this.userId);
 
       if (response.ok) {
         this.userDetails.isFollowing = false;
@@ -54,13 +53,5 @@ export class UserPageComponent implements OnInit {
     } catch(error) {
       console.error(error);
     }
-  }
-
-  viewFullWatchlist() {
-    window.location.href += '/watchlist';
-  }
-
-  viewFullWatchingList() {
-    window.location.href += '/watching';
   }
 }

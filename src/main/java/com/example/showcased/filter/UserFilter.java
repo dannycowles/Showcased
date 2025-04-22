@@ -18,7 +18,7 @@ public class UserFilter implements Filter {
         HttpSession session = request.getSession();
 
         // If the user attempts to follow/unfollow while not logged in, redirect them
-        if (request.getRequestURI().endsWith("/follow") || request.getRequestURI().endsWith("/unfollow")) {
+        if (request.getRequestURI().endsWith("/followers") && (request.getMethod().equals("POST") || request.getMethod().equals("DELETE"))) {
             if (session.getAttribute("user") == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
