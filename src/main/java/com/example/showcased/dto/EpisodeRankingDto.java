@@ -1,15 +1,11 @@
 package com.example.showcased.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class EpisodeRankingDto {
+    private Long id;
     private Long showId;
     private String showTitle;
     private String episodeTitle;

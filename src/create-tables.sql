@@ -44,16 +44,6 @@ CREATE TABLE user_show_rankings (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE user_episode_rankings (
-    user_id INT,
-    show_id INT NOT NULL,
-    season INT,
-    episode INT,
-    rank_num INT,
-    PRIMARY KEY(user_id, show_id, season, episode),
-    FOREIGN KEY(user_id) REFERENCES users(id)
-);
-
 CREATE TABLE show_info (
     show_id INT,
     title TEXT,
@@ -61,14 +51,24 @@ CREATE TABLE show_info (
     PRIMARY KEY(show_id)
 );
 
+CREATE TABLE user_episode_rankings (
+    user_id INT,
+    episode_id INT,
+    rank_num INT NOT NULL,
+    PRIMARY KEY(user_id, episode_id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(episode_id) REFERENCES episode_info(id)
+);
+
 CREATE TABLE episode_info (
-    show_id INT,
-    show_title TEXT,
-    episode_title TEXT,
-    season INT,
-    episode INT,
-    poster_path TEXT,
-    PRIMARY KEY(show_id, season, episode)
+    id INT,
+    show_id INT NOT NULL,
+    show_title TEXT NOT NULL,
+    episode_title TEXT NOT NULL,
+    season INT NOT NULL,
+    episode INT NOT NULL,
+    poster_path TEXT NOT NULL,
+    PRIMARY KEY(id)
 );
 
 CREATE TABLE liked_reviews (

@@ -1,7 +1,7 @@
 package com.example.showcased.entity;
 
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +11,12 @@ import lombok.Setter;
 @Getter
 @Table(name = "episode_info")
 public class EpisodeInfo {
-    @EmbeddedId
-    private EpisodeInfoId id;
+    @Id
+    private Long id;
+    private Long showId;
     private String showTitle;
     private String episodeTitle;
+    private int season;
+    private int episode;
     private String posterPath;
 }

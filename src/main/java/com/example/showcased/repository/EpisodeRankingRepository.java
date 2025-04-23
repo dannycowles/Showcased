@@ -14,8 +14,8 @@ public interface EpisodeRankingRepository extends JpaRepository<EpisodeRanking, 
     @Query("SELECT MAX(e.rankNum) FROM EpisodeRanking e WHERE e.id.userId = :userId")
     Integer findMaxRankNumByUserId(@Param("userId") Long user);
 
-    @Query("SELECT new com.example.showcased.dto.EpisodeRankingReturnDto(e.id.showId, r.rankNum, e.showTitle, e.episodeTitle, r.id.season, r.id.episode, e.posterPath)" +
-            "FROM EpisodeInfo e JOIN EpisodeRanking r ON e.id.showId = r.id.showId AND e.id.season = r.id.season AND e.id.episode = r.id.episode AND r.id.userId = :userId ORDER BY r.rankNum")
+    @Query("SELECT new com.example.showcased.dto.EpisodeRankingReturnDto(r.id.episodeId, e.showId, r.rankNum, e.showTitle, e.episodeTitle, e.season, e.episode, e.posterPath)" +
+            "FROM EpisodeInfo e JOIN EpisodeRanking r ON e.id = r.id.episodeId AND r.id.userId = :userId ORDER BY r.rankNum")
     List<EpisodeRankingReturnDto> findByIdUserId(@Param("userId") Long user, Pageable pageable);
 
     int countByIdUserId(Long userId);

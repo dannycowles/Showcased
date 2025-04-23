@@ -1,12 +1,11 @@
 package com.example.showcased.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class EpisodeDto {
+    private Long id;
     @JsonProperty("air_date")
     private String airDate;
 

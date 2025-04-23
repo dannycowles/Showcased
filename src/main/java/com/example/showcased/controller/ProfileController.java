@@ -170,9 +170,9 @@ public class ProfileController {
         return ResponseEntity.ok(ranking);
     }
 
-    @DeleteMapping("/episode-rankings/show/{showId}/season/{seasonNumber}/episode/{episodeNumber}")
-    public ResponseEntity<Void> removeFromEpisodeRankingList(@PathVariable("showId") Long showId, @PathVariable("seasonNumber") int seasonNumber, @PathVariable("episodeNumber") int episodeNumber, HttpSession session) {
-        profileService.removeFromEpisodeRankingList(showId, seasonNumber, episodeNumber, session);
+    @DeleteMapping("/episode-rankings/{id}")
+    public ResponseEntity<Void> removeFromEpisodeRankingList(@PathVariable("id") Long id, HttpSession session) {
+        profileService.removeFromEpisodeRankingList(id, session);
         return ResponseEntity.noContent().build();
     }
 

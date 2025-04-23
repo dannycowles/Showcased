@@ -226,13 +226,13 @@ public class ProfileService {
     public void addEpisodeToRankingList(EpisodeRankingDto episode, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         EpisodeRanking ranking = new EpisodeRanking();
-        EpisodeRankingId rankingId = new EpisodeRankingId(userId, episode.getShowId(), episode.getSeason(), episode.getEpisode());
+        EpisodeRankingId rankingId = new EpisodeRankingId(userId, episode.getId());
         ranking.setId(rankingId);
 
         // If the episode doesn't exist in the episode info table already we add it for easy access
-        if (!episodeInfoRepository.existsById(new EpisodeInfoId(episode.getShowId(), episode.getSeason(), episode.getEpisode()))) {
+        if (!episodeInfoRepository.existsById(episode.getId())) {
             EpisodeInfo episodeInfo = new EpisodeInfo();
-            episodeInfo.setId(new EpisodeInfoId(episode.getShowId(), episode.getSeason(), episode.getEpisode())); // Manually setting the composite key
+            episodeInfo.setId(episode.getId());
             episodeInfo.setShowTitle(episode.getShowTitle());
             episodeInfo.setEpisodeTitle(episode.getEpisodeTitle());
             episodeInfo.setPosterPath(episode.getPosterPath());
@@ -261,24 +261,25 @@ public class ProfileService {
         return episodeRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
-    public void removeFromEpisodeRankingList(Long showId, int seasonNumber, int episodeNumber, HttpSession session) {
+    public void removeFromEpisodeRankingList(Long episodeId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        episodeRankingRepository.deleteById(new EpisodeRankingId(userId, showId, seasonNumber, episodeNumber));
+        episodeRankingRepository.deleteById(new EpisodeRankingId(userId, episodeId));
 
         // After deleting from the show ranking list we will need to adjust the ranking numbers to account for it
         List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByIdUserId(userId, Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             EpisodeRanking ranking = new EpisodeRanking();
-            ranking.setId(new EpisodeRankingId(userId, rankings.get(i).getShowId(), rankings.get(i).getSeason(), rankings.get(i).getEpisode()));
+            ranking.setId(new EpisodeRankingId(userId, rankings.get(i).getId()));
             ranking.setRankNum(i + 1L);
             episodeRankingRepository.save(ranking);
         }
     }
 
     public void updateEpisodeRankingList(List<UpdateEpisodeRankingDto> episodes, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
         for (UpdateEpisodeRankingDto episode : episodes) {
             EpisodeRanking newRanking = new EpisodeRanking();
-            newRanking.setId(new EpisodeRankingId((Long) session.getAttribute("user"), episode.getShowId(), episode.getSeason(), episode.getEpisode()));
+            newRanking.setId(new EpisodeRankingId(userId, episode.getEpisodeId()));
             newRanking.setRankNum(episode.getRankNum());
             episodeRankingRepository.save(newRanking);
         }
