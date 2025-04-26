@@ -1,4 +1,5 @@
 export class EpisodeData {
+  readonly id: number;
   readonly name: string;
   readonly showName: string;
   readonly overview: string;
@@ -9,6 +10,7 @@ export class EpisodeData {
   readonly stillPath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
+    this.id = jsonObject['id'];
     this.name = jsonObject['name'];
     this.showName = jsonObject['showTitle'];
 

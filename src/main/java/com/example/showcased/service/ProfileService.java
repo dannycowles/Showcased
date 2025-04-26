@@ -233,9 +233,12 @@ public class ProfileService {
         if (!episodeInfoRepository.existsById(episode.getId())) {
             EpisodeInfo episodeInfo = new EpisodeInfo();
             episodeInfo.setId(episode.getId());
+            episodeInfo.setShowId(episode.getShowId());
             episodeInfo.setShowTitle(episode.getShowTitle());
             episodeInfo.setEpisodeTitle(episode.getEpisodeTitle());
             episodeInfo.setPosterPath(episode.getPosterPath());
+            episodeInfo.setSeason(episode.getSeason());
+            episodeInfo.setEpisode(episode.getEpisode());
 
             episodeInfoRepository.save(episodeInfo);
         }

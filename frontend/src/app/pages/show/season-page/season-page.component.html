@@ -1,5 +1,5 @@
 @if (season) {
-  <button (click)="returnToShowDetails()">Return to Show Details</button>
+  <button [routerLink]="['/show', showId]">Return to Show Details</button>
 
   <h2>Season {{seasonNumber}}</h2>
   <h3>Overview: {{season.overview}}</h3>
@@ -17,7 +17,7 @@
   @if (numSeasons) {
     <h3>Season Select:</h3>
     @for (_ of [].constructor(numSeasons); let season = $index; track season) {
-      <button (click)="seasonSelected(season + 1)">{{season + 1}}</button>
+      <button [routerLink]="['/show', showId, 'season', season + 1]">{{season + 1}}</button>
     }
   }
   <br>
@@ -31,7 +31,7 @@
     <h4>Plot: {{episode.overview}}</h4>
 
     <!-- Episode stills are sized w185, with a 16:9 ratio -->
-    <a (click)="episodeSelected(episode.episodeNumber)"><img [ngSrc]="episode.stillPath" alt="Episode Still" width="185" height="104"></a>
+    <a [routerLink]="['/show', showId, 'season', seasonNumber, 'episode', episode.episodeNumber]"><img [ngSrc]="episode.stillPath" alt="Episode Still" width="185" height="104"></a>
     <br>
     <br>
   }

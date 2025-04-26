@@ -38,14 +38,11 @@ export class EpisodePageComponent implements OnInit {
     }
   }
 
-  returnToSeasonDetails() {
-    window.location.href = `/show/${this.showId}/season/${this.seasonNumber}`;
-  }
-
   // Add the episode to the user's ranking list
   async addToRankingList() {
     try {
-      let data = {
+      const data = {
+        "id": this.episode.id,
         "showId": this.showId,
         "showTitle": this.episode.showName,
         "episodeTitle": this.episode.name,
@@ -53,9 +50,9 @@ export class EpisodePageComponent implements OnInit {
         "episode": this.episodeNumber,
         "posterPath": this.episode.stillPath
       };
-      let response = await this.profileService.addEpisodeToRankingList(data);
 
-      if (response.status === 201) {
+      const response = await this.profileService.addEpisodeToRankingList(data);
+      if (response.ok) {
         this.toastService.addToEpisodeRankingToast(this.episode.name);
       }
     } catch (error) {

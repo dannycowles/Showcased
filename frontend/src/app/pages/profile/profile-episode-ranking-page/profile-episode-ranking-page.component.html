@@ -14,7 +14,7 @@
         <!-- Episode stills are sized w185, with a 16:9 ratio -->
         <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
 
-        <button (click)="removeEpisodeFromRankingList(episode.showId, episode.season, episode.episode)">Remove Episode</button>
+        <button (click)="removeEpisodeFromRankingList(episode.id)">Remove Episode</button>
       </div>
     }
   </div>

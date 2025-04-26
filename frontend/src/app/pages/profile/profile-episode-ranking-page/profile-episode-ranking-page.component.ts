@@ -24,12 +24,12 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
     }
   }
 
-  async removeEpisodeFromRankingList(removeId: number, season: number, episode: number) {
+  async removeEpisodeFromRankingList(removeId: number) {
     try {
-      await this.profileService.removeEpisodeFromRankingList(removeId, season, episode);
+      await this.profileService.removeEpisodeFromRankingList(removeId);
 
       // Remove the episode from entries shown to the user
-      this.rankingEntries = this.rankingEntries.filter(show => !(show.showId == removeId && show.season == season && show.episode == episode));
+      this.rankingEntries = this.rankingEntries.filter(show => show.id !== removeId);
     } catch(error) {
       console.error(error);
     }
@@ -47,11 +47,9 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
 
   async updateEpisodeRankingList() {
     try {
-      let updates = this.rankingEntries.map(show => ({
-        "showId": show.showId,
-        "rankNum": show.rankNum,
-        "season": show.season,
-        "episode": show.episode
+      const updates = this.rankingEntries.map(episode => ({
+        "episodeId": episode.id,
+        "rankNum": episode.rankNum
       }));
       await this.profileService.updateEpisodeRankingList(updates);
     } catch(error) {

@@ -339,14 +339,12 @@ export class ProfileService {
   }
 
   /**
-   * Removes an episode from ranking list by ID, season #, and episode #
+   * Removes an episode from ranking list by ID
    * @param id
-   * @param season
-   * @param episode
    */
-  async removeEpisodeFromRankingList(id: number, season: number, episode: number): Promise<Response> {
+  async removeEpisodeFromRankingList(id: number): Promise<Response> {
     try {
-      const response = await fetch(`${this.baseUrl}/episode-rankings/show/${id}/season/${season}/episode/${episode}`, {
+      const response = await fetch(`${this.baseUrl}/episode-rankings/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });

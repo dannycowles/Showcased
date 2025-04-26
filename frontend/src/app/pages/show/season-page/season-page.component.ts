@@ -14,7 +14,7 @@ import {ProfileService} from '../../../services/profile.service';
 })
 export class SeasonPageComponent implements OnInit {
   readonly showId: number;
-  readonly seasonNumber: number;
+  seasonNumber: number;
   season: SeasonData
   numSeasons: number;
 
@@ -23,20 +23,27 @@ export class SeasonPageComponent implements OnInit {
               public utilsService: UtilsService,
               private profileService: ProfileService) {
     this.showId = this.route.snapshot.params['id'];
-    this.seasonNumber = this.route.snapshot.params['seasonNumber'];
+    this.route.params.subscribe(params => {
+      this.seasonNumber = params['seasonNumber'];
+      this.retrieveSeasonInfo();
+    });
   }
 
   async ngOnInit() {
-    // Retrieve season details from backend
-    try {
-      this.season = await this.showService.fetchSeasonDetails(this.showId, this.seasonNumber);
-    } catch(error) {
-      console.error(error);
-    }
+    await this.retrieveSeasonInfo();
 
     // Retrieve number of seasons from backend
     try {
       this.numSeasons = await this.showService.fetchNumberOfSeasons(this.showId);
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  async retrieveSeasonInfo() {
+    // Retrieve season details from backend
+    try {
+      this.season = await this.showService.fetchSeasonDetails(this.showId, this.seasonNumber);
     } catch(error) {
       console.error(error);
     }
@@ -52,8 +59,7 @@ export class SeasonPageComponent implements OnInit {
         showTitle: this.season.showTitle
       };
 
-      let response = await this.profileService.addSeasonToRankingList(data);
-
+      const response = await this.profileService.addSeasonToRankingList(data);
       if (response.ok) {
         this.season.onRankingList = true;
       }
@@ -64,8 +70,7 @@ export class SeasonPageComponent implements OnInit {
 
   async removeSeasonRankingList() {
     try {
-      let response = await this.profileService.removeSeasonFromRankingList(this.season.id);
-
+      const response = await this.profileService.removeSeasonFromRankingList(this.season.id);
       if (response.ok) {
         this.season.onRankingList = false;
       }
@@ -74,19 +79,10 @@ export class SeasonPageComponent implements OnInit {
     }
   }
 
-
-  episodeSelected(episodeNumber: number) {
-    window.location.href = `${window.location.pathname}/episode/${episodeNumber}`;
-  }
-
   seasonSelected(seasonNumber: number) {
     // Check if the user tries to select the same season they are already on
     if (seasonNumber != this.seasonNumber) {
       window.location.href = `show/${this.showId}/season/${seasonNumber}`;
     }
-  }
-
-  returnToShowDetails() {
-    window.location.href = `show/${this.showId}`;
   }
 }

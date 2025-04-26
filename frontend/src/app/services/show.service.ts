@@ -12,15 +12,29 @@ import {EpisodeData} from '../data/show/episode-data';
 export class ShowService {
   baseUrl: string = "http://localhost:8080/show";
 
+  // If the user is unauthorized, we redirect user to the login page
+  checkUnauthorizedUser(response: Response) {
+    if (response.status === 401) {
+      window.location.href = "/login";
+    }
+  }
+
+  // If the show / season / episode is not found, we redirect user to the 404 page
+  checkPageNotFound(response: Response) {
+    if (response.status === 500) {
+      window.location.href = "/not-found";
+    }
+  }
+
   /**
    * Fetches search results for a user query
     * @param searchString
    */
   async searchForShows(searchString: string): Promise<SearchResultData[]> {
     try {
-      let response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(searchString)}`);
+      const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(searchString)}`);
 
-      let data = await response.json();
+      const data = await response.json();
       return data.map((result: {}) =>  {
         return new SearchResultData(result);
       });
@@ -35,16 +49,12 @@ export class ShowService {
    */
   async fetchShowDetails(showId: number): Promise<ShowData> {
     try {
-      let response = await fetch(`${this.baseUrl}/${showId}`, {
+      const response = await fetch(`${this.baseUrl}/${showId}`, {
         credentials: 'include'
       });
 
-      // If the show was not found then redirect the user to the 404 page
-      if (response.status === 500) {
-        window.location.href = "/not-found";
-      }
-
-      let data = await response.json();
+      this.checkPageNotFound(response);
+      const data = await response.json();
       return new ShowData(data);
     } catch (error) {
       throw error;
@@ -57,9 +67,9 @@ export class ShowService {
    */
   async fetchNumberOfSeasons(showId: number): Promise<number> {
     try {
-      let response = await fetch(`${this.baseUrl}/${showId}/num-seasons`);
+      const response = await fetch(`${this.baseUrl}/${showId}/num-seasons`);
 
-      let data = await response.json();
+      const data = await response.json();
       return data['number_of_seasons'];
     } catch (error) {
       throw error;
@@ -76,7 +86,7 @@ export class ShowService {
         credentials: 'include'
       });
 
-      let data = await response.json();
+      const data = await response.json();
       return data.map((review: {}) => {
         return new ReviewData(review, new UtilsService());
       });
@@ -90,9 +100,9 @@ export class ShowService {
    * @param showId
    * @param data
    */
-  async addShowReview(showId:number, data: {}) {
+  async addShowReview(showId:number, data: {}): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
+      const response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -101,10 +111,8 @@ export class ShowService {
         body: JSON.stringify(data)
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = "/login";
-      }
+      this.checkUnauthorizedUser(response);
+      return response;
     } catch(error) {
       throw error;
     }
@@ -114,17 +122,15 @@ export class ShowService {
    * Likes the show review by its ID
    * @param reviewId
    */
-  async likeShowReview(reviewId: number) {
+  async likeShowReview(reviewId: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/${reviewId}/like`, {
+      const response = await fetch(`${this.baseUrl}/${reviewId}/like`, {
         method: 'PATCH',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = "/login";
-      }
+      this.checkUnauthorizedUser(response);
+      return response;
     } catch(error) {
       throw error;
     }
@@ -134,17 +140,15 @@ export class ShowService {
    * Unlikes the show review by its ID
    * @param reviewId
    */
-  async unlikeShowReview(reviewId: number) {
+  async unlikeShowReview(reviewId: number): Promise<Response> {
     try {
-      let response = await fetch(`${this.baseUrl}/${reviewId}/unlike`, {
+      const response = await fetch(`${this.baseUrl}/${reviewId}/unlike`, {
         method: 'PATCH',
         credentials: 'include'
       });
 
-      // If the user is unauthorized, we redirect them to the login page
-      if (response.status === 401) {
-        window.location.href = "/login";
-      }
+      this.checkUnauthorizedUser(response);
+      return response;
     } catch(error) {
       throw error;
     }
@@ -157,16 +161,12 @@ export class ShowService {
    */
   async fetchSeasonDetails(showId: number, seasonNumber: number): Promise<SeasonData> {
     try {
-      let response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}`, {
+      const response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}`, {
         credentials: 'include'
       });
 
-      // If the season was not found then redirect the user to the 404 page
-      if (response.status === 500) {
-        window.location.href = "/not-found";
-      }
-
-      let data = await response.json();
+      this.checkPageNotFound(response);
+      const data = await response.json();
       return new SeasonData(data);
     } catch (error) {
       throw error;
@@ -181,14 +181,10 @@ export class ShowService {
    */
   async fetchEpisodeDetails(showId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeData> {
     try {
-      let response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}/episode/${episodeNumber}`);
+      const response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}/episode/${episodeNumber}`);
 
-      // If the episode was not found then redirect the user to the 404 page
-      if (response.status === 500) {
-        window.location.href = "/not-found";
-      }
-
-      let data = await response.json();
+      this.checkPageNotFound(response);
+      const data = await response.json();
       return new EpisodeData(data);
     } catch (error) {
       throw error;

@@ -1,4 +1,5 @@
 export class EpisodeRankingData {
+  readonly id: number;
   readonly showId: number;
   rankNum: number;
   readonly showTitle: string;
@@ -8,6 +9,7 @@ export class EpisodeRankingData {
   readonly posterPath: string;
 
   constructor(jsonObject: { [key: string]: any }) {
+    this.id = jsonObject['id'];
     this.showId = jsonObject['showId'];
     this.rankNum = jsonObject['rankNum'];
     this.showTitle = jsonObject['showTitle'];

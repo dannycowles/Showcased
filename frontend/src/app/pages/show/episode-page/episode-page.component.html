@@ -1,5 +1,5 @@
 @if (episode) {
-  <button (click)="returnToSeasonDetails()">Return to Season Details</button>
+  <button [routerLink]="['/show', showId, 'season', seasonNumber]">Return to Season Details</button>
 
   <h2>Name: {{episode.name}}</h2>
 
