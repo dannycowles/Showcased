@@ -208,4 +208,32 @@ public class ProfileController {
         profileService.updateSeasonRankingList(seasons, session);
         return ResponseEntity.noContent().build();
     }
+
+
+    // ========== CHARACTER RANKINGS ==========
+
+    @PostMapping("/character-rankings")
+    public ResponseEntity<Void> addCharacterToRankingList(@RequestBody CharacterRankingDto character, HttpSession session) {
+
+        return null;
+    }
+
+    @GetMapping("/character-rankings")
+    public ResponseEntity<List<CharacterRankingReturnDto>> getCharacterRankingList(@RequestParam(value = "type") String characterType, HttpSession session) {
+
+        return null;
+    }
+
+    @DeleteMapping("/character-rankings/{name}")
+    public ResponseEntity<Void> removeFromCharacterRankingList(@PathVariable("name") String name, HttpSession session) {
+
+        return null;
+    }
+
+    @PatchMapping("/character-rankings")
+    public ResponseEntity<Void> updateCharacterRankingList(@RequestBody List<UpdateCharacterRankingDto> characters, HttpSession session) {
+
+        return null;
+    }
+
 }

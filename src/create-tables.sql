@@ -111,3 +111,14 @@ CREATE TABLE season_info (
     show_title TEXT NOT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE user_character_rankings (
+    user_id INT,
+    character_name VARCHAR(100) NOT NULL,
+    show_name TEXT NOT NULL,
+    character_type ENUM('Protagonist', 'Deuteragonist', 'Antagonist') NOT NULL,
+    rank_num INT NOT NULL,
+    PRIMARY KEY(user_id, character_name),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    CHECK (character_type IN ('Protagonist', 'Deuteragonist', 'Antagonist'))
+);
