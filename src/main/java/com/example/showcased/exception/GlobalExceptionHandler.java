@@ -133,4 +133,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
     }
 
+    /**
+     * Exception handler for trying to add invalid character type to rankings
+     */
+    @ExceptionHandler(InvalidCharacterType.class)
+    ResponseEntity<ErrorResponse> invalidCharacterTypeHandler(InvalidCharacterType ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
+
 }

@@ -3,6 +3,7 @@ package com.example.showcased.service;
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
 import com.example.showcased.exception.AlreadyOnListException;
+import com.example.showcased.exception.InvalidCharacterType;
 import com.example.showcased.exception.UserNotFoundException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,6 +24,7 @@ public class ProfileService {
     private final ModelMapper modelMapper;
     private final ShowRankingRepository showRankingRepository;
     private final int numTopEntries = 10;
+    private final String[] validCharacterTypes = {"Protagonist", "Deuteragonist", "Antagonist"};
     private final ReviewRepository reviewRepository;
     private final EpisodeInfoRepository episodeInfoRepository;
     private final EpisodeRankingRepository episodeRankingRepository;
@@ -29,6 +32,7 @@ public class ProfileService {
     private final FollowersRepository followersRepository;
     private final SeasonRankingRepository seasonRankingRepository;
     private final SeasonInfoRepository seasonInfoRepository;
+    private final CharacterRankingRepository characterRankingRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -41,7 +45,8 @@ public class ProfileService {
                           UserRepository userRepository,
                           FollowersRepository followersRepository,
                           SeasonRankingRepository seasonRankingRepository,
-                          SeasonInfoRepository seasonInfoRepository) {
+                          SeasonInfoRepository seasonInfoRepository,
+                          CharacterRankingRepository characterRankingRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -54,6 +59,7 @@ public class ProfileService {
         this.followersRepository = followersRepository;
         this.seasonRankingRepository = seasonRankingRepository;
         this.seasonInfoRepository = seasonInfoRepository;
+        this.characterRankingRepository = characterRankingRepository;
     }
 
     /**
@@ -345,6 +351,42 @@ public class ProfileService {
             newRanking.setRankNum(season.getRankNum());
             seasonRankingRepository.save(newRanking);
         });
+    }
+
+
+
+
+
+    public void addCharacterToRankingList(CharacterRankingDto character, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Check to ensure the character type is valid
+        if (!Arrays.asList(validCharacterTypes).contains(character.getCharacterType())) {
+            throw new InvalidCharacterType("Invalid character type: " + character.getCharacterType());
+        }
+
+        CharacterRanking ranking = modelMapper.map(character, CharacterRanking.class);
+        CharacterRankingId rankingId = new CharacterRankingId(userId, character.getCharacterName());
+        ranking.setId(rankingId);
+
+        // Check if the character is already on the user's list
+        if (characterRankingRepository.existsById(rankingId)) {
+            throw new AlreadyOnListException("Character is already on ranking list");
+        }
+
+        // If user's ranking list for that type is empty, start at 1 else append to end
+        Integer maxRank = characterRankingRepository.findMaxRankNumByCharacterType(userId, character.getCharacterType());
+        if (maxRank != null) {
+            ranking.setRankNum(maxRank + 1);
+        } else {
+            ranking.setRankNum(1);
+        }
+        characterRankingRepository.save(ranking);
+    }
+
+    public List<CharacterRankingReturnDto> getCharacterRankingList(Integer limit, String characterType, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, getPageRequest(limit));
     }
 
 

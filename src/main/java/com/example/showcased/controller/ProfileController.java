@@ -214,14 +214,14 @@ public class ProfileController {
 
     @PostMapping("/character-rankings")
     public ResponseEntity<Void> addCharacterToRankingList(@RequestBody CharacterRankingDto character, HttpSession session) {
-
-        return null;
+        profileService.addCharacterToRankingList(character, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/character-rankings")
-    public ResponseEntity<List<CharacterRankingReturnDto>> getCharacterRankingList(@RequestParam(value = "type") String characterType, HttpSession session) {
-
-        return null;
+    public ResponseEntity<List<CharacterRankingReturnDto>> getCharacterRankingList(@RequestParam(value = "limit", required = false) Integer limit, @RequestParam(value = "type") String characterType, HttpSession session) {
+        List<CharacterRankingReturnDto> ranking = profileService.getCharacterRankingList(limit, characterType, session);
+        return ResponseEntity.ok(ranking);
     }
 
     @DeleteMapping("/character-rankings/{name}")
