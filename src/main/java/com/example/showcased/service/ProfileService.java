@@ -389,6 +389,22 @@ public class ProfileService {
         return characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, getPageRequest(limit));
     }
 
+    public void removeFromCharacterRankingList(String characterType, String name, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        characterRankingRepository.deleteById(new CharacterRankingId(userId, name));
+
+        // After deleting the character, we need to update the ranks of the other characters on list
+        List<CharacterRankingReturnDto> rankings = characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, Pageable.unpaged());
+        for (int i = 0; i < rankings.size(); i++) {
+            CharacterRanking newRanking = new CharacterRanking();
+            newRanking.setId(new CharacterRankingId(userId, rankings.get(i).getCharacterName()));
+            newRanking.setRankNum(i + 1);
+            newRanking.setCharacterType(characterType);
+            newRanking.setShowName(rankings.get(i).getShowName());
+            characterRankingRepository.save(newRanking);
+        }
+    }
+
 
 
 

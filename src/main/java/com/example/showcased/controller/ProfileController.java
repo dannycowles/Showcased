@@ -224,10 +224,10 @@ public class ProfileController {
         return ResponseEntity.ok(ranking);
     }
 
-    @DeleteMapping("/character-rankings/{name}")
-    public ResponseEntity<Void> removeFromCharacterRankingList(@PathVariable("name") String name, HttpSession session) {
-
-        return null;
+    @DeleteMapping("/character-rankings/type/{characterType}/{name}")
+    public ResponseEntity<Void> removeFromCharacterRankingList(@PathVariable("characterType") String characterType, @PathVariable("name") String name, HttpSession session) {
+        profileService.removeFromCharacterRankingList(characterType, name, session);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/character-rankings")
