@@ -110,6 +110,45 @@
     <p>Nothing ranked yet!</p>
   }
 
+  <h3>Favorite Protagonists</h3>
+  @if (profileData.protagonistRankingTop.length != 0) {
+    @for (character of profileData.protagonistRankingTop; track character.name) {
+      <h5>{{character.rankNum}}</h5>
+      <h5>{{character.name}} - {{character.show}}</h5>
+    }
+    <button>Manage Favorite Protagonists</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
+  <h3>Favorite Deuteragonists</h3>
+  @if (profileData.deuteragonistRankingTop.length != 0) {
+    @for (character of profileData.deuteragonistRankingTop; track character.name) {
+      <h5>{{character.rankNum}}</h5>
+      <h5>{{character.name}} - {{character.show}}</h5>
+    }
+    <button>Manage Favorite Deuteragonists</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
+  <h3>Favorite Antagonists</h3>
+  @if (profileData.antagonistRankingTop.length != 0) {
+    @for (character of profileData.antagonistRankingTop; track character.name) {
+      <h5>{{character.rankNum}}</h5>
+      <h5>{{character.name}} - {{character.show}}</h5>
+    }
+    <button>Manage Favorite Antagonists</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
   <h3>Reviews</h3>
   @if (profileData.reviews.length != 0) {
     @for (review of profileData.reviews; track review.id) {

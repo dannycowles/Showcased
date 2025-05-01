@@ -89,6 +89,9 @@ public class ProfileService {
         profileDetails.setNumFollowers(getFollowersCount(session));
         profileDetails.setNumFollowing(getFollowingCount(session));
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
+        profileDetails.setProtagonistRankingTop(getCharacterRankingList(numTopEntries, validCharacterTypes[0], session));
+        profileDetails.setDeuteragonistRankingTop(getCharacterRankingList(numTopEntries, validCharacterTypes[1], session));
+        profileDetails.setAntagonistRankingTop(getCharacterRankingList(numTopEntries, validCharacterTypes[2], session));
         return profileDetails;
     }
 
