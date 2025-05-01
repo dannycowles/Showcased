@@ -231,9 +231,9 @@ public class ProfileController {
     }
 
     @PatchMapping("/character-rankings")
-    public ResponseEntity<Void> updateCharacterRankingList(@RequestBody List<UpdateCharacterRankingDto> characters, HttpSession session) {
-
-        return null;
+    public ResponseEntity<Void> updateCharacterRankingList(@RequestBody UpdateCharacterRankingsDto updates, HttpSession session) {
+        profileService.updateCharacterRankingList(updates, session);
+        return ResponseEntity.noContent().build();
     }
 
 }

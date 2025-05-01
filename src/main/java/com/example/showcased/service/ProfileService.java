@@ -406,6 +406,26 @@ public class ProfileService {
     }
 
 
+    public void updateCharacterRankingList(UpdateCharacterRankingsDto updates, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Check to ensure character type is valid
+        if (!Arrays.asList(validCharacterTypes).contains(updates.getCharacterType())) {
+            throw new InvalidCharacterType("Invalid character type: " + updates.getCharacterType());
+        }
+
+        // Update rankings
+        updates.getUpdates().forEach( update -> {
+            CharacterRanking newRanking = new CharacterRanking();
+            newRanking.setId(new CharacterRankingId(userId, update.getCharacterName()));
+            newRanking.setRankNum(update.getRankNum());
+            newRanking.setShowName(update.getShowName());
+            newRanking.setCharacterType(updates.getCharacterType());
+            characterRankingRepository.save(newRanking);
+        });
+    }
+
+
 
 
     public List<ReviewWithUserInfoDto> getReviews(HttpSession session) {
