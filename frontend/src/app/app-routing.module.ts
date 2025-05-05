@@ -28,6 +28,9 @@ import {UserFollowersPageComponent} from './pages/user/user-followers-page/user-
 import {UserFollowingPageComponent} from './pages/user/user-following-page/user-following-page.component';
 import {ProfileSeasonRankingPageComponent} from './pages/profile/profile-season-ranking-page/profile-season-ranking-page.component';
 import {UserSeasonRankingPageComponent} from './pages/user/user-season-ranking-page/user-season-ranking-page.component';
+import {
+  ProfileCharacterRankingPageComponent
+} from './pages/profile/profile-character-ranking-page/profile-character-ranking-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -42,6 +45,7 @@ const routes: Routes = [
     { path: 'profile/season-ranking', component: ProfileSeasonRankingPageComponent},
     { path: 'profile/followers', component: ProfileFollowersPageComponent},
     { path: 'profile/following', component: ProfileFollowingPageComponent},
+    { path: 'profile/character-ranking/:type', component: ProfileCharacterRankingPageComponent },
     { path: 'user/:id', component: UserPageComponent},
     { path: 'user/:id/watchlist', component: UserWatchlistPageComponent},
     { path: 'user/:id/watching', component: UserWatchingPageComponent},

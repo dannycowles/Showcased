@@ -6,6 +6,7 @@ import {ShowRankingData} from '../data/lists/show-ranking-data';
 import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
 import {UserSearchData} from '../data/user-search-data';
 import {SeasonRankingData} from '../data/lists/season-ranking-data';
+import {CharacterRankingsData} from '../data/character-rankings-data';
 
 @Injectable({
   providedIn: 'root'
@@ -492,6 +493,23 @@ export class ProfileService {
       return data.map((user: {}) => {
         return new UserSearchData(user);
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves all the character ranking lists for the logged-in user
+   */
+  async getCharacterRankingLists() {
+    try {
+      const response = await fetch(`${this.baseUrl}/character-rankings?type=all`, {
+        credentials: 'include'
+      });
+
+      this.checkUnauthorizedUser(response);
+      const data = await response.json();
+      return new CharacterRankingsData(data);
     } catch (error) {
       throw error;
     }

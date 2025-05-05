@@ -65,13 +65,13 @@ export class ProfileData {
       return new SeasonRankingData(season)
     })
 
-    this.protagonistRankingTop = jsonObject['protagonistRankingTop'].map(( protagonist: {} ) => {
+    this.protagonistRankingTop = jsonObject['characterRankings']['protagonists'].map(( protagonist: {} ) => {
       return new CharacterRankingData(protagonist)
     })
-    this.deuteragonistRankingTop = jsonObject['deuteragonistRankingTop'].map(( deuteragonist: {} ) => {
+    this.deuteragonistRankingTop = jsonObject['characterRankings']['deuteragonists'].map(( deuteragonist: {} ) => {
       return new CharacterRankingData(deuteragonist)
     })
-    this.antagonistRankingTop = jsonObject['antagonistRankingTop'].map(( antagonist: {} ) => {
+    this.antagonistRankingTop = jsonObject['characterRankings']['antagonists'].map(( antagonist: {} ) => {
       return new CharacterRankingData(antagonist)
     })
   }
