@@ -219,9 +219,12 @@ public class ProfileController {
     }
 
     @GetMapping("/character-rankings")
-    public ResponseEntity<List<CharacterRankingReturnDto>> getCharacterRankingList(@RequestParam(value = "limit", required = false) Integer limit, @RequestParam(value = "type") String characterType, HttpSession session) {
-        List<CharacterRankingReturnDto> ranking = profileService.getCharacterRankingList(limit, characterType, session);
-        return ResponseEntity.ok(ranking);
+    public ResponseEntity<?> getCharacterRankingList(@RequestParam(value = "limit", required = false) Integer limit, @RequestParam(value = "type") String characterType, HttpSession session) {
+        if (characterType.equals("all")) {
+            return ResponseEntity.ok(profileService.getAllCharacterRankings(limit, session));
+        } else {
+            return ResponseEntity.ok(profileService.getCharacterRankingList(limit, characterType, session));
+        }
     }
 
     @DeleteMapping("/character-rankings/type/{characterType}/{name}")

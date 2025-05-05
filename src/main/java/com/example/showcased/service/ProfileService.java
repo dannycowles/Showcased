@@ -89,9 +89,7 @@ public class ProfileService {
         profileDetails.setNumFollowers(getFollowersCount(session));
         profileDetails.setNumFollowing(getFollowingCount(session));
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
-        profileDetails.setProtagonistRankingTop(getCharacterRankingList(numTopEntries, validCharacterTypes[0], session));
-        profileDetails.setDeuteragonistRankingTop(getCharacterRankingList(numTopEntries, validCharacterTypes[1], session));
-        profileDetails.setAntagonistRankingTop(getCharacterRankingList(numTopEntries, validCharacterTypes[2], session));
+        profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
         return profileDetails;
     }
 
@@ -390,6 +388,16 @@ public class ProfileService {
     public List<CharacterRankingReturnDto> getCharacterRankingList(Integer limit, String characterType, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         return characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, getPageRequest(limit));
+    }
+
+    public AllCharacterRankingDto getAllCharacterRankings(Integer limit, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        AllCharacterRankingDto rankings = new AllCharacterRankingDto();
+
+        rankings.setProtagonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[0], getPageRequest(limit)));
+        rankings.setDeuteragonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[1], getPageRequest(limit)));
+        rankings.setAntagonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[2], getPageRequest(limit)));
+        return rankings;
     }
 
     public void removeFromCharacterRankingList(String characterType, String name, HttpSession session) {

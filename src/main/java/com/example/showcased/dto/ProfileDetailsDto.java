@@ -23,7 +23,5 @@ public class ProfileDetailsDto {
     private boolean isOwnProfile = false;
     private List<SeasonRankingReturnDto> seasonRankingTop;
     private boolean moreSeasonRanking = false;
-    private List<CharacterRankingReturnDto> protagonistRankingTop;
-    private List<CharacterRankingReturnDto> deuteragonistRankingTop;
-    private List<CharacterRankingReturnDto> antagonistRankingTop;
+    private AllCharacterRankingDto characterRankings;
 }
