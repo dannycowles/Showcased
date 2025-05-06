@@ -12,19 +12,29 @@ import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 })
 export class ProfileCharacterRankingPageComponent implements OnInit {
   characterRankings: CharacterRankingsData;
-  readonly validCharacterTypes: string[] = ["protagonist", "deuteragonist", "antagonist"];
+  readonly validCharacterTypes: string[] = ["protagonists", "deuteragonists", "antagonists"];
   characterType: string;
 
   constructor(private route: ActivatedRoute,
               private profileService: ProfileService,
               private router: Router) {
-    this.characterType = this.route.snapshot.params['type'];
+    this.route.params.subscribe(params => {
+      this.characterType = params['type'];
+    });
 
     // Check to ensure the type in the route is valid, if not redirect to 404
     if (!this.validCharacterTypes.includes(this.characterType)) {
       this.router.navigate(['not-found']);
     }
   };
+
+  uppercaseCharacterType(type?: string): string {
+    if (type) {
+      return type.charAt(0).toUpperCase() + type.slice(1);
+    } else {
+      return this.characterType.charAt(0).toUpperCase() + this.characterType.slice(1);
+    }
+  }
 
   /**
    * Returns all the rankings for the selected character type
