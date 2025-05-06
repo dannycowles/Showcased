@@ -59,7 +59,8 @@ const routes: Routes = [
     { path: 'show/:id', component: ShowPageComponent},
     { path: 'show/:id/season/:seasonNumber', component: SeasonPageComponent},
     { path: 'show/:id/season/:seasonNumber/episode/:episodeNumber', component: EpisodePageComponent },
-    { path: '**', component: PageNotFoundComponent}
+    { path: 'not-found', component: PageNotFoundComponent},
+    { path: '**', redirectTo: 'not-found'}
 ];
 
 @NgModule({
