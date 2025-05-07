@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ProfileService} from '../../../services/profile.service';
 import {CharacterRankingsData} from '../../../data/character-rankings-data';
 import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-profile-character-ranking-page',
@@ -28,6 +29,15 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     }
   };
 
+  async ngOnInit() {
+    // Retrieve all character rankings from the backend
+    try {
+      this.characterRankings = await this.profileService.getCharacterRankingLists();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   uppercaseCharacterType(type?: string): string {
     if (type) {
       return type.charAt(0).toUpperCase() + type.slice(1);
@@ -49,13 +59,42 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
-    // Retrieve all character rankings from the backend
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.characterRankings[this.characterType], event.previousIndex, event.currentIndex);
+
+    // Update the rank numbers based on the index within the updated list
+    this.characterRankings[this.characterType].forEach((character, index) => {
+      character.rankNum = index + 1;
+    });
+    this.updateCharacterRankingList();
+  }
+
+  async removeCharacterFromRankingList(name: string) {
     try {
-      this.characterRankings = await this.profileService.getCharacterRankingLists();
-    } catch (error) {
+      await this.profileService.removeCharacterFromRankingList(this.characterType, name);
+
+      // Remove the character from entries shown to the user
+      this.characterRankings[this.characterType].filter(character => character.name != name);
+    } catch(error) {
       console.error(error);
     }
+  }
+
+  async updateCharacterRankingList() {
+    try {
+      const updates = {
+        characterType: this.characterType.slice(0, this.characterType.length - 1),
+        updates: this.characterRankings[this.characterType].map(character => ({
+          characterName: character.name,
+          showName: character.show,
+          rankNum: character.rankNum
+        }))
+      };
+      await this.profileService.updateCharacterRankingList(updates);
+    } catch(error) {
+      console.error(error);
+    }
+
   }
 
 }

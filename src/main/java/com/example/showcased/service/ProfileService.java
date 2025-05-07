@@ -24,7 +24,7 @@ public class ProfileService {
     private final ModelMapper modelMapper;
     private final ShowRankingRepository showRankingRepository;
     private final int numTopEntries = 10;
-    private final String[] validCharacterTypes = {"Protagonist", "Deuteragonist", "Antagonist"};
+    private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist"};
     private final ReviewRepository reviewRepository;
     private final EpisodeInfoRepository episodeInfoRepository;
     private final EpisodeRankingRepository episodeRankingRepository;

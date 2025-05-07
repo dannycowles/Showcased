@@ -4,6 +4,7 @@ export class CharacterRankingsData {
   protagonists: CharacterRankingData[];
   deuteragonists: CharacterRankingData[];
   antagonists: CharacterRankingData[];
+  [key: string]: CharacterRankingData[];
 
   constructor(jsonObject: {[key: string]: any}) {
     this.protagonists = jsonObject['protagonists'].map((protagonist: {} ) => {

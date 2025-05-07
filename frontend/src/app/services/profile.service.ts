@@ -516,6 +516,44 @@ export class ProfileService {
   }
 
   /**
+   * Remove a character by name from a specific character type list for the logged-in user
+   */
+  async removeCharacterFromRankingList(type: string, name: string): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/character-rankings/${type}/${name}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Updates a character ranking list for the logged-in user
+   */
+  async updateCharacterRankingList(data: {}): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/character-rankings`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Removes the specified id from the logged-in user's following list
    * @param id
    */

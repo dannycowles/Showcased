@@ -15,10 +15,16 @@
   </div>
 
   @if (selectedCharacterRankings.length != 0) {
-    @for (character of selectedCharacterRankings; track character.name; let rank = $index) {
-      <h3>{{rank + 1}}</h3>
-      <h3>{{character.name}} - {{character.show}}</h3>
-    }
+    <div cdkDropList class="character-list" (cdkDropListDropped)="drop($event)">
+      @for (character of selectedCharacterRankings; track character.name; let rank = $index) {
+        <div class="character-box" cdkDrag>
+          <h3>{{rank + 1}}</h3>
+          <h3>{{character.name}} - {{character.show}}</h3>
+
+          <button>Remove Character</button>
+        </div>
+      }
+    </div>
   } @else {
     <h3>No {{uppercaseCharacterType()}} ranked yet!</h3>
   }
