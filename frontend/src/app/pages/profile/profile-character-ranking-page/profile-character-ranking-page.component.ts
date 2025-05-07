@@ -4,6 +4,8 @@ import {ProfileService} from '../../../services/profile.service';
 import {CharacterRankingsData} from '../../../data/character-rankings-data';
 import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import $ from 'jquery';
+import 'jquery-serializejson';
 
 @Component({
   selector: 'app-profile-character-ranking-page',
@@ -36,6 +38,17 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+
+    const characterForm = document.getElementById('character-form') as HTMLFormElement;
+    characterForm.addEventListener('submit', async event => {
+      if (!characterForm.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      } else {
+        await this.addCharacterToRankingList();
+      }
+        characterForm.classList.add('was-validated')
+    });
   }
 
   uppercaseCharacterType(type?: string): string {
@@ -50,13 +63,7 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
    * Returns all the rankings for the selected character type
    */
   get selectedCharacterRankings(): CharacterRankingData[] {
-    if (this.characterType === this.validCharacterTypes[0]) {
-      return this.characterRankings.protagonists;
-    } else if (this.characterType === this.validCharacterTypes[1]) {
-      return this.characterRankings.deuteragonists;
-    } else {
-      return this.characterRankings.antagonists;
-    }
+    return this.characterRankings[this.characterType];
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -67,6 +74,20 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
       character.rankNum = index + 1;
     });
     this.updateCharacterRankingList();
+  }
+
+  async addCharacterToRankingList() {
+    try {
+      // @ts-ignore
+      const data = $('#character-form').serializeJSON();
+      data["characterType"] = this.characterType.slice(0, -1);
+      await this.profileService.addCharacterToRankingList(data);
+
+      // TODO: update the character list in real time for user
+
+    } catch(error) {
+      console.error(error);
+    }
   }
 
   async removeCharacterFromRankingList(name: string) {
@@ -83,7 +104,7 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
   async updateCharacterRankingList() {
     try {
       const updates = {
-        characterType: this.characterType.slice(0, this.characterType.length - 1),
+        characterType: this.characterType.slice(0, -1),
         updates: this.characterRankings[this.characterType].map(character => ({
           characterName: character.name,
           showName: character.show,
