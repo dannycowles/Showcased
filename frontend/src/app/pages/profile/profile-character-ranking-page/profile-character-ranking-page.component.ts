@@ -42,12 +42,14 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     const characterForm = document.getElementById('character-form') as HTMLFormElement;
     characterForm.addEventListener('submit', async event => {
       if (!characterForm.checkValidity()) {
+        characterForm.classList.add('was-validated');
         event.preventDefault()
         event.stopPropagation()
       } else {
         await this.addCharacterToRankingList();
+        characterForm.classList.remove('was-validated');
+        characterForm.reset();
       }
-        characterForm.classList.add('was-validated')
     });
   }
 
@@ -81,10 +83,15 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
       // @ts-ignore
       const data = $('#character-form').serializeJSON();
       data["characterType"] = this.characterType.slice(0, -1);
-      await this.profileService.addCharacterToRankingList(data);
+      const response = await this.profileService.addCharacterToRankingList(data);
 
-      // TODO: update the character list in real time for user
-
+      // If the response was successful, update the character list in real time for user
+      if (response.ok) {
+        const newRank = this.characterRankings[this.characterType].length + 1;
+        const newCharacter = new CharacterRankingData(data);
+        newCharacter.rankNum = newRank;
+        this.characterRankings[this.characterType].push(newCharacter);
+      }
     } catch(error) {
       console.error(error);
     }
@@ -95,7 +102,7 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
       await this.profileService.removeCharacterFromRankingList(this.characterType, name);
 
       // Remove the character from entries shown to the user
-      this.characterRankings[this.characterType].filter(character => character.name != name);
+      this.characterRankings[this.characterType] = this.characterRankings[this.characterType].filter(character => character.name != name);
     } catch(error) {
       console.error(error);
     }

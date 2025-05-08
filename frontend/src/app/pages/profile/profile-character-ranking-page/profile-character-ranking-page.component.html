@@ -1,4 +1,4 @@
-<button routerLink="/profile">Return to Profile</button>
+<button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
 
 @if (characterRankings) {
   <h1>{{uppercaseCharacterType()}} Rankings</h1>
@@ -21,7 +21,7 @@
           <h3>{{rank + 1}}</h3>
           <h3>{{character.name}} - {{character.show}}</h3>
 
-          <button>Remove Character</button>
+          <button class="btn btn-danger" (click)="removeCharacterFromRankingList(character.name)">Remove Character</button>
         </div>
       }
     </div>
