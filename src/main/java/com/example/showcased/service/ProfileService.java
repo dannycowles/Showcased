@@ -387,6 +387,12 @@ public class ProfileService {
 
     public List<CharacterRankingReturnDto> getCharacterRankingList(Integer limit, String characterType, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
+
+        // Check to ensure requested character type is valid
+        if (!Arrays.asList(validCharacterTypes).contains(characterType)) {
+            throw new InvalidCharacterType("Invalid character type: " + characterType);
+        }
+
         return characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, getPageRequest(limit));
     }
 

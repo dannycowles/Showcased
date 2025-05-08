@@ -5,6 +5,7 @@ import com.example.showcased.entity.Follower;
 import com.example.showcased.entity.FollowerId;
 import com.example.showcased.entity.User;
 import com.example.showcased.exception.FollowSelfException;
+import com.example.showcased.exception.InvalidCharacterType;
 import com.example.showcased.exception.UserNotFoundException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -152,6 +154,12 @@ public class UserService {
 
     public List<CharacterRankingReturnDto> getUserCharacterRankings(Long userId, Integer limit, String characterType) {
         ensureUserExists(userId);
+
+        // Make sure that the requested character type is valid
+        if (!Arrays.asList(validCharacterTypes).contains(characterType)) {
+            throw new InvalidCharacterType("Invalid character type: " + characterType);
+        }
+
         return characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, getPageRequest(limit));
     }
 
