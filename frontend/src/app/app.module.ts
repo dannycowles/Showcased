@@ -42,6 +42,9 @@ import {UserSeasonRankingPageComponent} from './pages/user/user-season-ranking-p
 import {
   ProfileCharacterRankingPageComponent
 } from './pages/profile/profile-character-ranking-page/profile-character-ranking-page.component';
+import {
+  UserCharacterRankingPageComponent
+} from './pages/user/user-character-ranking-page/user-character-ranking-page.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +75,8 @@ import {
     UserFollowingPageComponent,
     ProfileSeasonRankingPageComponent,
     UserSeasonRankingPageComponent,
-    ProfileCharacterRankingPageComponent
+    ProfileCharacterRankingPageComponent,
+    UserCharacterRankingPageComponent
   ],
   imports: [
     BrowserModule,

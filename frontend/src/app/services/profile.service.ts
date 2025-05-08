@@ -503,7 +503,7 @@ export class ProfileService {
    */
   async getCharacterRankingLists() {
     try {
-      const response = await fetch(`${this.baseUrl}/character-rankings?type=all`, {
+      const response = await fetch(`${this.baseUrl}/character-rankings`, {
         credentials: 'include'
       });
 

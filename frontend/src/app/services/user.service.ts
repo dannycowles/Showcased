@@ -6,6 +6,7 @@ import {WatchingData} from '../data/lists/watching-data';
 import {ShowRankingData} from '../data/lists/show-ranking-data';
 import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
 import {SeasonRankingData} from '../data/lists/season-ranking-data';
+import {CharacterRankingsData} from '../data/character-rankings-data';
 
 @Injectable({
   providedIn: 'root'
@@ -134,6 +135,21 @@ export class UserService {
       return data.map((season: {}) => {
         return new SeasonRankingData(season);
       });
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves all the character ranking lists for the user with the specified id
+   * @param id
+   */
+  async getAllCharacterRankingLists(id: number): Promise<CharacterRankingsData> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${id}/character-rankings`);
+
+      const data = await response.json();
+      return new CharacterRankingsData(data);
     } catch(error) {
       throw error;
     }

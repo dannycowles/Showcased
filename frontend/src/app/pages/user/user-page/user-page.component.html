@@ -133,6 +133,45 @@
     <p>Nothing ranked yet!</p>
   }
 
+  <h3>Favorite Protagonists</h3>
+  @if (userDetails.protagonistRankingTop.length != 0) {
+    @for (character of userDetails.protagonistRankingTop; track character.name) {
+      <h5>{{character.rankNum}}</h5>
+      <h5>{{character.name}} - {{character.show}}</h5>
+    }
+    <button routerLink="character-ranking/protagonists">View Full List</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
+  <h3>Favorite Deuteragonists</h3>
+  @if (userDetails.deuteragonistRankingTop.length != 0) {
+    @for (character of userDetails.deuteragonistRankingTop; track character.name) {
+      <h5>{{character.rankNum}}</h5>
+      <h5>{{character.name}} - {{character.show}}</h5>
+    }
+    <button routerLink="character-ranking/deuteragonists">View Full List</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
+  <h3>Favorite Antagonists</h3>
+  @if (userDetails.antagonistRankingTop.length != 0) {
+    @for (character of userDetails.antagonistRankingTop; track character.name) {
+      <h5>{{character.rankNum}}</h5>
+      <h5>{{character.name}} - {{character.show}}</h5>
+    }
+    <button routerLink="character-ranking/antagonists">View Full List</button>
+    <br>
+    <br>
+  } @else {
+    <p>Nothing ranked yet!</p>
+  }
+
   <h3>Reviews</h3>
   @if (userDetails.reviews.length != 0) {
     @for (review of userDetails.reviews; track review.id) {

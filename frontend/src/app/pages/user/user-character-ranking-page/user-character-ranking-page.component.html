@@ -1,0 +1,29 @@
+<button class="btn btn-primary" [routerLink]="['/user', userId]">Return to Profile</button>
+
+@if (characterRankings) {
+  <h1>{{uppercaseCharacterType()}} Rankings</h1>
+
+  <div class="dropdown mb-5">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      {{uppercaseCharacterType()}}
+    </button>
+    <ul class="dropdown-menu">
+      @for (type of validCharacterTypes; track type) {
+        <li><a class="dropdown-item" [routerLink]="['/user', userId, 'character-ranking', type]">{{uppercaseCharacterType(type)}}</a></li>
+      }
+    </ul>
+  </div>
+
+  @if (selectedCharacterRankings.length != 0) {
+    <div class="character-list">
+      @for (character of selectedCharacterRankings; track character.name; let rank = $index) {
+        <div class="character-box">
+          <h3>{{rank + 1}}</h3>
+          <h3>{{character.name}} - {{character.show}}</h3>
+        </div>
+      }
+    </div>
+  } @else {
+    <h3>No {{uppercaseCharacterType()}} ranked yet!</h3>
+  }
+}
