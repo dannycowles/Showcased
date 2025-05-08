@@ -105,6 +105,7 @@ public class UserService {
         userDetails.setReviews(getUserReviews(userId));
         userDetails.setNumFollowers(getFollowersCount(userId));
         userDetails.setNumFollowing(getFollowingCount(userId));
+        userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
 
         // Check if the user is logged in, if so we check they are following this user
         Long loggedInUserId = (Long) session.getAttribute("user");

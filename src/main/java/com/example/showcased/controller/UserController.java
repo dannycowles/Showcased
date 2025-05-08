@@ -3,7 +3,6 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,8 +96,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/character-rankings")
-    public ResponseEntity<?> getUserCharacterRankings(@PathVariable Long id, @RequestParam(value = "limit", required = false) Integer limit, @RequestParam(value = "type") String characterType) {
-        if (characterType.equals("all")) {
+    public ResponseEntity<?> getUserCharacterRankings(@PathVariable Long id, @RequestParam(value = "limit", required = false) Integer limit, @RequestParam(value = "type", required = false) String characterType) {
+        if (characterType == null) {
             return ResponseEntity.ok(userService.getAllUserCharacterRankings(id, limit));
         } else {
             return ResponseEntity.ok(userService.getUserCharacterRankings(id, limit, characterType));
