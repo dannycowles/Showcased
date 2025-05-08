@@ -30,6 +30,8 @@ public class UserService {
     private final ReviewRepository reviewRepository;
     private final FollowersRepository followersRepository;
     private final SeasonRankingRepository seasonRankingRepository;
+    private final CharacterRankingRepository characterRankingRepository;
+    private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist"};
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -38,7 +40,9 @@ public class UserService {
                        UserRepository userRepository,
                        ModelMapper modelMapper,
                        ReviewRepository reviewRepository,
-                       FollowersRepository followersRepository, SeasonRankingRepository seasonRankingRepository) {
+                       FollowersRepository followersRepository,
+                       SeasonRankingRepository seasonRankingRepository,
+                       CharacterRankingRepository characterRankingRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -48,6 +52,7 @@ public class UserService {
         this.reviewRepository = reviewRepository;
         this.followersRepository = followersRepository;
         this.seasonRankingRepository = seasonRankingRepository;
+        this.characterRankingRepository = characterRankingRepository;
     }
 
     public void ensureUserExists(Long userId) {
@@ -142,6 +147,21 @@ public class UserService {
     public List<SeasonRankingReturnDto> getUserSeasonRankings(Long userId, Integer limit) {
         ensureUserExists(userId);
         return seasonRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    }
+
+    public List<CharacterRankingReturnDto> getUserCharacterRankings(Long userId, Integer limit, String characterType) {
+        ensureUserExists(userId);
+        return characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, getPageRequest(limit));
+    }
+
+    public AllCharacterRankingDto getAllUserCharacterRankings(Long userId, Integer limit) {
+        ensureUserExists(userId);
+        AllCharacterRankingDto rankings = new AllCharacterRankingDto();
+
+        rankings.setProtagonists(getUserCharacterRankings(userId, limit, validCharacterTypes[0]));
+        rankings.setDeuteragonists(getUserCharacterRankings(userId, limit, validCharacterTypes[1]));
+        rankings.setAntagonists(getUserCharacterRankings(userId, limit, validCharacterTypes[2]));
+        return rankings;
     }
 
 
