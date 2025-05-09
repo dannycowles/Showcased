@@ -19,10 +19,8 @@ public class DiscoverController {
     }
 
     @GetMapping("/shows/trending")
-    public ResponseEntity<TrendingShowsDto> getTrendingShows(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
-        TrendingShowsDto shows = discoverService.getTrendingShows(page, limit);
+    public ResponseEntity<TrendingShowsDto> getTrendingShows(@RequestParam(value = "page", required = false) Integer page) {
+        TrendingShowsDto shows = discoverService.getTrendingShows(page);
         return ResponseEntity.ok(shows);
     }
-
-    // TODO: account for page and limit, and error checks, also get last_air_date
 }

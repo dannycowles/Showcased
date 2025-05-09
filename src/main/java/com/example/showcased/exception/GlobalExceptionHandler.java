@@ -141,4 +141,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
     }
 
+    /**
+     * Exception handler for invalid page number for filter
+     */
+    @ExceptionHandler(InvalidPageException.class)
+    ResponseEntity<ErrorResponse> invalidPageHandler(InvalidPageException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
 }
