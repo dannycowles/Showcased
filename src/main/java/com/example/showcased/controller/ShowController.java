@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/show")
+@RequestMapping("/shows")
 public class ShowController {
 
     private final ShowService showService;
@@ -18,9 +18,9 @@ public class ShowController {
         this.showService = showService;
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<SearchDto>> searchShows(@RequestParam String query) {
-        List<SearchDto> results = showService.searchShows(query);
+    @GetMapping()
+    public ResponseEntity<List<SearchDto>> searchShows(@RequestParam(value = "name", required = true) String name) {
+        List<SearchDto> results = showService.searchShows(name);
         return ResponseEntity.ok(results);
     }
 
@@ -36,13 +36,13 @@ public class ShowController {
         return ResponseEntity.ok(numSeasons);
     }
 
-    @GetMapping("/{id}/season/{seasonNumber}")
+    @GetMapping("/{id}/seasons/{seasonNumber}")
     public ResponseEntity<SeasonDto> getSeasonDetails(@PathVariable int seasonNumber, @PathVariable int id, HttpSession session) {
         SeasonDto season = showService.getSeasonDetails(seasonNumber, id, session);
         return ResponseEntity.ok(season);
     }
 
-    @GetMapping("/{id}/season/{seasonNumber}/episode/{episodeNumber}")
+    @GetMapping("/{id}/seasons/{seasonNumber}/episodes/{episodeNumber}")
     public ResponseEntity<EpisodeDto> getEpisodeDetails(@PathVariable String episodeNumber, @PathVariable String seasonNumber, @PathVariable String id) {
         EpisodeDto episode = showService.getEpisodeDetails(episodeNumber, seasonNumber, id);
         return ResponseEntity.ok(episode);
@@ -69,6 +69,12 @@ public class ShowController {
     public ResponseEntity<Void> unlikeShowReview(@PathVariable Long reviewId, HttpSession session) {
         showService.unlikeShowReview(reviewId, session);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/trending")
+    public ResponseEntity<TrendingShowsDto> getTrendingShows(@RequestParam(value = "page", required = false) Integer page) {
+        TrendingShowsDto shows = showService.getTrendingShows(page);
+        return ResponseEntity.ok(shows);
     }
 
 }
