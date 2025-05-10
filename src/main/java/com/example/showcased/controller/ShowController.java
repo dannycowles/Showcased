@@ -18,20 +18,25 @@ public class ShowController {
         this.showService = showService;
     }
 
+    // ========== SHOW BROWSING ==========
+
     @GetMapping()
-    public ResponseEntity<List<SearchDto>> searchShows(@RequestParam(value = "name", required = true) String name) {
+    public ResponseEntity<List<SearchDto>> searchShows(@RequestParam String name) {
         List<SearchDto> results = showService.searchShows(name);
         return ResponseEntity.ok(results);
     }
 
+
+    // ========== SHOW INFORMATION ==========
+
     @GetMapping("/{id}")
-    public ResponseEntity<ShowDto> getShowDetails(@PathVariable("id") String id, HttpSession session) {
+    public ResponseEntity<ShowDto> getShowDetails(@PathVariable String id, HttpSession session) {
         ShowDto show = showService.getShowDetails(id, session);
         return ResponseEntity.ok(show);
     }
 
     @GetMapping("/{id}/num-seasons")
-    public ResponseEntity<NumSeasonsDto> getNumberOfSeasons(@PathVariable("id") int id) {
+    public ResponseEntity<NumSeasonsDto> getNumberOfSeasons(@PathVariable int id) {
         NumSeasonsDto numSeasons = showService.getNumberOfSeasons(id);
         return ResponseEntity.ok(numSeasons);
     }
@@ -48,8 +53,11 @@ public class ShowController {
         return ResponseEntity.ok(episode);
     }
 
+
+    // ========== REVIEWS ==========
+
     @PostMapping("/{id}/reviews")
-    public ResponseEntity<Void> addReviewToShow(@PathVariable("id") Long id, @RequestBody ReviewDto review, HttpSession session) {
+    public ResponseEntity<Void> addReviewToShow(@PathVariable Long id, @RequestBody ReviewDto review, HttpSession session) {
         showService.addReviewToShow(id, review, session);
         return ResponseEntity.ok().build();
     }
@@ -59,22 +67,24 @@ public class ShowController {
         return showService.getShowReviews(id, session);
     }
 
-    @PatchMapping("/{reviewId}/like")
+    @PostMapping("/reviews/{reviewId}/likes")
     public ResponseEntity<Void> likeShowReview(@PathVariable Long reviewId, HttpSession session) {
         showService.likeShowReview(reviewId, session);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{reviewId}/unlike")
+    @DeleteMapping("/reviews/{reviewId}/likes")
     public ResponseEntity<Void> unlikeShowReview(@PathVariable Long reviewId, HttpSession session) {
         showService.unlikeShowReview(reviewId, session);
         return ResponseEntity.ok().build();
     }
 
+
+    // ========== DISCOVER ==========
+
     @GetMapping("/trending")
-    public ResponseEntity<TrendingShowsDto> getTrendingShows(@RequestParam(value = "page", required = false) Integer page) {
+    public ResponseEntity<TrendingShowsDto> getTrendingShows(@RequestParam(required = false) Integer page) {
         TrendingShowsDto shows = showService.getTrendingShows(page);
         return ResponseEntity.ok(shows);
     }
-
 }

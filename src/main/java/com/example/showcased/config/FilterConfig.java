@@ -49,7 +49,7 @@ public class FilterConfig {
     public FilterRegistrationBean<ShowReviewsFilter> showReviewsFilter() {
         FilterRegistrationBean<ShowReviewsFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new ShowReviewsFilter());
-        registrationBean.addUrlPatterns("/show/*");
+        registrationBean.addUrlPatterns("/shows/*");
         registrationBean.setOrder(2);
         return registrationBean;
     }
