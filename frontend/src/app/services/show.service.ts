@@ -5,12 +5,13 @@ import {UtilsService} from './utils.service';
 import {ShowData} from '../data/show/show-data';
 import {SeasonData} from '../data/show/season-data';
 import {EpisodeData} from '../data/show/episode-data';
+import {TrendingShowsData} from '../data/trending-shows-data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShowService {
-  baseUrl: string = "http://localhost:8080/show";
+  baseUrl: string = "http://localhost:8080/shows";
 
   // If the user is unauthorized, we redirect user to the login page
   checkUnauthorizedUser(response: Response) {
@@ -32,7 +33,7 @@ export class ShowService {
    */
   async searchForShows(searchString: string): Promise<SearchResultData[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(searchString)}`);
+      const response = await fetch(`${this.baseUrl}/?name=${encodeURIComponent(searchString)}`);
 
       const data = await response.json();
       return data.map((result: {}) =>  {
@@ -124,8 +125,8 @@ export class ShowService {
    */
   async likeShowReview(reviewId: number): Promise<Response> {
     try {
-      const response = await fetch(`${this.baseUrl}/${reviewId}/like`, {
-        method: 'PATCH',
+      const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/likes`, {
+        method: 'POST',
         credentials: 'include'
       });
 
@@ -142,8 +143,8 @@ export class ShowService {
    */
   async unlikeShowReview(reviewId: number): Promise<Response> {
     try {
-      const response = await fetch(`${this.baseUrl}/${reviewId}/unlike`, {
-        method: 'PATCH',
+      const response = await fetch(`${this.baseUrl}/reviews${reviewId}/likes`, {
+        method: 'DELETE',
         credentials: 'include'
       });
 
@@ -161,7 +162,7 @@ export class ShowService {
    */
   async fetchSeasonDetails(showId: number, seasonNumber: number): Promise<SeasonData> {
     try {
-      const response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}`, {
+      const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}`, {
         credentials: 'include'
       });
 
@@ -181,7 +182,7 @@ export class ShowService {
    */
   async fetchEpisodeDetails(showId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeData> {
     try {
-      const response = await fetch(`${this.baseUrl}/${showId}/season/${seasonNumber}/episode/${episodeNumber}`);
+      const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}/episodes/${episodeNumber}`);
 
       this.checkPageNotFound(response);
       const data = await response.json();
@@ -191,4 +192,18 @@ export class ShowService {
     }
   }
 
+  /**
+   * Fetches a page of the trending shows on TMDB
+   * @param page
+   */
+  async fetchTrendingShows(page: number = 1): Promise<TrendingShowsData> {
+    try {
+      const response = await fetch(`${this.baseUrl}/trending?page=${page}`);
+
+      const data = await response.json();
+      return new TrendingShowsData(data);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
