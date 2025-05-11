@@ -6,6 +6,7 @@ import {ShowData} from '../data/show/show-data';
 import {SeasonData} from '../data/show/season-data';
 import {EpisodeData} from '../data/show/episode-data';
 import {TrendingShowsData} from '../data/trending-shows-data';
+import {ShowGenresData} from '../data/show-genres-data';
 
 @Injectable({
   providedIn: 'root'
@@ -202,6 +203,20 @@ export class ShowService {
 
       const data = await response.json();
       return new TrendingShowsData(data);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Fetches all show genres on TMDB
+   */
+  async fetchShowGenres() {
+    try {
+      const response = await fetch(`${this.baseUrl}/genres`);
+
+      const data = await response.json();
+      return new ShowGenresData(data);
     } catch (error) {
       throw error;
     }
