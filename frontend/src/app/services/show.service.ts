@@ -7,6 +7,7 @@ import {SeasonData} from '../data/show/season-data';
 import {EpisodeData} from '../data/show/episode-data';
 import {TrendingShowsData} from '../data/trending-shows-data';
 import {ShowGenresData} from '../data/show-genres-data';
+import {TopRatedShowsData} from '../data/top-rated-shows-data';
 
 @Injectable({
   providedIn: 'root'
@@ -211,12 +212,27 @@ export class ShowService {
   /**
    * Fetches all show genres on TMDB
    */
-  async fetchShowGenres() {
+  async fetchShowGenres(): Promise<ShowGenresData> {
     try {
       const response = await fetch(`${this.baseUrl}/genres`);
 
       const data = await response.json();
       return new ShowGenresData(data);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Fetches a page of the top-rated shows on TMDB
+   * @param page
+   */
+  async fetchTopRatedShows(page: number = 1): Promise<TopRatedShowsData> {
+    try {
+      const response = await fetch(`${this.baseUrl}/top?page=${page}`);
+
+      const data = await response.json();
+      return new TopRatedShowsData(data);
     } catch (error) {
       throw error;
     }
