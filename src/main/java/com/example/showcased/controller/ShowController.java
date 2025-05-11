@@ -93,4 +93,10 @@ public class ShowController {
         AllGenresDto genres = showService.getAllGenres();
         return ResponseEntity.ok(genres);
     }
+
+    @GetMapping("/top")
+    public ResponseEntity<TopRatedShowsDto> getTopRatedShows(@RequestParam(required = false) Integer page) {
+        TopRatedShowsDto shows = showService.getTopRatedShows(page);
+        return ResponseEntity.ok(shows);
+    }
 }
