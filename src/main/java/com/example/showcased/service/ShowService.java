@@ -452,4 +452,20 @@ public class ShowService {
 
         return shows;
     }
+
+    public AllGenresDto getAllGenres() {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Define headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", "application/json");
+        headers.add("Authorization", "Bearer " + tmdbKey);
+
+        // Create HTTP entity with headers
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+
+        // Make request to TMDB TV genres endpoint
+        String url = "https://api.themoviedb.org/3/genre/tv/list";
+        return restTemplate.exchange(url, HttpMethod.GET, requestEntity, AllGenresDto.class).getBody();
+    }
 }

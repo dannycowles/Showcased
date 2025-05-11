@@ -87,4 +87,10 @@ public class ShowController {
         TrendingShowsDto shows = showService.getTrendingShows(page);
         return ResponseEntity.ok(shows);
     }
+
+    @GetMapping("/genres")
+    public ResponseEntity<AllGenresDto> getShowGenres() {
+        AllGenresDto genres = showService.getAllGenres();
+        return ResponseEntity.ok(genres);
+    }
 }

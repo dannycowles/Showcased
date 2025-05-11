@@ -143,7 +143,7 @@ export class ShowService {
    */
   async unlikeShowReview(reviewId: number): Promise<Response> {
     try {
-      const response = await fetch(`${this.baseUrl}/reviews${reviewId}/likes`, {
+      const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/likes`, {
         method: 'DELETE',
         credentials: 'include'
       });
