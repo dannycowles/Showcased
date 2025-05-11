@@ -34,6 +34,8 @@ import {
 import {
   UserCharacterRankingPageComponent
 } from './pages/user/user-character-ranking-page/user-character-ranking-page.component';
+import {DiscoverPageComponent} from './pages/discover/discover-page/discover-page.component';
+import {DiscoverGenresPageComponent} from './pages/discover/discover-genres-page/discover-genres-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -63,6 +65,8 @@ const routes: Routes = [
     { path: 'show/:id', component: ShowPageComponent},
     { path: 'show/:id/season/:seasonNumber', component: SeasonPageComponent},
     { path: 'show/:id/season/:seasonNumber/episode/:episodeNumber', component: EpisodePageComponent },
+    { path: 'discover', component: DiscoverPageComponent},
+    { path: 'discover/show', component: DiscoverGenresPageComponent},
     { path: 'not-found', component: PageNotFoundComponent},
     { path: '**', redirectTo: 'not-found'}
 ];

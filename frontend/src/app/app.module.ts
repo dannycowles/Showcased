@@ -45,6 +45,8 @@ import {
 import {
   UserCharacterRankingPageComponent
 } from './pages/user/user-character-ranking-page/user-character-ranking-page.component';
+import {DiscoverPageComponent} from './pages/discover/discover-page/discover-page.component';
+import {DiscoverGenresPageComponent} from './pages/discover/discover-genres-page/discover-genres-page.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +78,9 @@ import {
     ProfileSeasonRankingPageComponent,
     UserSeasonRankingPageComponent,
     ProfileCharacterRankingPageComponent,
-    UserCharacterRankingPageComponent
+    UserCharacterRankingPageComponent,
+    DiscoverPageComponent,
+    DiscoverGenresPageComponent
   ],
   imports: [
     BrowserModule,
