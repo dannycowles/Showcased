@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,6 @@ import java.util.stream.Collectors;
 public class ShowService {
 
     private final ModelMapper modelMapper;
-    @Value("${tmdbApi}")
-    private String tmdbKey;
-
     @Value("${omdbApi}")
     private String omdbKey;
 
@@ -40,6 +38,8 @@ public class ShowService {
     private final WatchingRepository watchingRepository;
     private final ShowRankingRepository showRankingRepository;
     private final SeasonRankingRepository seasonRankingRepository;
+    private final TMDBClient tmdbClient;
+    private final OMDBClient omdbClient;
 
     public ShowService(ReviewRepository reviewRepository,
                        ModelMapper modelMapper,
@@ -47,7 +47,9 @@ public class ShowService {
                        WatchlistRepository watchlistRepository,
                        WatchingRepository watchingRepository,
                        ShowRankingRepository showRankingRepository,
-                       SeasonRankingRepository seasonRankingRepository) {
+                       SeasonRankingRepository seasonRankingRepository,
+                       TMDBClient tmdbClient,
+                       OMDBClient omdbClient) {
         this.reviewRepository = reviewRepository;
         this.modelMapper = modelMapper;
         this.likedReviewsRepository = likedReviewsRepository;
@@ -55,94 +57,97 @@ public class ShowService {
         this.watchingRepository = watchingRepository;
         this.showRankingRepository = showRankingRepository;
         this.seasonRankingRepository = seasonRankingRepository;
+        this.tmdbClient = tmdbClient;
+        this.omdbClient = omdbClient;
     }
 
-    public List<SearchDto> searchShows(String query) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Define headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set("Authorization", "Bearer " + tmdbKey);
-
-        // Create HttpEntity with headers
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-
-        // Make request to TMDB show search endpoint
-        String url = "https://api.themoviedb.org/3/search/tv?query=" + query;
-        ResponseEntity<SearchResponseDto> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, SearchResponseDto.class);
-        List<SearchDto> results = responseEntity.getBody().getResults();
-
-        // For each of the search results, use another TMDB endpoint to retrieve the end year
+    // For each of the shows, retrieve the end year
+    private void retrieveEndYears(ShowResultsPageDto shows) {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        for (SearchDto searchResult : results) {
+        for (SearchDto searchResult : shows.getResults()) {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                String url2 = "https://api.themoviedb.org/3/tv/" + searchResult.getId();
-                ResponseEntity<String> response = restTemplate.exchange(url2, HttpMethod.GET, requestEntity, String.class);
-
-                // Parse the response and extract the last date
-                JSONObject jsonResponse = new JSONObject(response.getBody());
+                // Make request to TMDB show details endpoint
+                String url = UriComponentsBuilder
+                        .fromUriString("https://api.themoviedb.org/3/tv/")
+                        .path(searchResult.getId())
+                        .toUriString();
+                JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));
 
                 // Check if the show is in production, if so leave the last_air_date blank
                 String endYear = "";
                 if (!jsonResponse.optBoolean("in_production")) {
                     endYear = jsonResponse.optString("last_air_date").split("-")[0];
                 }
-
-                // Update the result object to include the end year
                 searchResult.setEndYear(endYear);
             });
             futures.add(future);
         }
         // Wait for all API calls to complete
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+    }
 
-        return results;
+    public ShowResultsPageDto searchByTitle(String query, Integer page) {
+       // Make request to TMDB search endpoint
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/search/tv")
+                .queryParam("query", query)
+                .queryParam("page", page != null ? page : 1)
+                .toUriString();
+
+        ShowResultsPageDto shows = tmdbClient.get(url, ShowResultsPageDto.class);
+        retrieveEndYears(shows);
+        return shows;
+    }
+
+    public ShowResultsPageDto searchByGenre(Integer genre, Integer page) {
+        // Make request to TMDB discover endpoint
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/discover/tv")
+                .queryParam("with_genres", genre)
+                .queryParam("page", page != null ? page : 1)
+                .toUriString();
+
+        ShowResultsPageDto shows = tmdbClient.get(url, ShowResultsPageDto.class);
+        retrieveEndYears(shows);
+        return shows;
     }
 
     public ShowDto getShowDetails(String id, HttpSession session) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Define headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set("Authorization", "Bearer " + tmdbKey);
-
-        // Create HttpEntity with headers
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-
         // Make request to TMDB show details endpoint
-        String url = "https://api.themoviedb.org/3/tv/" + id;
-        ShowDto show = restTemplate.exchange(url, HttpMethod.GET, requestEntity, ShowDto.class).getBody();
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .path(id)
+                .toUriString();
+        ShowDto show = tmdbClient.get(url, ShowDto.class);
 
-        // Make request to TMDB external ID endpoint
-        url = "https://api.themoviedb.org/3/tv/" + id + "/external_ids";
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-
-        // Parse the response and extract the IMDB id
-        JSONObject jsonResponse = new JSONObject(response.getBody());
+        // Make request to TMDB external ID's endpoint
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .pathSegment(id, "external_ids")
+                .toUriString();
+        JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));
         String imdbId = jsonResponse.optString("imdb_id");
         show.setImdbId(imdbId);
 
         // Make request to TMDB cast endpoint
-        url = "https://api.themoviedb.org/3/tv/" + id + "/credits";
-        CastResponseDto cast = restTemplate.exchange(url, HttpMethod.GET, requestEntity, CastResponseDto.class).getBody();
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .pathSegment(id, "credits")
+                .toUriString();
+        CastResponseDto cast = tmdbClient.get(url, CastResponseDto.class);
 
         // Store only the first 5 stars (can modify later)
         show.setCast(cast.getCast().stream().limit(5).collect(Collectors.toList()));
 
         // Make request to OMDB show endpoint using the IMDB id
-        url = "https://www.omdbapi.com/?apikey=" + omdbKey + "&i=" + imdbId;
-        response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
+        url = UriComponentsBuilder
+                .fromUriString("https://www.omdbapi.com")
+                .queryParam("apikey", omdbKey)
+                .queryParam("i", imdbId)
+                .toUriString();
+        jsonResponse = new JSONObject(omdbClient.getRaw(url));
 
         // Parse the response and extract the following information:
-        // - Plot
-        // - Rated
-        // - Runtime
-        // - imdbRating
-        // - imdbVotes
-        // - Awards
-        jsonResponse = new JSONObject(response.getBody());
         show.setPlot(jsonResponse.optString("Plot"));
         show.setRating(jsonResponse.optString("Rated"));
         show.setAverageRuntime(jsonResponse.optString("Runtime"));
@@ -151,9 +156,11 @@ public class ShowService {
         show.setAwards(jsonResponse.optString("Awards"));
 
         // Make request to TMDB watch providers endpoint
-        url = "https://api.themoviedb.org/3/tv/" + id + "/watch/providers";
-        response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-        jsonResponse = new JSONObject(response.getBody());
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .pathSegment(id, "watch", "providers")
+                .toUriString();
+        jsonResponse = new JSONObject(tmdbClient.getRaw(url));
 
         // Retrieve the US based results for simplicity
         JSONObject results = jsonResponse.optJSONObject("results");
@@ -162,7 +169,7 @@ public class ShowService {
             return show;
         }
 
-        // Parse and set the streaming and buy options for the show
+        // Parse and set the streaming options for the shows
         JSONArray streaming = results.optJSONArray("flatrate");
         List<WatchOptionDto> streamingOptions = new ArrayList<>();
         if (streaming != null) {
@@ -172,6 +179,7 @@ public class ShowService {
             }
         }
 
+        // Parse and set the buy options for the shows
         JSONArray buy = results.optJSONArray("buy");
         List<WatchOptionDto> buyOptions = new ArrayList<>();
         if (buy != null) {
@@ -191,54 +199,42 @@ public class ShowService {
             show.setOnWatchingList(watchingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
             show.setOnRankingList(showRankingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
         }
-
         return show;
     }
 
-    public NumSeasonsDto getNumberOfSeasons(int showId) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Define headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set("Authorization", "Bearer " + tmdbKey);
-
-        // Create HttpEntity with headers
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-
-        String url = "https://api.themoviedb.org/3/tv/" + showId;
-        return restTemplate.exchange(url, HttpMethod.GET, requestEntity, NumSeasonsDto.class).getBody();
+    public NumSeasonsDto getNumberOfSeasons(String showId) {
+        // Make request to TMDB show endpoint
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .path(showId)
+                .toUriString();
+        return tmdbClient.get(url, NumSeasonsDto.class);
     }
 
-    public SeasonDto getSeasonDetails(int seasonNumber, int showId, HttpSession session) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Define headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set("Authorization", "Bearer " + tmdbKey);
-
-        // Create HttpEntity with headers
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-
+    public SeasonDto getSeasonDetails(String seasonNumber, String showId, HttpSession session) {
         // Make a request to TMDB season details endpoint
-        String url = "https://api.themoviedb.org/3/tv/" + showId + "/season/" + seasonNumber;
-        SeasonDto season = restTemplate.exchange(url, HttpMethod.GET, requestEntity, SeasonDto.class ).getBody();
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .pathSegment(showId, "season", seasonNumber)
+                .toUriString();
+        SeasonDto season = tmdbClient.get(url, SeasonDto.class);
 
-        // Make request to TMDB external ID endpoint
-        url = "https://api.themoviedb.org/3/tv/" + showId + "/external_ids";
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-
-        // Parse the response and extract the IMDB id
-        JSONObject jsonResponse = new JSONObject(response.getBody());
+        // Make request to TMDB external ID's endpoint
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .pathSegment(showId, "external_ids")
+                .toUriString();
+        JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));
         String imdbId = jsonResponse.optString("imdb_id");
 
         // Make a request to OMDB endpoint to retrieve IMDB ratings
-        url = "https://www.omdbapi.com/?apikey=" + omdbKey + "&i=" + imdbId + "&Season=" + seasonNumber;
-        response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-
-        // Parse the response and extract the array of episodes
-        jsonResponse = new JSONObject(response.getBody());
+        url = UriComponentsBuilder
+                .fromUriString("https://www.omdbapi.com")
+                .queryParam("apikey", omdbKey)
+                .queryParam("i", imdbId)
+                .queryParam("Season", seasonNumber)
+                .toUriString();
+        jsonResponse = new JSONObject(tmdbClient.getRaw(url));
         JSONArray episodes = jsonResponse.getJSONArray("Episodes");
         season.setShowTitle(jsonResponse.optString("Title"));
 
@@ -262,13 +258,21 @@ public class ShowService {
         // previous TMDB endpoint contained spoilers in overview
         List<SeasonEpisodeDto> seasonEpisodes = season.getEpisodes();
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        for (SeasonEpisodeDto seasonEpisode : seasonEpisodes) {
+        for (SeasonEpisodeDto episode : seasonEpisodes) {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                String url2 = "https://www.omdbapi.com/?apikey=" + omdbKey + "&i=" + imdbId + "&Season=" + seasonNumber + "&Episode=" + seasonEpisode.getEpisodeNumber();
-                ResponseEntity<String> response2 = restTemplate.exchange(url2, HttpMethod.GET, requestEntity, String.class);
-                JSONObject jsonResponse2 = new JSONObject(response2.getBody());
-                if (!jsonResponse2.optString("Plot").equals("N/A") && jsonResponse2.optBoolean("Plot")) {
-                    seasonEpisode.setPlot(jsonResponse2.optString("Plot"));
+                // Make request to OMDB episode endpoint
+                String url2 = UriComponentsBuilder
+                        .fromUriString("https://www.omdbapi.com")
+                        .queryParam("apikey", omdbKey)
+                        .queryParam("i", imdbId)
+                        .queryParam("Season", seasonNumber)
+                        .queryParam("Episode", episode.getEpisodeNumber())
+                        .toUriString();
+                System.out.println(url2);
+                JSONObject response = new JSONObject(omdbClient.getRaw(url2));
+
+                if (!response.optString("Plot").equals("N/A") && response.optBoolean("Plot")) {
+                    episode.setPlot(response.optString("Plot"));
                 }
             });
             futures.add(future);
@@ -282,54 +286,47 @@ public class ShowService {
         if (userId != null) {
             season.setOnRankingList(seasonRankingRepository.existsById(new SeasonRankingId(userId, season.getId())));;
         }
-
         return season;
     }
 
     public EpisodeDto getEpisodeDetails(String episodeNumber, String seasonNumber, String showId) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Define headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set("Authorization", "Bearer " + tmdbKey);
-
-        // Create HttpEntity with headers
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-
         // Make a request to TMDB episode endpoint
-        String url = "https://api.themoviedb.org/3/tv/" +  showId + "/season/" + seasonNumber + "/episode/" + episodeNumber;
-        EpisodeDto episode = restTemplate.exchange(url, HttpMethod.GET, requestEntity, EpisodeDto.class).getBody();
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .pathSegment(showId, "season", seasonNumber, "episode", episodeNumber)
+                .toUriString();
+        EpisodeDto episode = tmdbClient.get(url, EpisodeDto.class);
 
-        // Make request to TMDB external ID endpoint
-        url = "https://api.themoviedb.org/3/tv/" + showId + "/external_ids";
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-
-        // Parse the response and extract the IMDB id
-        JSONObject jsonResponse = new JSONObject(response.getBody());
+        // Make request to TMDB external ID's endpoint
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .pathSegment(showId, "external_ids")
+                .toUriString();
+        JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));
         String imdbId = jsonResponse.optString("imdb_id");
 
-        // Make request to OMDB endpoint to get additional episode information
-        url = "https://www.omdbapi.com/?apikey=" + omdbKey + "&i=" + imdbId + "&Season=" + seasonNumber + "&Episode=" + episodeNumber;
-        response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-
-        // Parse the response and extract:
-        // - IMDB rating
-        // - IMDB votes
-        // - Plot
-        jsonResponse = new JSONObject(response.getBody());
+        // Make request to OMDB episode endpoint
+        url = UriComponentsBuilder
+                .fromUriString("https://www.omdbapi.com")
+                .queryParam("apikey", omdbKey)
+                .queryParam("i", imdbId)
+                .queryParam("Season", seasonNumber)
+                .queryParam("Episode", episode.getEpisodeNumber())
+                .toUriString();
+        jsonResponse = new JSONObject(omdbClient.getRaw(url));
         episode.setImdbVotes(jsonResponse.optString("imdbVotes"));
         episode.setImdbRating(jsonResponse.optString("imdbRating"));
 
         // Make request to TMDB show endpoint to retrieve show title
-        url = "https://api.themoviedb.org/3/tv/" + showId;
-        response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-        jsonResponse = new JSONObject(response.getBody());
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .path(showId)
+                .toUriString();
+        jsonResponse = new JSONObject(tmdbClient.getRaw(url));
         episode.setShowTitle(jsonResponse.optString("name"));
 
         if (!jsonResponse.optString("Plot").equals("N/A") && jsonResponse.optBoolean("Plot")) {
-            String plot = jsonResponse.optString("Plot");
-            episode.setPlot(plot);
+            episode.setPlot(jsonResponse.optString("Plot"));
         }
         return episode;
     }
@@ -401,125 +398,32 @@ public class ShowService {
         reviewRepository.save(review);
     }
 
-    public TrendingShowsDto getTrendingShows(Integer page) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Define headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", "application/json");
-        headers.add("Authorization", "Bearer " + tmdbKey);
-
-        // Create HTTP entity with headers
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-
+    public ShowResultsPageDto getTrendingShows(Integer page) {
         // Make request to TMDB trending TV endpoint
-        if (page == null) {
-            page = 1;
-        }
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/trending/tv/day")
+                .queryParam("page", page != null ? page : 1)
+                .toUriString();
 
-        String url = "https://api.themoviedb.org/3/trending/tv/day?page=" + page;
-        TrendingShowsDto shows;
-        try {
-            shows =  restTemplate.exchange(url, HttpMethod.GET, requestEntity, TrendingShowsDto.class).getBody();
-        } catch(HttpClientErrorException ex) {
-            String errorBody = ex.getResponseBodyAsString();
-            JSONObject jsonObject = new JSONObject(errorBody);
-            throw new InvalidPageException(jsonObject.getString("status_message"));
-        }
-
-        // For each of the search results, use another TMDB endpoint to retrieve the end year
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
-        for (SearchDto searchResult : shows.getResults()) {
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                String url2 = "https://api.themoviedb.org/3/tv/" + searchResult.getId();
-                ResponseEntity<String> response = restTemplate.exchange(url2, HttpMethod.GET, requestEntity, String.class);
-
-                // Parse the response and extract the last date
-                JSONObject jsonResponse = new JSONObject(response.getBody());
-
-                // Check if the show is in production, if so leave the last_air_date blank
-                String endYear = "";
-                if (!jsonResponse.optBoolean("in_production")) {
-                    endYear = jsonResponse.optString("last_air_date").split("-")[0];
-                }
-
-                // Update the result object to include the end year
-                searchResult.setEndYear(endYear);
-            });
-            futures.add(future);
-        }
-        // Wait for all API calls to complete
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-
+        ShowResultsPageDto shows = tmdbClient.get(url, ShowResultsPageDto.class);
+        retrieveEndYears(shows);
         return shows;
     }
 
     public AllGenresDto getAllGenres() {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Define headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", "application/json");
-        headers.add("Authorization", "Bearer " + tmdbKey);
-
-        // Create HTTP entity with headers
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-
         // Make request to TMDB TV genres endpoint
         String url = "https://api.themoviedb.org/3/genre/tv/list";
-        return restTemplate.exchange(url, HttpMethod.GET, requestEntity, AllGenresDto.class).getBody();
+        return tmdbClient.get(url, AllGenresDto.class);
     }
 
-    public TopRatedShowsDto getTopRatedShows(Integer page) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Define headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", "application/json");
-        headers.add("Authorization", "Bearer " + tmdbKey);
-
-        // Create HTTP entity with headers
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-
+    public ShowResultsPageDto getTopRatedShows(Integer page) {
         // Make request to TMDB top-rated shows endpoint
-        if (page == null) {
-            page = 1;
-        }
-
-        String url = "https://api.themoviedb.org/3/tv/top_rated?page=" + page;
-        TopRatedShowsDto shows;
-        try {
-            shows = restTemplate.exchange(url, HttpMethod.GET, requestEntity, TopRatedShowsDto.class).getBody();
-        } catch (HttpClientErrorException ex) {
-            String errorBody = ex.getResponseBodyAsString();
-            JSONObject jsonObject = new JSONObject(errorBody);
-            throw new InvalidPageException(jsonObject.getString("status_message"));
-        }
-
-        // For each of the search results, use another TMDB endpoint to retrieve the end year
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
-        for (SearchDto searchResult : shows.getResults()) {
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                String url2 = "https://api.themoviedb.org/3/tv/" + searchResult.getId();
-                ResponseEntity<String> response = restTemplate.exchange(url2, HttpMethod.GET, requestEntity, String.class);
-
-                // Parse the response and extract the last date
-                JSONObject jsonResponse = new JSONObject(response.getBody());
-
-                // Check if the show is in production, if so leave the last_air_date blank
-                String endYear = "";
-                if (!jsonResponse.optBoolean("in_production")) {
-                    endYear = jsonResponse.optString("last_air_date").split("-")[0];
-                }
-
-                // Update the result object to include the end year
-                searchResult.setEndYear(endYear);
-            });
-            futures.add(future);
-        }
-        // Wait for all API calls to complete
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv/top_rated")
+                .queryParam("page", page != null ? page : 1)
+                .toUriString();
+        ShowResultsPageDto shows = tmdbClient.get(url, ShowResultsPageDto.class);
+        retrieveEndYears(shows);
         return shows;
     }
 }

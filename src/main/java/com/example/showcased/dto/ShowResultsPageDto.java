@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class TopRatedShowsDto {
+public class ShowResultsPageDto {
     private int page;
     private List<SearchDto> results;
     private int total_pages;

@@ -21,9 +21,14 @@ public class ShowController {
     // ========== SHOW BROWSING ==========
 
     @GetMapping()
-    public ResponseEntity<List<SearchDto>> searchShows(@RequestParam String name) {
-        List<SearchDto> results = showService.searchShows(name);
-        return ResponseEntity.ok(results);
+    public ResponseEntity<ShowResultsPageDto> searchShows(@RequestParam(required = false) String name, @RequestParam(required = false) Integer genre, @RequestParam(required = false) Integer page) {
+        if (genre != null) {
+            return ResponseEntity.ok(showService.searchByGenre(genre, page));
+        } else if (name != null) {
+            return ResponseEntity.ok(showService.searchByTitle(name, page));
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 
@@ -36,13 +41,13 @@ public class ShowController {
     }
 
     @GetMapping("/{id}/num-seasons")
-    public ResponseEntity<NumSeasonsDto> getNumberOfSeasons(@PathVariable int id) {
+    public ResponseEntity<NumSeasonsDto> getNumberOfSeasons(@PathVariable String id) {
         NumSeasonsDto numSeasons = showService.getNumberOfSeasons(id);
         return ResponseEntity.ok(numSeasons);
     }
 
     @GetMapping("/{id}/seasons/{seasonNumber}")
-    public ResponseEntity<SeasonDto> getSeasonDetails(@PathVariable int seasonNumber, @PathVariable int id, HttpSession session) {
+    public ResponseEntity<SeasonDto> getSeasonDetails(@PathVariable String seasonNumber, @PathVariable String id, HttpSession session) {
         SeasonDto season = showService.getSeasonDetails(seasonNumber, id, session);
         return ResponseEntity.ok(season);
     }
@@ -83,8 +88,8 @@ public class ShowController {
     // ========== DISCOVER ==========
 
     @GetMapping("/trending")
-    public ResponseEntity<TrendingShowsDto> getTrendingShows(@RequestParam(required = false) Integer page) {
-        TrendingShowsDto shows = showService.getTrendingShows(page);
+    public ResponseEntity<ShowResultsPageDto> getTrendingShows(@RequestParam(required = false) Integer page) {
+        ShowResultsPageDto shows = showService.getTrendingShows(page);
         return ResponseEntity.ok(shows);
     }
 
@@ -95,8 +100,8 @@ public class ShowController {
     }
 
     @GetMapping("/top")
-    public ResponseEntity<TopRatedShowsDto> getTopRatedShows(@RequestParam(required = false) Integer page) {
-        TopRatedShowsDto shows = showService.getTopRatedShows(page);
+    public ResponseEntity<ShowResultsPageDto> getTopRatedShows(@RequestParam(required = false) Integer page) {
+        ShowResultsPageDto shows = showService.getTopRatedShows(page);
         return ResponseEntity.ok(shows);
     }
 }
