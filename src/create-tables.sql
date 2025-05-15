@@ -127,7 +127,7 @@ CREATE TABLE user_collections (
     user_id INT NOT NULL,
     collection_id INT AUTO_INCREMENT,
     collection_name VARCHAR(255) NOT NULL,
-    private BOOLEAN NOT NULL DEFAULT FALSE,
+    is_private BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (collection_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     UNIQUE (user_id, collection_name)
