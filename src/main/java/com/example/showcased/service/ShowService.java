@@ -105,6 +105,7 @@ public class ShowService {
                 .fromUriString("https://api.themoviedb.org/3/discover/tv")
                 .queryParam("with_genres", genre)
                 .queryParam("page", page != null ? page : 1)
+                .queryParam("sort_by", "vote_count.desc")
                 .toUriString();
 
         ShowResultsPageDto shows = tmdbClient.get(url, ShowResultsPageDto.class);
@@ -122,7 +123,7 @@ public class ShowService {
 
         // Make request to TMDB external ID's endpoint
         url = UriComponentsBuilder
-                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .fromUriString("https://api.themoviedb.org/3/tv")
                 .pathSegment(id, "external_ids")
                 .toUriString();
         JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));
@@ -131,7 +132,7 @@ public class ShowService {
 
         // Make request to TMDB cast endpoint
         url = UriComponentsBuilder
-                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .fromUriString("https://api.themoviedb.org/3/tv")
                 .pathSegment(id, "credits")
                 .toUriString();
         CastResponseDto cast = tmdbClient.get(url, CastResponseDto.class);
@@ -157,7 +158,7 @@ public class ShowService {
 
         // Make request to TMDB watch providers endpoint
         url = UriComponentsBuilder
-                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .fromUriString("https://api.themoviedb.org/3/tv")
                 .pathSegment(id, "watch", "providers")
                 .toUriString();
         jsonResponse = new JSONObject(tmdbClient.getRaw(url));
@@ -214,14 +215,14 @@ public class ShowService {
     public SeasonDto getSeasonDetails(String seasonNumber, String showId, HttpSession session) {
         // Make a request to TMDB season details endpoint
         String url = UriComponentsBuilder
-                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .fromUriString("https://api.themoviedb.org/3/tv")
                 .pathSegment(showId, "season", seasonNumber)
                 .toUriString();
         SeasonDto season = tmdbClient.get(url, SeasonDto.class);
 
         // Make request to TMDB external ID's endpoint
         url = UriComponentsBuilder
-                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .fromUriString("https://api.themoviedb.org/3/tv")
                 .pathSegment(showId, "external_ids")
                 .toUriString();
         JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));
@@ -292,14 +293,14 @@ public class ShowService {
     public EpisodeDto getEpisodeDetails(String episodeNumber, String seasonNumber, String showId) {
         // Make a request to TMDB episode endpoint
         String url = UriComponentsBuilder
-                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .fromUriString("https://api.themoviedb.org/3/tv")
                 .pathSegment(showId, "season", seasonNumber, "episode", episodeNumber)
                 .toUriString();
         EpisodeDto episode = tmdbClient.get(url, EpisodeDto.class);
 
         // Make request to TMDB external ID's endpoint
         url = UriComponentsBuilder
-                .fromUriString("https://api.themoviedb.org/3/tv/")
+                .fromUriString("https://api.themoviedb.org/3/tv")
                 .pathSegment(showId, "external_ids")
                 .toUriString();
         JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));

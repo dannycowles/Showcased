@@ -1,1 +1,30 @@
-<p>discover-genres-page works!</p>
+<h1>Genre Results</h1>
+
+@if (resultData) {
+  @for (show of resultData.results; track show.id) {
+    <h2>{{show.name}}</h2>
+
+    <!-- If the show didn't air for more than one year only display once -->
+    @if (!show.firstAirDate && !show.lastAirDate) {
+      <h3>Air Dates Unknown</h3>
+    } @else if (show.firstAirDate === show.lastAirDate) {
+      <h3>{{show.firstAirDate}}</h3>
+    } @else {
+      <h3>{{ show.firstAirDate }} - {{ show.lastAirDate }}</h3>
+    }
+
+    <!-- Poster images are sized w185, using 2:3 ratio -->
+    <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster Path" width="185" height="278" priority></a>
+    <br>
+    <br>
+  }
+
+  <!-- Pagination below -->
+  <nav aria-label="Search result navigation">
+    <ul class="pagination">
+      <li class="page-item" [class.disabled]="page === 1"><a class="page-link" (click)="navigateToPage(page - 1)">Previous</a></li>
+      <h2 class="ms-2 me-2">{{page}} of {{resultData.totalPages}}</h2>
+      <li class="page-item disabled" [class.disabled]="page === resultData.totalPages"><a class="page-link" (click)="navigateToPage(page + 1)">Next</a></li>
+    </ul>
+  </nav>
+}

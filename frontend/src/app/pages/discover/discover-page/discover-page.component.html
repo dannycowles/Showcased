@@ -3,7 +3,7 @@
 @if (showGenres) {
   <h2>Show Genres</h2>
   @for (genre of showGenres.genres; track genre.id) {
-    <a [routerLink]="['show']" [queryParams]="{ genre: genre.name }"><p>{{genre.name}}</p></a>
+    <a [routerLink]="['show']" [queryParams]="{ genre: genre.id, page: 1 }"><p>{{genre.name}}</p></a>
   }
 }
 

@@ -8,6 +8,7 @@ import {EpisodeData} from '../data/show/episode-data';
 import {TrendingShowsData} from '../data/trending-shows-data';
 import {ShowGenresData} from '../data/show-genres-data';
 import {TopRatedShowsData} from '../data/top-rated-shows-data';
+import {ResultPageData} from '../data/show/result-page-data';
 
 @Injectable({
   providedIn: 'root'
@@ -35,12 +36,28 @@ export class ShowService {
    */
   async searchForShows(searchString: string): Promise<SearchResultData[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/?name=${encodeURIComponent(searchString)}`);
+      const response = await fetch(`${this.baseUrl}?name=${encodeURIComponent(searchString)}`);
 
       const data = await response.json();
       return data.map((result: {}) =>  {
         return new SearchResultData(result);
       });
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Fetches show results by genre and page number
+   * @param genreId
+   * @param page
+   */
+  async searchByGenre(genreId: number, page: number = 1): Promise<ResultPageData> {
+    try {
+      const response = await fetch(`${this.baseUrl}?genre=${genreId}&page=${page}`);
+
+      const data = await response.json();
+      return new ResultPageData(data);
     } catch(error) {
       throw error;
     }
