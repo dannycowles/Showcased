@@ -122,3 +122,20 @@ CREATE TABLE user_character_rankings (
     FOREIGN KEY(user_id) REFERENCES users(id),
     CHECK (character_type IN ('Protagonist', 'Deuteragonist', 'Antagonist'))
 );
+
+CREATE TABLE user_collections (
+    user_id INT NOT NULL,
+    collection_id INT AUTO_INCREMENT,
+    collection_name VARCHAR(255) NOT NULL,
+    private BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (collection_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    UNIQUE (user_id, collection_name)
+);
+
+CREATE TABLE shows_in_collections (
+    collection_id INT,
+    show_id INT,
+    PRIMARY KEY (collection_id, show_id),
+    FOREIGN KEY (collection_id) REFERENCES user_collections(collection_id)
+);
