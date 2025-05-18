@@ -528,6 +528,18 @@ public class ProfileService {
         collectionsRepository.save(updateCollection);
     }
 
+    public CollectionReturnDto getCollection(Long collectionId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        Collection collection = collectionsRepository.findById(collectionId)
+                .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
+
+        // Check to ensure the collection being retrieved is actually owned by the logged-in user
+        if (!collection.getUserId().equals(userId)) {
+            throw new UnauthorizedCollectionAccessException("You do not have permission to view this collection");
+        }
+        return new CollectionReturnDto(collection.getCollectionName(), collection.isPrivate(), showsInCollectionRepository.findByIdCollectionId(collectionId));
+    }
+
     public void addShowToCollection(Long collectionId, WatchSendDto show, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         Collection updateCollection = collectionsRepository.findById(collectionId)
@@ -547,5 +559,15 @@ public class ProfileService {
         ShowsInCollection newShow = new ShowsInCollection();
         newShow.setId(showsInCollectionId);
         showsInCollectionRepository.save(newShow);
+    }
+
+    public void removeShowFromCollection(Long collectionId, Long showId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Check to ensure the collection being modified is actually owned by the logged-in user
+        if (!collectionsRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
+            throw new UnauthorizedCollectionAccessException("You do not have permission to modify this collection");
+        }
+        showsInCollectionRepository.deleteById(new ShowsInCollectionId(collectionId, showId));
     }
 }
