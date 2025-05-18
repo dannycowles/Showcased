@@ -507,4 +507,24 @@ public class ProfileService {
         }
         collectionsRepository.deleteById(collectionId);
     }
+
+    public void updateCollection(Long collectionId, UpdateCollectionDto collection, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        Collection updateCollection = collectionsRepository.findById(collectionId)
+                .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
+
+        // Check to ensure the collection being modified is actually owned by the logged-in user
+        if (!updateCollection.getUserId().equals(userId)) {
+            throw new UnauthorizedCollectionAccessException("You do not have permission to modify this collection");
+        }
+
+        // Update columns as needed
+        if (collection.getIsPrivate() != null) {
+            updateCollection.setPrivate(collection.getIsPrivate());
+        }
+        if (collection.getCollectionName() != null) {
+            updateCollection.setCollectionName(collection.getCollectionName());
+        }
+        collectionsRepository.save(updateCollection);
+    }
 }

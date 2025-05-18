@@ -261,4 +261,10 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/collections/{id}")
+    public ResponseEntity<Void> updateCollection(@PathVariable Long id, @RequestBody UpdateCollectionDto collection, HttpSession session) {
+        profileService.updateCollection(id, collection, session);
+        return ResponseEntity.noContent().build();
+    }
+
 }

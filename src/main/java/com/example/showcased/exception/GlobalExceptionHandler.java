@@ -164,4 +164,12 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> unauthorizedCollectionAccessHandler(UnauthorizedCollectionAccessException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler for user collection not found
+     */
+    @ExceptionHandler(CollectionNotFoundException.class)
+    ResponseEntity<ErrorResponse> collectionNotFoundHandler(CollectionNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
+    }
 }
