@@ -1,12 +1,11 @@
 package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
+import com.example.showcased.entity.Collection;
 import com.example.showcased.entity.Follower;
 import com.example.showcased.entity.FollowerId;
 import com.example.showcased.entity.User;
-import com.example.showcased.exception.FollowSelfException;
-import com.example.showcased.exception.InvalidCharacterType;
-import com.example.showcased.exception.UserNotFoundException;
+import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
@@ -34,6 +33,8 @@ public class UserService {
     private final SeasonRankingRepository seasonRankingRepository;
     private final CharacterRankingRepository characterRankingRepository;
     private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist"};
+    private final CollectionRepository collectionsRepository;
+    private final ShowsInCollectionRepository showsInCollectionRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -44,7 +45,9 @@ public class UserService {
                        ReviewRepository reviewRepository,
                        FollowersRepository followersRepository,
                        SeasonRankingRepository seasonRankingRepository,
-                       CharacterRankingRepository characterRankingRepository) {
+                       CharacterRankingRepository characterRankingRepository,
+                       CollectionRepository collectionsRepository,
+                       ShowsInCollectionRepository showsInCollectionRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -55,6 +58,8 @@ public class UserService {
         this.followersRepository = followersRepository;
         this.seasonRankingRepository = seasonRankingRepository;
         this.characterRankingRepository = characterRankingRepository;
+        this.collectionsRepository = collectionsRepository;
+        this.showsInCollectionRepository = showsInCollectionRepository;
     }
 
     public void ensureUserExists(Long userId) {
@@ -244,5 +249,26 @@ public class UserService {
     public Long getFollowingCount(Long userId) {
         ensureUserExists(userId);
         return followersRepository.countByIdFollowerId(userId);
+    }
+
+
+
+
+    public List<CollectionDto> getCollections(Long userId) {
+        ensureUserExists(userId);
+        return collectionsRepository.findByUserIdPublic(userId).stream()
+                .map(collection -> modelMapper.map(collection, CollectionDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public CollectionReturnDto getShowsInCollection(Long userId, Long collectionId) {
+        ensureUserExists(userId);
+        Collection collection = collectionsRepository.findById(collectionId)
+                .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
+
+        if (collection.isPrivate()) {
+            throw new UnauthorizedCollectionAccessException("Collection is private");
+        }
+        return new CollectionReturnDto(collection.getCollectionName(), false, showsInCollectionRepository.findByIdCollectionId(collectionId));
     }
 }

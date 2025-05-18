@@ -107,15 +107,31 @@ public class UserController {
 
     // ========== SOCIAL ==========
 
-    @PostMapping("{id}/followers")
+    @PostMapping("/{id}/followers")
     public ResponseEntity<Void> followUser(@PathVariable("id") Long followId, HttpSession session) {
         userService.followUser(followId, session);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{id}/followers")
+    @DeleteMapping("/{id}/followers")
     public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId, HttpSession session) {
         userService.unfollowUser(unfollowId, session);
         return ResponseEntity.noContent().build();
+    }
+
+
+
+    // ========== COLLECTIONS ==========
+
+    @GetMapping("/{id}/collections")
+    public ResponseEntity<List<CollectionDto>> getCollections(@PathVariable Long id) {
+        List<CollectionDto> collections = userService.getCollections(id);
+        return ResponseEntity.ok(collections);
+    }
+
+    @GetMapping("/{id}/collections/{collectionId}")
+    public ResponseEntity<CollectionReturnDto> getShowsInCollection(@PathVariable Long id, @PathVariable Long collectionId) {
+        CollectionReturnDto collection = userService.getShowsInCollection(id, collectionId);
+        return ResponseEntity.ok(collection);
     }
 }
