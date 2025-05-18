@@ -527,4 +527,25 @@ public class ProfileService {
         }
         collectionsRepository.save(updateCollection);
     }
+
+    public void addShowToCollection(Long collectionId, WatchSendDto show, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        Collection updateCollection = collectionsRepository.findById(collectionId)
+                .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
+
+        // Check to ensure the collection being added to is actually owned by the logged-in user
+        if (!updateCollection.getUserId().equals(userId)) {
+            throw new UnauthorizedCollectionAccessException("You do not have permission to add to this collection");
+        }
+        addToShowInfoRepository(show);
+
+        ShowsInCollectionId showsInCollectionId = new ShowsInCollectionId(collectionId, show.getShowId());
+        if (showsInCollectionRepository.existsById(showsInCollectionId)) {
+            throw new AlreadyInCollectionException("Show is already in this collection");
+        }
+
+        ShowsInCollection newShow = new ShowsInCollection();
+        newShow.setId(showsInCollectionId);
+        showsInCollectionRepository.save(newShow);
+    }
 }

@@ -267,4 +267,10 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/collections/{id}")
+    public ResponseEntity<Void> addShowToCollection(@PathVariable Long id, @RequestBody WatchSendDto show, HttpSession session) {
+        profileService.addShowToCollection(id, show, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }

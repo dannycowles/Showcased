@@ -172,4 +172,12 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> collectionNotFoundHandler(CollectionNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler for trying to add a show to a collection that already has that show
+     */
+    @ExceptionHandler(AlreadyInCollectionException.class)
+    ResponseEntity<ErrorResponse> alreadyInCollectionHandler(AlreadyInCollectionException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
 }
