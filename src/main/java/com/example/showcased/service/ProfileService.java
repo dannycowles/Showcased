@@ -2,10 +2,7 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
-import com.example.showcased.exception.AlreadyOnListException;
-import com.example.showcased.exception.DuplicateCollectionNameException;
-import com.example.showcased.exception.InvalidCharacterType;
-import com.example.showcased.exception.UserNotFoundException;
+import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.hibernate.annotations.CollectionId;
@@ -38,7 +35,6 @@ public class ProfileService {
     private final CharacterRankingRepository characterRankingRepository;
     private final CollectionRepository collectionsRepository;
     private final ShowsInCollectionRepository showsInCollectionRepository;
-    private final CollectionRepository collectionRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -70,7 +66,6 @@ public class ProfileService {
         this.characterRankingRepository = characterRankingRepository;
         this.collectionsRepository = collectionRepository;
         this.showsInCollectionRepository = showsInCollectionRepository;
-        this.collectionRepository = collectionRepository;
     }
 
     /**
@@ -501,5 +496,15 @@ public class ProfileService {
         // Save new collection to database
         Collection newCollection = new Collection(userId, collection.getCollectionName());
         collectionsRepository.save(newCollection);
+    }
+
+    public void deleteCollection(Long collectionId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Check to ensure the collection being deleted is actually owned by the logged-in user
+        if (!collectionsRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
+            throw new UnauthorizedCollectionAccessException("You do not have permission to delete this collection");
+        }
+        collectionsRepository.deleteById(collectionId);
     }
 }

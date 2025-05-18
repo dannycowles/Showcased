@@ -255,4 +255,10 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @DeleteMapping("/collections/{id}")
+    public ResponseEntity<Void> deleteCollection(@PathVariable Long id, HttpSession session) {
+        profileService.deleteCollection(id, session);
+        return ResponseEntity.noContent().build();
+    }
+
 }

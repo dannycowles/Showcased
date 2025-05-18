@@ -156,4 +156,12 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> duplicateCollectionNameHandler(DuplicateCollectionNameException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler for trying to edit unowned collection
+     */
+    @ExceptionHandler(UnauthorizedCollectionAccessException.class)
+    ResponseEntity<ErrorResponse> unauthorizedCollectionAccessHandler(UnauthorizedCollectionAccessException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    }
 }

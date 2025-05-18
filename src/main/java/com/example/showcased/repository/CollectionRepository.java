@@ -10,4 +10,5 @@ import java.util.List;
 public interface CollectionRepository extends JpaRepository<Collection, Long> {
     List<Collection> findByUserId(Long userId);
     boolean existsByUserIdAndCollectionName(Long userId, String collectionName);
+    boolean existsByUserIdAndCollectionId(Long userId, Long collectionId);
 }
