@@ -148,4 +148,12 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> invalidPageHandler(InvalidPageException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler for duplicate collection names
+     */
+    @ExceptionHandler(DuplicateCollectionNameException.class)
+    ResponseEntity<ErrorResponse> duplicateCollectionNameHandler(DuplicateCollectionNameException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
 }

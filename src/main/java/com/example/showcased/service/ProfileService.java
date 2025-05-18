@@ -3,10 +3,12 @@ package com.example.showcased.service;
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
 import com.example.showcased.exception.AlreadyOnListException;
+import com.example.showcased.exception.DuplicateCollectionNameException;
 import com.example.showcased.exception.InvalidCharacterType;
 import com.example.showcased.exception.UserNotFoundException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
+import org.hibernate.annotations.CollectionId;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfileService {
@@ -33,6 +36,9 @@ public class ProfileService {
     private final SeasonRankingRepository seasonRankingRepository;
     private final SeasonInfoRepository seasonInfoRepository;
     private final CharacterRankingRepository characterRankingRepository;
+    private final CollectionRepository collectionsRepository;
+    private final ShowsInCollectionRepository showsInCollectionRepository;
+    private final CollectionRepository collectionRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -46,7 +52,9 @@ public class ProfileService {
                           FollowersRepository followersRepository,
                           SeasonRankingRepository seasonRankingRepository,
                           SeasonInfoRepository seasonInfoRepository,
-                          CharacterRankingRepository characterRankingRepository) {
+                          CharacterRankingRepository characterRankingRepository,
+                          CollectionRepository collectionRepository,
+                          ShowsInCollectionRepository showsInCollectionRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -60,6 +68,9 @@ public class ProfileService {
         this.seasonRankingRepository = seasonRankingRepository;
         this.seasonInfoRepository = seasonInfoRepository;
         this.characterRankingRepository = characterRankingRepository;
+        this.collectionsRepository = collectionRepository;
+        this.showsInCollectionRepository = showsInCollectionRepository;
+        this.collectionRepository = collectionRepository;
     }
 
     /**
@@ -468,5 +479,27 @@ public class ProfileService {
     public void removeFollower(Long removeId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         followersRepository.deleteById(new FollowerId(removeId, userId));
+    }
+
+
+
+    public List<CollectionDto> getCollectionList(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return collectionsRepository.findByUserId(userId).stream()
+                .map(collection -> modelMapper.map(collection, CollectionDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public void createCollection(CreateCollectionDto collection, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Check to make sure user doesn't have a collection with the provided name already
+        if (collectionsRepository.existsByUserIdAndCollectionName(userId, collection.getCollectionName())) {
+            throw new DuplicateCollectionNameException("You already have a collection named " + collection.getCollectionName());
+        }
+
+        // Save new collection to database
+        Collection newCollection = new Collection(userId, collection.getCollectionName());
+        collectionsRepository.save(newCollection);
     }
 }

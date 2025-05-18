@@ -239,4 +239,20 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
+
+
+    // ========== COLLECTIONS ==========
+
+    @GetMapping("/collections")
+    public ResponseEntity<List<CollectionDto>> getCollectionList(HttpSession session) {
+        List<CollectionDto> collections = profileService.getCollectionList(session);
+        return ResponseEntity.ok(collections);
+    }
+
+    @PostMapping("/collections")
+    public ResponseEntity<Void> createCollection(@RequestBody CreateCollectionDto collection, HttpSession session) {
+        profileService.createCollection(collection, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }
