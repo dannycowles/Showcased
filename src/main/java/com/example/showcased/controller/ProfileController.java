@@ -267,13 +267,13 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/collections/{id}")
+    @GetMapping("/collections/{id}/shows")
     public ResponseEntity<CollectionReturnDto> getCollection(@PathVariable Long id, HttpSession session) {
         CollectionReturnDto collection = profileService.getCollection(id, session);
         return ResponseEntity.ok(collection);
     }
 
-    @PostMapping("/collections/{id}")
+    @PostMapping("/collections/{id}/shows")
     public ResponseEntity<Void> addShowToCollection(@PathVariable Long id, @RequestBody WatchSendDto show, HttpSession session) {
         profileService.addShowToCollection(id, show, session);
         return ResponseEntity.status(HttpStatus.CREATED).build();

@@ -7,12 +7,14 @@ import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
 import {UserSearchData} from '../data/user-search-data';
 import {SeasonRankingData} from '../data/lists/season-ranking-data';
 import {CharacterRankingsData} from '../data/character-rankings-data';
+import {CollectionData} from '../data/collection-data';
+import {SingleCollectionData} from '../data/single-collection-data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-  baseUrl: string = "http://localhost:8080/profile";
+  readonly baseUrl: string = "http://localhost:8080/profile";
 
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
@@ -582,6 +584,148 @@ export class ProfileService {
   async removeFollower(id: number): Promise<Response> {
     try {
       const response: Response = await fetch(`${this.baseUrl}/followers/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves all collections for the logged-in user
+   */
+  async getCollections(): Promise<CollectionData[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/collections`, {
+        credentials: 'include'
+      });
+
+      this.checkUnauthorizedUser(response);
+      const data = await response.json();
+      return data.map((collection: {}) => {
+        return new CollectionData(collection);
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Creates a new collection for the logged-in user
+   * @param data
+   */
+  async createCollection(data: {}): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/collections`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Deletes a collection for the logged-in user by ID
+   * @param id
+   */
+  async deleteCollection(id: number): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/collections/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Updates a collection for the logged-in user by ID
+   * @param id
+   * @param data
+   */
+  async updateCollection(id: number, data: {}): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/collections/${id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Adds a show to a collection for the logged-in user by ID
+   * @param id
+   * @param data
+   */
+  async addShowToCollection(id: number, data: {}): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/collections/${id}/shows`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves shows in a collection for the logged-in user by ID
+   * @param id
+   */
+  async getCollection(id: number): Promise<SingleCollectionData> {
+    try {
+      const response = await fetch(`${this.baseUrl}/collections/${id}/shows`, {
+        credentials: 'include'
+      });
+
+      this.checkUnauthorizedUser(response);
+      const data = await response.json();
+      return new SingleCollectionData(data);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Removes a show from a collection for the logged-in user by ID
+   * @param collectionId
+   * @param showId
+   */
+  async removeShowFromCollection(collectionId: number, showId: number): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/collections/${collectionId}/shows/${showId}`, {
         method: 'DELETE',
         credentials: 'include'
       });

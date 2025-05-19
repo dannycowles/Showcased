@@ -47,6 +47,9 @@ import {
 } from './pages/user/user-character-ranking-page/user-character-ranking-page.component';
 import {DiscoverPageComponent} from './pages/discover/discover-page/discover-page.component';
 import {DiscoverGenresPageComponent} from './pages/discover/discover-genres-page/discover-genres-page.component';
+import {
+  ProfileCollectionsPageComponent
+} from './pages/profile/profile-collections-page/profile-collections-page.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +83,8 @@ import {DiscoverGenresPageComponent} from './pages/discover/discover-genres-page
     ProfileCharacterRankingPageComponent,
     UserCharacterRankingPageComponent,
     DiscoverPageComponent,
-    DiscoverGenresPageComponent
+    DiscoverGenresPageComponent,
+    ProfileCollectionsPageComponent
   ],
   imports: [
     BrowserModule,

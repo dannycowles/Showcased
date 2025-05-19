@@ -36,6 +36,9 @@ import {
 } from './pages/user/user-character-ranking-page/user-character-ranking-page.component';
 import {DiscoverPageComponent} from './pages/discover/discover-page/discover-page.component';
 import {DiscoverGenresPageComponent} from './pages/discover/discover-genres-page/discover-genres-page.component';
+import {
+  ProfileCollectionsPageComponent
+} from './pages/profile/profile-collections-page/profile-collections-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -51,6 +54,7 @@ const routes: Routes = [
     { path: 'profile/followers', component: ProfileFollowersPageComponent},
     { path: 'profile/following', component: ProfileFollowingPageComponent},
     { path: 'profile/character-ranking/:type', component: ProfileCharacterRankingPageComponent },
+    { path: 'profile/collections', component: ProfileCollectionsPageComponent },
     { path: 'user/:id', component: UserPageComponent},
     { path: 'user/:id/watchlist', component: UserWatchlistPageComponent},
     { path: 'user/:id/watching', component: UserWatchingPageComponent},
