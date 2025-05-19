@@ -130,7 +130,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/collections/{collectionId}")
-    public ResponseEntity<CollectionReturnDto> getShowsInCollection(@PathVariable Long id, @PathVariable Long collectionId) {
+    public ResponseEntity<CollectionReturnDto> getCollectionDetails(@PathVariable Long id, @PathVariable Long collectionId) {
         CollectionReturnDto collection = userService.getShowsInCollection(id, collectionId);
         return ResponseEntity.ok(collection);
     }

@@ -704,9 +704,9 @@ export class ProfileService {
    * Retrieves shows in a collection for the logged-in user by ID
    * @param id
    */
-  async getCollection(id: number): Promise<SingleCollectionData> {
+  async getCollectionDetails(id: number): Promise<SingleCollectionData> {
     try {
-      const response = await fetch(`${this.baseUrl}/collections/${id}/shows`, {
+      const response = await fetch(`${this.baseUrl}/collections/${id}`, {
         credentials: 'include'
       });
 

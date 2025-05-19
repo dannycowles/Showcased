@@ -7,12 +7,14 @@ import {ShowRankingData} from '../data/lists/show-ranking-data';
 import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
 import {SeasonRankingData} from '../data/lists/season-ranking-data';
 import {CharacterRankingsData} from '../data/character-rankings-data';
+import {CollectionData} from '../data/collection-data';
+import {SingleCollectionData} from '../data/single-collection-data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  baseUrl: string = "http://localhost:8080/user";
+  readonly baseUrl: string = "http://localhost:8080/user";
 
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
@@ -29,7 +31,7 @@ export class UserService {
     try {
       const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(query)}`);
 
-      const data: [] = await response.json();
+      const data = await response.json();
       return data.map((result: {}) => {
         return new UserSearchData(result);
       });
@@ -225,6 +227,39 @@ export class UserService {
         return new UserSearchData(user);
       });
     } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the public collections for user with the specified id
+   * @param id
+   */
+  async getPublicCollections(id: number): Promise<CollectionData[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${id}/collections`);
+
+      const data = await response.json();
+      return data.map((collection: {}) => {
+        return new CollectionData(collection);
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the details for a collection with the specified id
+   * @param userId
+   * @param collectionId
+   */
+  async getCollectionDetails(userId: number, collectionId: number): Promise<SingleCollectionData> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${userId}/collections/${collectionId}`);
+
+      const data = await response.json();
+      return new SingleCollectionData(data);
+    } catch (error) {
       throw error;
     }
   }
