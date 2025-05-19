@@ -1,0 +1,12 @@
+@if (collectionData) {
+  <h1>{{collectionData.name}}</h1>
+
+  @if (collectionData.shows.length != 0) {
+    @for (show of collectionData.shows; track show.id) {
+      <h3>{{show.title}}</h3>
+      <p>TODO: show poster and navigation</p>
+    }
+  } @else {
+    <p>No shows in collection yet!</p>
+  }
+}

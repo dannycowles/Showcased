@@ -1,1 +1,12 @@
-<p>profile-collections-page works!</p>
+<h1>Collections</h1>
+
+@if (collectionData) {
+  @if (collectionData.length != 0) {
+    @for (collection of collectionData; track collection.id) {
+      <a [routerLink]="[collection.id]"><h3>{{collection.name}}</h3></a>
+      <p>Private? {{collection.isPrivate}}</p>
+    }
+  } @else {
+    <p>No Collection Yet!</p>
+  }
+}

@@ -1,11 +1,11 @@
 export class CollectionData {
-  readonly collectionId: number;
-  collectionName: string;
+  readonly id: number;
+  name: string;
   isPrivate: boolean;
 
   constructor(jsonObject: { [key: string]: any }) {
-    this.collectionId = jsonObject['collectionId'];
-    this.collectionName = jsonObject['collectionName'];
+    this.id = jsonObject['collectionId'];
+    this.name = jsonObject['collectionName'];
     this.isPrivate = jsonObject['private'];
   }
 }
