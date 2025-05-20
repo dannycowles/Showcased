@@ -10,6 +10,7 @@ import {ToastDisplayService} from '../../../services/toast.service';
 import {UtilsService} from '../../../services/utils.service';
 import {AuthenticationService} from '../../../services/auth.service';
 import {ShowData} from '../../../data/show/show-data';
+import {CollectionData} from '../../../data/collection-data';
 
 @Component({
   selector: 'app-show-page',
@@ -22,6 +23,8 @@ export class ShowPageComponent implements OnInit {
   show: ShowData;
   reviews: ReviewData[];
   readonly heartSize: number = 100;
+  collections: CollectionData[];
+  collectionSelection: number;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
@@ -178,6 +181,28 @@ export class ShowPageComponent implements OnInit {
         window.location.href = "login";
       }
     } catch(error) {
+      console.error(error);
+    }
+  }
+
+  async addToCollectionPressed() {
+    try {
+      this.collections = await this.profileService.getCollections();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async collectionSubmitted() {
+    try {
+      const showData = {
+        showId: this.showId,
+        title: this.show.name,
+        posterPath: this.show.posterPath
+      };
+
+      await this.profileService.addShowToCollection(this.collectionSelection, showData);
+    } catch (error) {
       console.error(error);
     }
   }

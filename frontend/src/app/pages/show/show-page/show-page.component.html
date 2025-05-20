@@ -93,6 +93,41 @@
 
   <br>
   <br>
+
+  <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#collectionModal" (click)="addToCollectionPressed()">Add to Collection</button>
+
+  <!-- TODO: Create new collection ability inside modal, error/success messages -->
+  <div class="modal fade" id="collectionModal" aria-labelledby="collectionModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add {{show.name}} to Collection</h5>
+          <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          @if (collections?.length != 0) {
+            <ul class="list-group">
+              @for (collection of collections; track collection.id) {
+                <li class="list-group-item">
+                  <input class="form-check-input me-2" type="radio" name="collectionRadio" value="" (click)="collectionSelection = collection.id">
+                  <label class="form-check-label" >{{collection.name}}</label>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p>You have no collections yet!</p>
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-primary" [disabled]="collectionSelection == null" (click)="collectionSubmitted()">Add to Collection</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <br>
   <button class="btn btn-primary ms-2" (click)="addReviewPressed()" type="button" data-bs-toggle="modal" data-bs-target="#reviewModal">
     Add Review
   </button>
