@@ -96,7 +96,7 @@
 
   <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#collectionModal" (click)="addToCollectionPressed()">Add to Collection</button>
 
-  <!-- TODO: Create new collection ability inside modal, error/success messages -->
+  <!-- TODO: error/success messages for adding to collection, search box to filter collections, make scrollable-->
   <div class="modal fade" id="collectionModal" aria-labelledby="collectionModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
@@ -117,6 +117,11 @@
           } @else {
             <p>You have no collections yet!</p>
           }
+          <div class="input-group mt-5">
+            <input type="text" class="form-control" placeholder="New Collection" aria-label="New Collection" aria-describedby="createCollectionButton" id="newCollectionInput" [(ngModel)]="newCollectionName" (keyup.enter)="createNewCollection()">
+            <button class="btn btn-primary" id="createCollectionButton" (click)="createNewCollection()" [disabled]="newCollectionName == null || newCollectionName.length == 0">Create</button>
+          </div>
+          <div id="collection-creation-message" class="mt-3"></div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

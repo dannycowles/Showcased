@@ -25,6 +25,7 @@ export class ShowPageComponent implements OnInit {
   readonly heartSize: number = 100;
   collections: CollectionData[];
   collectionSelection: number;
+  newCollectionName: string;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
@@ -233,6 +234,27 @@ export class ShowPageComponent implements OnInit {
 
     try {
       await this.showService.addShowReview(this.showId, data);
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  async createNewCollection() {
+    try {
+      const data = {
+        collectionName: this.newCollectionName
+      };
+      const response = await this.profileService.createCollection(data);
+
+      const message = document.getElementById("collection-creation-message")
+      if (response.ok) {
+        this.collections = await this.profileService.getCollections();
+        message.innerText = "Collection created!";
+        message.style.color = "green";
+      } else {
+        message.innerText = "You already have a collection with this name!";
+        message.style.color = "red";
+      }
     } catch(error) {
       console.error(error);
     }
