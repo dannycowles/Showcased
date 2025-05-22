@@ -17,3 +17,7 @@
 #like-count {
   font-size: 1.5rem;
 }
+
+.scrollable-list {
+  max-height: 25vh;
+}

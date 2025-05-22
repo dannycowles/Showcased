@@ -200,6 +200,7 @@ export class ShowPageComponent implements OnInit {
   }
 
   async collectionSubmitted() {
+    const collectionMessage = document.getElementById("collection-message");
     try {
       const showData = {
         showId: this.showId,
@@ -207,9 +208,20 @@ export class ShowPageComponent implements OnInit {
         posterPath: this.show.posterPath
       };
 
-      await this.profileService.addShowToCollection(this.collectionSelection, showData);
+      const response = await this.profileService.addShowToCollection(this.collectionSelection, showData);
+      if (response.ok) {
+        collectionMessage.innerText = "Successfully added to collection!";
+        collectionMessage.style.color = "green";
+      } else {
+        collectionMessage.innerText = "Show is already in this collection!";
+        collectionMessage.style.color = "red";
+      }
     } catch (error) {
       console.error(error);
+    } finally {
+      setTimeout(() => {
+        collectionMessage.innerText = "";
+      }, 3000);
     }
   }
 
@@ -245,23 +257,27 @@ export class ShowPageComponent implements OnInit {
   }
 
   async createNewCollection() {
+    const collectionMessage = document.getElementById("collection-message")
     try {
       const data = {
         collectionName: this.newCollectionName
       };
-      const response = await this.profileService.createCollection(data);
 
-      const message = document.getElementById("collection-creation-message")
+      const response = await this.profileService.createCollection(data);
       if (response.ok) {
         this.collections = await this.profileService.getCollections();
-        message.innerText = "Collection created!";
-        message.style.color = "green";
+        collectionMessage.innerText = "Collection created!";
+        collectionMessage.style.color = "green";
       } else {
-        message.innerText = "You already have a collection with this name!";
-        message.style.color = "red";
+        collectionMessage.innerText = "You already have a collection with this name!";
+        collectionMessage.style.color = "red";
       }
     } catch(error) {
       console.error(error);
+    } finally {
+      setTimeout(() => {
+        collectionMessage.innerText = "";
+      }, 3000);
     }
   }
 
