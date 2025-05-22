@@ -478,11 +478,19 @@ public class ProfileService {
 
 
 
-    public List<CollectionDto> getCollectionList(HttpSession session) {
+    public List<CollectionDto> getCollectionList(String name, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return collectionsRepository.findByUserId(userId).stream()
-                .map(collection -> modelMapper.map(collection, CollectionDto.class))
-                .collect(Collectors.toList());
+
+        // If a name is specified filter by that, else retrieve all collections
+        if (name != null) {
+            return collectionsRepository.findByUserIdAndCollectionNameContainingIgnoreCase(userId, name).stream()
+                    .map(collection -> modelMapper.map(collection, CollectionDto.class))
+                    .collect(Collectors.toList());
+        } else {
+            return collectionsRepository.findByUserId(userId).stream()
+                    .map(collection -> modelMapper.map(collection, CollectionDto.class))
+                    .collect(Collectors.toList());
+        }
     }
 
     public void createCollection(CreateCollectionDto collection, HttpSession session) {

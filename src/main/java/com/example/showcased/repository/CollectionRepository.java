@@ -16,4 +16,5 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
 
     @Query("SELECT c FROM Collection c WHERE c.userId = :userId AND c.isPrivate = false")
     List<Collection> findByUserIdPublic(@Param("userId") Long userId);
+    List<Collection> findByUserIdAndCollectionNameContainingIgnoreCase(Long userId, String name);
 }

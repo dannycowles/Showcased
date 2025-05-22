@@ -598,9 +598,12 @@ export class ProfileService {
   /**
    * Retrieves all collections for the logged-in user
    */
-  async getCollections(): Promise<CollectionData[]> {
+  async getCollections(name?: string): Promise<CollectionData[]> {
+    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const url = `${this.baseUrl}/collections${params}`;
+
     try {
-      const response = await fetch(`${this.baseUrl}/collections`, {
+      const response = await fetch(url, {
         credentials: 'include'
       });
 

@@ -26,6 +26,8 @@ export class ShowPageComponent implements OnInit {
   collections: CollectionData[];
   collectionSelection: number;
   newCollectionName: string;
+  searchCollectionString: string;
+  debouncedSearchCollections: () => void;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
@@ -50,6 +52,9 @@ export class ShowPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+    this.debouncedSearchCollections = this.utilsService.debounce(() => {
+      this.searchCollections();
+    });
   }
 
   seasonSelected(seasonNumber:string) {
@@ -260,4 +265,11 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
+  async searchCollections() {
+    try {
+      this.collections = await this.profileService.getCollections(this.searchCollectionString);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

@@ -244,8 +244,8 @@ public class ProfileController {
     // ========== COLLECTIONS ==========
 
     @GetMapping("/collections")
-    public ResponseEntity<List<CollectionDto>> getCollectionList(HttpSession session) {
-        List<CollectionDto> collections = profileService.getCollectionList(session);
+    public ResponseEntity<List<CollectionDto>> getCollectionList(@RequestParam(required = false) String name, HttpSession session) {
+        List<CollectionDto> collections = profileService.getCollectionList(name, session);
         return ResponseEntity.ok(collections);
     }
 
