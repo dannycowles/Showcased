@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {SingleCollectionData} from '../../../data/single-collection-data';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import $ from 'jquery';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -14,7 +15,8 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
   readonly collectionId: number;
 
   constructor(private profileService: ProfileService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private router: Router) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
@@ -30,6 +32,28 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
     try {
       await this.profileService.removeShowFromCollection(this.collectionId, showId);
       this.collectionData.shows = this.collectionData.shows.filter(show => show.id != showId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async toggleCollectionVisibility() {
+    const visibility = $('#visibility-radios input:radio:checked').val();
+
+    try {
+      const data = {
+        isPrivate: visibility === 'private'
+      };
+      await this.profileService.updateCollection(this.collectionId, data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  deleteCollection() {
+    try {
+      this.profileService.deleteCollection(this.collectionId);
+      this.router.navigate(['/profile/collections']);
     } catch (error) {
       console.error(error);
     }

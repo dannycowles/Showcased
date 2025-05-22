@@ -3,11 +3,15 @@
 @if (collectionData) {
   <h1>{{collectionData.name}}</h1>
 
-  <div class="btn-group" role="group" aria-label="Toggle private/public visibility">
-    <input type="radio" class="btn-check" name="visibilityRadio" id="privateRadio" autocomplete="off" [checked]="collectionData.isPrivate">
+  <button class="btn btn-danger" (click)="deleteCollection()">Delete Collection</button>
+  <br>
+  <br>
+
+  <div class="btn-group" id="visibility-radios" role="group" aria-label="Toggle private/public visibility" (change)="toggleCollectionVisibility()">
+    <input type="radio" class="btn-check" name="visibilityRadio" id="privateRadio" autocomplete="off" value="private" [checked]="collectionData.isPrivate">
     <label class="btn btn-outline-danger" for="privateRadio">Private</label>
 
-    <input type="radio" class="btn-check" name="visibilityRadio" id="publicRadio" autocomplete="off" [checked]="!collectionData.isPrivate">
+    <input type="radio" class="btn-check" name="visibilityRadio" id="publicRadio" autocomplete="off" value="public" [checked]="!collectionData.isPrivate">
     <label class="btn btn-outline-success" for="publicRadio">Public</label>
   </div>
 
