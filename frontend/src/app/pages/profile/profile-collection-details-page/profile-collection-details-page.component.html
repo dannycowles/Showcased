@@ -3,12 +3,22 @@
 @if (collectionData) {
   <h1>{{collectionData.name}}</h1>
 
+  <div class="btn-group" role="group" aria-label="Toggle private/public visibility">
+    <input type="radio" class="btn-check" name="visibilityRadio" id="privateRadio" autocomplete="off" [checked]="collectionData.isPrivate">
+    <label class="btn btn-outline-danger" for="privateRadio">Private</label>
+
+    <input type="radio" class="btn-check" name="visibilityRadio" id="publicRadio" autocomplete="off" [checked]="!collectionData.isPrivate">
+    <label class="btn btn-outline-success" for="publicRadio">Public</label>
+  </div>
+
   @if (collectionData.shows.length != 0) {
     @for (show of collectionData.shows; track show.id) {
       <h3>{{show.title}}</h3>
 
       <!-- Poster images are sized w185, using 2:3 ratio -->
       <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+
+      <button class="btn btn-danger" (click)="removeShowFromCollection(show.id)">Remove Show</button>
     }
   } @else {
     <p>No shows in collection yet!</p>

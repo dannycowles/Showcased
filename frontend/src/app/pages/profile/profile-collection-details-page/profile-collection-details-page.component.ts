@@ -11,18 +11,28 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class ProfileCollectionDetailsPageComponent implements OnInit {
   collectionData: SingleCollectionData;
-  readonly id: number;
+  readonly collectionId: number;
 
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute) {
-    this.id = this.route.snapshot.params['id'];
+    this.collectionId = this.route.snapshot.params['id'];
   };
 
   async ngOnInit() {
     try {
-      this.collectionData = await this.profileService.getCollectionDetails(this.id);
+      this.collectionData = await this.profileService.getCollectionDetails(this.collectionId);
     } catch (error) {
       console.error(error);
     }
   };
+
+  async removeShowFromCollection(showId: number ) {
+    try {
+      await this.profileService.removeShowFromCollection(this.collectionId, showId);
+      this.collectionData.shows = this.collectionData.shows.filter(show => show.id != showId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 }
