@@ -24,6 +24,15 @@ public class UserFilter implements Filter {
                 return;
             }
         }
+
+        // If the user attempts to like/unlike a collection while not logged in, redirect them
+        if (request.getRequestURI().endsWith("likes")) {
+            if (session.getAttribute("user") == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+        }
+
         filterChain.doFilter(request, response);
     }
 }

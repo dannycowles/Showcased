@@ -75,20 +75,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Exception handler for when a user tries to like a show
-     * review they already have
+     * Exception handler for when a user tries to like something they already have
      */
-    @ExceptionHandler(AlreadyLikedShowReviewException.class)
-    public ResponseEntity<ErrorResponse> alreadyLikedShowReviewHandler(AlreadyLikedShowReviewException ex) {
+    @ExceptionHandler(AlreadyLikedException.class)
+    public ResponseEntity<ErrorResponse> alreadyLikedShowReviewHandler(AlreadyLikedException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
 
     /**
-     * Exception handler for when a user tries to unlike a show
-     * they haven't even liked
+     * Exception handler for when a user tries to unlike something they haven't yet liked
      */
-    @ExceptionHandler(HaventLikedShowReviewException.class)
-    public ResponseEntity<ErrorResponse> haventLikedShowReviewHandler(HaventLikedShowReviewException ex) {
+    @ExceptionHandler(HaventLikedException.class)
+    public ResponseEntity<ErrorResponse> haventLikedShowReviewHandler(HaventLikedException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
 

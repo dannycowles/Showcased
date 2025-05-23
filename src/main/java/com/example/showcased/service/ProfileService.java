@@ -5,7 +5,6 @@ import com.example.showcased.entity.*;
 import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
-import org.hibernate.annotations.CollectionId;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +34,7 @@ public class ProfileService {
     private final CharacterRankingRepository characterRankingRepository;
     private final CollectionRepository collectionsRepository;
     private final ShowsInCollectionRepository showsInCollectionRepository;
+    private final LikedCollectionsRepository likedCollectionsRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -50,7 +50,8 @@ public class ProfileService {
                           SeasonInfoRepository seasonInfoRepository,
                           CharacterRankingRepository characterRankingRepository,
                           CollectionRepository collectionRepository,
-                          ShowsInCollectionRepository showsInCollectionRepository) {
+                          ShowsInCollectionRepository showsInCollectionRepository,
+                          LikedCollectionsRepository likedCollectionsRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -66,6 +67,7 @@ public class ProfileService {
         this.characterRankingRepository = characterRankingRepository;
         this.collectionsRepository = collectionRepository;
         this.showsInCollectionRepository = showsInCollectionRepository;
+        this.likedCollectionsRepository = likedCollectionsRepository;
     }
 
     /**
@@ -548,7 +550,7 @@ public class ProfileService {
         if (!collection.getUserId().equals(userId)) {
             throw new UnauthorizedCollectionAccessException("You do not have permission to view this collection");
         }
-        return new CollectionReturnDto(collection.getCollectionName(), collection.isPrivate(), collection.getDescription(), showsInCollectionRepository.findByIdCollectionId(collectionId));
+        return new CollectionReturnDto(collection.getCollectionName(), collection.isPrivate(), collection.getDescription(), likedCollectionsRepository.countByIdCollectionId(collectionId), showsInCollectionRepository.findByIdCollectionId(collectionId));
     }
 
     public void addShowToCollection(Long collectionId, WatchSendDto show, HttpSession session) {

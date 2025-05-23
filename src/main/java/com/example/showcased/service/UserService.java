@@ -1,10 +1,7 @@
 package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
-import com.example.showcased.entity.Collection;
-import com.example.showcased.entity.Follower;
-import com.example.showcased.entity.FollowerId;
-import com.example.showcased.entity.User;
+import com.example.showcased.entity.*;
 import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -35,6 +32,7 @@ public class UserService {
     private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist"};
     private final CollectionRepository collectionsRepository;
     private final ShowsInCollectionRepository showsInCollectionRepository;
+    private final LikedCollectionsRepository likedCollectionsRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -47,7 +45,8 @@ public class UserService {
                        SeasonRankingRepository seasonRankingRepository,
                        CharacterRankingRepository characterRankingRepository,
                        CollectionRepository collectionsRepository,
-                       ShowsInCollectionRepository showsInCollectionRepository) {
+                       ShowsInCollectionRepository showsInCollectionRepository,
+                       LikedCollectionsRepository likedCollectionsRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -60,6 +59,7 @@ public class UserService {
         this.characterRankingRepository = characterRankingRepository;
         this.collectionsRepository = collectionsRepository;
         this.showsInCollectionRepository = showsInCollectionRepository;
+        this.likedCollectionsRepository = likedCollectionsRepository;
     }
 
     public void ensureUserExists(Long userId) {
@@ -269,6 +269,29 @@ public class UserService {
         if (collection.isPrivate()) {
             throw new UnauthorizedCollectionAccessException("Collection is private");
         }
-        return new CollectionReturnDto(collection.getCollectionName(), false, collection.getDescription(), showsInCollectionRepository.findByIdCollectionId(collectionId));
+        return new CollectionReturnDto(collection.getCollectionName(), false, collection.getDescription(), likedCollectionsRepository.countByIdCollectionId(collectionId), showsInCollectionRepository.findByIdCollectionId(collectionId));
     }
+
+    public void likeCollection(Long collectionId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        LikedCollections newLike = new LikedCollections(new LikedCollectionsId(userId, collectionId)); ;
+
+        // Check if the user has already liked this collection
+        if (likedCollectionsRepository.existsById(newLike.getId())) {
+            throw new AlreadyLikedException("You have already liked this collection");
+        }
+        likedCollectionsRepository.save(newLike);
+    }
+
+    public void unlikeCollection(Long collectionId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        LikedCollections removeLike = new LikedCollections(new LikedCollectionsId(userId, collectionId));
+
+        // Check to make sure the user has actually liked this collection
+        if (!likedCollectionsRepository.existsById(removeLike.getId())) {
+            throw new HaventLikedException("You have not liked this collection");
+        }
+        likedCollectionsRepository.delete(removeLike);
+    }
+
 }

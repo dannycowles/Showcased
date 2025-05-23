@@ -2,22 +2,15 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
-import com.example.showcased.exception.AlreadyLikedShowReviewException;
-import com.example.showcased.exception.HaventLikedShowReviewException;
-import com.example.showcased.exception.InvalidPageException;
+import com.example.showcased.exception.AlreadyLikedException;
+import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
@@ -368,7 +361,7 @@ public class ShowService {
         // Check if the user has already liked the review, if so we throw an exception
         LikedReviews likedReview = new LikedReviews(new LikedReviewsId(userId, reviewId));
         if (likedReviewsRepository.existsById(likedReview.getId())) {
-            throw new AlreadyLikedShowReviewException("You have already liked this show review");
+            throw new AlreadyLikedException("You have already liked this show review");
         }
 
         // Store the review like information in the DB
@@ -387,7 +380,7 @@ public class ShowService {
         // we throw an exception
         LikedReviews likedReview = new LikedReviews(new LikedReviewsId(userId, reviewId));
         if (!likedReviewsRepository.existsById(likedReview.getId())) {
-            throw new HaventLikedShowReviewException("You have not liked this show review");
+            throw new HaventLikedException("You have not liked this show review");
         }
 
         // Delete the review like information from the DB

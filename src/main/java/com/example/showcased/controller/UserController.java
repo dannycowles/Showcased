@@ -3,13 +3,14 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -133,5 +134,17 @@ public class UserController {
     public ResponseEntity<CollectionReturnDto> getCollectionDetails(@PathVariable Long id, @PathVariable Long collectionId) {
         CollectionReturnDto collection = userService.getShowsInCollection(id, collectionId);
         return ResponseEntity.ok(collection);
+    }
+
+    @PostMapping("/{id}/collections/{collectionId}/likes")
+    public ResponseEntity<Void> likeCollection(@PathVariable Long id, @PathVariable Long collectionId, HttpSession session) {
+        userService.likeCollection(collectionId, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/{id}/collections/{collectionId}/likes")
+    public ResponseEntity<Void> unlikeCollection(@PathVariable Long id, @PathVariable Long collectionId, HttpSession session) {
+        userService.unlikeCollection(collectionId, session);
+        return ResponseEntity.noContent().build();
     }
 }

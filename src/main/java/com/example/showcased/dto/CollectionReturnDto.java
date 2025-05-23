@@ -11,5 +11,6 @@ public class CollectionReturnDto {
     private String collectionName;
     private boolean isPrivate;
     private String description;
+    private int numLikes;
     private List<WatchReturnDto> shows;
 }

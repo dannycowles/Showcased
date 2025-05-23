@@ -14,7 +14,7 @@ import {SingleCollectionData} from '../data/single-collection-data';
   providedIn: 'root'
 })
 export class UserService {
-  readonly baseUrl: string = "http://localhost:8080/user";
+  readonly baseUrl: string = "http://localhost:8080/users";
 
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
