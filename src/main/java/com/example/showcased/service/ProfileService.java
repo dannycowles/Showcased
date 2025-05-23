@@ -533,6 +533,9 @@ public class ProfileService {
         if (collection.getCollectionName() != null) {
             updateCollection.setCollectionName(collection.getCollectionName());
         }
+        if (collection.getDescription() != null) {
+            updateCollection.setDescription(collection.getDescription());
+        }
         collectionsRepository.save(updateCollection);
     }
 
@@ -545,7 +548,7 @@ public class ProfileService {
         if (!collection.getUserId().equals(userId)) {
             throw new UnauthorizedCollectionAccessException("You do not have permission to view this collection");
         }
-        return new CollectionReturnDto(collection.getCollectionName(), collection.isPrivate(), showsInCollectionRepository.findByIdCollectionId(collectionId));
+        return new CollectionReturnDto(collection.getCollectionName(), collection.isPrivate(), collection.getDescription(), showsInCollectionRepository.findByIdCollectionId(collectionId));
     }
 
     public void addShowToCollection(Long collectionId, WatchSendDto show, HttpSession session) {

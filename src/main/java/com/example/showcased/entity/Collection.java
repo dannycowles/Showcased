@@ -14,6 +14,7 @@ public class Collection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long collectionId;
     private String collectionName;
+    private String description;
     private boolean isPrivate = false;
 
     public Collection(Long userId, String collectionName) {

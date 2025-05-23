@@ -269,6 +269,6 @@ public class UserService {
         if (collection.isPrivate()) {
             throw new UnauthorizedCollectionAccessException("Collection is private");
         }
-        return new CollectionReturnDto(collection.getCollectionName(), false, showsInCollectionRepository.findByIdCollectionId(collectionId));
+        return new CollectionReturnDto(collection.getCollectionName(), false, collection.getDescription(), showsInCollectionRepository.findByIdCollectionId(collectionId));
     }
 }

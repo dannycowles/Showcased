@@ -10,5 +10,6 @@ import java.util.List;
 public class CollectionReturnDto {
     private String collectionName;
     private boolean isPrivate;
+    private String description;
     private List<WatchReturnDto> shows;
 }
