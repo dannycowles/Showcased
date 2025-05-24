@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -538,6 +539,23 @@ public class ProfileService {
         if (collection.getDescription() != null) {
             updateCollection.setDescription(collection.getDescription());
         }
+
+        // If ranked is toggled we need to do extra processing
+        if (collection.getIsRanked() != null) {
+            updateCollection.setRanked(collection.getIsRanked());
+            List<UpdateCollectionRankingDto> updates = collection.getShows();
+
+            if (updates != null && !updates.isEmpty()) {
+                List<ShowsInCollection> updatedShows = new ArrayList<>();
+                for (int i = 0; i < updates.size(); i++) {
+                    ShowsInCollection show = new ShowsInCollection();
+                    show.setId(new ShowsInCollectionId(collectionId, updates.get(i).getShowId()));
+                    show.setRankNum(updateCollection.isRanked() ? i + 1L : null);
+                    updatedShows.add(show);
+                }
+                showsInCollectionRepository.saveAll(updatedShows);
+            }
+        }
         collectionsRepository.save(updateCollection);
     }
 
@@ -550,7 +568,7 @@ public class ProfileService {
         if (!collection.getUserId().equals(userId)) {
             throw new UnauthorizedCollectionAccessException("You do not have permission to view this collection");
         }
-        return new CollectionReturnDto(collection.getCollectionName(), collection.isPrivate(), collection.getDescription(), likedCollectionsRepository.countByIdCollectionId(collectionId), showsInCollectionRepository.findByIdCollectionId(collectionId));
+        return new CollectionReturnDto(collection.getCollectionName(), collection.isPrivate(), collection.isRanked(), collection.getDescription(), likedCollectionsRepository.countByIdCollectionId(collectionId), showsInCollectionRepository.findByIdCollectionId(collectionId));
     }
 
     public void addShowToCollection(Long collectionId, WatchSendDto show, HttpSession session) {
@@ -562,8 +580,8 @@ public class ProfileService {
         if (!updateCollection.getUserId().equals(userId)) {
             throw new UnauthorizedCollectionAccessException("You do not have permission to add to this collection");
         }
-        addToShowInfoRepository(show);
 
+        addToShowInfoRepository(show);
         ShowsInCollectionId showsInCollectionId = new ShowsInCollectionId(collectionId, show.getShowId());
         if (showsInCollectionRepository.existsById(showsInCollectionId)) {
             throw new AlreadyInCollectionException("Show is already in this collection");
@@ -571,16 +589,37 @@ public class ProfileService {
 
         ShowsInCollection newShow = new ShowsInCollection();
         newShow.setId(showsInCollectionId);
+        // Check if the collection is ranked, if so we need extra processing
+        if (updateCollection.isRanked()) {
+            Long maxRank = showsInCollectionRepository.findMaxRankNumByIdCollectionId(collectionId);
+            if (maxRank != null) {
+                newShow.setRankNum(maxRank + 1);
+            } else {
+                newShow.setRankNum(1L);
+            }
+        }
         showsInCollectionRepository.save(newShow);
     }
 
     public void removeShowFromCollection(Long collectionId, Long showId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
+        Collection collection = collectionsRepository.findById(collectionId)
+                .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
 
         // Check to ensure the collection being modified is actually owned by the logged-in user
-        if (!collectionsRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
+        if (!collection.getUserId().equals(userId)) {
             throw new UnauthorizedCollectionAccessException("You do not have permission to modify this collection");
         }
+
         showsInCollectionRepository.deleteById(new ShowsInCollectionId(collectionId, showId));
+
+        // Check if the collection is ranked, if so we need extra processing
+        if (collection.isRanked()) {
+            List<ShowsInCollection> shows = showsInCollectionRepository.findByIdCollectionIdOrderByRankNumAsc(collectionId);
+            for (int i = 0; i < shows.size(); i++) {
+                shows.get(i).setRankNum(i + 1L);
+            }
+            showsInCollectionRepository.saveAll(shows);
+        }
     }
 }

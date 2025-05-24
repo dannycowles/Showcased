@@ -16,6 +16,7 @@ public class Collection {
     private String collectionName;
     private String description;
     private boolean isPrivate = false;
+    private boolean isRanked = false;
 
     public Collection(Long userId, String collectionName) {
         this.userId = userId;

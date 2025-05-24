@@ -269,7 +269,7 @@ public class UserService {
         if (collection.isPrivate()) {
             throw new UnauthorizedCollectionAccessException("Collection is private");
         }
-        return new CollectionReturnDto(collection.getCollectionName(), false, collection.getDescription(), likedCollectionsRepository.countByIdCollectionId(collectionId), showsInCollectionRepository.findByIdCollectionId(collectionId));
+        return new CollectionReturnDto(collection.getCollectionName(), false, collection.isRanked(), collection.getDescription(), likedCollectionsRepository.countByIdCollectionId(collectionId), showsInCollectionRepository.findByIdCollectionId(collectionId));
     }
 
     public void likeCollection(Long collectionId, HttpSession session) {

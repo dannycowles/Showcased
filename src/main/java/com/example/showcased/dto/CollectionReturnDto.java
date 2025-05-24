@@ -10,7 +10,8 @@ import java.util.List;
 public class CollectionReturnDto {
     private String collectionName;
     private boolean isPrivate;
+    private boolean isRanked;
     private String description;
     private int numLikes;
-    private List<WatchReturnDto> shows;
+    private List<RankingReturnDto> shows;
 }

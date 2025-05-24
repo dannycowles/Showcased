@@ -11,4 +11,5 @@ import lombok.Data;
 public class ShowsInCollection {
     @EmbeddedId
     private ShowsInCollectionId id;
+    private Long rankNum;
 }

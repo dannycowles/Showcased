@@ -129,16 +129,18 @@ CREATE TABLE user_collections (
     collection_name VARCHAR(255) NOT NULL,
     description TEXT DEFAULT NULL,
     is_private BOOLEAN NOT NULL DEFAULT FALSE,
+    is_ranked BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (collection_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    UNIQUE (user_id, collection_name)
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE shows_in_collections (
     collection_id INT,
     show_id INT,
+    rank_num INT DEFAULT NULL,
     PRIMARY KEY (collection_id, show_id),
-    FOREIGN KEY (collection_id) REFERENCES user_collections(collection_id)
+    FOREIGN KEY (collection_id) REFERENCES user_collections(collection_id),
+    UNIQUE (collection_id, rank_num)
 );
 
 CREATE TABLE liked_collections (
