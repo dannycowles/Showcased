@@ -35,4 +35,14 @@ export class UtilsService {
       timeoutId = setTimeout(() => fn.apply(this, args), ms);
     };
   };
+
+  displayCharactersLeft(inputID: string, helpBlockID: string, maxLength: number) {
+    const inputElement = document.getElementById(inputID) as HTMLInputElement | HTMLTextAreaElement;
+    const helpBlockElement = document.getElementById(helpBlockID);
+
+    if (!inputElement || !helpBlockElement) return;
+
+    const charactersLeft = maxLength - inputElement.value.length;
+    helpBlockElement.innerText = `${charactersLeft} characters remaining`;
+  }
 }

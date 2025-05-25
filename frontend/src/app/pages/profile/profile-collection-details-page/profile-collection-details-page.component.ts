@@ -3,7 +3,9 @@ import {ProfileService} from '../../../services/profile.service';
 import {SingleCollectionData} from '../../../data/single-collection-data';
 import {ActivatedRoute, Router} from '@angular/router';
 import $ from 'jquery';
+import 'jquery-serializejson';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {UtilsService} from '../../../services/utils.service';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -17,7 +19,8 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
 
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
-              private router: Router) {
+              private router: Router,
+              public utils : UtilsService) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
@@ -89,5 +92,43 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       console.error(error);
     }
   }
+
+  async updateCollectionDetails() {
+    const collectionError = document.getElementById("edit-collection-error-message");
+    try {
+      // @ts-ignore
+      const collectionForm = $("#collection-form").serializeJSON();
+
+      const data: any = {};
+      if (collectionForm["collectionName"] !== this.collectionData.name) data.collectionName = collectionForm["collectionName"];
+      if (collectionForm["description"] !== this.collectionData.description) data.description = collectionForm["description"];
+
+      if (Object.keys(data).length === 0) {
+        collectionError.innerText = "No changes to save.";
+        collectionError.style.color = "gray";
+        return;
+      }
+
+      const response = await this.profileService.updateCollection(this.collectionId, data);
+      if (response.ok) {
+        collectionError.innerText = "Changes saved!";
+        collectionError.style.color = "green";
+
+        // Update local state
+        if (data.collectionName) this.collectionData.name = data.collectionName;
+        if (data.description) this.collectionData.description = data.description;
+      } else if (response.status == 409) {
+        collectionError.innerText = "You already have a collection with that name";
+        collectionError.style.color = "red";
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        collectionError.innerText = "";
+      }, 3000);
+    }
+  }
+
 
 }

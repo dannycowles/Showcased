@@ -2,8 +2,45 @@
 
 @if (collectionData) {
   <h1>{{collectionData.name}}</h1>
-
   <p>{{collectionData.description}}</p>
+
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#collectionModal">Edit Collection Details</button>
+
+  <div class="modal fade" id="collectionModal" aria-labelledby="collectionModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="reviewModalLabel">Edit Collection</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="collection-form">
+            <div class="mb-3">
+              <label for="collectionNameInput" class="form-label">Collection Name</label>
+              <input type="text" maxlength="100" class="form-control" id="collectionNameInput" name="collectionName"
+                     (input)="utils.displayCharactersLeft('collectionNamInput', 'nameHelpBlock', 100)"
+                     [value]="collectionData.name">
+              <div id="nameHelpBlock" class="form-text">{{ 100 - collectionData.name.length }} characters remaining</div>
+            </div>
+            <div class="mb-3">
+              <label for="descriptionInput" class="form-label">Description</label>
+              <textarea class="form-control" id="descriptionInput" name="description" rows="3" maxlength="250" aria-describedby="descriptionHelpBlock"
+                        (input)="utils.displayCharactersLeft('descriptionInput', 'descriptionHelpBlock', 250)"
+                        [value]="collectionData.description"></textarea>
+              <div id="descriptionHelpBlock" class="form-text">{{ 250 - collectionData.description.length }} characters remaining</div>
+            </div>
+            <div class="mb-3">
+              <p id="edit-collection-error-message"></p>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="updateCollectionDetails()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <button class="btn btn-danger" (click)="deleteCollection()">Delete Collection</button>
   <br>

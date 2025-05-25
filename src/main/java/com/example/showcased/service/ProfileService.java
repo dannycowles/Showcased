@@ -534,6 +534,9 @@ public class ProfileService {
             updateCollection.setPrivate(collection.getIsPrivate());
         }
         if (collection.getCollectionName() != null) {
+            if (collectionsRepository.existsByUserIdAndCollectionName(userId, collection.getCollectionName())) {
+                throw new DuplicateCollectionNameException("You already have a collection named " + collection.getCollectionName());
+            }
             updateCollection.setCollectionName(collection.getCollectionName());
         }
         if (collection.getDescription() != null) {
