@@ -269,7 +269,12 @@ public class UserService {
         if (collection.isPrivate()) {
             throw new UnauthorizedCollectionAccessException("Collection is private");
         }
-        return new CollectionReturnDto(collection.getCollectionName(), false, collection.isRanked(), collection.getDescription(), likedCollectionsRepository.countByIdCollectionId(collectionId), showsInCollectionRepository.findByIdCollectionId(collectionId));
+
+        CollectionReturnDto collectionReturn = modelMapper.map(collection, CollectionReturnDto.class);
+        collectionReturn.setShows(showsInCollectionRepository.findByIdCollectionId(collectionId));
+        collectionReturn.setNumLikes(likedCollectionsRepository.countByIdCollectionId(collectionId));
+        collectionReturn.setLikedByUser(likedCollectionsRepository.existsById(new LikedCollectionsId(userId, collectionId)));
+        return collectionReturn;
     }
 
     public void likeCollection(Long collectionId, HttpSession session) {

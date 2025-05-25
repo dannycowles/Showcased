@@ -7,7 +7,7 @@ export class SingleCollectionData {
   isRanked: boolean;
   description: string | null;
   numLikes: number;
-  likedByUser: boolean = false;
+  likedByUser: boolean;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.name = jsonObject['collectionName'];
@@ -18,5 +18,6 @@ export class SingleCollectionData {
     this.isRanked = jsonObject['ranked'];
     this.description = jsonObject['description'];
     this.numLikes = jsonObject['numLikes'];
+    this.likedByUser = jsonObject['likedByUser'];
   }
 }

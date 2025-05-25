@@ -29,4 +29,19 @@ export class UserCollectionDetailsPageComponent implements OnInit {
       this.router.navigate(['not-found']);
     }
   };
+
+  async toggleLikeState() {
+    try {
+      this.collection.likedByUser = !this.collection.likedByUser;
+      if (this.collection.likedByUser) {
+        await this.userService.likeCollection(this.collectionId);
+        this.collection.numLikes++;
+      } else {
+        await this.userService.unlikeCollection(this.collectionId);
+        this.collection.numLikes--;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

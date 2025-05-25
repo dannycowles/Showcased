@@ -571,7 +571,12 @@ public class ProfileService {
         if (!collection.getUserId().equals(userId)) {
             throw new UnauthorizedCollectionAccessException("You do not have permission to view this collection");
         }
-        return new CollectionReturnDto(collection.getCollectionName(), collection.isPrivate(), collection.isRanked(), collection.getDescription(), likedCollectionsRepository.countByIdCollectionId(collectionId), showsInCollectionRepository.findByIdCollectionId(collectionId));
+
+        CollectionReturnDto collectionReturn = modelMapper.map(collection, CollectionReturnDto.class);
+        collectionReturn.setShows(showsInCollectionRepository.findByIdCollectionId(collectionId));
+        collectionReturn.setNumLikes(likedCollectionsRepository.countByIdCollectionId(collectionId));
+        collectionReturn.setLikedByUser(likedCollectionsRepository.existsById(new LikedCollectionsId(userId, collectionId)));
+        return collectionReturn;
     }
 
     public void addShowToCollection(Long collectionId, WatchSendDto show, HttpSession session) {
