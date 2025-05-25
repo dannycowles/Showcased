@@ -29,6 +29,7 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       this.collectionData = await this.profileService.getCollectionDetails(this.collectionId);
     } catch (error) {
       console.error(error);
+      this.router.navigate(['not-found']);
     }
   };
 
@@ -99,6 +100,13 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       // @ts-ignore
       const collectionForm = $("#collection-form").serializeJSON();
 
+      // Prevent user from entering blank collection name
+      if (collectionForm["collectionName"].length === 0) {
+        collectionError.innerText = "Collection name cannot be empty";
+        collectionError.style.color = "red";
+        return;
+      }
+
       const data: any = {};
       if (collectionForm["collectionName"] !== this.collectionData.name) data.collectionName = collectionForm["collectionName"];
       if (collectionForm["description"] !== this.collectionData.description) data.description = collectionForm["description"];
@@ -129,6 +137,4 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       }, 3000);
     }
   }
-
-
 }

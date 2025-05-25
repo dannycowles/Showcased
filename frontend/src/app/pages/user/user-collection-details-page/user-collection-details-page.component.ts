@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../../services/user.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {SingleCollectionData} from '../../../data/single-collection-data';
 
 @Component({
@@ -15,7 +15,8 @@ export class UserCollectionDetailsPageComponent implements OnInit {
   collection: SingleCollectionData;
 
   constructor(private userService: UserService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private router: Router) {
     this.userId = route.snapshot.params['id'];
     this.collectionId = route.snapshot.params['collectionId'];
   };
@@ -25,6 +26,7 @@ export class UserCollectionDetailsPageComponent implements OnInit {
       this.collection = await this.userService.getCollectionDetails(this.userId, this.collectionId);
     } catch (error) {
       console.error(error);
+      this.router.navigate(['not-found']);
     }
   };
 }

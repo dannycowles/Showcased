@@ -27,7 +27,7 @@
               <textarea class="form-control" id="descriptionInput" name="description" rows="3" maxlength="250" aria-describedby="descriptionHelpBlock"
                         (input)="utils.displayCharactersLeft('descriptionInput', 'descriptionHelpBlock', 250)"
                         [value]="collectionData.description"></textarea>
-              <div id="descriptionHelpBlock" class="form-text">{{ 250 - collectionData.description.length }} characters remaining</div>
+              <div id="descriptionHelpBlock" class="form-text">{{ 250 - collectionData.description?.length }} characters remaining</div>
             </div>
             <div class="mb-3">
               <p id="edit-collection-error-message"></p>
