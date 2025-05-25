@@ -1,0 +1,13 @@
+<button class="btn btn-primary" [routerLink]="['/user', userId]">Return to Profile</button>
+
+<h1>Collections</h1>
+
+@if (collections) {
+  @if (collections.length != 0) {
+    @for (collection of collections; track collection.id) {
+      <a [routerLink]="[collection.id]"><h3>{{collection.name}}</h3></a>
+    }
+  } @else {
+    <p>No Collection Yet!</p>
+  }
+}

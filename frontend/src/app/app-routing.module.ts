@@ -42,6 +42,10 @@ import {
 import {
   ProfileCollectionDetailsPageComponent
 } from './pages/profile/profile-collection-details-page/profile-collection-details-page.component';
+import {UserCollectionsPageComponent} from './pages/user/user-collections-page/user-collections-page.component';
+import {
+  UserCollectionDetailsPageComponent
+} from './pages/user/user-collection-details-page/user-collection-details-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -68,6 +72,8 @@ const routes: Routes = [
     { path: 'user/:id/character-ranking/:type', component: UserCharacterRankingPageComponent},
     { path: 'user/:id/followers', component: UserFollowersPageComponent},
     { path: 'user/:id/following', component: UserFollowingPageComponent},
+    { path: 'user/:id/collections', component: UserCollectionsPageComponent},
+    { path: 'user/:id/collections/:collectionId', component: UserCollectionDetailsPageComponent},
     { path: 'search', component: SearchPageComponent},
     { path: 'search-users', component: UserSearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},

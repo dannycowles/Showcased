@@ -53,6 +53,10 @@ import {
 import {
   ProfileCollectionDetailsPageComponent
 } from './pages/profile/profile-collection-details-page/profile-collection-details-page.component';
+import {UserCollectionsPageComponent} from './pages/user/user-collections-page/user-collections-page.component';
+import {
+  UserCollectionDetailsPageComponent
+} from './pages/user/user-collection-details-page/user-collection-details-page.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +92,9 @@ import {
     DiscoverPageComponent,
     DiscoverGenresPageComponent,
     ProfileCollectionsPageComponent,
-    ProfileCollectionDetailsPageComponent
+    ProfileCollectionDetailsPageComponent,
+    UserCollectionsPageComponent,
+    UserCollectionDetailsPageComponent
   ],
   imports: [
     BrowserModule,
