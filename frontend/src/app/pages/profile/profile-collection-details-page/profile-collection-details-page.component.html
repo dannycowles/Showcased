@@ -4,6 +4,11 @@
   <h1>{{collectionData.name}}</h1>
   <pre>{{collectionData.description}}</pre>
 
+  <div class="d-flex align-items-center">
+    <yt-button-heart [isLiked]="collectionData.likedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
+    <div id="like-count">{{collectionData.numLikes}}</div>
+  </div>
+
   <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#collectionModal">Edit Collection Details</button>
 
   <div class="modal fade" id="collectionModal" aria-labelledby="collectionModal" aria-hidden="true">

@@ -263,4 +263,35 @@ export class UserService {
       throw error;
     }
   }
+
+  /**
+   * Likes a user's collection by the specified id
+   * @param collectionId
+   */
+  async likeCollection(collectionId: number): Promise<Response> {
+    try {
+      return await fetch(`${this.baseUrl}/collections/${collectionId}/likes`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Unlikes a user's collection by the specified id
+   * @param collectionId
+   */
+  async unlikeCollection(collectionId: number): Promise<Response> {
+    try {
+      return await fetch(`${this.baseUrl}/collections/${collectionId}/likes`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

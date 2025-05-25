@@ -136,14 +136,14 @@ public class UserController {
         return ResponseEntity.ok(collection);
     }
 
-    @PostMapping("/{id}/collections/{collectionId}/likes")
-    public ResponseEntity<Void> likeCollection(@PathVariable Long id, @PathVariable Long collectionId, HttpSession session) {
+    @PostMapping("/collections/{collectionId}/likes")
+    public ResponseEntity<Void> likeCollection(@PathVariable Long collectionId, HttpSession session) {
         userService.likeCollection(collectionId, session);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/{id}/collections/{collectionId}/likes")
-    public ResponseEntity<Void> unlikeCollection(@PathVariable Long id, @PathVariable Long collectionId, HttpSession session) {
+    @DeleteMapping("/collections/{collectionId}/likes")
+    public ResponseEntity<Void> unlikeCollection(@PathVariable Long collectionId, HttpSession session) {
         userService.unlikeCollection(collectionId, session);
         return ResponseEntity.noContent().build();
     }

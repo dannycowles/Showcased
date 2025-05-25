@@ -7,6 +7,7 @@ export class SingleCollectionData {
   isRanked: boolean;
   description: string | null;
   numLikes: number;
+  likedByUser: boolean = false;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.name = jsonObject['collectionName'];

@@ -6,6 +6,7 @@ import $ from 'jquery';
 import 'jquery-serializejson';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {UtilsService} from '../../../services/utils.service';
+import {UserService} from '../../../services/user.service';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -20,7 +21,8 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
               private router: Router,
-              public utils : UtilsService) {
+              public utils : UtilsService,
+              private userService: UserService) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
@@ -135,6 +137,21 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       setTimeout(() => {
         collectionError.innerText = "";
       }, 3000);
+    }
+  }
+
+  async toggleLikeState() {
+    try {
+      this.collectionData.likedByUser = !this.collectionData.likedByUser;
+      if (this.collectionData.likedByUser) {
+        await this.userService.likeCollection(this.collectionId);
+        this.collectionData.numLikes++;
+      } else {
+        await this.userService.unlikeCollection(this.collectionId);
+        this.collectionData.numLikes--;
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 }
