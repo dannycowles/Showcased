@@ -3,6 +3,8 @@
 @if (collectionData) {
   <h1>{{collectionData.name}}</h1>
 
+  <p>{{collectionData.description}}</p>
+
   <button class="btn btn-danger" (click)="deleteCollection()">Delete Collection</button>
   <br>
   <br>
@@ -15,14 +17,44 @@
     <label class="btn btn-outline-success" for="publicRadio">Public</label>
   </div>
 
+  <br>
+  <br>
+  <div class="btn-group" id="ranked-radios" role="group" aria-label="Toggle ranked/unranked" (change)="toggleRankSetting()">
+    <input type="radio" class="btn-check" name="rankedRadio" id="unrankedRadio" autocomplete="off" value="unranked" [checked]="!collectionData.isRanked">
+    <label class="btn btn-outline-primary" for="unrankedRadio">Unranked</label>
+
+    <input type="radio" class="btn-check" name="rankedRadio" id="rankedRadio" autocomplete="off" value="ranked" [checked]="collectionData.isRanked">
+    <label class="btn btn-outline-primary" for="rankedRadio">Ranked</label>
+  </div>
+  <br>
+  <br>
+
   @if (collectionData.shows.length != 0) {
-    @for (show of collectionData.shows; track show.id) {
-      <h3>{{show.title}}</h3>
+    @if (collectionData.isRanked) {
+      <div cdkDropList class="show-list" (cdkDropListDropped)="drop($event)">
+        @for (show of collectionData.shows; track show.id; let rank = $index) {
+          <div cdkDrag class="show-box">
+            <h3>{{rank + 1}}</h3>
+            <h3>{{show.title}}</h3>
 
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+            <!-- Poster images are sized w185, using 2:3 ratio -->
+            <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+            <button class="btn btn-danger" (click)="removeShowFromCollection(show.id)">Remove Show</button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div>
+        @for (show of collectionData.shows; track show.id; let rank = $index) {
+          <div>
+            <h3>{{show.title}}</h3>
 
-      <button class="btn btn-danger" (click)="removeShowFromCollection(show.id)">Remove Show</button>
+            <!-- Poster images are sized w185, using 2:3 ratio -->
+            <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+            <button class="btn btn-danger" (click)="removeShowFromCollection(show.id)">Remove Show</button>
+          </div>
+        }
+      </div>
     }
   } @else {
     <p>No shows in collection yet!</p>

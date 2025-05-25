@@ -4,6 +4,9 @@ export class SingleCollectionData {
   name: string;
   shows: CollectionShowData[];
   isPrivate: boolean;
+  isRanked: boolean;
+  description: string | null;
+  numLikes: number;
 
   constructor(jsonObject: { [key: string]: any }) {
     this.name = jsonObject['collectionName'];
@@ -11,5 +14,8 @@ export class SingleCollectionData {
       return new CollectionShowData(show);
     });
     this.isPrivate = jsonObject['private'];
+    this.isRanked = jsonObject['ranked'];
+    this.description = jsonObject['description'];
+    this.numLikes = jsonObject['numLikes'];
   }
 }

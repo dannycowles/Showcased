@@ -3,6 +3,7 @@ import {ProfileService} from '../../../services/profile.service';
 import {SingleCollectionData} from '../../../data/single-collection-data';
 import {ActivatedRoute, Router} from '@angular/router';
 import $ from 'jquery';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -38,7 +39,7 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
   }
 
   async toggleCollectionVisibility() {
-    const visibility = $('#visibility-radios input:radio:checked').val();
+    const visibility = $('#visibility-radios input:radio:checked').val() as "private" | "public";
 
     try {
       const data = {
@@ -50,10 +51,40 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
     }
   }
 
-  deleteCollection() {
+  async toggleRankSetting() {
+    const ranking = $('#ranked-radios input:radio:checked').val() as "ranked" | "unranked";
+    this.collectionData.isRanked = ranking === "ranked";
+    await this.updateCollectionRanking();
+  }
+
+  async drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.collectionData.shows, event.previousIndex, event.currentIndex);
+
+    // Update the rank numbers based on the index within the updated list
+    this.collectionData.shows.forEach((show, index) => {
+      show.rankNum = index + 1;
+    });
+    await this.updateCollectionRanking();
+  }
+
+  async deleteCollection() {
     try {
-      this.profileService.deleteCollection(this.collectionId);
+      await this.profileService.deleteCollection(this.collectionId);
       this.router.navigate(['/profile/collections']);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async updateCollectionRanking() {
+    try {
+      const data = {
+        isRanked: this.collectionData.isRanked,
+        shows: this.collectionData.shows.map(show => {
+          return { showId: show.id };
+        })
+      };
+      await this.profileService.updateCollection(this.collectionId, data);
     } catch (error) {
       console.error(error);
     }
