@@ -531,7 +531,7 @@ public class ProfileService {
 
         // Update columns as needed
         if (collection.getIsPrivate() != null) {
-            updateCollection.setPrivate(collection.getIsPrivate());
+            updateCollection.setPrivateCollection(collection.getIsPrivate());
         }
         if (collection.getCollectionName() != null) {
             if (collectionsRepository.existsByUserIdAndCollectionName(userId, collection.getCollectionName())) {

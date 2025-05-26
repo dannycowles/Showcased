@@ -23,7 +23,7 @@ export class UserCollectionDetailsPageComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.collection = await this.userService.getCollectionDetails(this.userId, this.collectionId);
+      this.collection = await this.userService.getCollectionDetails(this.collectionId);
     } catch (error) {
       console.error(error);
       this.router.navigate(['not-found']);
@@ -34,11 +34,21 @@ export class UserCollectionDetailsPageComponent implements OnInit {
     try {
       this.collection.likedByUser = !this.collection.likedByUser;
       if (this.collection.likedByUser) {
-        await this.userService.likeCollection(this.collectionId);
-        this.collection.numLikes++;
+        const response = await this.userService.likeCollection(this.collectionId);
+
+        if (response.status === 401) {
+          this.router.navigate(['login']);
+        } else {
+          this.collection.numLikes++;
+        }
       } else {
-        await this.userService.unlikeCollection(this.collectionId);
-        this.collection.numLikes--;
+        const response = await this.userService.unlikeCollection(this.collectionId);
+
+        if (response.status === 401) {
+          this.router.navigate(['login']);
+        } else {
+          this.collection.numLikes--;
+        }
       }
     } catch (error) {
       console.error(error);

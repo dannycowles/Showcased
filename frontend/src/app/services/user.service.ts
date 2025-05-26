@@ -233,11 +233,15 @@ export class UserService {
 
   /**
    * Retrieves the public collections for user with the specified id
+   * @param name
    * @param id
    */
-  async getPublicCollections(id: number): Promise<CollectionData[]> {
+  async getPublicCollections(id: number, name ?: string): Promise<CollectionData[]> {
+    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const url = `${this.baseUrl}/${id}/collections${params}`;
+
     try {
-      const response = await fetch(`${this.baseUrl}/${id}/collections`);
+      const response = await fetch(url);
 
       const data = await response.json();
       return data.map((collection: {}) => {
@@ -250,12 +254,13 @@ export class UserService {
 
   /**
    * Retrieves the details for a collection with the specified id
-   * @param userId
    * @param collectionId
    */
-  async getCollectionDetails(userId: number, collectionId: number): Promise<SingleCollectionData> {
+  async getCollectionDetails(collectionId: number): Promise<SingleCollectionData> {
     try {
-      const response = await fetch(`${this.baseUrl}/${userId}/collections/${collectionId}`);
+      const response = await fetch(`${this.baseUrl}/collections/${collectionId}`, {
+        credentials: 'include'
+      });
 
       const data = await response.json();
       return new SingleCollectionData(data);

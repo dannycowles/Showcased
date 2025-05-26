@@ -58,7 +58,7 @@ public class FilterConfig {
     public FilterRegistrationBean<UserFilter> userFilter() {
         FilterRegistrationBean<UserFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new UserFilter());
-        registrationBean.addUrlPatterns("/user/*");
+        registrationBean.addUrlPatterns("/users/*");
         registrationBean.setOrder(3);
         return registrationBean;
     }

@@ -125,14 +125,14 @@ public class UserController {
     // ========== COLLECTIONS ==========
 
     @GetMapping("/{id}/collections")
-    public ResponseEntity<List<CollectionDto>> getCollections(@PathVariable Long id) {
-        List<CollectionDto> collections = userService.getCollections(id);
+    public ResponseEntity<List<CollectionDto>> getCollections(@RequestParam(required = false) String name, @PathVariable Long id) {
+        List<CollectionDto> collections = userService.getCollections(name, id);
         return ResponseEntity.ok(collections);
     }
 
-    @GetMapping("/{id}/collections/{collectionId}")
-    public ResponseEntity<CollectionReturnDto> getCollectionDetails(@PathVariable Long id, @PathVariable Long collectionId) {
-        CollectionReturnDto collection = userService.getShowsInCollection(id, collectionId);
+    @GetMapping("/collections/{collectionId}")
+    public ResponseEntity<CollectionReturnDto> getCollectionDetails(@PathVariable Long collectionId, HttpSession session) {
+        CollectionReturnDto collection = userService.getShowsInCollection(collectionId, session);
         return ResponseEntity.ok(collection);
     }
 

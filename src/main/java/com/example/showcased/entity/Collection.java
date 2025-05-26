@@ -15,8 +15,12 @@ public class Collection {
     private Long collectionId;
     private String collectionName;
     private String description;
-    private boolean isPrivate = false;
-    private boolean isRanked = false;
+
+    @Column(name = "is_private")
+    private boolean privateCollection = false;
+
+    @Column(name = "is_ranked")
+    private boolean ranked = false;
 
     public Collection(Long userId, String collectionName) {
         this.userId = userId;

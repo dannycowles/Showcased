@@ -254,26 +254,38 @@ public class UserService {
 
 
 
-    public List<CollectionDto> getCollections(Long userId) {
+    public List<CollectionDto> getCollections(String name, Long userId) {
         ensureUserExists(userId);
-        return collectionsRepository.findByUserIdPublic(userId).stream()
-                .map(collection -> modelMapper.map(collection, CollectionDto.class))
-                .collect(Collectors.toList());
+
+        // If a name is specified filter by that, else retrieve all collections
+        if (name != null) {
+            return collectionsRepository.findByUserIdAndPrivateCollectionFalseAndCollectionNameContainingIgnoreCase(userId, name).stream()
+                    .map(collection -> modelMapper.map(collection, CollectionDto.class))
+                    .collect(Collectors.toList());
+        } else {
+            return collectionsRepository.findByUserIdAndPrivateCollectionFalse(userId).stream()
+                    .map(collection -> modelMapper.map(collection, CollectionDto.class))
+                    .collect(Collectors.toList());
+        }
     }
 
-    public CollectionReturnDto getShowsInCollection(Long userId, Long collectionId) {
-        ensureUserExists(userId);
+    public CollectionReturnDto getShowsInCollection(Long collectionId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
         Collection collection = collectionsRepository.findById(collectionId)
                 .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
 
-        if (collection.isPrivate()) {
+        if (collection.isPrivateCollection()) {
             throw new UnauthorizedCollectionAccessException("Collection is private");
         }
 
         CollectionReturnDto collectionReturn = modelMapper.map(collection, CollectionReturnDto.class);
         collectionReturn.setShows(showsInCollectionRepository.findByIdCollectionId(collectionId));
         collectionReturn.setNumLikes(likedCollectionsRepository.countByIdCollectionId(collectionId));
-        collectionReturn.setLikedByUser(likedCollectionsRepository.existsById(new LikedCollectionsId(userId, collectionId)));
+
+        // If the user is logged in, check if they have liked the collection
+        if (userId != null) {
+            collectionReturn.setLikedByUser(likedCollectionsRepository.existsById(new LikedCollectionsId(userId, collectionId)));
+        }
         return collectionReturn;
     }
 
