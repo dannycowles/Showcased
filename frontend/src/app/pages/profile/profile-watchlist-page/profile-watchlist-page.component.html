@@ -1,5 +1,17 @@
 <button routerLink="/profile">Return to Profile</button>
 
+<br>
+<br>
+<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addShowModal">Add Show</button>
+<br>
+<br>
+
+<app-add-show-modal (addShow)="handleAddShow($event)"
+                    title="Add Show to Watchlist"
+                    [message]="modalMessage"
+                    [messageColor]="modalColor"
+></app-add-show-modal>
+
 @if (watchlistEntries) {
   <h1>Watchlist</h1>
 

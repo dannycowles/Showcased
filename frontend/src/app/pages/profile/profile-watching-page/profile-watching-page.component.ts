@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {WatchingData} from '../../../data/lists/watching-data';
+import {SearchResultData} from '../../../data/search-result-data';
 
 @Component({
   selector: 'app-profile-watching-page',
@@ -10,6 +11,8 @@ import {WatchingData} from '../../../data/lists/watching-data';
 })
 export class ProfileWatchingPageComponent implements OnInit {
   watchingEntries: WatchingData[];
+  modalMessage: string;
+  modalColor: string;
 
   constructor(private profileService: ProfileService) { }
 
@@ -42,6 +45,32 @@ export class ProfileWatchingPageComponent implements OnInit {
       this.watchingEntries = this.watchingEntries.filter(show => show.showId != moveId);
     } catch(error) {
       console.error(error);
+    }
+  }
+
+  async handleAddShow(show: SearchResultData) {
+    try {
+      const data = {
+        showId: show.id,
+        title: show.name,
+        posterPath: show.posterPath
+      };
+      const response = await this.profileService.addShowToWatchingList(data);
+
+      if (response.ok) {
+        this.modalMessage = "Successfully added!";
+        this.modalColor = "green";
+        this.watchingEntries.push(new WatchingData(data));
+      } else if (response.status === 409) {
+        this.modalMessage = "You already have this show on your watching list.";
+        this.modalColor = "red";
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        this.modalMessage = "";
+      }, 3000);
     }
   }
 

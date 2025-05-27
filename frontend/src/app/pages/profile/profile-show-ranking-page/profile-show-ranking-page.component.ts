@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ProfileService} from '../../../services/profile.service';
 import {ShowRankingData} from '../../../data/lists/show-ranking-data';
+import {SearchResultData} from '../../../data/search-result-data';
 
 @Component({
   selector: 'app-profile-show-ranking-page',
@@ -11,6 +12,8 @@ import {ShowRankingData} from '../../../data/lists/show-ranking-data';
 })
 export class ProfileShowRankingPageComponent implements OnInit {
   rankingEntries: ShowRankingData[];
+  modalMessage: string;
+  modalColor: string;
 
   constructor(private profileService: ProfileService) { }
 
@@ -54,6 +57,32 @@ export class ProfileShowRankingPageComponent implements OnInit {
       await this.profileService.updateShowRankingList(updates);
     } catch(error) {
       console.error(error);
+    }
+  }
+
+  async handleAddShow(show: SearchResultData) {
+    try {
+      const data = {
+        showId: show.id,
+        title: show.name,
+        posterPath: show.posterPath
+      };
+      const response = await this.profileService.addShowToRankingList(data);
+
+      if (response.ok) {
+        this.modalMessage = "Successfully added!";
+        this.modalColor = "green";
+        this.rankingEntries.push(new ShowRankingData(data));
+      } else if (response.status === 409) {
+        this.modalMessage = "You already have this show on your ranking list.";
+        this.modalColor = "red";
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        this.modalMessage = "";
+      }, 3000);
     }
   }
 

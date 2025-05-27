@@ -131,7 +131,7 @@ public class ProfileController {
 
     // ========== SHOW RANKINGS ==========
 
-    @PostMapping("/show-ranking")
+    @PostMapping("/show-rankings")
     public ResponseEntity<Void> addShowToRankingList(@RequestBody WatchSendDto show, HttpSession session) {
         profileService.addShowToRankingList(show, session);
         return ResponseEntity.status(HttpStatus.CREATED).build();
