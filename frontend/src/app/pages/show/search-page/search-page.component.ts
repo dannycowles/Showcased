@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {SearchResultData} from '../../../data/search-result-data';
 import {ShowService} from '../../../services/show.service';
+import {TopRatedShowsData} from '../../../data/top-rated-shows-data';
 
 
 @Component({
@@ -11,7 +12,7 @@ import {ShowService} from '../../../services/show.service';
 })
 export class SearchPageComponent implements OnInit {
   searchString: string;
-  searchResults: SearchResultData[];
+  searchResults: TopRatedShowsData;
 
   constructor(private showService: ShowService) {}
 

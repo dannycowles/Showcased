@@ -3,7 +3,7 @@
 <button (click)="search()">Search</button>
 
 @if (searchResults) {
-  @for (result of searchResults; track result.id) {
+  @for (result of searchResults.results; track result.id) {
     <h2>{{result.name}}</h2>
 
     <!-- If the show didn't air for more than one year only display once -->

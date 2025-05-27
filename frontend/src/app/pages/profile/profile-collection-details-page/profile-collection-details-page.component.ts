@@ -7,6 +7,9 @@ import 'jquery-serializejson';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {UtilsService} from '../../../services/utils.service';
 import {UserService} from '../../../services/user.service';
+import {ShowService} from '../../../services/show.service';
+import {TrendingShowsData} from '../../../data/trending-shows-data';
+import {CollectionShowData} from '../../../data/collection-show-data';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -17,12 +20,17 @@ import {UserService} from '../../../services/user.service';
 export class ProfileCollectionDetailsPageComponent implements OnInit {
   collectionData: SingleCollectionData;
   readonly collectionId: number;
+  showSearchResults: TrendingShowsData;
+  searchString: string | null;
+  selectedShowId: number;
+  debouncedSearchShows: () => void;
 
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
               private router: Router,
               public utils : UtilsService,
-              private userService: UserService) {
+              private userService: UserService,
+              private showService: ShowService) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
@@ -33,6 +41,10 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       console.error(error);
       this.router.navigate(['not-found']);
     }
+
+    this.debouncedSearchShows = this.utils.debounce(() => {
+      this.searchShows();
+    });
   };
 
   async removeShowFromCollection(showId: number ) {
@@ -152,6 +164,45 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       }
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async searchShows() {
+    try {
+      this.showSearchResults = await this.showService.searchForShows(this.searchString);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async addShow() {
+    const show = this.showSearchResults.results.find(show => show.id === this.selectedShowId);
+    const errorMessage = document.getElementById("add-show-error-message");
+
+    try {
+      const data = {
+        showId: show.id,
+        title: show.name,
+        posterPath: show.posterPath
+      };
+
+      const response = await this.profileService.addShowToCollection(this.collectionId, data);
+
+      if (response.ok) {
+        errorMessage.innerText = "Successfully added!";
+        errorMessage.style.color = "green";
+
+        this.collectionData.shows.push(new CollectionShowData(data));
+      } else {
+        errorMessage.innerText = "You already have this show in this collection.";
+        errorMessage.style.color = "red";
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        errorMessage.innerText = "";
+      }, 3000);
     }
   }
 }

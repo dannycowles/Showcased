@@ -34,14 +34,12 @@ export class ShowService {
    * Fetches search results for a user query
     * @param searchString
    */
-  async searchForShows(searchString: string): Promise<SearchResultData[]> {
+  async searchForShows(searchString: string): Promise<TopRatedShowsData> {
     try {
       const response = await fetch(`${this.baseUrl}?name=${encodeURIComponent(searchString)}`);
 
       const data = await response.json();
-      return data.map((result: {}) =>  {
-        return new SearchResultData(result);
-      });
+      return new TopRatedShowsData(data);
     } catch(error) {
       throw error;
     }
