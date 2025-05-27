@@ -7,8 +7,7 @@ import 'jquery-serializejson';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {UtilsService} from '../../../services/utils.service';
 import {UserService} from '../../../services/user.service';
-import {ShowService} from '../../../services/show.service';
-import {TrendingShowsData} from '../../../data/trending-shows-data';
+import {SearchResultData} from '../../../data/search-result-data';
 import {CollectionShowData} from '../../../data/collection-show-data';
 
 @Component({
@@ -20,17 +19,14 @@ import {CollectionShowData} from '../../../data/collection-show-data';
 export class ProfileCollectionDetailsPageComponent implements OnInit {
   collectionData: SingleCollectionData;
   readonly collectionId: number;
-  showSearchResults: TrendingShowsData;
-  searchString: string | null;
-  selectedShowId: number;
-  debouncedSearchShows: () => void;
+  modalMessage: string;
+  modalColor: string;
 
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
               private router: Router,
               public utils : UtilsService,
-              private userService: UserService,
-              private showService: ShowService) {
+              private userService: UserService) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
@@ -41,10 +37,6 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       console.error(error);
       this.router.navigate(['not-found']);
     }
-
-    this.debouncedSearchShows = this.utils.debounce(() => {
-      this.searchShows();
-    });
   };
 
   async removeShowFromCollection(showId: number ) {
@@ -167,41 +159,28 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
     }
   }
 
-  async searchShows() {
-    try {
-      this.showSearchResults = await this.showService.searchForShows(this.searchString);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async addShow() {
-    const show = this.showSearchResults.results.find(show => show.id === this.selectedShowId);
-    const errorMessage = document.getElementById("add-show-error-message");
-
+  async handleAddShow(show: SearchResultData) {
     try {
       const data = {
         showId: show.id,
         title: show.name,
         posterPath: show.posterPath
       };
-
       const response = await this.profileService.addShowToCollection(this.collectionId, data);
 
       if (response.ok) {
-        errorMessage.innerText = "Successfully added!";
-        errorMessage.style.color = "green";
-
+        this.modalMessage = `Successfully added ${show.name}`;
+        this.modalColor = "green";
         this.collectionData.shows.push(new CollectionShowData(data));
       } else {
-        errorMessage.innerText = "You already have this show in this collection.";
-        errorMessage.style.color = "red";
+        this.modalMessage = "You already have this show in this collection.";
+        this.modalColor = "red";
       }
     } catch (error) {
       console.error(error);
     } finally {
       setTimeout(() => {
-        errorMessage.innerText = "";
+        this.modalMessage = "";
       }, 3000);
     }
   }

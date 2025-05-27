@@ -57,6 +57,7 @@ import {UserCollectionsPageComponent} from './pages/user/user-collections-page/u
 import {
   UserCollectionDetailsPageComponent
 } from './pages/user/user-collection-details-page/user-collection-details-page.component';
+import {AddShowModalComponent} from "./components/add-show-modal/add-show-modal.component";
 
 @NgModule({
   declarations: [
@@ -96,19 +97,20 @@ import {
     UserCollectionsPageComponent,
     UserCollectionDetailsPageComponent
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    RouterModule,
-    AppRoutingModule,
-    NgOptimizedImage,
-    AngularToastifyModule,
-    DragDropModule,
-    NgOtpInputModule,
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    ButtonHeartComponent
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        RouterModule,
+        AppRoutingModule,
+        NgOptimizedImage,
+        AngularToastifyModule,
+        DragDropModule,
+        NgOtpInputModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        ButtonHeartComponent,
+        AddShowModalComponent
+    ],
   providers: [ToastService],
   bootstrap: [AppComponent]
 })

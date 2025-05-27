@@ -53,48 +53,11 @@
   <br>
   <br>
 
-  <div class="modal fade" id="addShowModal" aria-labelledby="addShowModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add Show</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="searchShowInput" class="form-label">Search for Show</label>
-            <input type="text" class="form-control" id="searchShowInput" placeholder="Search..." [(ngModel)]="searchString"
-            (input)="debouncedSearchShows()">
-          </div>
-
-          <div class="mb-3">
-            @if (showSearchResults) {
-              @if (showSearchResults.results.length != 0) {
-                <ul class="list-group overflow-auto" style="max-height: 25vh" id="showRadios">
-                  @for (show of showSearchResults.results; track show.id) {
-                    <li class="list-group-item">
-                      <input class="form-check-input me-1" type="radio" name="listGroupRadio" [value]="show.id" [id]="show.id" [(ngModel)]="selectedShowId">
-                      <label class="form-check-label" [for]="show.id">{{show.name}}</label>
-                    </li>
-                  }
-                </ul>
-              } @else {
-                <p>No Shows Found!</p>
-              }
-            }
-          </div>
-          <div id="add-show-error-message"></div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" (click)="addShow()" [disabled]="!searchString">Add</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <app-add-show-modal (addShow)="handleAddShow($event)"
+                      title="Add Show to Collection"
+                      [message]="modalMessage"
+                      [messageColor]="modalColor"
+  ></app-add-show-modal>
 
   <div class="btn-group" id="visibility-radios" role="group" aria-label="Toggle private/public visibility" (change)="toggleCollectionVisibility()">
     <input type="radio" class="btn-check" name="visibilityRadio" id="privateRadio" autocomplete="off" value="private" [checked]="collectionData.isPrivate">
