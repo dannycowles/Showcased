@@ -45,8 +45,8 @@ public class ProfileController {
     }
 
     @GetMapping("/followers")
-    public ResponseEntity<List<UserSearchDto>> getFollowers(HttpSession session) {
-        List<UserSearchDto> followers = profileService.getFollowers(session);
+    public ResponseEntity<List<UserSearchDto>> getFollowers(@RequestParam(required = false) String name, HttpSession session) {
+        List<UserSearchDto> followers = profileService.getFollowers(name, session);
         return ResponseEntity.ok(followers);
     }
 
@@ -57,8 +57,8 @@ public class ProfileController {
     }
 
     @GetMapping("/following")
-    public ResponseEntity<List<UserSearchDto>> getFollowing(HttpSession session) {
-        List<UserSearchDto> following = profileService.getFollowing(session);
+    public ResponseEntity<List<UserSearchDto>> getFollowing(@RequestParam(required = false) String name, HttpSession session) {
+        List<UserSearchDto> following = profileService.getFollowing(name, session);
         return ResponseEntity.ok(following);
     }
 

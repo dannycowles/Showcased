@@ -442,10 +442,14 @@ export class ProfileService {
 
   /**
    * Retrieves a list of all the users currently following the logged-in user
+   * @param name
    */
-  async getFollowersList(): Promise<UserSearchData[]> {
+  async getFollowersList(name?: string): Promise<UserSearchData[]> {
+    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const url = `${this.baseUrl}/followers${params}`;
+
     try {
-      const response = await fetch(`${this.baseUrl}/followers`, {
+      const response = await fetch(url, {
         credentials: 'include'
       });
 
@@ -483,10 +487,14 @@ export class ProfileService {
 
   /**
    * Retrieves a list of all the users the logged-in user is following
+   * @param name
    */
-  async getFollowingList(): Promise<UserSearchData[]> {
+  async getFollowingList(name?: string): Promise<UserSearchData[]> {
+    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const url = `${this.baseUrl}/following${params}`;
+
     try {
-      const response = await fetch(`${this.baseUrl}/following`, {
+      const response = await fetch(url, {
         credentials: 'include'
       });
 

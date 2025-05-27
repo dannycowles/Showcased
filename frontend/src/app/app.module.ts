@@ -58,6 +58,7 @@ import {
   UserCollectionDetailsPageComponent
 } from './pages/user/user-collection-details-page/user-collection-details-page.component';
 import {AddShowModalComponent} from "./components/add-show-modal/add-show-modal.component";
+import {FollowersFollowingComponent} from "./components/followers-following/followers-following.component";
 
 @NgModule({
   declarations: [
@@ -109,7 +110,8 @@ import {AddShowModalComponent} from "./components/add-show-modal/add-show-modal.
         ReactiveFormsModule,
         BrowserAnimationsModule,
         ButtonHeartComponent,
-        AddShowModalComponent
+        AddShowModalComponent,
+        FollowersFollowingComponent
     ],
   providers: [ToastService],
   bootstrap: [AppComponent]

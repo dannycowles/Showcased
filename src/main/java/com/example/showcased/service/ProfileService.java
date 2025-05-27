@@ -458,16 +458,26 @@ public class ProfileService {
         return reviewRepository.findByUserId((Long) session.getAttribute("user"));
     }
 
-    public List<UserSearchDto> getFollowers(HttpSession session) {
-        return followersRepository.getFollowersByIdFollowingId((Long) session.getAttribute("user"));
+    public List<UserSearchDto> getFollowers(String name, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (name != null) {
+            return followersRepository.getFollowersByIdFollowingIdFiltered(userId, name);
+        } else {
+            return followersRepository.getFollowersByIdFollowingId(userId);
+        }
     }
 
     public Long getFollowersCount(HttpSession session) {
         return followersRepository.countByIdFollowingId((Long) session.getAttribute("user"));
     }
 
-    public List<UserSearchDto> getFollowing(HttpSession session) {
-        return followersRepository.getFollowingByIdFollowerId((Long) session.getAttribute("user"));
+    public List<UserSearchDto> getFollowing(String name, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (name != null) {
+            return followersRepository.getFollowingByIdFollowerIdFiltered(userId, name);
+        } else {
+            return followersRepository.getFollowingByIdFollowerId(userId);
+        }
     }
 
     public Long getFollowingCount(HttpSession session) {

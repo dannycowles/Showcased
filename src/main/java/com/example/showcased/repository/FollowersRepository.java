@@ -30,4 +30,14 @@ public interface FollowersRepository extends JpaRepository<Follower, FollowerId>
             "FROM Follower f " +
             "WHERE f.id.followerId = :userId")
     Set<Long> getFollowingIds(@Param("userId") Long userId);
+
+    @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
+            "FROM Follower f JOIN User u ON f.id.followerId = u.id " +
+            "WHERE f.id.followingId = :userId AND u.username like %:name%")
+    List<UserSearchDto> getFollowersByIdFollowingIdFiltered(Long userId, String name);
+
+    @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
+            "FROM Follower f JOIN User u ON f.id.followingId = u.id " +
+            "WHERE f.id.followerId = :userId AND u.username like %:name%")
+    List<UserSearchDto> getFollowingByIdFollowerIdFiltered(Long userId, String name);
 }
