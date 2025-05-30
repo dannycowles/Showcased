@@ -20,6 +20,8 @@ import {UserService} from '../../services/user.service';
 })
 export class FollowersFollowingComponent implements OnInit {
   @Input({required: true}) listType: "followers" | "following";
+  @Input() editable: boolean = true; // true for profile page, false for user page
+  @Input() userId: number;
 
   searchString: string = "";
   debouncedSearch: () => void;
@@ -38,9 +40,16 @@ export class FollowersFollowingComponent implements OnInit {
 
   async search() {
     try {
-      const action = (this.listType === "followers")
-        ? () => this.profileService.getFollowersList(this.searchString)
-        : () => this.profileService.getFollowingList(this.searchString);
+      let action;
+      if (this.editable) {
+        action = (this.listType === "followers")
+          ? () => this.profileService.getFollowersList(this.searchString)
+          : () => this.profileService.getFollowingList(this.searchString);
+      } else {
+        action = (this.listType === "followers")
+          ? () => this.userService.getFollowersList(this.userId)
+          : () => this.userService.getFollowingList(this.userId);
+      }
 
       this.searchResults = await action();
     } catch (error) {
@@ -48,13 +57,33 @@ export class FollowersFollowingComponent implements OnInit {
     }
   }
 
+  async follow(userId: number) {
+    try {
+      const response = await this.userService.followUser(userId);
+      if (response.ok) {
+        const updateUser = this.searchResults.find(user => user.id === userId);
+        updateUser.isFollowing = true;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async unfollow(userId: number) {
+    try {
+      const response = await this.userService.unfollowUser(userId);
+      if (response.ok) {
+        const updateUser = this.searchResults.find(user => user.id === userId);
+        updateUser.isFollowing = false;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async remove(userId: number) {
     try {
-      const action = (this.listType === "followers")
-        ? () => this.profileService.removeFollower(userId)
-        : () => this.userService.unfollowUser(userId);
-
-      const response = await action();
+      const response = await this.profileService.removeFollower(userId);
       if (response.ok) {
         this.searchResults = this.searchResults.filter(user => user.id != userId);
       }

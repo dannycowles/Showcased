@@ -9,10 +9,20 @@
         <img [ngSrc]="user.profilePicture" alt="User Profile Picture" width="100" height="100">
         <h3 class="ms-5"><a [routerLink]="['/user', user.id]" class="text-dark">{{user.username}}</a></h3>
 
-        @if (listType === "followers") {
-          <button class="btn btn-outline-danger ms-auto" (click)="remove(user.id)">Remove</button>
+        @if (editable) {
+          @if (listType === "followers") {
+            <button class="btn btn-outline-danger ms-auto" (click)="remove(user.id)">Remove</button>
+          } @else {
+            <button class="btn btn-outline-danger ms-auto" (click)="unfollow(user.id)">Unfollow</button>
+          }
         } @else {
-          <button class="btn btn-outline-danger ms-auto" (click)="remove(user.id)">Unfollow</button>
+          @if (!user.isOwnProfile) {
+            @if (user.isFollowing) {
+              <button class="btn btn-outline-danger ms-auto" (click)="unfollow(user.id)">Unfollow</button>
+            } @else {
+              <button class="btn btn-outline-success ms-auto" (click)="follow(user.id)">Follow</button>
+            }
+          }
         }
       </div>
     }
