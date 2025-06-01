@@ -11,11 +11,8 @@ import java.util.List;
 @Setter
 public class ShowDto {
     private String id;
-
     private String imdbId;
-
     private String imdbRating;
-
     private String imdbVotes;
 
     @JsonProperty("backdrop_path")
@@ -27,13 +24,8 @@ public class ShowDto {
     @JsonProperty("name")
     private String title;
 
-    @JsonProperty("tagline")
     private String tagline;
-
-    @JsonProperty("plot")
     private String plot;
-
-    @JsonProperty("rating")
     private String rating;
 
     @JsonProperty("average_runtime")
@@ -50,24 +42,19 @@ public class ShowDto {
 
     @JsonProperty("number_of_seasons")
     private int numSeasons;
-
-    @JsonProperty("genres")
     private List<GenresDto> genres;
 
     @JsonProperty("created_by")
     private List<CreatorDto> creator;
-
-    @JsonProperty("cast")
     private List<CastDto> cast;
 
     @JsonProperty("in_production")
     private boolean inProduction;
 
     private String awards;
-
     private List<WatchOptionDto> streamOptions = new ArrayList<>();
-
     private List<WatchOptionDto> buyOptions = new ArrayList<>();
+    private List<SearchDto> recommendations = new ArrayList<>();
 
     private boolean onWatchlist = false;
     private boolean onWatchingList = false;

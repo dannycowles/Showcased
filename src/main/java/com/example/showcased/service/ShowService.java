@@ -149,6 +149,23 @@ public class ShowService {
         show.setImdbVotes(jsonResponse.optString("imdbVotes"));
         show.setAwards(jsonResponse.optString("Awards"));
 
+        // Check if the user is logged in, if so, check if the show is on watchlist/watching/ranking
+        Long userId = (Long) session.getAttribute("user");
+        if (userId != null) {
+            show.setOnWatchlist(watchlistRepository.existsById(new WatchId(userId, Long.parseLong(id))));
+            show.setOnWatchingList(watchingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
+            show.setOnRankingList(showRankingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
+        }
+
+        // Make request to TMDB TV recommendations endpoint
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv")
+                .pathSegment(id, "recommendations")
+                .toUriString();
+        ShowResultsPageDto search = tmdbClient.get(url, ShowResultsPageDto.class);
+        retrieveEndYears(search);
+        show.setRecommendations(search.getResults());
+
         // Make request to TMDB watch providers endpoint
         url = UriComponentsBuilder
                 .fromUriString("https://api.themoviedb.org/3/tv")
@@ -186,13 +203,6 @@ public class ShowService {
         show.setStreamOptions(streamingOptions);
         show.setBuyOptions(buyOptions);
 
-        // Check if the user is logged in, if so, check if the show is on watchlist/watching/ranking
-        Long userId = (Long) session.getAttribute("user");
-        if (userId != null) {
-            show.setOnWatchlist(watchlistRepository.existsById(new WatchId(userId, Long.parseLong(id))));
-            show.setOnWatchingList(watchingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
-            show.setOnRankingList(showRankingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
-        }
         return show;
     }
 
