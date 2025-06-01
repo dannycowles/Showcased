@@ -19,7 +19,7 @@ import {CollectionData} from '../../../data/collection-data';
   standalone: false
 })
 export class ShowPageComponent implements OnInit {
-  readonly showId: number;
+  showId: number;
   show: ShowData;
   reviews: ReviewData[];
   readonly heartSize: number = 100;
@@ -35,7 +35,10 @@ export class ShowPageComponent implements OnInit {
               private toastService: ToastDisplayService,
               public utilsService: UtilsService,
               private authService: AuthenticationService) {
-    this.showId = this.route.snapshot.params['id'];
+    this.route.params.subscribe(params => {
+      this.showId = params['id'];
+      this.ngOnInit();
+    });
   }
 
   async ngOnInit() {

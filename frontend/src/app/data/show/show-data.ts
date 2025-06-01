@@ -2,6 +2,7 @@ import {GenreData} from './genre-data';
 import {CreatorData} from './creator-data';
 import {CastData} from './cast-data';
 import {WatchOptionData} from './watch-option-data';
+import {SearchResultData} from '../search-result-data';
 
 export class ShowData {
   readonly id: number;
@@ -25,6 +26,7 @@ export class ShowData {
   readonly cast: CastData[];
   readonly streamingOptions: WatchOptionData[];
   readonly buyOptions: WatchOptionData[];
+  readonly recommendations: SearchResultData[];
   onWatchlist: boolean;
   onWatchingList: boolean;
   onRankingList: boolean;
@@ -76,6 +78,10 @@ export class ShowData {
 
     this.buyOptions = jsonObject['buyOptions'].map((option: {}) => {
       return new WatchOptionData(option);
+    });
+
+    this.recommendations = jsonObject['recommendations'].map((recommendation: {}) => {
+      return new SearchResultData(recommendation);
     });
 
     this.onWatchlist = jsonObject['onWatchlist'];

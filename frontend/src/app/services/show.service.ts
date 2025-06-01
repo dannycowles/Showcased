@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {ReviewData} from '../data/review-data';
-import {SearchResultData} from '../data/search-result-data';
 import {UtilsService} from './utils.service';
 import {ShowData} from '../data/show/show-data';
 import {SeasonData} from '../data/show/season-data';

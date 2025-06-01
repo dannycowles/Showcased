@@ -217,6 +217,17 @@
       }
     </div>
   </div>
+
+  <h2 class="ms-2">You Might Like...</h2>
+  <div class="d-flex">
+    @for (show of show.recommendations; track show.id) {
+      <div class="ms-2">
+        <a [routerLink]="['/show', show.id]">
+          <img [ngSrc]="show.posterPath" alt="Show Recommendation Picture" width="185" height="278">
+        </a>
+      </div>
+    }
+  </div>
 }
 
 @if (reviews) {
