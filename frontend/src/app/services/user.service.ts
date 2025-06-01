@@ -196,10 +196,14 @@ export class UserService {
   /**
    * Retrieves the followers list for user with the specified id
    * @param id
+   * @param name
    */
-  async getFollowersList(id: number): Promise<UserSearchData[]> {
+  async getFollowersList(id: number, name ?: string): Promise<UserSearchData[]> {
+    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const url = `${this.baseUrl}/${id}/followers${params}`;
+
     try {
-      const response = await fetch(`${this.baseUrl}/${id}/followers`, {
+      const response = await fetch(url, {
         credentials: 'include'
       });
 
@@ -215,10 +219,14 @@ export class UserService {
   /**
    * Retrieves the following list for user with the specified id
    * @param id
+   * @param name
    */
-  async getFollowingList(id: number): Promise<UserSearchData[]> {
+  async getFollowingList(id: number, name ?: string): Promise<UserSearchData[]> {
+    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const url = `${this.baseUrl}/${id}/following${params}`;
+
     try {
-      const response = await fetch(`${this.baseUrl}/${id}/following`, {
+      const response = await fetch(url, {
         credentials: 'include'
       });
 

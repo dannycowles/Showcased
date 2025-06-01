@@ -205,33 +205,37 @@ public class UserService {
         followersRepository.deleteById(new FollowerId(userId, unfollowId));
     }
 
-    public List<UserSearchDto> getFollowers(Long userId, HttpSession session) {
+    public List<UserSearchDto> getFollowers(Long userId, String name, HttpSession session) {
         ensureUserExists(userId);
-        List<UserSearchDto> followers = followersRepository.getFollowersByIdFollowingId(userId);
+        List<UserSearchDto> followers = (name != null)
+                ? followersRepository.getFollowersByIdFollowingIdFiltered(userId, name)
+                : followersRepository.getFollowersByIdFollowingId(userId);
 
-        Long loggedInUserId = (Long) session.getAttribute("user");
-        if (loggedInUserId != null) {
-            Set<Long> followedUsers = followersRepository.getFollowingIds(loggedInUserId);
-
-            // Iterate through followers list and check if set contains that id
-            followers.forEach(user -> {
-               user.setFollowing(followedUsers.contains(user.getId()));
-               user.setOwnProfile(loggedInUserId.equals(user.getId()));
-            });
-        }
-
+        setFollowingFlags(followers, session);
         return followers;
     }
 
-    public Long getFollowersCount(Long userId) {
+    private Long getFollowersCount(Long userId) {
         ensureUserExists(userId);
         return followersRepository.countByIdFollowingId(userId);
     }
 
-    public List<UserSearchDto> getFollowing(Long userId, HttpSession session) {
+    public List<UserSearchDto> getFollowing(Long userId, String name, HttpSession session) {
         ensureUserExists(userId);
-        List<UserSearchDto> following = followersRepository.getFollowingByIdFollowerId(userId);
+        List<UserSearchDto> following = (name != null)
+                ? followersRepository.getFollowingByIdFollowerIdFiltered(userId, name)
+                : followersRepository.getFollowingByIdFollowerId(userId);
 
+        setFollowingFlags(following, session);
+        return following;
+    }
+
+    private Long getFollowingCount(Long userId) {
+        ensureUserExists(userId);
+        return followersRepository.countByIdFollowerId(userId);
+    }
+
+    private void setFollowingFlags(List<UserSearchDto> following, HttpSession session) {
         Long loggedInUserId = (Long) session.getAttribute("user");
         if (loggedInUserId != null) {
             Set<Long> followedUsers = followersRepository.getFollowingIds(loggedInUserId);
@@ -242,13 +246,6 @@ public class UserService {
                 user.setOwnProfile(loggedInUserId.equals(user.getId()));
             });
         }
-
-        return following;
-    }
-
-    public Long getFollowingCount(Long userId) {
-        ensureUserExists(userId);
-        return followersRepository.countByIdFollowerId(userId);
     }
 
 

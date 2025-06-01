@@ -47,8 +47,8 @@ export class FollowersFollowingComponent implements OnInit {
           : () => this.profileService.getFollowingList(this.searchString);
       } else {
         action = (this.listType === "followers")
-          ? () => this.userService.getFollowersList(this.userId)
-          : () => this.userService.getFollowingList(this.userId);
+          ? () => this.userService.getFollowersList(this.userId, this.searchString)
+          : () => this.userService.getFollowingList(this.userId, this.searchString);
       }
 
       this.searchResults = await action();

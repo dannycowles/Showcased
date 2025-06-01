@@ -39,27 +39,15 @@ public class UserController {
         return ResponseEntity.ok(reviews);
     }
 
-    @GetMapping("/{id}/followers/count")
-    public ResponseEntity<Long> getFollowersCount(@PathVariable("id") Long id) {
-        Long followersCount = userService.getFollowersCount(id);
-        return ResponseEntity.ok(followersCount);
-    }
-
     @GetMapping("/{id}/following")
-    public ResponseEntity<List<UserSearchDto>> getFollowing(@PathVariable("id") Long id, HttpSession session) {
-        List<UserSearchDto> following = userService.getFollowing(id, session);
+    public ResponseEntity<List<UserSearchDto>> getFollowing(@PathVariable("id") Long id, @RequestParam(value = "name", required = false) String name, HttpSession session) {
+        List<UserSearchDto> following = userService.getFollowing(id, name, session);
         return ResponseEntity.ok(following);
     }
 
-    @GetMapping("/{id}/following/count")
-    public ResponseEntity<Long> getFollowingCount(@PathVariable("id") Long id) {
-        Long followingCount = userService.getFollowingCount(id);
-        return ResponseEntity.ok(followingCount);
-    }
-
     @GetMapping("/{id}/followers")
-    public ResponseEntity<List<UserSearchDto>> getFollowers(@PathVariable("id") Long id, HttpSession session) {
-        List<UserSearchDto> followers = userService.getFollowers(id, session);
+    public ResponseEntity<List<UserSearchDto>> getFollowers(@PathVariable("id") Long id, @RequestParam(value = "name", required = false) String name, HttpSession session) {
+        List<UserSearchDto> followers = userService.getFollowers(id, name, session);
         return ResponseEntity.ok(followers);
     }
 
