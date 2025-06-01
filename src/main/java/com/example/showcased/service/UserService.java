@@ -76,14 +76,12 @@ public class UserService {
     }
 
     public ProfileDetailsDto getUserDetails(Long userId, HttpSession session) {
-        ProfileDetailsDto userDetails = new ProfileDetailsDto();
-
         // Throw exception if the user was not found by ID
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        userDetails.setUsername(user.getUsername());
-        userDetails.setProfilePicture(user.getProfilePicture());
+        ProfileDetailsDto userDetails = modelMapper.map(user, ProfileDetailsDto.class);
+
         userDetails.setWatchlistTop(getUserWatchlist(userId, numTopEntries));
         if (watchlistRepository.countByIdUserId(userId) > numTopEntries) {
             userDetails.setMoreWatchlist(true);

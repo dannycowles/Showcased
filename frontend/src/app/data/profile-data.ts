@@ -10,6 +10,7 @@ import {CharacterRankingData} from './lists/character-ranking-data';
 export class ProfileData {
   readonly username: string
   profilePicture: string
+  bio: string
   readonly watchlistTop: WatchlistData[]
   readonly moreWatchlist: boolean
   readonly watchingTop: WatchingData[]
@@ -31,6 +32,7 @@ export class ProfileData {
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username']
     this.profilePicture = jsonObject['profilePicture']
+    this.bio = jsonObject['bio']
 
     this.watchlistTop = jsonObject['watchlistTop'].map(( show: {} ) => {
       return new WatchlistData(show)

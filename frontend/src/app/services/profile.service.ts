@@ -47,6 +47,25 @@ export class ProfileService {
   }
 
   /**
+   * Updates the profile information, currently it's just for bio updates
+   * @param data
+   */
+  async updateProfileDetails(data: {}): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/details`, {
+        method: 'PATCH',
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Uploads a profile picture for the logged-in user
    * @param formData
    */
