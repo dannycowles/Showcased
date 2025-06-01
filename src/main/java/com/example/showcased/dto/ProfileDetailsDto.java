@@ -24,4 +24,5 @@ public class ProfileDetailsDto {
     private List<SeasonRankingReturnDto> seasonRankingTop;
     private boolean moreSeasonRanking = false;
     private AllCharacterRankingDto characterRankings;
+    private String bio;
 }

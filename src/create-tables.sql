@@ -4,6 +4,7 @@ CREATE TABLE users (
     profile_picture VARCHAR(255),
     username VARCHAR(20) NOT NULL UNIQUE,
     password VARCHAR(60) NOT NULL,
+    bio VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (id)
 );
 

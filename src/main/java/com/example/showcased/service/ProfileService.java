@@ -87,9 +87,7 @@ public class ProfileService {
         User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        ProfileDetailsDto profileDetails = new ProfileDetailsDto();
-        profileDetails.setUsername(user.getUsername());
-        profileDetails.setProfilePicture(user.getProfilePicture());
+        ProfileDetailsDto profileDetails = modelMapper.map(user, ProfileDetailsDto.class);
         profileDetails.setWatchlistTop(getWatchlist(numTopEntries, session));
         profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
         profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
@@ -100,6 +98,15 @@ public class ProfileService {
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
         return profileDetails;
+    }
+
+    public void updateProfileDetails(UpdateBioDto update, HttpSession session) {
+        Long id = (Long) session.getAttribute("user");
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        user.setBio(update.getBio());
+        userRepository.save(user);
     }
 
     public void addShowToWatchlist(WatchSendDto show, HttpSession session) {
@@ -430,7 +437,6 @@ public class ProfileService {
             characterRankingRepository.save(newRanking);
         }
     }
-
 
     public void updateCharacterRankingList(UpdateCharacterRankingsDto updates, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");

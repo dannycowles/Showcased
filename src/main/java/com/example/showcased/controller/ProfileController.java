@@ -32,6 +32,12 @@ public class ProfileController {
         return ResponseEntity.ok(profileDetails);
     }
 
+    @PatchMapping("/details")
+    public ResponseEntity<Void> updateProfileDetails(@RequestBody UpdateBioDto update, HttpSession session) {
+        profileService.updateProfileDetails(update, session);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/profile-picture")
     public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, HttpSession session) {
         String fileUrl = fileService.uploadProfilePicture(file, session);
