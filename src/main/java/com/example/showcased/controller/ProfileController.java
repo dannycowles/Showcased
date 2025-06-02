@@ -81,6 +81,25 @@ public class ProfileController {
     }
 
 
+
+
+    // ========== SOCIALS =========
+
+    @PostMapping("/socials")
+    public ResponseEntity<Void> addSocialAccount(@RequestBody SocialAccountDto account, HttpSession session) {
+        profileService.addSocialAccount(account, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/socials/{socialId}")
+    public ResponseEntity<Void> removeSocialAccount(@PathVariable Long socialId, HttpSession session) {
+        profileService.removeSocialAccount(socialId, session);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
+
     // ========= WATCHLIST ==========
 
     @PostMapping("/watchlist")

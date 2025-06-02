@@ -36,6 +36,7 @@ public class ProfileService {
     private final CollectionRepository collectionsRepository;
     private final ShowsInCollectionRepository showsInCollectionRepository;
     private final LikedCollectionsRepository likedCollectionsRepository;
+    private final UserSocialRepository userSocialRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -52,7 +53,8 @@ public class ProfileService {
                           CharacterRankingRepository characterRankingRepository,
                           CollectionRepository collectionRepository,
                           ShowsInCollectionRepository showsInCollectionRepository,
-                          LikedCollectionsRepository likedCollectionsRepository) {
+                          LikedCollectionsRepository likedCollectionsRepository,
+                          UserSocialRepository userSocialRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -69,6 +71,7 @@ public class ProfileService {
         this.collectionsRepository = collectionRepository;
         this.showsInCollectionRepository = showsInCollectionRepository;
         this.likedCollectionsRepository = likedCollectionsRepository;
+        this.userSocialRepository = userSocialRepository;
     }
 
     /**
@@ -97,6 +100,7 @@ public class ProfileService {
         profileDetails.setNumFollowing(getFollowingCount(session));
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
+        profileDetails.setSocialAccounts(retrieveSocialAccounts(session));
         return profileDetails;
     }
 
@@ -148,6 +152,29 @@ public class ProfileService {
         watching.setId(new WatchId(userId, Long.valueOf(id)));
         watchingRepository.save(watching);
     }
+
+
+
+
+    public void addSocialAccount(SocialAccountDto account, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        UserSocial socialAccount = new UserSocial();
+        socialAccount.setId(new UserSocialId(userId, account.getSocialId()));
+        socialAccount.setHandle(account.getHandle());
+        userSocialRepository.save(socialAccount);
+    }
+
+    public void removeSocialAccount(Long socialId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        userSocialRepository.deleteById(new UserSocialId(userId, socialId));
+    }
+
+    private List<SocialAccountReturnDto> retrieveSocialAccounts(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return userSocialRepository.findByIdUserId(userId);
+    }
+
+
 
 
 

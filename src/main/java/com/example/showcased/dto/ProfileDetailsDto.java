@@ -25,4 +25,5 @@ public class ProfileDetailsDto {
     private boolean moreSeasonRanking = false;
     private AllCharacterRankingDto characterRankings;
     private String bio;
+    private List<SocialAccountReturnDto> socialAccounts;
 }
