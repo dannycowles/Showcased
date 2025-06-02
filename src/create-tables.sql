@@ -151,3 +151,18 @@ CREATE TABLE liked_collections (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (collection_id) REFERENCES user_collections(collection_id)
 );
+
+CREATE TABLE social_platforms (
+    id INT AUTO_INCREMENT,
+    name TEXT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE user_socials (
+    user_id INT,
+    social_id INT,
+    handle TEXT NOT NULL,
+    PRIMARY KEY (user_id, social_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (social_id) REFERENCES social_platforms(id)
+);
