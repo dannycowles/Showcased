@@ -55,6 +55,9 @@ export class ProfileService {
       const response = await fetch(`${this.baseUrl}/details`, {
         method: 'PATCH',
         credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
       });
 

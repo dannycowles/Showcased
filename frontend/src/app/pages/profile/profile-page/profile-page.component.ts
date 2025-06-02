@@ -12,6 +12,9 @@ import {UtilsService} from '../../../services/utils.service';
 export class ProfilePageComponent implements OnInit {
   profileData: ProfileData;
   objectUrl: string | null = null;
+  newBio: string;
+  readonly bioMaxLength: number = 100;
+  bioMessage: string | null = null;
 
   constructor(private profileService: ProfileService,
               public utilsService: UtilsService) { }
@@ -20,6 +23,7 @@ export class ProfilePageComponent implements OnInit {
     // Retrieve profile data from backend
     try {
       this.profileData = await this.profileService.getProfileDetails();
+      this.newBio = this.profileData.bio;
     } catch (error) {
       console.error(error);
     }
@@ -44,6 +48,31 @@ export class ProfilePageComponent implements OnInit {
       } catch(error) {
         console.error(error);
       }
+    }
+  }
+
+  async updateBio() {
+    // Prevent sending unchanged bio
+    if (this.newBio === this.profileData.bio) {
+      return;
+    }
+
+    try {
+      const data = {
+        bio: this.newBio
+      };
+
+      const response = await this.profileService.updateProfileDetails(data);
+      if (response.ok) {
+        this.profileData.bio = this.newBio;
+        this.bioMessage = "Bio updated successfully.";
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        this.bioMessage = "";
+      }, 3000);
     }
   }
 
