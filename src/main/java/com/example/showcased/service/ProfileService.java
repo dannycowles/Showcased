@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +38,7 @@ public class ProfileService {
     private final ShowsInCollectionRepository showsInCollectionRepository;
     private final LikedCollectionsRepository likedCollectionsRepository;
     private final UserSocialRepository userSocialRepository;
+    private final SocialPlatformRepository socialPlatformRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -54,7 +56,8 @@ public class ProfileService {
                           CollectionRepository collectionRepository,
                           ShowsInCollectionRepository showsInCollectionRepository,
                           LikedCollectionsRepository likedCollectionsRepository,
-                          UserSocialRepository userSocialRepository) {
+                          UserSocialRepository userSocialRepository,
+                          SocialPlatformRepository socialPlatformRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -72,6 +75,7 @@ public class ProfileService {
         this.showsInCollectionRepository = showsInCollectionRepository;
         this.likedCollectionsRepository = likedCollectionsRepository;
         this.userSocialRepository = userSocialRepository;
+        this.socialPlatformRepository = socialPlatformRepository;
     }
 
     /**
@@ -171,7 +175,17 @@ public class ProfileService {
 
     private List<SocialAccountReturnDto> retrieveSocialAccounts(HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return userSocialRepository.findByIdUserId(userId);
+
+        List<SocialAccountReturnDto> socials = userSocialRepository.findByIdUserId(userId);
+        for (SocialAccountReturnDto socialAccount : socials) {
+            Optional<SocialPlatform> platform = socialPlatformRepository.findById(socialAccount.getSocialId());
+            if (platform.isPresent()) {
+                SocialPlatform p = platform.get();
+                socialAccount.setUrl(p.getUrl().replace("{handle}", socialAccount.getHandle()));
+            }
+        }
+
+        return socials;
     }
 
 

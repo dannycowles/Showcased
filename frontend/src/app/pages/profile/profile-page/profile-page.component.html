@@ -19,10 +19,11 @@
     <button class="btn btn-secondary mt-3 mb-3" data-bs-toggle="modal" data-bs-target="#socialModal">Edit Social Accounts</button>
     @for (social of profileData.socials; track social.socialId) {
       <div>
-        {{social.socialName}} - {{social.handle}}
+        {{social.socialName}} - <a [href]="social.url" target="_blank">{{social.handle}}</a>
       </div>
     }
   </div>
+
 
   <div class="modal fade" id="bioModal" aria-labelledby="bioModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">

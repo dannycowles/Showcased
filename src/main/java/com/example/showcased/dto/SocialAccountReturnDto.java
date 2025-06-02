@@ -9,4 +9,5 @@ public class SocialAccountReturnDto {
     private Long socialId;
     private String socialName;
     private String handle;
+    private String url;
 }

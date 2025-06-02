@@ -33,6 +33,7 @@ public class UserService {
     private final CollectionRepository collectionsRepository;
     private final ShowsInCollectionRepository showsInCollectionRepository;
     private final LikedCollectionsRepository likedCollectionsRepository;
+    private final SocialPlatformRepository socialPlatformRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -46,7 +47,8 @@ public class UserService {
                        CharacterRankingRepository characterRankingRepository,
                        CollectionRepository collectionsRepository,
                        ShowsInCollectionRepository showsInCollectionRepository,
-                       LikedCollectionsRepository likedCollectionsRepository) {
+                       LikedCollectionsRepository likedCollectionsRepository,
+                       SocialPlatformRepository socialPlatformRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -60,6 +62,7 @@ public class UserService {
         this.collectionsRepository = collectionsRepository;
         this.showsInCollectionRepository = showsInCollectionRepository;
         this.likedCollectionsRepository = likedCollectionsRepository;
+        this.socialPlatformRepository = socialPlatformRepository;
     }
 
     public void ensureUserExists(Long userId) {
@@ -120,6 +123,13 @@ public class UserService {
         }
         return userDetails;
     }
+
+    public List<SocialPlatform> getAllSocials() {
+        return socialPlatformRepository.findAll();
+    }
+
+
+
 
     // If a limit was provided, use that, else retrieve the entire ranking list
     private Pageable getPageRequest(Integer limit) {

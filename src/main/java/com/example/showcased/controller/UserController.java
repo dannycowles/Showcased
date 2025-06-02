@@ -1,6 +1,7 @@
 package com.example.showcased.controller;
 
 import com.example.showcased.dto.*;
+import com.example.showcased.entity.SocialPlatform;
 import com.example.showcased.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -106,6 +107,13 @@ public class UserController {
     public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId, HttpSession session) {
         userService.unfollowUser(unfollowId, session);
         return ResponseEntity.noContent().build();
+    }
+
+    // todo - not entirely sure where is best to have this endpoint
+    @GetMapping("/all-socials")
+    public ResponseEntity<List<SocialPlatform>> getAllSocials() {
+        List<SocialPlatform> socials = userService.getAllSocials();
+        return ResponseEntity.ok(socials);
     }
 
 

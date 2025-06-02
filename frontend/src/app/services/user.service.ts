@@ -9,6 +9,7 @@ import {SeasonRankingData} from '../data/lists/season-ranking-data';
 import {CharacterRankingsData} from '../data/character-rankings-data';
 import {CollectionData} from '../data/collection-data';
 import {SingleCollectionData} from '../data/single-collection-data';
+import {SocialPlatformData} from '../data/social-platform-data';
 
 @Injectable({
   providedIn: 'root'
@@ -307,4 +308,19 @@ export class UserService {
     }
   }
 
+  /**
+   * Retrieves all possible social platforms
+   */
+  async getAllSocialPlatforms(): Promise<SocialPlatformData[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/all-socials`);
+
+      const data = await response.json();
+      return data.map((platform: {}) => {
+        return new SocialPlatformData(platform);
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }

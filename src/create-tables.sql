@@ -155,6 +155,7 @@ CREATE TABLE liked_collections (
 CREATE TABLE social_platforms (
     id INT AUTO_INCREMENT,
     name TEXT NOT NULL,
+    url TEXT NOT NULL,
     PRIMARY KEY (id)
 );
 

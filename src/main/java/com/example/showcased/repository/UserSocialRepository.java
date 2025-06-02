@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface UserSocialRepository extends JpaRepository<UserSocial, UserSocialId> {
-    @Query("SELECT new com.example.showcased.dto.SocialAccountReturnDto(u.id.socialId, s.name, u.handle) " +
+    @Query("SELECT new com.example.showcased.dto.SocialAccountReturnDto(u.id.socialId, s.name, u.handle, null) " +
             "FROM UserSocial u JOIN SocialPlatform s ON u.id.socialId = s.id " +
             "WHERE u.id.userId = :userId")
     List<SocialAccountReturnDto> findByIdUserId(@Param("userId") Long userId);
