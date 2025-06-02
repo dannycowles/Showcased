@@ -69,6 +69,47 @@ export class ProfileService {
   }
 
   /**
+   * Adds a new social account, if user already has a social account for
+   * the given social page it will overwrite it
+   * @param data
+   */
+  async addSocialAccount(data: {}): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/socials`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Removes a social account by the id type of the social page
+   * @param socialId
+   */
+  async removeSocialAccount(socialId: number): Promise<Response> {
+    try {
+      const response = await fetch(`${this.baseUrl}/socials/${socialId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      this.checkUnauthorizedUser(response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Uploads a profile picture for the logged-in user
    * @param formData
    */

@@ -6,6 +6,7 @@ import {ShowRankingData} from './lists/show-ranking-data'
 import {EpisodeRankingData} from './lists/episode-ranking-data'
 import {SeasonRankingData} from './lists/season-ranking-data'
 import {CharacterRankingData} from './lists/character-ranking-data';
+import {UserSocialData} from './user-social-data';
 
 export class ProfileData {
   readonly username: string
@@ -28,6 +29,7 @@ export class ProfileData {
   readonly protagonistRankingTop: CharacterRankingData[]
   readonly deuteragonistRankingTop: CharacterRankingData[]
   readonly antagonistRankingTop: CharacterRankingData[]
+  socials: UserSocialData[];
 
   constructor(jsonObject: { [key : string]: any }) {
     this.username = jsonObject['username']
@@ -75,6 +77,10 @@ export class ProfileData {
     })
     this.antagonistRankingTop = jsonObject['characterRankings']['antagonists'].map(( antagonist: {} ) => {
       return new CharacterRankingData(antagonist)
+    })
+
+    this.socials = jsonObject['socialAccounts'].map(( socialAccount: {} ) => {
+      return new UserSocialData(socialAccount)
     })
   }
 }

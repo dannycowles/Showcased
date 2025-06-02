@@ -16,6 +16,12 @@
     </div>
     <pre class="fs-3">{{profileData.bio}}</pre>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bioModal">Edit Bio</button>
+    <button class="btn btn-secondary mt-3 mb-3" data-bs-toggle="modal" data-bs-target="#socialModal">Edit Social Accounts</button>
+    @for (social of profileData.socials; track social.socialId) {
+      <div>
+        {{social.socialName}} - {{social.handle}}
+      </div>
+    }
   </div>
 
   <div class="modal fade" id="bioModal" aria-labelledby="bioModalLabel" aria-hidden="true">
@@ -37,6 +43,29 @@
         <div class="modal-footer">
           <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button class="btn btn-primary" (click)="updateBio()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="socialModal" aria-labelledby="socialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="socialModalLabel">Edit Social Accounts</h1>
+          <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          @for (social of profileData.socials; track social.socialId) {
+            <div>
+              {{social.socialName}} - {{social.handle}}
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
