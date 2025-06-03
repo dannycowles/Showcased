@@ -7,6 +7,7 @@ import {EpisodeRankingData} from './lists/episode-ranking-data'
 import {SeasonRankingData} from './lists/season-ranking-data'
 import {CharacterRankingData} from './lists/character-ranking-data';
 import {UserSocialData} from './user-social-data';
+import {UserHeaderData} from './user-header-data';
 
 export class ProfileData {
   readonly username: string
@@ -82,5 +83,18 @@ export class ProfileData {
     this.socials = jsonObject['socialAccounts'].map(( socialAccount: {} ) => {
       return new UserSocialData(socialAccount)
     })
+  }
+
+  get userHeaderData(): UserHeaderData {
+    return {
+      username: this.username,
+      profilePicture: this.profilePicture,
+      bio: this.bio,
+      numFollowers: this.numFollowers,
+      numFollowing: this.numFollowing,
+      socials: this.socials,
+      isFollowing: this.isFollowing,
+      isOwnProfile: this.isOwnProfile
+    };
   }
 }

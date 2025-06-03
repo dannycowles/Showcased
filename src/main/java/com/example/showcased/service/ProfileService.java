@@ -105,6 +105,7 @@ public class ProfileService {
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
         profileDetails.setSocialAccounts(retrieveSocialAccounts(session));
+        profileDetails.setOwnProfile(true);
         return profileDetails;
     }
 

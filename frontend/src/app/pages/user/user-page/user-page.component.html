@@ -1,28 +1,5 @@
 @if (userDetails) {
-  <div class="d-flex flex-column align-items-center mt-5">
-    <h3 class="mb-3">{{userDetails.username}}</h3>
-    <img class="mb-3 rounded-circle object-fit-cover" id="profile-picture" [ngSrc]="userDetails.profilePicture" alt="Profile Picture" width="500" height="500" priority>
-
-    @if (!userDetails.isOwnProfile) {
-      @if (userDetails.isFollowing) {
-        <button class="btn btn-outline-danger" (click)="unfollowUser()">Unfollow</button>
-      } @else {
-        <button class="btn btn-outline-success" (click)="followUser()">Follow</button>
-      }
-    }
-
-    <div class="d-flex m-3 gap-5">
-      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" routerLink="followers">
-        <h3>{{userDetails.numFollowers}}</h3>
-        <h4>Followers</h4>
-      </a>
-      <a class="d-flex flex-column align-items-center text-decoration-none text-dark" routerLink="following">
-        <h3>{{userDetails.numFollowing}}</h3>
-        <h4>Following</h4>
-      </a>
-    </div>
-    <pre class="fs-3">{{userDetails.bio}}</pre>
-  </div>
+  <app-user-info [headerData]="headerData" [editable]="false" [userId]="userId"></app-user-info>
 
   <br>
   <br>

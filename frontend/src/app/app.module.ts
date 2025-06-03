@@ -59,6 +59,7 @@ import {
 } from './pages/user/user-collection-details-page/user-collection-details-page.component';
 import {AddShowModalComponent} from "./components/add-show-modal/add-show-modal.component";
 import {FollowersFollowingComponent} from "./components/followers-following/followers-following.component";
+import {UserInfoComponent} from './components/user-info/user-info.component';
 
 @NgModule({
   declarations: [
@@ -98,21 +99,22 @@ import {FollowersFollowingComponent} from "./components/followers-following/foll
     UserCollectionsPageComponent,
     UserCollectionDetailsPageComponent
   ],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        RouterModule,
-        AppRoutingModule,
-        NgOptimizedImage,
-        AngularToastifyModule,
-        DragDropModule,
-        NgOtpInputModule,
-        ReactiveFormsModule,
-        BrowserAnimationsModule,
-        ButtonHeartComponent,
-        AddShowModalComponent,
-        FollowersFollowingComponent
-    ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    RouterModule,
+    AppRoutingModule,
+    NgOptimizedImage,
+    AngularToastifyModule,
+    DragDropModule,
+    NgOtpInputModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    ButtonHeartComponent,
+    AddShowModalComponent,
+    FollowersFollowingComponent,
+    UserInfoComponent
+  ],
   providers: [ToastService],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
