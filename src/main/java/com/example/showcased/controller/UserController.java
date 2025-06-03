@@ -109,13 +109,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    // todo - not entirely sure where is best to have this endpoint
-    @GetMapping("/all-socials")
-    public ResponseEntity<List<SocialPlatform>> getAllSocials() {
-        List<SocialPlatform> socials = userService.getAllSocials();
-        return ResponseEntity.ok(socials);
-    }
-
 
 
     // ========== COLLECTIONS ==========

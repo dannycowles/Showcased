@@ -175,17 +175,7 @@ public class ProfileService {
 
     private List<SocialAccountReturnDto> retrieveSocialAccounts(HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-
-        List<SocialAccountReturnDto> socials = userSocialRepository.findByIdUserId(userId);
-        for (SocialAccountReturnDto socialAccount : socials) {
-            Optional<SocialPlatform> platform = socialPlatformRepository.findById(socialAccount.getSocialId());
-            if (platform.isPresent()) {
-                SocialPlatform p = platform.get();
-                socialAccount.setUrl(p.getUrl().replace("{handle}", socialAccount.getHandle()));
-            }
-        }
-
-        return socials;
+        return userSocialRepository.findByIdUserId(userId);
     }
 
 

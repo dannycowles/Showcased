@@ -33,7 +33,7 @@ public class UserService {
     private final CollectionRepository collectionsRepository;
     private final ShowsInCollectionRepository showsInCollectionRepository;
     private final LikedCollectionsRepository likedCollectionsRepository;
-    private final SocialPlatformRepository socialPlatformRepository;
+    private final UserSocialRepository userSocialRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -48,7 +48,7 @@ public class UserService {
                        CollectionRepository collectionsRepository,
                        ShowsInCollectionRepository showsInCollectionRepository,
                        LikedCollectionsRepository likedCollectionsRepository,
-                       SocialPlatformRepository socialPlatformRepository) {
+                       UserSocialRepository userSocialRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -62,7 +62,7 @@ public class UserService {
         this.collectionsRepository = collectionsRepository;
         this.showsInCollectionRepository = showsInCollectionRepository;
         this.likedCollectionsRepository = likedCollectionsRepository;
-        this.socialPlatformRepository = socialPlatformRepository;
+        this.userSocialRepository = userSocialRepository;
     }
 
     public void ensureUserExists(Long userId) {
@@ -114,6 +114,7 @@ public class UserService {
         userDetails.setNumFollowers(getFollowersCount(userId));
         userDetails.setNumFollowing(getFollowingCount(userId));
         userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
+        userDetails.setSocialAccounts(retrieveSocialAccounts(userId));
 
         // Check if the user is logged in, if so we check they are following this user
         Long loggedInUserId = (Long) session.getAttribute("user");
@@ -124,8 +125,9 @@ public class UserService {
         return userDetails;
     }
 
-    public List<SocialPlatform> getAllSocials() {
-        return socialPlatformRepository.findAll();
+    private List<SocialAccountReturnDto> retrieveSocialAccounts(Long userId) {
+        ensureUserExists(userId);
+        return userSocialRepository.findByIdUserId(userId);
     }
 
 
