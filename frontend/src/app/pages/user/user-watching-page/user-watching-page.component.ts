@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {WatchingData} from '../../../data/lists/watching-data';
 import {UserService} from '../../../services/user.service';
+import {ShowListData} from '../../../data/lists/show-list-data';
 
 @Component({
   selector: 'app-user-watching-page',
@@ -11,7 +11,7 @@ import {UserService} from '../../../services/user.service';
 })
 export class UserWatchingPageComponent implements OnInit {
   readonly userId: number;
-  watchingEntries: WatchingData[];
+  watchingEntries: ShowListData[];
 
   constructor(private route: ActivatedRoute,
               private userService: UserService) {

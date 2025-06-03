@@ -1,21 +1,20 @@
 import {ReviewData} from './review-data'
 import {UtilsService} from '../services/utils.service'
-import {WatchlistData} from './lists/watchlist-data'
-import {WatchingData} from './lists/watching-data'
 import {ShowRankingData} from './lists/show-ranking-data'
 import {EpisodeRankingData} from './lists/episode-ranking-data'
 import {SeasonRankingData} from './lists/season-ranking-data'
 import {CharacterRankingData} from './lists/character-ranking-data';
 import {UserSocialData} from './user-social-data';
 import {UserHeaderData} from './user-header-data';
+import {ShowListData} from './lists/show-list-data';
 
 export class ProfileData {
   readonly username: string
   profilePicture: string
   bio: string
-  readonly watchlistTop: WatchlistData[]
+  readonly watchlistTop: ShowListData[]
   readonly moreWatchlist: boolean
-  readonly watchingTop: WatchingData[]
+  readonly watchingTop: ShowListData[]
   readonly moreWatching: boolean
   readonly showRankingTop: ShowRankingData[]
   readonly moreShowRanking: boolean
@@ -38,12 +37,12 @@ export class ProfileData {
     this.bio = jsonObject['bio']
 
     this.watchlistTop = jsonObject['watchlistTop'].map(( show: {} ) => {
-      return new WatchlistData(show)
+      return new ShowListData(show)
     })
     this.moreWatchlist = jsonObject['moreWatchlist']
 
     this.watchingTop = jsonObject['watchingTop'].map(( show: {} ) => {
-      return new WatchingData(show)
+      return new ShowListData(show)
     })
     this.moreWatching = jsonObject['moreWatching']
 

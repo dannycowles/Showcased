@@ -1,4 +1,4 @@
-export class WatchingData {
+export class ShowListData {
   readonly showId: number;
   readonly title: string;
   readonly posterPath: string;

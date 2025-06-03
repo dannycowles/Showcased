@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
-import {WatchingData} from '../../../data/lists/watching-data';
+import {ShowListData} from '../../../data/lists/show-list-data';
 import {SearchResultData} from '../../../data/search-result-data';
 
 @Component({
@@ -10,7 +10,7 @@ import {SearchResultData} from '../../../data/search-result-data';
   standalone: false
 })
 export class ProfileWatchingPageComponent implements OnInit {
-  watchingEntries: WatchingData[];
+  watchingEntries: ShowListData[];
   modalMessage: string;
   modalColor: string;
 
@@ -60,7 +60,7 @@ export class ProfileWatchingPageComponent implements OnInit {
       if (response.ok) {
         this.modalMessage = "Successfully added!";
         this.modalColor = "green";
-        this.watchingEntries.push(new WatchingData(data));
+        this.watchingEntries.push(new ShowListData(data));
       } else if (response.status === 409) {
         this.modalMessage = "You already have this show on your watching list.";
         this.modalColor = "red";

@@ -1,42 +1,11 @@
 @if (profileData) {
   <app-user-info [headerData]="headerData"></app-user-info>
 
-  <br>
-  <br>
-  <h3>Watchlist</h3>
-  @if (profileData.watchlistTop.length != 0) {
-    @for (show of profileData.watchlistTop; track show.showId) {
-      <h5>{{show.title}}</h5>
+  <app-show-list title="Watchlist" [shows]="profileData.watchlistTop"></app-show-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="watchlist">Manage Watchlist</button>
 
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-    }
-    <br>
-    <br>
-    <button routerLink="/profile/watchlist">Manage Watchlist</button>
-    <br>
-    <br>
-
-  } @else {
-    <p>Nothing on watchlist yet!</p>
-  }
-
-  <h3>Currently Watching</h3>
-  @if (profileData.watchingTop.length != 0) {
-    @for (show of profileData.watchingTop; track show.showId) {
-      <h5>{{show.title}}</h5>
-
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-    }
-    <br>
-    <br>
-    <button routerLink="/profile/watching">Manage Currently Watching</button>
-    <br>
-    <br>
-  } @else {
-    <p>Not watching anything!</p>
-  }
+  <app-show-list title="Currently Watching" [shows]="profileData.watchingTop"></app-show-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="watching">Manage Currently Watching</button>
 
   <h3>Favorite Shows</h3>
   @if (profileData.showRankingTop.length != 0) {

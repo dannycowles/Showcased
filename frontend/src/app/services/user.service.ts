@@ -1,14 +1,13 @@
 import {Injectable} from '@angular/core';
 import {UserSearchData} from '../data/user-search-data';
 import {ProfileData} from '../data/profile-data';
-import {WatchlistData} from '../data/lists/watchlist-data';
-import {WatchingData} from '../data/lists/watching-data';
 import {ShowRankingData} from '../data/lists/show-ranking-data';
 import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
 import {SeasonRankingData} from '../data/lists/season-ranking-data';
 import {CharacterRankingsData} from '../data/character-rankings-data';
 import {CollectionData} from '../data/collection-data';
 import {SingleCollectionData} from '../data/single-collection-data';
+import {ShowListData} from '../data/lists/show-list-data';
 
 @Injectable({
   providedIn: 'root'
@@ -61,13 +60,13 @@ export class UserService {
    * Retrieves the full watchlist for the user with the specified id
    * @param id
    */
-  async getFullWatchlist(id: number): Promise<WatchlistData[]> {
+  async getFullWatchlist(id: number): Promise<ShowListData[]> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}/watchlist`);
 
       const data = await response.json();
       return data.map((show: {}) => {
-        return new WatchlistData(show);
+        return new ShowListData(show);
       });
     } catch(error) {
       throw error;
@@ -78,13 +77,13 @@ export class UserService {
    * Retrieves the full watching list for the user with the specified id
    * @param id
    */
-  async getFullWatchingList(id:number): Promise<WatchingData[]> {
+  async getFullWatchingList(id:number): Promise<ShowListData[]> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}/currently-watching`);
 
       const data = await response.json();
       return data.map((show: {}) => {
-        return new WatchingData(show);
+        return new ShowListData(show);
       });
     } catch(error) {
       throw error;

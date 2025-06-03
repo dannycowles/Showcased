@@ -60,6 +60,7 @@ import {
 import {AddShowModalComponent} from "./components/add-show-modal/add-show-modal.component";
 import {FollowersFollowingComponent} from "./components/followers-following/followers-following.component";
 import {UserInfoComponent} from './components/user-info/user-info.component';
+import {ShowListComponent} from './components/show-list/show-list.component';
 
 @NgModule({
   declarations: [
@@ -113,7 +114,8 @@ import {UserInfoComponent} from './components/user-info/user-info.component';
     ButtonHeartComponent,
     AddShowModalComponent,
     FollowersFollowingComponent,
-    UserInfoComponent
+    UserInfoComponent,
+    ShowListComponent
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],
