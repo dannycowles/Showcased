@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ProfileData} from '../../../data/profile-data';
 import {ProfileService} from '../../../services/profile.service';
 import {UtilsService} from '../../../services/utils.service';
-import {UserService} from '../../../services/user.service';
+import {UserSocialData} from '../../../data/user-social-data';
 
 @Component({
   selector: 'app-profile-page',
@@ -16,10 +16,10 @@ export class ProfilePageComponent implements OnInit {
   newBio: string;
   readonly bioMaxLength: number = 100;
   bioMessage: string | null = null;
+  debouncedAddSocialAccount: (social: UserSocialData) => void;
 
   constructor(private profileService: ProfileService,
-              public utilsService: UtilsService,
-              private userService: UserService) { }
+              public utilsService: UtilsService) { }
 
   async ngOnInit() {
     // Retrieve profile data from backend
@@ -29,6 +29,10 @@ export class ProfilePageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+
+    this.debouncedAddSocialAccount = this.utilsService.debounce((social: UserSocialData) => {
+      this.addSocialAccount(social);
+    });
   }
 
   async onFileSelected(event: any) {
@@ -75,6 +79,30 @@ export class ProfilePageComponent implements OnInit {
       setTimeout(() => {
         this.bioMessage = "";
       }, 3000);
+    }
+  }
+
+  async removeSocialAccount(social: UserSocialData) {
+    try {
+      const response = await this.profileService.removeSocialAccount(social.socialId);
+
+      if (response.ok) {
+        social.handle = null;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  addSocialAccount(social: UserSocialData) {
+    try {
+      const data = {
+        socialId: social.socialId,
+        handle: social.handle
+      };
+      this.profileService.addSocialAccount(data);
+    } catch (error) {
+      console.error(error);
     }
   }
 }

@@ -65,10 +65,10 @@
             <div>
               <iconify-icon [attr.icon]="social.icon" width="25" height="25"></iconify-icon>
               {{social.socialName}}
-              <input type="text" [value]="social.handle">
+              <input type="text" [(ngModel)]="social.handle" (input)="debouncedAddSocialAccount(social)">
 
               @if (social.handle) {
-                <button class="btn-close"></button>
+                <button class="btn-close" (click)="removeSocialAccount(social)"></button>
               }
             </div>
           }
