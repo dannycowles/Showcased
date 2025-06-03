@@ -156,6 +156,7 @@ CREATE TABLE social_platforms (
     id INT AUTO_INCREMENT,
     name TEXT NOT NULL,
     url TEXT NOT NULL,
+    icon TEXT NOT NULL,
     PRIMARY KEY (id)
 );
 

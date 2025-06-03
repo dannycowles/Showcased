@@ -10,4 +10,5 @@ public class SocialAccountReturnDto {
     private String socialName;
     private String handle;
     private String url;
+    private String icon;
 }

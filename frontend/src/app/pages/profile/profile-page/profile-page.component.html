@@ -18,9 +18,12 @@
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bioModal">Edit Bio</button>
     <button class="btn btn-secondary mt-3 mb-3" data-bs-toggle="modal" data-bs-target="#socialModal">Edit Social Accounts</button>
     @for (social of profileData.socials; track social.socialId) {
-      <div>
-        {{social.socialName}} - <a [href]="social.url" target="_blank">{{social.handle}}</a>
-      </div>
+      @if (social.handle) {
+        <div>
+          <iconify-icon [attr.icon]="social.icon" width="30" height="30"></iconify-icon>
+          {{social.socialName}} - <a [href]="social.url" target="_blank">{{social.handle}}</a>
+        </div>
+      }
     }
   </div>
 
@@ -60,7 +63,13 @@
         <div class="modal-body">
           @for (social of profileData.socials; track social.socialId) {
             <div>
-              {{social.socialName}} - {{social.handle}}
+              <iconify-icon [attr.icon]="social.icon" width="25" height="25"></iconify-icon>
+              {{social.socialName}}
+              <input type="text" [value]="social.handle">
+
+              @if (social.handle) {
+                <button class="btn-close"></button>
+              }
             </div>
           }
         </div>

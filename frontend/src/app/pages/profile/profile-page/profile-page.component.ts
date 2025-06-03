@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {ProfileData} from '../../../data/profile-data';
 import {ProfileService} from '../../../services/profile.service';
 import {UtilsService} from '../../../services/utils.service';
-import {SocialPlatformData} from '../../../data/social-platform-data';
 import {UserService} from '../../../services/user.service';
 
 @Component({
@@ -17,7 +16,6 @@ export class ProfilePageComponent implements OnInit {
   newBio: string;
   readonly bioMaxLength: number = 100;
   bioMessage: string | null = null;
-  socialPlatforms: SocialPlatformData[];
 
   constructor(private profileService: ProfileService,
               public utilsService: UtilsService,
@@ -27,7 +25,6 @@ export class ProfilePageComponent implements OnInit {
     // Retrieve profile data from backend
     try {
       this.profileData = await this.profileService.getProfileDetails();
-      this.socialPlatforms = await this.userService.getAllSocialPlatforms();
       this.newBio = this.profileData.bio;
     } catch (error) {
       console.error(error);

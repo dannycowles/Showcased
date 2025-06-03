@@ -23,6 +23,7 @@
     "angular-toastify": "^2.0.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "iconify-icon": "^3.0.0",
     "jquery": "^3.7.1",
     "jquery-serializejson": "^3.2.1",
     "ng-otp-input": "^2.0.7",
