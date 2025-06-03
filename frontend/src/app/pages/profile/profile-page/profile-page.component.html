@@ -21,7 +21,7 @@
       @if (social.handle) {
         <div>
           <iconify-icon [attr.icon]="social.icon" width="30" height="30"></iconify-icon>
-          {{social.socialName}} - <a [href]="social.url" target="_blank">{{social.handle}}</a>
+          {{social.socialName}} - <a [href]="social.url.replace('{handle}', social.handle)" target="_blank">{{social.handle}}</a>
         </div>
       }
     }
