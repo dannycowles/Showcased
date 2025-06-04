@@ -25,17 +25,10 @@
   <app-character-list title="Favorite Antagonists" [characters]="profileData.antagonistRankingTop"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">Manage Favorite Antagonists</button>
 
-  <h3>Reviews</h3>
+  <h3>Show Reviews</h3>
   @if (profileData.reviews.length != 0) {
     @for (review of profileData.reviews; track review.id) {
-      <h4>Date: {{utilsService.getFormattedDate(review.reviewDate)}}</h4>
-      <h4>Relative Time Since Review: {{review.relativeDate}}</h4>
-      <h4>Show: {{review.showTitle}}</h4>
-      <h4>Rating: {{review.rating}}</h4>
-      <h4>Commentary: {{review.commentary}}</h4>
-      <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
-      <h4>Likes: {{review.likes}}</h4>
-      <br>
+      <app-profile-show-review [review]="review"></app-profile-show-review>
     }
   } @else {
     <p>No reviews yet!</p>

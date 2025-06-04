@@ -1,0 +1,17 @@
+<div class="mb-3 d-flex align-items-start justify-content-between">
+  <div>
+    <h4>{{review.relativeDate}}</h4>
+    <h4>Commentary: {{review.commentary}}</h4>
+  </div>
+  <div>
+    <h4>{{review.showTitle}}</h4>
+    <h4>{{review.rating}}/10</h4>
+  </div>
+  <div class="d-flex align-items-center">
+    <yt-button-heart [isLiked]="review.likedByUser" [size]="100" (click)="toggleLikeState(review)"></yt-button-heart>
+    <div class="fs-4" id="like-count">{{review.likes}}</div>
+  </div>
+</div>
+
+<!-- TODO: work on profile/user reviews, the method doesn't set the likedByUser like the show service does -->
+
