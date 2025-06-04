@@ -1,8 +1,11 @@
 <h3>{{ title }}</h3>
 @if (shows.length != 0) {
   <div class="d-flex gap-5">
-    @for (show of shows; track show.showId) {
-      <div >
+    @for (show of shows; track show.showId; let rank = $index) {
+      @if (ranked) {
+        <h2 class="align-self-center fw-bold">{{rank + 1}}</h2>
+      }
+      <div>
         <h5>{{show.title}}</h5>
         <!-- Poster images are sized w185, using 2:3 ratio -->
         <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>

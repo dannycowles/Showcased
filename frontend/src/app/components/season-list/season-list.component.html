@@ -1,0 +1,17 @@
+<h3>Favorite Seasons</h3>
+@if (seasons.length != 0) {
+  <div class="d-flex gap-5">
+    @for (season of seasons; track season.id) {
+      <h2 class="align-self-center fw-bold">{{season.rankNum}}</h2>
+      <div>
+        <h5>{{season.showTitle}} Season {{season.season}}</h5>
+        <!-- Poster images are sized w185, using 2:3 ratio -->
+        <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Season Poster" width="185" height="278" priority></a>
+      </div>
+    }
+  </div>
+} @else {
+  <p>Nothing ranked yet!</p>
+}
+
+

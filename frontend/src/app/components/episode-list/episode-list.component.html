@@ -1,0 +1,16 @@
+<h3>Favorite Episodes</h3>
+@if (episodes.length != 0) {
+  <div class="d-flex gap-5">
+    @for (episode of episodes; track episode.showId) {
+      <h2 class="align-self-center fw-bold">{{episode.rankNum}}</h2>
+      <div>
+        <h5>{{episode.episodeTitle}}</h5>
+        <h5>{{episode.showTitle}} : S{{episode.season}} E{{episode.episode}}</h5>
+        <!-- Episode stills are sized w185, with a 16:9 ratio -->
+        <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
+      </div>
+    }
+  </div>
+} @else {
+  <p>Nothing ranked yet!</p>
+}

@@ -61,6 +61,8 @@ import {AddShowModalComponent} from "./components/add-show-modal/add-show-modal.
 import {FollowersFollowingComponent} from "./components/followers-following/followers-following.component";
 import {UserInfoComponent} from './components/user-info/user-info.component';
 import {ShowListComponent} from './components/show-list/show-list.component';
+import {SeasonListComponent} from './components/season-list/season-list.component';
+import {EpisodeListComponent} from './components/episode-list/episode-list.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +117,9 @@ import {ShowListComponent} from './components/show-list/show-list.component';
     AddShowModalComponent,
     FollowersFollowingComponent,
     UserInfoComponent,
-    ShowListComponent
+    ShowListComponent,
+    SeasonListComponent,
+    EpisodeListComponent
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],

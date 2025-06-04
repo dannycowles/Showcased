@@ -3,77 +3,25 @@
 
   <app-show-list title="Watchlist" [shows]="userDetails.watchlistTop"></app-show-list>
   @if (userDetails.moreWatchlist) {
-    <button [routerLink]="['/user', userId, 'watchlist']">View Full List</button>
+    <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'watchlist']">View Full List</button>
   }
 
   <app-show-list title="Currently Watching" [shows]="userDetails.watchingTop"></app-show-list>
   @if (userDetails.moreWatching) {
-    <button [routerLink]="['/user', userId, 'watching']">View Full List</button>
+    <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'watching']">View Full List</button>
   }
 
-  <h3>Favorite Shows</h3>
-  @if (userDetails.showRankingTop.length != 0) {
-    @for (show of userDetails.showRankingTop; track show.showId) {
-      <h5>{{show.rankNum}}</h5>
-      <h5>{{show.title}}</h5>
-
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', show.showId]" ><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-    }
-    <br>
-    <br>
-
-    @if (userDetails.moreShowRanking) {
-      <button [routerLink]="['/user', userId, 'show-ranking']">View Full List</button>
-    }
-
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
+  <app-show-list title="Favorite Shows" [shows]="userDetails.showRankingTop" ranked></app-show-list>
+  @if (userDetails.moreShowRanking) {
+    <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'show-ranking']">View Full List</button>
   }
 
-  <h3>Favorite Seasons</h3>
-  @if (userDetails.seasonRankingTop.length != 0) {
-    @for (season of userDetails.seasonRankingTop; track season.id) {
-      <h5>{{season.rankNum}}</h5>
-      <h5>{{season.showTitle}} Season {{season.season}}</h5>
+  <app-season-list [seasons]="userDetails.seasonRankingTop"></app-season-list>
+  <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'season-ranking']">View Full List</button>
 
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Season Poster" width="185" height="278" priority></a>
-    }
-
-    <br>
-    <br>
-    <button [routerLink]="['/user', userId, 'season-ranking']">View Full List</button>
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
-
-  <h3>Favorite Episodes</h3>
-  @if (userDetails.episodeRankingTop.length != 0) {
-    @for (episode of userDetails.episodeRankingTop; track episode.showId) {
-      <h5>{{episode.rankNum}}</h5>
-      <h5>Show: {{episode.showTitle}}</h5>
-      <h5>Episode: {{episode.episodeTitle}}</h5>
-      <h5>S{{episode.season}} E{{episode.episode}}</h5>
-
-      <!-- Episode stills are sized w185, with a 16:9 ratio -->
-      <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
-    }
-    <br>
-    <br>
-
-    @if (userDetails.moreEpisodeRanking) {
-      <button [routerLink]="['/user', userId, 'episode-ranking']">View Full List</button>
-    }
-
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
+  <app-episode-list [episodes]="userDetails.episodeRankingTop"></app-episode-list>
+  @if (userDetails.moreEpisodeRanking) {
+    <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'episode-ranking']">View Full List</button>
   }
 
   <h3>Favorite Protagonists</h3>
