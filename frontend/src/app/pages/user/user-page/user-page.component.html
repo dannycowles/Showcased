@@ -3,65 +3,35 @@
 
   <app-show-list title="Watchlist" [shows]="userDetails.watchlistTop"></app-show-list>
   @if (userDetails.moreWatchlist) {
-    <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'watchlist']">View Full List</button>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="watchlist">View Full List</button>
   }
 
   <app-show-list title="Currently Watching" [shows]="userDetails.watchingTop"></app-show-list>
   @if (userDetails.moreWatching) {
-    <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'watching']">View Full List</button>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="watching">View Full List</button>
   }
 
   <app-show-list title="Favorite Shows" [shows]="userDetails.showRankingTop" ranked></app-show-list>
   @if (userDetails.moreShowRanking) {
-    <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'show-ranking']">View Full List</button>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="show-ranking">View Full List</button>
   }
 
   <app-season-list [seasons]="userDetails.seasonRankingTop"></app-season-list>
-  <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'season-ranking']">View Full List</button>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="season-ranking">View Full List</button>
 
   <app-episode-list [episodes]="userDetails.episodeRankingTop"></app-episode-list>
   @if (userDetails.moreEpisodeRanking) {
-    <button class="btn btn-primary mt-3 mb-3" [routerLink]="['/user', userId, 'episode-ranking']">View Full List</button>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="episode-ranking">View Full List</button>
   }
 
-  <h3>Favorite Protagonists</h3>
-  @if (userDetails.protagonistRankingTop.length != 0) {
-    @for (character of userDetails.protagonistRankingTop; track character.name) {
-      <h5>{{character.rankNum}}</h5>
-      <h5>{{character.name}} - {{character.show}}</h5>
-    }
-    <button routerLink="character-ranking/protagonists">View Full List</button>
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
+  <app-character-list title="Favorite Protagonists" [characters]="userDetails.protagonistRankingTop"></app-character-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/protagonists">View Full List</button>
 
-  <h3>Favorite Deuteragonists</h3>
-  @if (userDetails.deuteragonistRankingTop.length != 0) {
-    @for (character of userDetails.deuteragonistRankingTop; track character.name) {
-      <h5>{{character.rankNum}}</h5>
-      <h5>{{character.name}} - {{character.show}}</h5>
-    }
-    <button routerLink="character-ranking/deuteragonists">View Full List</button>
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
+  <app-character-list title="Favorite Deuteragonists" [characters]="userDetails.deuteragonistRankingTop"></app-character-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/deuteragonists">View Full List</button>
 
-  <h3>Favorite Antagonists</h3>
-  @if (userDetails.antagonistRankingTop.length != 0) {
-    @for (character of userDetails.antagonistRankingTop; track character.name) {
-      <h5>{{character.rankNum}}</h5>
-      <h5>{{character.name}} - {{character.show}}</h5>
-    }
-    <button routerLink="character-ranking/antagonists">View Full List</button>
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
+  <app-character-list title="Favorite Antagonists" [characters]="userDetails.antagonistRankingTop"></app-character-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">View Full List</button>
 
   <h3>Reviews</h3>
   @if (userDetails.reviews.length != 0) {
@@ -78,5 +48,4 @@
   } @else {
     <p>No reviews yet!</p>
   }
-
 }

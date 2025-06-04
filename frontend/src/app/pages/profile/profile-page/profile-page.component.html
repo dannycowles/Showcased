@@ -16,44 +16,14 @@
   <app-episode-list [episodes]="profileData.episodeRankingTop"></app-episode-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="episode-ranking">Manage Favorite Episodes</button>
 
-  <h3>Favorite Protagonists</h3>
-  @if (profileData.protagonistRankingTop.length != 0) {
-    @for (character of profileData.protagonistRankingTop; track character.name) {
-      <h5>{{character.rankNum}}</h5>
-      <h5>{{character.name}} - {{character.show}}</h5>
-    }
-    <button routerLink="character-ranking/protagonists">Manage Favorite Protagonists</button>
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
+  <app-character-list title="Favorite Protagonists" [characters]="profileData.protagonistRankingTop"></app-character-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/protagonists">Manage Favorite Protagonists</button>
 
-  <h3>Favorite Deuteragonists</h3>
-  @if (profileData.deuteragonistRankingTop.length != 0) {
-    @for (character of profileData.deuteragonistRankingTop; track character.name) {
-      <h5>{{character.rankNum}}</h5>
-      <h5>{{character.name}} - {{character.show}}</h5>
-    }
-    <button routerLink="character-ranking/deuteragonists">Manage Favorite Deuteragonists</button>
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
+  <app-character-list title="Favorite Deuteragonists" [characters]="profileData.deuteragonistRankingTop"></app-character-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/deuteragonists">Manage Favorite Deuteragonists</button>
 
-  <h3>Favorite Antagonists</h3>
-  @if (profileData.antagonistRankingTop.length != 0) {
-    @for (character of profileData.antagonistRankingTop; track character.name) {
-      <h5>{{character.rankNum}}</h5>
-      <h5>{{character.name}} - {{character.show}}</h5>
-    }
-    <button routerLink="character-ranking/antagonists">Manage Favorite Antagonists</button>
-    <br>
-    <br>
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
+  <app-character-list title="Favorite Antagonists" [characters]="profileData.antagonistRankingTop"></app-character-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">Manage Favorite Antagonists</button>
 
   <h3>Reviews</h3>
   @if (profileData.reviews.length != 0) {
@@ -70,6 +40,5 @@
   } @else {
     <p>No reviews yet!</p>
   }
-
 }
 
