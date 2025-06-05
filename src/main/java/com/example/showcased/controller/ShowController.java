@@ -58,6 +58,12 @@ public class ShowController {
         return ResponseEntity.ok(episode);
     }
 
+    @GetMapping("/{id}/characters")
+    public ResponseEntity<List<RoleDto>> getShowCharacters(@PathVariable String id, @RequestParam(required = false) String name) {
+        List<RoleDto> characters = showService.getCharacters(id, name);
+        return ResponseEntity.ok(characters);
+    }
+
 
     // ========== REVIEWS ==========
 

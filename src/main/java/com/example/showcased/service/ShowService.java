@@ -6,6 +6,8 @@ import com.example.showcased.exception.AlreadyLikedException;
 import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -204,6 +206,32 @@ public class ShowService {
         show.setBuyOptions(buyOptions);
 
         return show;
+    }
+
+    public List<RoleDto> getCharacters(String id, String name) {
+        // Make request to TMDB aggregate credits endpoint
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv")
+                .pathSegment(id, "aggregate_credits")
+                .toUriString();
+
+        List<RoleDto> roles = tmdbClient.get(url, CastWrapperDto.class).getCast().stream()
+                .flatMap(character -> character.getRoles().stream())
+                .toList();
+        List<RoleDto> filteredRoles = roles;
+
+        // If a name/query is provided fuzzy search on that
+        if (name != null && !name.isEmpty()) {
+            List<String> names = roles.stream()
+                    .map(role -> role.getCharacter())
+                    .toList();
+            List<ExtractedResult> results = FuzzySearch.extractAll(name, names, 70);
+            filteredRoles = results.stream()
+                    .map(res -> roles.get(res.getIndex()))
+                    .toList();
+        }
+
+        return filteredRoles;
     }
 
     public NumSeasonsDto getNumberOfSeasons(String showId) {
