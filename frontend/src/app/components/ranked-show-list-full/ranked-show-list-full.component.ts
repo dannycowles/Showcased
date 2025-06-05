@@ -19,7 +19,7 @@ import {ShowRankingData} from '../../data/lists/show-ranking-data';
 export class RankedShowListFullComponent {
   @Input({required : true}) title: string;
   @Input({required : true}) shows: ShowRankingData[];
-  @Input({transform: booleanAttribute}) editable: boolean;
+  @Input({transform: booleanAttribute}) editable: boolean = false;
 
   @Output() update = new EventEmitter<void>();
   @Output() remove = new EventEmitter<number>();

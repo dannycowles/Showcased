@@ -25,5 +25,4 @@ export class UserSeasonRankingPageComponent implements OnInit {
       console.error(error);
     }
   };
-
 }

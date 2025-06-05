@@ -1,19 +1,12 @@
-<button routerLink="/profile">Return to Profile</button>
+<button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
 
 @if (rankingEntries) {
-  <h1>Season Ranking</h1>
-
-  <div cdkDropList class="show-list" (cdkDropListDropped)="drop($event)">
-    @for (season of rankingEntries; track season.id; let rank = $index) {
-      <div class="show-box" cdkDrag>
-        <h5>{{rank + 1}}</h5>
-        <h5>{{season.showTitle}} S{{season.season}}</h5>
-
-        <!-- Poster images are sized w185, using 2:3 ratio -->
-        <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-
-        <button (click)="removeSeasonFromRankingList(season.id)">Remove Season</button>
-      </div>
-    }
-  </div>
+  <app-ranked-season-list-full title="Season Ranking"
+                               [seasons]="rankingEntries"
+                               editable
+                               (update)="updateSeasonRankingList()"
+                               (remove)="removeSeasonFromRankingList($event)"
+  ></app-ranked-season-list-full>
+} @else {
+  <p>You have no seasons on your ranking list yet!</p>
 }

@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ProfileService} from '../../../services/profile.service';
 import {SeasonRankingData} from '../../../data/lists/season-ranking-data';
 
@@ -33,17 +32,7 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
     }
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.rankingEntries, event.previousIndex, event.currentIndex);
-
-    // Update the rank numbers based on the index within the updated list
-    this.rankingEntries.forEach((season, index) => {
-      season.rankNum = index + 1;
-    });
-    this.updatedSeasonRankingList();
-  }
-
-  async updatedSeasonRankingList() {
+  async updateSeasonRankingList() {
     try {
       let updates = this.rankingEntries.map(season => ({
         "id": season.id,

@@ -67,6 +67,7 @@ import {CharacterListComponent} from './components/character-list/character-list
 import {ProfileShowReviewComponent} from './components/profile-show-review/profile-show-review.component';
 import {ShowListFullComponent} from './components/show-list-full/show-list-full.component';
 import {RankedShowListFullComponent} from './components/ranked-show-list-full/ranked-show-list-full.component';
+import {RankedSeasonListFullComponent} from './components/ranked-season-list-full/ranked-season-list-full.component';
 
 @NgModule({
   declarations: [
@@ -127,7 +128,8 @@ import {RankedShowListFullComponent} from './components/ranked-show-list-full/ra
     CharacterListComponent,
     ProfileShowReviewComponent,
     ShowListFullComponent,
-    RankedShowListFullComponent
+    RankedShowListFullComponent,
+    RankedSeasonListFullComponent
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],
