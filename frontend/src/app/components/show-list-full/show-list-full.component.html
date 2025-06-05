@@ -1,0 +1,14 @@
+<h1>{{ title }}</h1>
+
+@for (show of shows; track show.showId) {
+  <h5>{{show.title}}</h5>
+  <!-- Poster images are sized w185, using 2:3 ratio -->
+  <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+
+  @if (editable) {
+    <button class="btn btn-danger" (click)="removeEvent(show.showId)">Remove Show</button>
+    @if (moveTitle) {
+      <button class="btn btn-secondary" (click)="moveEvent(show.showId)">Move Show to {{ moveTitle }}</button>
+    }
+  }
+}

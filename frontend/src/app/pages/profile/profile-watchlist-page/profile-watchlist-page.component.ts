@@ -17,7 +17,6 @@ export class ProfileWatchlistPageComponent implements OnInit {
   constructor(private profileService: ProfileService) { };
 
   async ngOnInit() {
-
     // Retrieve all watchlist entries for profile
     try {
       this.watchlistEntries = await this.profileService.getFullWatchlist();
@@ -73,5 +72,4 @@ export class ProfileWatchlistPageComponent implements OnInit {
       }, 3000);
     }
   }
-
 }

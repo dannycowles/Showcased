@@ -1,16 +1,8 @@
-<button [routerLink]="['../']">Return to User Profile</button>
+<button class="btn btn-primary" [routerLink]="['../']">Return to User Profile</button>
 
 @if (watchingEntries) {
-  <h3>Currently Watching</h3>
-  @if (watchingEntries.length != 0) {
-    @for (show of watchingEntries; track show.showId) {
-      <h5>{{show.title}}</h5>
-
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-    }
-  } @else {
-    <p>Not watching anything!</p>
-  }
+  <app-show-list-full title="Watching" [shows]="watchingEntries"></app-show-list-full>
+} @else {
+  <p>User doesn't have any shows on their watching list yet!</p>
 }
 

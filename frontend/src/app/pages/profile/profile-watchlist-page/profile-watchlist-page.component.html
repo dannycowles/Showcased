@@ -1,10 +1,6 @@
-<button routerLink="/profile">Return to Profile</button>
-
+<button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
 <br>
-<br>
-<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addShowModal">Add Show</button>
-<br>
-<br>
+<button class="btn btn-success mt-3 mb-3" data-bs-toggle="modal" data-bs-target="#addShowModal">Add Show</button>
 
 <app-add-show-modal (addShow)="handleAddShow($event)"
                     title="Add Show to Watchlist"
@@ -13,15 +9,13 @@
 ></app-add-show-modal>
 
 @if (watchlistEntries) {
-  <h1>Watchlist</h1>
-
-  @for (show of watchlistEntries; track show.showId) {
-    <h5>{{show.title}}</h5>
-
-    <!-- Poster images are sized w185, using 2:3 ratio -->
-    <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-
-    <button (click)="removeShowFromWatchlist(show.showId)">Remove Show</button>
-    <button (click)="moveShowToWatchingList(show.showId)">Move Show to Watching</button>
-  }
+  <app-show-list-full title="Watchlist"
+                      [shows]="watchlistEntries"
+                      editable
+                      (remove)="removeShowFromWatchlist($event)"
+                      (move)="moveShowToWatchingList($event)"
+                      moveTitle="Watching"
+  ></app-show-list-full>
+} @else {
+  <p>You don't have any shows on your watchlist yet!</p>
 }

@@ -65,6 +65,7 @@ import {SeasonListComponent} from './components/season-list/season-list.componen
 import {EpisodeListComponent} from './components/episode-list/episode-list.component';
 import {CharacterListComponent} from './components/character-list/character-list.component';
 import {ProfileShowReviewComponent} from './components/profile-show-review/profile-show-review.component';
+import {ShowListFullComponent} from './components/show-list-full/show-list-full.component';
 
 @NgModule({
   declarations: [
@@ -123,7 +124,8 @@ import {ProfileShowReviewComponent} from './components/profile-show-review/profi
     SeasonListComponent,
     EpisodeListComponent,
     CharacterListComponent,
-    ProfileShowReviewComponent
+    ProfileShowReviewComponent,
+    ShowListFullComponent
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],

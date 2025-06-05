@@ -1,16 +1,8 @@
-<button [routerLink]="['../']">Return to User Profile</button>
+<button class="btn btn-primary" [routerLink]="['../']">Return to User Profile</button>
 
 @if (watchlistEntries) {
-  <h3>Watchlist</h3>
-  @if (watchlistEntries.length != 0) {
-    @for (show of watchlistEntries; track show.showId) {
-      <h5>{{show.title}}</h5>
-
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-    }
-  } @else {
-    <p>Nothing on watchlist yet!</p>
-  }
+  <app-show-list-full title="Watchlist" [shows]="watchlistEntries"></app-show-list-full>
+} @else {
+  <p>User has no shows on their watchlist yet!</p>
 }
 
