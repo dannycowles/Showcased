@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ProfileService} from '../../../services/profile.service';
 import {EpisodeRankingData} from '../../../data/lists/episode-ranking-data';
 
@@ -15,7 +14,6 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
   constructor(private profileService: ProfileService) { }
 
   async ngOnInit() {
-
     // Retrieve episode ranking entries for the profile
     try {
       this.rankingEntries = await this.profileService.getFullEpisodeRankingList();
@@ -35,16 +33,6 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
     }
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.rankingEntries, event.previousIndex, event.currentIndex);
-
-    // Update the rank numbers based on the index within the updated list
-    this.rankingEntries.forEach((episode, index) => {
-      episode.rankNum = index + 1;
-    });
-    this.updateEpisodeRankingList();
-  }
-
   async updateEpisodeRankingList() {
     try {
       const updates = this.rankingEntries.map(episode => ({
@@ -56,5 +44,4 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
       console.error(error);
     }
   }
-
 }

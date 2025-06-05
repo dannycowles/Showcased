@@ -31,10 +31,6 @@ export class RankedShowListFullComponent {
     this.shows.forEach((show, index) => {
       show.rankNum = index + 1;
     });
-    this.updateEvent();
-  }
-
-  updateEvent() {
     this.update.emit();
   }
 

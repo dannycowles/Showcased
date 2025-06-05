@@ -1,22 +1,13 @@
-<button routerLink="/profile">Return to Profile</button>
+<button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
 
 @if (rankingEntries) {
-  <h1>Episode Ranking</h1>
-
-  <div cdkDropList class="episode-list" (cdkDropListDropped)="drop($event)">
-    @for (episode of rankingEntries; track episode.showId; let rank = $index) {
-      <div class="episode-box" cdkDrag>
-        <h5>{{rank + 1}}</h5>
-        <h5>Show: {{episode.showTitle}}</h5>
-        <h5>Episode: {{episode.episodeTitle}}</h5>
-        <h5>S{{episode.season}} E{{episode.episode}}</h5>
-
-        <!-- Episode stills are sized w185, with a 16:9 ratio -->
-        <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
-
-        <button (click)="removeEpisodeFromRankingList(episode.id)">Remove Episode</button>
-      </div>
-    }
-  </div>
+ <app-ranked-episode-list-full title="Favorite Episodes"
+                               [episodes]="rankingEntries"
+                               editable
+                               (update)="updateEpisodeRankingList()"
+                               (remove)="removeEpisodeFromRankingList($event)"
+ ></app-ranked-episode-list-full>
+} @else {
+  <p>You have no episodes ranked yet!</p>
 }
 

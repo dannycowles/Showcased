@@ -1,35 +1,34 @@
 import {booleanAttribute, Component, EventEmitter, Input, Output} from '@angular/core';
-import {SeasonRankingData} from '../../data/lists/season-ranking-data';
+import {EpisodeRankingData} from '../../data/lists/episode-ranking-data';
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
 
 @Component({
-  selector: 'app-ranked-season-list-full',
+  selector: 'app-ranked-episode-list-full',
   imports: [
     CdkDropList,
     CdkDrag,
     RouterLink,
     NgOptimizedImage
   ],
-  templateUrl: './ranked-season-list-full.component.html',
-  styleUrl: './ranked-season-list-full.component.css',
-  standalone: true
+  templateUrl: './ranked-episode-list-full.component.html',
+  styleUrl: './ranked-episode-list-full.component.css'
 })
-export class RankedSeasonListFullComponent {
+export class RankedEpisodeListFullComponent {
   @Input({required : true}) title: string;
-  @Input({required : true}) seasons: SeasonRankingData[];
+  @Input({required : true}) episodes: EpisodeRankingData[];
   @Input({transform : booleanAttribute}) editable: boolean = false;
 
   @Output() update = new EventEmitter<void>();
   @Output() remove = new EventEmitter<number>();
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.seasons, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.episodes, event.previousIndex, event.currentIndex);
 
     // Update the rank numbers based on the index within the updated list
-    this.seasons.forEach((season, index) => {
-      season.rankNum = index + 1;
+    this.episodes.forEach((episode, index) => {
+      episode.rankNum = index + 1;
     });
     this.update.emit();
   }

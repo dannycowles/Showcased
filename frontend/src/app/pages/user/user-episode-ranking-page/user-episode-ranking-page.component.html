@@ -1,18 +1,7 @@
-<button [routerLink]="['../']">Return to User Profile</button>
+<button class="btn btn-primary" [routerLink]="['../']">Return to User Profile</button>
 
 @if (rankingEntries) {
-  <h3>Favorite Episodes</h3>
-  @if (rankingEntries.length != 0) {
-    @for (episode of rankingEntries; track episode.showId) {
-      <h5>{{episode.rankNum}}</h5>
-      <h5>Show: {{episode.showTitle}}</h5>
-      <h5>Episode: {{episode.episodeTitle}}</h5>
-      <h5>S{{episode.season}} E{{episode.episode}}</h5>
-
-      <!-- Episode stills are sized w185, with a 16:9 ratio -->
-      <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
-    }
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
+  <app-ranked-episode-list-full title="Favorite Episodes" [episodes]="rankingEntries"></app-ranked-episode-list-full>
+} @else {
+  <p>User has no episodes ranked yet!</p>
 }
