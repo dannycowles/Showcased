@@ -8,6 +8,7 @@ import {TrendingShowsData} from '../data/trending-shows-data';
 import {ShowGenresData} from '../data/show-genres-data';
 import {TopRatedShowsData} from '../data/top-rated-shows-data';
 import {ResultPageData} from '../data/show/result-page-data';
+import {RoleData} from '../data/role-data';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,26 @@ export class ShowService {
       const data = await response.json();
       return new ResultPageData(data);
     } catch(error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Searches for characters by show ID and provided search query
+   * @param showId
+   * @param name
+   */
+  async searchCharacters(showId: number, name ?: string): Promise<RoleData[]> {
+    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const url = `${this.baseUrl}/${showId}/characters${params}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.map((role: {}) => {
+        return new RoleData(role);
+      });
+    } catch (error) {
       throw error;
     }
   }
