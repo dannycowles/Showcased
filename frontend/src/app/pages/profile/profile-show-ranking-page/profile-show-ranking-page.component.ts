@@ -38,16 +38,6 @@ export class ProfileShowRankingPageComponent implements OnInit {
     }
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.rankingEntries, event.previousIndex, event.currentIndex);
-
-    // Update the rank numbers based on the index within the updated list
-    this.rankingEntries.forEach((show, index) => {
-      show.rankNum = index + 1;
-    });
-    this.updateShowRankingList();
-  }
-
   async updateShowRankingList() {
     try {
       let updates = this.rankingEntries.map(show => ({
