@@ -4,6 +4,8 @@ export class CharacterRankingsData {
   protagonists: CharacterRankingData[];
   deuteragonists: CharacterRankingData[];
   antagonists: CharacterRankingData[];
+  tritagonists: CharacterRankingData[];
+  side: CharacterRankingData[];
   [key: string]: CharacterRankingData[];
 
   constructor(jsonObject: {[key: string]: any}) {
@@ -17,6 +19,14 @@ export class CharacterRankingsData {
 
     this.antagonists = jsonObject['antagonists'].map((antagonist: {} ) => {
       return new CharacterRankingData(antagonist);
-    })
+    });
+
+    this.tritagonists = jsonObject['tritagonists'].map((tritagonist: {} ) => {
+      return new CharacterRankingData(tritagonist);
+    });
+
+    this.side = jsonObject['side'].map((side: {} ) => {
+      return new CharacterRankingData(side);
+    });
   }
 }

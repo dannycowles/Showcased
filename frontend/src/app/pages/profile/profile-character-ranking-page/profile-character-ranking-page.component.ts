@@ -4,8 +4,11 @@ import {ProfileService} from '../../../services/profile.service';
 import {CharacterRankingsData} from '../../../data/character-rankings-data';
 import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import $ from 'jquery';
-import 'jquery-serializejson';
+import {UtilsService} from '../../../services/utils.service';
+import {ShowService} from '../../../services/show.service';
+import {TopRatedShowsData} from '../../../data/top-rated-shows-data';
+import {SearchResultData} from '../../../data/search-result-data';
+import {RoleData} from '../../../data/role-data';
 
 @Component({
   selector: 'app-profile-character-ranking-page',
@@ -15,12 +18,25 @@ import 'jquery-serializejson';
 })
 export class ProfileCharacterRankingPageComponent implements OnInit {
   characterRankings: CharacterRankingsData;
-  readonly validCharacterTypes: string[] = ["protagonists", "deuteragonists", "antagonists"];
+  readonly validCharacterTypes: string[] = ["protagonists", "deuteragonists", "antagonists", "tritagonists", "side"];
+  readonly typeTitles: string[] = ["Protagonists", "Deuteragonists", "Antagonists", "Tritagonists", "Side Characters"];
   characterType: string;
+
+  debouncedSearchShows: () => void;
+  searchShowString: string = "";
+  searchShowResults: TopRatedShowsData;
+  selectedShow: SearchResultData;
+
+  debouncedSearchCharacters: () => void;
+  searchCharacterString: string = "";
+  searchCharacterResults: RoleData[];
+  selectedCharacter: RoleData;
 
   constructor(private route: ActivatedRoute,
               private profileService: ProfileService,
-              private router: Router) {
+              private router: Router,
+              public utils: UtilsService,
+              private showService: ShowService) {
     this.route.params.subscribe(params => {
       this.characterType = params['type'];
     });
@@ -39,26 +55,42 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
       console.error(error);
     }
 
-    const characterForm = document.getElementById('character-form') as HTMLFormElement;
-    characterForm.addEventListener('submit', async event => {
-      if (!characterForm.checkValidity()) {
-        characterForm.classList.add('was-validated');
-        event.preventDefault()
-        event.stopPropagation()
-      } else {
-        await this.addCharacterToRankingList();
-        characterForm.classList.remove('was-validated');
-        characterForm.reset();
-      }
+    this.debouncedSearchShows = this.utils.debounce(() => {
+      this.searchShows();
+    });
+    this.debouncedSearchCharacters = this.utils.debounce(() => {
+      this.searchCharacters();
     });
   }
 
-  uppercaseCharacterType(type?: string): string {
+  characterTypeTitle(type?: string): string {
     if (type) {
-      return type.charAt(0).toUpperCase() + type.slice(1);
+      return this.typeTitles[this.validCharacterTypes.indexOf(type)];
     } else {
-      return this.characterType.charAt(0).toUpperCase() + this.characterType.slice(1);
+      return this.typeTitles[this.validCharacterTypes.indexOf(this.characterType)];
     }
+  }
+
+  async searchShows() {
+    try {
+      this.searchShowResults = await this.showService.searchForShows(this.searchShowString);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async searchCharacters() {
+    try {
+      this.searchCharacterResults = await this.showService.searchCharacters(this.selectedShow.id, this.searchCharacterString);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  backButtonPressed() {
+    this.searchCharacterResults = null;
+    this.searchCharacterString = "";
+    this.selectedCharacter = null;
   }
 
   /**
@@ -78,51 +110,54 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     this.updateCharacterRankingList();
   }
 
-  async addCharacterToRankingList() {
-    try {
-      // @ts-ignore
-      const data = $('#character-form').serializeJSON();
-      data["characterType"] = this.characterType.slice(0, -1);
-      const response = await this.profileService.addCharacterToRankingList(data);
-
-      // If the response was successful, update the character list in real time for user
-      if (response.ok) {
-        const newRank = this.characterRankings[this.characterType].length + 1;
-        const newCharacter = new CharacterRankingData(data);
-        newCharacter.rankNum = newRank;
-        this.characterRankings[this.characterType].push(newCharacter);
-      }
-    } catch(error) {
-      console.error(error);
-    }
-  }
-
-  async removeCharacterFromRankingList(name: string) {
-    try {
-      await this.profileService.removeCharacterFromRankingList(this.characterType, name);
-
-      // Remove the character from entries shown to the user
-      this.characterRankings[this.characterType] = this.characterRankings[this.characterType].filter(character => character.name != name);
-    } catch(error) {
-      console.error(error);
-    }
-  }
-
   async updateCharacterRankingList() {
     try {
-      const updates = {
-        characterType: this.characterType.slice(0, -1),
+      const data = {
+        characterType: this.characterType != "side" ? this.characterType.slice(0,this.characterType.length-1) : this.characterType,
         updates: this.characterRankings[this.characterType].map(character => ({
-          characterName: character.name,
-          showName: character.show,
+          id: character.id,
           rankNum: character.rankNum
         }))
-      };
-      await this.profileService.updateCharacterRankingList(updates);
-    } catch(error) {
+      }
+
+      await this.profileService.updateCharacterRankingList(data);
+    } catch (error) {
       console.error(error);
     }
-
   }
 
+  async removeCharacter(removeId: string) {
+    try {
+      const response = await this.profileService.removeCharacterFromRankingList(removeId);
+      if (response.ok) {
+        this.characterRankings[this.characterType] = this.characterRankings[this.characterType].filter(character => character.id !== removeId);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async addCharacter() {
+    try {
+      const data = {
+        id: this.selectedCharacter.id,
+        showId: this.selectedShow.id,
+        name: this.selectedCharacter.characterName,
+        type: this.characterType != "side" ? this.characterType.slice(0,this.characterType.length-1) : this.characterType
+      }
+
+      const response = await this.profileService.addCharacterToRankingList(data);
+      if (response.ok) {
+        const newData = {
+          id: this.selectedCharacter.id,
+          showId: this.selectedShow.id,
+          characterName: this.selectedCharacter.characterName,
+          showName: this.selectedShow.name
+        }
+        this.characterRankings[this.characterType].push(new CharacterRankingData(newData));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

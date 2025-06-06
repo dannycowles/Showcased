@@ -1,11 +1,15 @@
 export class CharacterRankingData {
-  name: string
-  show: string
-  rankNum: number
+  id: string;
+  showId: number;
+  name: string;
+  showName: string;
+  rankNum: number;
 
   constructor(jsonObject: {[key: string]: any}) {
-    this.name = jsonObject['characterName']
-    this.show = jsonObject['showName']
-    this.rankNum = jsonObject['rankNum']
+    this.id = jsonObject['id'];
+    this.showId = jsonObject['showId'];
+    this.name = jsonObject['characterName'];
+    this.showName = jsonObject['showName'];
+    this.rankNum = jsonObject['rankNum'];
   }
 }

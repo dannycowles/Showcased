@@ -1,17 +1,83 @@
 <button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
 
 @if (characterRankings) {
-  <h1>{{uppercaseCharacterType()}} Rankings</h1>
+  <h1>{{characterTypeTitle()}} Rankings</h1>
 
-  <div class="dropdown mb-5">
+  <div class="dropdown mb-3">
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      {{uppercaseCharacterType()}}
+      {{characterTypeTitle()}}
     </button>
     <ul class="dropdown-menu">
       @for (type of validCharacterTypes; track type) {
-        <li><a class="dropdown-item" [routerLink]="['/profile/character-ranking', type]">{{uppercaseCharacterType(type)}}</a></li>
+        <li><a class="dropdown-item" [routerLink]="['/profile/character-ranking', type]">{{characterTypeTitle(type)}}</a></li>
       }
     </ul>
+  </div>
+
+  <button class="btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#showSearchModal">Add Character</button>
+
+  <div class="modal fade" id="showSearchModal" aria-labelledby="showSearchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="showSearchModalLabel">Search Show</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchShowString" (input)="debouncedSearchShows()">
+          <ul class="list-group overflow-auto" [style.max-height]="'25vh'">
+            @if (searchShowResults) {
+              @if (searchShowResults.results.length > 0) {
+                @for (show of searchShowResults.results; track show.id) {
+                  <li class="list-group-item">
+                    <input class="form-check-input me-1" type="radio" name="showRadios" [value]="show" [id]="show.id" [(ngModel)]="selectedShow">
+                    <label class="form-check-label stretched-link" [for]="show.id">{{show.name}}</label>
+                  </li>
+                }
+              } @else {
+                <p>No results found!</p>
+              }
+            }
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" [disabled]="!selectedShow" data-bs-toggle="modal" data-bs-target="#characterSearchModal">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="characterSearchModal">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="bi bi-arrow-left-square fs-3 me-3" [style.cursor]="'pointer'" data-bs-toggle="modal" data-bs-target="#showSearchModal" (click)="backButtonPressed()"></i>
+          <h1 class="modal-title fs-5" id="characterSearchModalLabel">Search Characters</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchCharacterString" (input)="debouncedSearchCharacters()">
+          <ul class="list-group overflow-auto" [style.max-height]="'25vh'">
+            @if (searchCharacterResults) {
+              @if (searchCharacterResults.length > 0) {
+                @for (character of searchCharacterResults; track character.id) {
+                  <li class="list-group-item">
+                    <input class="form-check-input me-1" type="radio" name="characterRadios" [value]="character" [id]="character.id" [(ngModel)]="selectedCharacter">
+                    <label class="form-check-label stretched-link" [for]="character.id">{{character.characterName}}</label>
+                  </li>
+                }
+              } @else {
+                <p>No results found!</p>
+              }
+            }
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" [disabled]="!selectedCharacter" class="btn btn-primary" (click)="addCharacter()">Add Character</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   @if (selectedCharacterRankings.length != 0) {
@@ -19,35 +85,14 @@
       @for (character of selectedCharacterRankings; track character.name; let rank = $index) {
         <div class="character-box" cdkDrag>
           <h3>{{rank + 1}}</h3>
-          <h3>{{character.name}} - {{character.show}}</h3>
+          <h3>{{character.name}} - {{character.showName}}</h3>
 
-          <button class="btn btn-danger" (click)="removeCharacterFromRankingList(character.name)">Remove Character</button>
+          <button class="btn btn-danger" (click)="removeCharacter(character.id)">Remove Character</button>
         </div>
       }
     </div>
   } @else {
-    <h3>No {{uppercaseCharacterType()}} ranked yet!</h3>
+    <h3>No {{characterTypeTitle()}} ranked yet!</h3>
   }
 }
 
-<form id="character-form" class="row mt-5 g-3 me-2 ms-2" novalidate>
-  <div class="col-4">
-    <div class="form-floating">
-      <input type="text" class="form-control" id="name" name="characterName" placeholder="Character Name" required>
-      <label for="name">Character Name</label>
-      <div class="invalid-feedback">
-        Please enter a character name
-      </div>
-    </div>
-  </div>
-  <div class="col-4">
-    <div class="form-floating">
-      <input type="text" class="form-control" id="show" name="showName" placeholder="Show" required>
-      <label for="show">Show</label>
-      <div class="invalid-feedback">
-        Please enter a show name
-      </div>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary col-2">Add Character</button>
-</form>

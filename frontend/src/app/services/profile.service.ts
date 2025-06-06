@@ -573,7 +573,7 @@ export class ProfileService {
   /**
    * Retrieves all the character ranking lists for the logged-in user
    */
-  async getCharacterRankingLists() {
+  async getCharacterRankingLists(): Promise<CharacterRankingsData> {
     try {
       const response = await fetch(`${this.baseUrl}/character-rankings`, {
         credentials: 'include'
@@ -610,11 +610,11 @@ export class ProfileService {
   }
 
   /**
-   * Remove a character by name from a specific character type list for the logged-in user
+   * Remove a character by ID
    */
-  async removeCharacterFromRankingList(type: string, name: string): Promise<Response> {
+  async removeCharacterFromRankingList(id: string): Promise<Response> {
     try {
-      const response = await fetch(`${this.baseUrl}/character-rankings/${type}/${name}`, {
+      const response = await fetch(`${this.baseUrl}/character-rankings/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
