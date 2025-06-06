@@ -217,6 +217,7 @@ public class ShowService {
 
         List<RoleDto> roles = tmdbClient.get(url, CastWrapperDto.class).getCast().stream()
                 .flatMap(character -> character.getRoles().stream())
+                .filter(character -> character.getEpisode_count() > 1)
                 .toList();
         List<RoleDto> filteredRoles = roles;
 
@@ -224,6 +225,7 @@ public class ShowService {
         if (name != null && !name.isEmpty()) {
             List<String> names = roles.stream()
                     .map(role -> role.getCharacter())
+                    .distinct()
                     .toList();
             List<ExtractedResult> results = FuzzySearch.extractAll(name, names, 70);
             filteredRoles = results.stream()
