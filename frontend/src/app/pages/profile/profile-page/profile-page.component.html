@@ -25,6 +25,12 @@
   <app-character-list title="Favorite Antagonists" [characters]="profileData.antagonistRankingTop"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">Manage Favorite Antagonists</button>
 
+  <app-character-list title="Favorite Tritagonists" [characters]="profileData.tritagonistRankingTop"></app-character-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/tritagonists">Manage Favorite Tritagonists</button>
+
+  <app-character-list title="Favorite Side Characters" [characters]="profileData.sideCharacterRankingTop"></app-character-list>
+  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">Manage Favorite Side Characters</button>
+
   <h3>Show Reviews</h3>
   @if (profileData.reviews.length != 0) {
     @for (review of profileData.reviews; track review.id) {

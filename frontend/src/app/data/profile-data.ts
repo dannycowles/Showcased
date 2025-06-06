@@ -29,6 +29,8 @@ export class ProfileData {
   readonly protagonistRankingTop: CharacterRankingData[]
   readonly deuteragonistRankingTop: CharacterRankingData[]
   readonly antagonistRankingTop: CharacterRankingData[]
+  readonly tritagonistRankingTop: CharacterRankingData[]
+  readonly sideCharacterRankingTop: CharacterRankingData[]
   socials: UserSocialData[];
 
   constructor(jsonObject: { [key : string]: any }) {
@@ -81,6 +83,14 @@ export class ProfileData {
 
     this.socials = jsonObject['socialAccounts'].map(( socialAccount: {} ) => {
       return new UserSocialData(socialAccount)
+    })
+
+    this.tritagonistRankingTop = jsonObject['characterRankings']['tritagonists'].map(( tritagonist: {} ) => {
+      return new CharacterRankingData(tritagonist)
+    })
+
+    this.sideCharacterRankingTop = jsonObject['characterRankings']['side'].map(( sideCharacter: {} ) => {
+      return new CharacterRankingData(sideCharacter)
     })
   }
 
