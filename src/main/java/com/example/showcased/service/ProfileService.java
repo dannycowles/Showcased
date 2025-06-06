@@ -25,7 +25,7 @@ public class ProfileService {
     private final ModelMapper modelMapper;
     private final ShowRankingRepository showRankingRepository;
     private final int numTopEntries = 10;
-    private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist"};
+    private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist", "tritagonist", "side"};
     private final ReviewRepository reviewRepository;
     private final EpisodeInfoRepository episodeInfoRepository;
     private final EpisodeRankingRepository episodeRankingRepository;
@@ -39,6 +39,7 @@ public class ProfileService {
     private final LikedCollectionsRepository likedCollectionsRepository;
     private final UserSocialRepository userSocialRepository;
     private final SocialPlatformRepository socialPlatformRepository;
+    private final CharacterInfoRepository characterInfoRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -57,7 +58,8 @@ public class ProfileService {
                           ShowsInCollectionRepository showsInCollectionRepository,
                           LikedCollectionsRepository likedCollectionsRepository,
                           UserSocialRepository userSocialRepository,
-                          SocialPlatformRepository socialPlatformRepository) {
+                          SocialPlatformRepository socialPlatformRepository,
+                          CharacterInfoRepository characterInfoRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -76,6 +78,7 @@ public class ProfileService {
         this.likedCollectionsRepository = likedCollectionsRepository;
         this.userSocialRepository = userSocialRepository;
         this.socialPlatformRepository = socialPlatformRepository;
+        this.characterInfoRepository = characterInfoRepository;
     }
 
     /**
@@ -410,21 +413,27 @@ public class ProfileService {
         Long userId = (Long) session.getAttribute("user");
 
         // Check to ensure the character type is valid
-        if (!Arrays.asList(validCharacterTypes).contains(character.getCharacterType())) {
-            throw new InvalidCharacterType("Invalid character type: " + character.getCharacterType());
+        if (!Arrays.asList(validCharacterTypes).contains(character.getType())) {
+            throw new InvalidCharacterType("Invalid character type: " + character.getType());
         }
 
-        CharacterRanking ranking = modelMapper.map(character, CharacterRanking.class);
-        CharacterRankingId rankingId = new CharacterRankingId(userId, character.getCharacterName());
-        ranking.setId(rankingId);
+        // Check if the character already exists in the character info table, if not add it
+        if (!characterInfoRepository.existsById(character.getId())) {
+            CharacterInfo characterInfo = modelMapper.map(character, CharacterInfo.class);
+            characterInfoRepository.save(characterInfo);
+        }
+
+        CharacterRanking ranking = new CharacterRanking();
+        ranking.setId(new CharacterRankingId(userId, character.getId()));
+        ranking.setCharacterType(character.getType());
 
         // Check if the character is already on the user's list
-        if (characterRankingRepository.existsById(rankingId)) {
+        if (characterRankingRepository.existsById(ranking.getId())) {
             throw new AlreadyOnListException("Character is already on ranking list");
         }
 
         // If user's ranking list for that type is empty, start at 1 else append to end
-        Integer maxRank = characterRankingRepository.findMaxRankNumByCharacterType(userId, character.getCharacterType());
+        Integer maxRank = characterRankingRepository.findMaxRankNumByCharacterType(userId, character.getType());
         if (maxRank != null) {
             ranking.setRankNum(maxRank + 1);
         } else {
@@ -451,22 +460,28 @@ public class ProfileService {
         rankings.setProtagonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[0], getPageRequest(limit)));
         rankings.setDeuteragonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[1], getPageRequest(limit)));
         rankings.setAntagonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[2], getPageRequest(limit)));
+        rankings.setTritagonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[3], getPageRequest(limit)));
+        rankings.setSide(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[4], getPageRequest(limit)));
         return rankings;
     }
 
-    public void removeFromCharacterRankingList(String characterType, String name, HttpSession session) {
+    public void removeFromCharacterRankingList(String characterId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        characterRankingRepository.deleteById(new CharacterRankingId(userId, name));
 
-        // After deleting the character, we need to update the ranks of the other characters on list
-        List<CharacterRankingReturnDto> rankings = characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, Pageable.unpaged());
-        for (int i = 0; i < rankings.size(); i++) {
-            CharacterRanking newRanking = new CharacterRanking();
-            newRanking.setId(new CharacterRankingId(userId, rankings.get(i).getCharacterName()));
-            newRanking.setRankNum(i + 1);
-            newRanking.setCharacterType(characterType);
-            newRanking.setShowName(rankings.get(i).getShowName());
-            characterRankingRepository.save(newRanking);
+        Optional<CharacterRanking> characterDelete = characterRankingRepository.findById(new CharacterRankingId(userId, characterId));
+        if (characterDelete.isPresent()) {
+            String characterType = characterDelete.get().getCharacterType();
+            characterRankingRepository.delete(characterDelete.get());
+
+            // After deleting the character, we need to update the ranks of the other characters on list
+            List<CharacterRankingReturnDto> rankings = characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, Pageable.unpaged());
+            for (int i = 0; i < rankings.size(); i++) {
+                CharacterRanking newRanking = new CharacterRanking();
+                newRanking.setId(new CharacterRankingId(userId, rankings.get(i).getId()));
+                newRanking.setRankNum(i + 1);
+                newRanking.setCharacterType(characterType);
+                characterRankingRepository.save(newRanking);
+            }
         }
     }
 
@@ -481,9 +496,8 @@ public class ProfileService {
         // Update rankings
         updates.getUpdates().forEach( update -> {
             CharacterRanking newRanking = new CharacterRanking();
-            newRanking.setId(new CharacterRankingId(userId, update.getCharacterName()));
+            newRanking.setId(new CharacterRankingId(userId, update.getId()));
             newRanking.setRankNum(update.getRankNum());
-            newRanking.setShowName(update.getShowName());
             newRanking.setCharacterType(updates.getCharacterType());
             characterRankingRepository.save(newRanking);
         });

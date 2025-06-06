@@ -115,13 +115,20 @@ CREATE TABLE season_info (
 
 CREATE TABLE user_character_rankings (
     user_id INT,
-    character_name VARCHAR(100) NOT NULL,
-    show_name TEXT NOT NULL,
-    character_type ENUM('Protagonist', 'Deuteragonist', 'Antagonist') NOT NULL,
+    character_id VARCHAR(255),
+    character_type ENUM('Protagonist', 'Deuteragonist', 'Antagonist', 'Tritagonist', 'Side') NOT NULL,
     rank_num INT NOT NULL,
-    PRIMARY KEY(user_id, character_name),
+    PRIMARY KEY(user_id, character_id),
     FOREIGN KEY(user_id) REFERENCES users(id),
-    CHECK (character_type IN ('Protagonist', 'Deuteragonist', 'Antagonist'))
+    FOREIGN KEY(character_id) REFERENCES character_info(id),
+    CHECK (character_type IN ('Protagonist', 'Deuteragonist', 'Antagonist', 'Tritagonist', 'Side'))
+);
+
+CREATE TABLE character_info (
+    id VARCHAR(255),
+    show_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE user_collections (

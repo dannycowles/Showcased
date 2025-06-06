@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CharacterRankingId {
     private Long userId;
-    private String characterName;
+    private String characterId;
 }

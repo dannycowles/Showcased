@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class CharacterRankingDto {
-    private String characterName;
-    private String showName;
-    private String characterType;
+    private String id;
+    private Long showId;
+    private String name;
+    private String type;
 }

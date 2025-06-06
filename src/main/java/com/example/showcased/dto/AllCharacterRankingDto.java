@@ -13,4 +13,6 @@ public class AllCharacterRankingDto {
     private List<CharacterRankingReturnDto> protagonists;
     private List<CharacterRankingReturnDto> deuteragonists;
     private List<CharacterRankingReturnDto> antagonists;
+    private List<CharacterRankingReturnDto> tritagonists;
+    private List<CharacterRankingReturnDto> side;
 }

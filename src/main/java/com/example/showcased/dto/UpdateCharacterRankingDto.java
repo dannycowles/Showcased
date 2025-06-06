@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class UpdateCharacterRankingDto {
-    private String characterName;
-    private String showName;
+    private String id;
     private int rankNum;
 }

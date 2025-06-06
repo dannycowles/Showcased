@@ -29,7 +29,7 @@ public class UserService {
     private final FollowersRepository followersRepository;
     private final SeasonRankingRepository seasonRankingRepository;
     private final CharacterRankingRepository characterRankingRepository;
-    private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist"};
+    private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist", "tritagonist", "side"};
     private final CollectionRepository collectionsRepository;
     private final ShowsInCollectionRepository showsInCollectionRepository;
     private final LikedCollectionsRepository likedCollectionsRepository;
@@ -185,6 +185,8 @@ public class UserService {
         rankings.setProtagonists(getUserCharacterRankings(userId, limit, validCharacterTypes[0]));
         rankings.setDeuteragonists(getUserCharacterRankings(userId, limit, validCharacterTypes[1]));
         rankings.setAntagonists(getUserCharacterRankings(userId, limit, validCharacterTypes[2]));
+        rankings.setTritagonists(getUserCharacterRankings(userId, limit, validCharacterTypes[3]));
+        rankings.setSide(getUserCharacterRankings(userId, limit, validCharacterTypes[4]));
         return rankings;
     }
 

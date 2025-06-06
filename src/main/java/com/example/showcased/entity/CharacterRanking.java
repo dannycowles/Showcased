@@ -11,7 +11,6 @@ import lombok.Data;
 public class CharacterRanking {
     @EmbeddedId
     private CharacterRankingId id;
-    private String showName;
     private String characterType;
     private int rankNum;
 }
