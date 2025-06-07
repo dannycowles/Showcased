@@ -25,7 +25,7 @@ public class UserService {
     private final int numTopEntries = 10;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final ReviewRepository reviewRepository;
+    private final ShowReviewRepository showReviewRepository;
     private final FollowersRepository followersRepository;
     private final SeasonRankingRepository seasonRankingRepository;
     private final CharacterRankingRepository characterRankingRepository;
@@ -41,7 +41,7 @@ public class UserService {
                        WatchingRepository watchingRepository,
                        UserRepository userRepository,
                        ModelMapper modelMapper,
-                       ReviewRepository reviewRepository,
+                       ShowReviewRepository showReviewRepository,
                        FollowersRepository followersRepository,
                        SeasonRankingRepository seasonRankingRepository,
                        CharacterRankingRepository characterRankingRepository,
@@ -55,7 +55,7 @@ public class UserService {
         this.watchingRepository = watchingRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
-        this.reviewRepository = reviewRepository;
+        this.showReviewRepository = showReviewRepository;
         this.followersRepository = followersRepository;
         this.seasonRankingRepository = seasonRankingRepository;
         this.characterRankingRepository = characterRankingRepository;
@@ -110,7 +110,7 @@ public class UserService {
             userDetails.setMoreSeasonRanking(true);
         }
 
-        userDetails.setReviews(getUserReviews(userId));
+        userDetails.setShowReviews(getUserReviews(userId));
         userDetails.setNumFollowers(getFollowersCount(userId));
         userDetails.setNumFollowing(getFollowingCount(userId));
         userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
@@ -193,9 +193,9 @@ public class UserService {
 
 
 
-    public List<ReviewWithUserInfoDto> getUserReviews(Long userId) {
+    public List<ShowReviewWithUserInfoDto> getUserReviews(Long userId) {
         ensureUserExists(userId);
-        return reviewRepository.findByUserId(userId);
+        return showReviewRepository.findByUserId(userId);
     }
 
     public void followUser(Long followId, HttpSession session) {

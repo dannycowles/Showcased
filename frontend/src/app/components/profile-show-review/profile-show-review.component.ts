@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ReviewData} from '../../data/review-data';
+import {ShowReviewData} from '../../data/show-review-data';
 import {UtilsService} from '../../services/utils.service';
 import {ButtonHeartComponent} from '../../pages/show/button-heart.component';
 import {ShowService} from '../../services/show.service';
@@ -14,12 +14,12 @@ import {ShowService} from '../../services/show.service';
   standalone: true
 })
 export class ProfileShowReviewComponent {
-  @Input({required : true}) review : ReviewData;
+  @Input({required : true}) review : ShowReviewData;
 
   constructor(public utilsService: UtilsService,
               private showService: ShowService) {};
 
-  async toggleLikeState(review: ReviewData) {
+  async toggleLikeState(review: ShowReviewData) {
     try {
       review.likedByUser = !review.likedByUser;
       if (review.likedByUser) {

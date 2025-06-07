@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ReviewData} from '../data/review-data';
+import {ShowReviewData} from '../data/show-review-data';
 import {UtilsService} from './utils.service';
 import {ShowData} from '../data/show/show-data';
 import {SeasonData} from '../data/show/season-data';
@@ -118,7 +118,7 @@ export class ShowService {
    * Fetches the reviews for a show by its ID
    * @param showId
    */
-  async fetchShowReviews(showId: number): Promise<ReviewData[]> {
+  async fetchShowReviews(showId: number): Promise<ShowReviewData[]> {
     try {
       let response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
         credentials: 'include'
@@ -126,7 +126,7 @@ export class ShowService {
 
       const data = await response.json();
       return data.map((review: {}) => {
-        return new ReviewData(review, new UtilsService());
+        return new ShowReviewData(review, new UtilsService());
       });
     } catch (error) {
       throw error;

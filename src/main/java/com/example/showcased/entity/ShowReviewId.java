@@ -5,16 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewId implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
-    private Long reviewerId;
+public class ShowReviewId implements Serializable {
+    private Long userId;
     private Long showId;
 }

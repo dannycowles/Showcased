@@ -39,9 +39,9 @@
   <app-character-list title="Favorite Side Characters" [characters]="userDetails.sideCharacterRankingTop"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">View Full List</button>
 
-  <h3>Reviews</h3>
-  @if (userDetails.reviews.length != 0) {
-    @for (review of userDetails.reviews; track review.id) {
+  <h3>Show Reviews</h3>
+  @if (userDetails.showReviews.length != 0) {
+    @for (review of userDetails.showReviews; track review.id) {
       <app-profile-show-review [review]="review"></app-profile-show-review>
     }
   } @else {

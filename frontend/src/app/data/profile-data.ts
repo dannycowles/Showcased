@@ -1,4 +1,4 @@
-import {ReviewData} from './review-data'
+import {ShowReviewData} from './show-review-data'
 import {UtilsService} from '../services/utils.service'
 import {ShowRankingData} from './lists/show-ranking-data'
 import {EpisodeRankingData} from './lists/episode-ranking-data'
@@ -20,7 +20,7 @@ export class ProfileData {
   readonly moreShowRanking: boolean
   readonly episodeRankingTop: EpisodeRankingData[]
   readonly moreEpisodeRanking: boolean
-  readonly reviews: ReviewData[]
+  readonly showReviews: ShowReviewData[]
   numFollowers: number
   numFollowing: number
   isFollowing: boolean
@@ -58,8 +58,8 @@ export class ProfileData {
     })
     this.moreEpisodeRanking = jsonObject['moreEpisodeRanking']
 
-    this.reviews = jsonObject['reviews'].map(( review: {} ) => {
-      return new ReviewData(review, new UtilsService())
+    this.showReviews = jsonObject['showReviews'].map(( review: {} ) => {
+      return new ShowReviewData(review, new UtilsService())
     })
 
     this.numFollowers = jsonObject['numFollowers']

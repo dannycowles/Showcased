@@ -32,8 +32,8 @@
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">Manage Favorite Side Characters</button>
 
   <h3>Show Reviews</h3>
-  @if (profileData.reviews.length != 0) {
-    @for (review of profileData.reviews; track review.id) {
+  @if (profileData.showReviews.length != 0) {
+    @for (review of profileData.showReviews; track review.id) {
       <app-profile-show-review [review]="review"></app-profile-show-review>
     }
   } @else {

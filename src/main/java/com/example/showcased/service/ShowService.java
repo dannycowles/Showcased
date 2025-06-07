@@ -27,8 +27,8 @@ public class ShowService {
     @Value("${omdbApi}")
     private String omdbKey;
 
-    private final ReviewRepository reviewRepository;
-    private final LikedReviewsRepository likedReviewsRepository;
+    private final ShowReviewRepository showReviewRepository;
+    private final LikedShowReviewsRepository likedShowReviewsRepository;
     private final WatchlistRepository watchlistRepository;
     private final WatchingRepository watchingRepository;
     private final ShowRankingRepository showRankingRepository;
@@ -36,18 +36,18 @@ public class ShowService {
     private final TMDBClient tmdbClient;
     private final OMDBClient omdbClient;
 
-    public ShowService(ReviewRepository reviewRepository,
+    public ShowService(ShowReviewRepository showReviewRepository,
                        ModelMapper modelMapper,
-                       LikedReviewsRepository likedReviewsRepository,
+                       LikedShowReviewsRepository likedShowReviewsRepository,
                        WatchlistRepository watchlistRepository,
                        WatchingRepository watchingRepository,
                        ShowRankingRepository showRankingRepository,
                        SeasonRankingRepository seasonRankingRepository,
                        TMDBClient tmdbClient,
                        OMDBClient omdbClient) {
-        this.reviewRepository = reviewRepository;
+        this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
-        this.likedReviewsRepository = likedReviewsRepository;
+        this.likedShowReviewsRepository = likedShowReviewsRepository;
         this.watchlistRepository = watchlistRepository;
         this.watchingRepository = watchingRepository;
         this.showRankingRepository = showRankingRepository;
@@ -365,41 +365,41 @@ public class ShowService {
         return episode;
     }
 
-    public void addReviewToShow(Long id, ReviewDto review, HttpSession session) {
+    public void addReviewToShow(Long id, ShowReviewDto review, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        ReviewId reviewId = new ReviewId(userId, id);
+        ShowReviewId reviewId = new ShowReviewId(userId, id);
 
         // Delete existing review if it exists
-        if (reviewRepository.existsById(reviewId)) {
-            reviewRepository.deleteById(reviewId);
+        if (showReviewRepository.existsById(reviewId)) {
+            showReviewRepository.deleteById(reviewId);
         }
 
-        Review newReview = modelMapper.map(review, Review.class);
-        newReview.setId(reviewId);
-        reviewRepository.save(newReview);
+        ShowReview newReview = modelMapper.map(review, ShowReview.class);
+        newReview.setKey(reviewId);
+        showReviewRepository.save(newReview);
     }
 
-    public List<ReviewWithUserInfoDto> getShowReviews(Long showId, HttpSession session) {
+    public List<ShowReviewWithUserInfoDto> getShowReviews(Long showId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return reviewRepository.findAllByShowId(showId, userId);
+        return showReviewRepository.findAllByShowId(showId, userId);
     }
 
     public void likeShowReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
         // Check if the user has already liked the review, if so we throw an exception
-        LikedReviews likedReview = new LikedReviews(new LikedReviewsId(userId, reviewId));
-        if (likedReviewsRepository.existsById(likedReview.getId())) {
+        LikedShowReviews likedReview = new LikedShowReviews(new LikedShowReviewsId(userId, reviewId));
+        if (likedShowReviewsRepository.existsById(likedReview.getId())) {
             throw new AlreadyLikedException("You have already liked this show review");
         }
 
         // Store the review like information in the DB
-        likedReviewsRepository.save(likedReview);
+        likedShowReviewsRepository.save(likedReview);
 
         // Retrieve the review from the repository and increment the like count
-        Review review = reviewRepository.findByReviewId(reviewId);
+        ShowReview review = showReviewRepository.findByReviewId(reviewId);
         review.setNumLikes(review.getNumLikes() + 1);
-        reviewRepository.save(review);
+        showReviewRepository.save(review);
     }
 
     public void unlikeShowReview(Long reviewId, HttpSession session) {
@@ -407,18 +407,18 @@ public class ShowService {
 
         // Check if the user has liked the review, if they haven't they can't unlike it so
         // we throw an exception
-        LikedReviews likedReview = new LikedReviews(new LikedReviewsId(userId, reviewId));
-        if (!likedReviewsRepository.existsById(likedReview.getId())) {
+        LikedShowReviews likedReview = new LikedShowReviews(new LikedShowReviewsId(userId, reviewId));
+        if (!likedShowReviewsRepository.existsById(likedReview.getId())) {
             throw new HaventLikedException("You have not liked this show review");
         }
 
         // Delete the review like information from the DB
-        likedReviewsRepository.delete(likedReview);
+        likedShowReviewsRepository.delete(likedReview);
 
         // Retrieve the review from the repository and decrement the like count
-        Review review = reviewRepository.findByReviewId(reviewId);
+        ShowReview review = showReviewRepository.findByReviewId(reviewId);
         review.setNumLikes(review.getNumLikes() - 1);
-        reviewRepository.save(review);
+        showReviewRepository.save(review);
     }
 
     public ShowResultsPageDto getTrendingShows(Integer page) {

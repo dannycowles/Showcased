@@ -9,7 +9,7 @@ import java.util.Date;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ReviewWithUserInfoDto {
+public class ShowReviewWithUserInfoDto {
     private Long id;
     private String username;
     private String profilePicture;

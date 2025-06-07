@@ -16,7 +16,7 @@ public class ProfileDetailsDto {
     private boolean moreShowRanking = false;
     private List<EpisodeRankingReturnDto> episodeRankingTop;
     private boolean moreEpisodeRanking = false;
-    private List<ReviewWithUserInfoDto> reviews;
+    private List<ShowReviewWithUserInfoDto> showReviews;
     private Long numFollowers;
     private Long numFollowing;
     private boolean isFollowing = false;

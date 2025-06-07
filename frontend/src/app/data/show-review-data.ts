@@ -1,11 +1,11 @@
 import {UtilsService} from '../services/utils.service';
 
-export class ReviewData {
+export class ShowReviewData {
   readonly id: number;
   readonly showTitle: string;
   readonly reviewerUsername: string;
   readonly reviewerProfilePicture: string;
-  readonly reviewerId: number;
+  readonly userId: number;
   readonly rating: number;
   readonly commentary: string;
   readonly containsSpoilers: boolean;
@@ -19,7 +19,7 @@ export class ReviewData {
     this.showTitle = jsonObject['showTitle'];
     this.reviewerUsername = jsonObject['username'];
     this.reviewerProfilePicture = jsonObject['profilePicture'];
-    this.reviewerId = jsonObject['reviewerId'];
+    this.userId = jsonObject['reviewerId'];
     this.rating = jsonObject['rating'];
     this.commentary = jsonObject['commentary'];
     this.containsSpoilers = jsonObject['containsSpoilers'];

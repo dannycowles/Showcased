@@ -45,8 +45,8 @@ public class ProfileController {
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<List<ReviewWithUserInfoDto>> getReviews(HttpSession session) {
-        List<ReviewWithUserInfoDto> reviews = profileService.getReviews(session);
+    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getReviews(HttpSession session) {
+        List<ShowReviewWithUserInfoDto> reviews = profileService.getReviews(session);
         return ResponseEntity.ok(reviews);
     }
 

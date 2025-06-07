@@ -68,13 +68,13 @@ public class ShowController {
     // ========== REVIEWS ==========
 
     @PostMapping("/{id}/reviews")
-    public ResponseEntity<Void> addReviewToShow(@PathVariable Long id, @RequestBody ReviewDto review, HttpSession session) {
+    public ResponseEntity<Void> addReviewToShow(@PathVariable Long id, @RequestBody ShowReviewDto review, HttpSession session) {
         showService.addReviewToShow(id, review, session);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}/reviews")
-    public List<ReviewWithUserInfoDto> getShowReviews(@PathVariable Long id, HttpSession session) {
+    public List<ShowReviewWithUserInfoDto> getShowReviews(@PathVariable Long id, HttpSession session) {
         return showService.getShowReviews(id, session);
     }
 

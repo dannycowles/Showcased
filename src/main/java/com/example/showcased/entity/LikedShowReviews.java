@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "liked_reviews")
-public class LikedReviews {
+@Table(name = "liked_show_reviews")
+public class LikedShowReviews {
     @EmbeddedId
-    private LikedReviewsId id;
+    private LikedShowReviewsId id;
 }

@@ -7,12 +7,11 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "reviews")
-public class Review {
+@Table(name = "show_reviews")
+public class ShowReview {
+    private Long id;
     @EmbeddedId
-    private ReviewId id;
-    private String showTitle;
-    private Long reviewId;
+    private ShowReviewId key;
     private double rating;
     private String commentary;
     private boolean containsSpoilers;

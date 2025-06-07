@@ -1,7 +1,6 @@
 package com.example.showcased.controller;
 
 import com.example.showcased.dto.*;
-import com.example.showcased.entity.SocialPlatform;
 import com.example.showcased.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -35,8 +34,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/reviews")
-    public ResponseEntity<List<ReviewWithUserInfoDto>> getUserReviews(@PathVariable Long id) {
-        List<ReviewWithUserInfoDto> reviews = userService.getUserReviews(id);
+    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getUserReviews(@PathVariable Long id) {
+        List<ShowReviewWithUserInfoDto> reviews = userService.getUserReviews(id);
         return ResponseEntity.ok(reviews);
     }
 

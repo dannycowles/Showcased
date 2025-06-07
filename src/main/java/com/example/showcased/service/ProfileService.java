@@ -26,7 +26,7 @@ public class ProfileService {
     private final ShowRankingRepository showRankingRepository;
     private final int numTopEntries = 10;
     private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist", "tritagonist", "side"};
-    private final ReviewRepository reviewRepository;
+    private final ShowReviewRepository showReviewRepository;
     private final EpisodeInfoRepository episodeInfoRepository;
     private final EpisodeRankingRepository episodeRankingRepository;
     private final UserRepository userRepository;
@@ -38,7 +38,6 @@ public class ProfileService {
     private final ShowsInCollectionRepository showsInCollectionRepository;
     private final LikedCollectionsRepository likedCollectionsRepository;
     private final UserSocialRepository userSocialRepository;
-    private final SocialPlatformRepository socialPlatformRepository;
     private final CharacterInfoRepository characterInfoRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
@@ -46,7 +45,7 @@ public class ProfileService {
                           ModelMapper modelMapper,
                           WatchingRepository watchingRepository,
                           ShowRankingRepository showRankingRepository,
-                          ReviewRepository reviewRepository,
+                          ShowReviewRepository showReviewRepository,
                           EpisodeInfoRepository episodeInfoRepository,
                           EpisodeRankingRepository episodeRankingRepository,
                           UserRepository userRepository,
@@ -58,14 +57,13 @@ public class ProfileService {
                           ShowsInCollectionRepository showsInCollectionRepository,
                           LikedCollectionsRepository likedCollectionsRepository,
                           UserSocialRepository userSocialRepository,
-                          SocialPlatformRepository socialPlatformRepository,
                           CharacterInfoRepository characterInfoRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
         this.modelMapper = modelMapper;
         this.showRankingRepository = showRankingRepository;
-        this.reviewRepository = reviewRepository;
+        this.showReviewRepository = showReviewRepository;
         this.episodeInfoRepository = episodeInfoRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.userRepository = userRepository;
@@ -77,7 +75,6 @@ public class ProfileService {
         this.showsInCollectionRepository = showsInCollectionRepository;
         this.likedCollectionsRepository = likedCollectionsRepository;
         this.userSocialRepository = userSocialRepository;
-        this.socialPlatformRepository = socialPlatformRepository;
         this.characterInfoRepository = characterInfoRepository;
     }
 
@@ -102,7 +99,7 @@ public class ProfileService {
         profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
         profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
-        profileDetails.setReviews(getReviews(session));
+        profileDetails.setShowReviews(getReviews(session));
         profileDetails.setNumFollowers(getFollowersCount(session));
         profileDetails.setNumFollowing(getFollowingCount(session));
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
@@ -506,8 +503,8 @@ public class ProfileService {
 
 
 
-    public List<ReviewWithUserInfoDto> getReviews(HttpSession session) {
-        return reviewRepository.findByUserId((Long) session.getAttribute("user"));
+    public List<ShowReviewWithUserInfoDto> getReviews(HttpSession session) {
+        return showReviewRepository.findByUserId((Long) session.getAttribute("user"));
     }
 
     public List<UserSearchDto> getFollowers(String name, HttpSession session) {

@@ -8,19 +8,48 @@ CREATE TABLE users (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE reviews (
-    review_id INT AUTO_INCREMENT,
-    reviewer_id INT,
+CREATE TABLE show_reviews (
+    id INT AUTO_INCREMENT UNIQUE,
+    user_id INT,
     show_id INT,
-    show_title TEXT,
     rating DOUBLE NOT NULL,
     commentary TEXT DEFAULT NULL,
     contains_spoilers BOOLEAN DEFAULT false,
     num_likes INT DEFAULT 0,
     review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (reviewer_id, show_id),
-    UNIQUE (review_id),
-    FOREIGN KEY (reviewer_id) REFERENCES users(id)
+    PRIMARY KEY (user_id, show_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (show_id) REFERENCES show_info(show_id)
+);
+
+CREATE TABLE liked_show_reviews (
+    user_id INT,
+    review_id INT,
+    PRIMARY KEY(user_id, review_id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(review_id) REFERENCES show_reviews(id)
+);
+
+CREATE TABLE episode_reviews (
+    id INT AUTO_INCREMENT UNIQUE,
+    user_id INT,
+    episode_id INT,
+    rating DOUBLE NOT NULL,
+    commentary TEXT DEFAULT NULL,
+    contains_spoilers BOOLEAN DEFAULT false,
+    num_likes INT DEFAULT 0,
+    review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, episode_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (episode_id) REFERENCES episode_info(id)
+);
+
+CREATE TABLE liked_episode_reviews (
+    user_id INT,
+    review_id INT,
+    PRIMARY KEY (user_id, review_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (review_id) REFERENCES episode_reviews(id)
 );
 
 CREATE TABLE currently_watching (
@@ -70,13 +99,6 @@ CREATE TABLE episode_info (
     episode INT NOT NULL,
     poster_path TEXT NOT NULL,
     PRIMARY KEY(id)
-);
-
-CREATE TABLE liked_reviews (
-    user_id INT,
-    review_id INT,
-    PRIMARY KEY(user_id, review_id),
-    FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
 CREATE TABLE otp_requests (

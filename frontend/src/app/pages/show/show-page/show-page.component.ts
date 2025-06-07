@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 
 import $ from 'jquery';
 import 'jquery-serializejson';
-import {ReviewData} from '../../../data/review-data';
+import {ShowReviewData} from '../../../data/show-review-data';
 import {ShowService} from '../../../services/show.service';
 import {ProfileService} from '../../../services/profile.service';
 import {ToastDisplayService} from '../../../services/toast.service';
@@ -21,7 +21,7 @@ import {CollectionData} from '../../../data/collection-data';
 export class ShowPageComponent implements OnInit {
   showId: number;
   show: ShowData;
-  reviews: ReviewData[];
+  reviews: ShowReviewData[];
   readonly heartSize: number = 100;
   collections: CollectionData[];
   collectionSelection: number;
@@ -37,11 +37,17 @@ export class ShowPageComponent implements OnInit {
               private authService: AuthenticationService) {
     this.route.params.subscribe(params => {
       this.showId = params['id'];
-      this.ngOnInit();
+      this.loadShowData();
     });
   }
 
   async ngOnInit() {
+    this.debouncedSearchCollections = this.utilsService.debounce(() => {
+      this.searchCollections();
+    });
+  }
+
+  async loadShowData() {
     // Retrieve show data from backend
     try {
       this.show = await this.showService.fetchShowDetails(this.showId);
@@ -55,9 +61,6 @@ export class ShowPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
-    this.debouncedSearchCollections = this.utilsService.debounce(() => {
-      this.searchCollections();
-    });
   }
 
   seasonSelected(seasonNumber:string) {
@@ -166,7 +169,7 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  async toggleLikeState(review: ReviewData) {
+  async toggleLikeState(review: ShowReviewData) {
     try {
       review.likedByUser = !review.likedByUser;
       if (review.likedByUser) {
