@@ -9,15 +9,16 @@ CREATE TABLE users (
 );
 
 CREATE TABLE show_reviews (
-    id INT AUTO_INCREMENT UNIQUE,
-    user_id INT,
-    show_id INT,
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    show_id INT NOT NULL,
     rating DOUBLE NOT NULL,
     commentary TEXT DEFAULT NULL,
     contains_spoilers BOOLEAN DEFAULT false,
     num_likes INT DEFAULT 0,
     review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, show_id),
+    PRIMARY KEY (id),
+    UNIQUE (user_id, show_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (show_id) REFERENCES show_info(show_id)
 );
@@ -31,15 +32,16 @@ CREATE TABLE liked_show_reviews (
 );
 
 CREATE TABLE episode_reviews (
-    id INT AUTO_INCREMENT UNIQUE,
-    user_id INT,
-    episode_id INT,
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    episode_id INT NOT NULL,
     rating DOUBLE NOT NULL,
     commentary TEXT DEFAULT NULL,
     contains_spoilers BOOLEAN DEFAULT false,
     num_likes INT DEFAULT 0,
     review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, episode_id),
+    PRIMARY KEY (id),
+    UNIQUE (user_id, episode_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (episode_id) REFERENCES episode_info(id)
 );

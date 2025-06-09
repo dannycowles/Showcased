@@ -252,7 +252,8 @@ export class ShowPageComponent implements OnInit {
       "rating": reviewForm["rating"],
       "showTitle": this.show.name,
       "commentary": reviewForm["commentary"],
-      "containsSpoilers": "spoilers" in reviewForm
+      "containsSpoilers": "spoilers" in reviewForm,
+      "posterPath": this.show.posterPath
     };
 
     try {

@@ -7,13 +7,13 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "show_reviews")
-public class ShowReview {
+@Table(name = "episode_reviews")
+public class EpisodeReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
-    private Long showId;
+    private Long episodeId;
     private double rating;
     private String commentary;
     private boolean containsSpoilers;

@@ -2,24 +2,22 @@ package com.example.showcased.repository;
 
 import com.example.showcased.dto.ShowReviewWithUserInfoDto;
 import com.example.showcased.entity.ShowReview;
-import com.example.showcased.entity.ShowReviewId;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface ShowReviewRepository extends JpaRepository<ShowReview, ShowReviewId> {
+public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
 
     @Query(""" 
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
                 r.id,
                 u.username,
                 u.profilePicture,
-                r.key.userId,
-                r.key.showId,
+                r.userId,
+                r.showId,
                 s.title,
                 r.rating,
                 r.commentary,
@@ -36,9 +34,9 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, ShowRevi
                  END
             )
             FROM ShowReview r
-            JOIN User u ON r.key.userId = u.id
-            JOIN ShowInfo s ON r.key.showId = s.showId
-            WHERE r.key.showId = :showId
+            JOIN User u ON r.userId = u.id
+            JOIN ShowInfo s ON r.showId = s.showId
+            WHERE r.showId = :showId
         """)
     List<ShowReviewWithUserInfoDto> findAllByShowId(@Param("showId") Long showId, @Param("userId") Long userId);
 
@@ -47,8 +45,8 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, ShowRevi
             r.id,
             u.username,
             u.profilePicture,
-            r.key.userId,
-            r.key.showId,
+            r.userId,
+            r.showId,
             s.title,
             r.rating,
             r.commentary,
@@ -63,13 +61,17 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, ShowRevi
             END
         )
         FROM ShowReview r
-        JOIN User u ON r.key.userId = u.id
-        JOIN ShowInfo s ON r.key.showId = s.showId
-        WHERE r.key.userId = :id
+        JOIN User u ON r.userId = u.id
+        JOIN ShowInfo s ON r.showId = s.showId
+        WHERE r.userId = :id
         ORDER BY r.reviewDate DESC
     """)
     List<ShowReviewWithUserInfoDto> findByUserId(@Param("id") Long id);
 
     @Query("SELECT r FROM ShowReview r WHERE r.id = :reviewId")
     ShowReview findByReviewId(@Param("reviewId") Long reviewId);
+    boolean existsByUserIdAndShowId(Long userId, Long showId);
+
+    @Transactional
+    void deleteByUserIdAndShowId(Long userId, Long showId);
 }

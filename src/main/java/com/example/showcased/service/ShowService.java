@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class ShowService {
 
     private final ModelMapper modelMapper;
+    private final ShowInfoRepository showInfoRepository;
     @Value("${omdbApi}")
     private String omdbKey;
 
@@ -44,7 +45,7 @@ public class ShowService {
                        ShowRankingRepository showRankingRepository,
                        SeasonRankingRepository seasonRankingRepository,
                        TMDBClient tmdbClient,
-                       OMDBClient omdbClient) {
+                       OMDBClient omdbClient, ShowInfoRepository showInfoRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -54,6 +55,7 @@ public class ShowService {
         this.seasonRankingRepository = seasonRankingRepository;
         this.tmdbClient = tmdbClient;
         this.omdbClient = omdbClient;
+        this.showInfoRepository = showInfoRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -365,17 +367,26 @@ public class ShowService {
         return episode;
     }
 
-    public void addReviewToShow(Long id, ShowReviewDto review, HttpSession session) {
+    public void addReviewToShow(Long showId, ShowReviewDto review, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        ShowReviewId reviewId = new ShowReviewId(userId, id);
 
         // Delete existing review if it exists
-        if (showReviewRepository.existsById(reviewId)) {
-            showReviewRepository.deleteById(reviewId);
+        if (showReviewRepository.existsByUserIdAndShowId(userId, showId)) {
+            showReviewRepository.deleteByUserIdAndShowId(userId, showId);
+        }
+
+        // Check if the show exists in the show info table
+        if (!showInfoRepository.existsById(showId)) {
+            ShowInfo showInfo = new ShowInfo();
+            showInfo.setShowId(showId);
+            showInfo.setPosterPath(review.getPosterPath());
+            showInfo.setTitle(review.getShowTitle());
+            showInfoRepository.save(showInfo);
         }
 
         ShowReview newReview = modelMapper.map(review, ShowReview.class);
-        newReview.setKey(reviewId);
+        newReview.setUserId(userId);
+        newReview.setShowId(showId);
         showReviewRepository.save(newReview);
     }
 

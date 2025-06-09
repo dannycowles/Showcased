@@ -8,4 +8,5 @@ public class ShowReviewDto {
     private String showTitle;
     private String commentary;
     private boolean containsSpoilers;
+    private String posterPath;
 }
