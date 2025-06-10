@@ -34,6 +34,7 @@ public class UserService {
     private final ShowsInCollectionRepository showsInCollectionRepository;
     private final LikedCollectionsRepository likedCollectionsRepository;
     private final UserSocialRepository userSocialRepository;
+    private final EpisodeReviewRepository episodeReviewRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -48,7 +49,7 @@ public class UserService {
                        CollectionRepository collectionsRepository,
                        ShowsInCollectionRepository showsInCollectionRepository,
                        LikedCollectionsRepository likedCollectionsRepository,
-                       UserSocialRepository userSocialRepository) {
+                       UserSocialRepository userSocialRepository, EpisodeReviewRepository episodeReviewRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -63,9 +64,10 @@ public class UserService {
         this.showsInCollectionRepository = showsInCollectionRepository;
         this.likedCollectionsRepository = likedCollectionsRepository;
         this.userSocialRepository = userSocialRepository;
+        this.episodeReviewRepository = episodeReviewRepository;
     }
 
-    public void ensureUserExists(Long userId) {
+    private void ensureUserExists(Long userId) {
         // Check to make sure user exists in system
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
@@ -110,7 +112,8 @@ public class UserService {
             userDetails.setMoreSeasonRanking(true);
         }
 
-        userDetails.setShowReviews(getUserReviews(userId));
+        userDetails.setShowReviews(getUserShowReviews(userId));
+        userDetails.setEpisodeReviews(getUserEpisodeReviews(userId));
         userDetails.setNumFollowers(getFollowersCount(userId));
         userDetails.setNumFollowing(getFollowingCount(userId));
         userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
@@ -193,9 +196,14 @@ public class UserService {
 
 
 
-    public List<ShowReviewWithUserInfoDto> getUserReviews(Long userId) {
+    public List<ShowReviewWithUserInfoDto> getUserShowReviews(Long userId) {
         ensureUserExists(userId);
         return showReviewRepository.findByUserId(userId);
+    }
+
+    public List<EpisodeReviewWithUserInfoDto> getUserEpisodeReviews(Long userId) {
+        ensureUserExists(userId);
+        return episodeReviewRepository.findByUserId(userId);
     }
 
     public void followUser(Long followId, HttpSession session) {

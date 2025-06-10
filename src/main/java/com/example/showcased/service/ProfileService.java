@@ -39,6 +39,7 @@ public class ProfileService {
     private final LikedCollectionsRepository likedCollectionsRepository;
     private final UserSocialRepository userSocialRepository;
     private final CharacterInfoRepository characterInfoRepository;
+    private final EpisodeReviewRepository episodeReviewRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -57,7 +58,7 @@ public class ProfileService {
                           ShowsInCollectionRepository showsInCollectionRepository,
                           LikedCollectionsRepository likedCollectionsRepository,
                           UserSocialRepository userSocialRepository,
-                          CharacterInfoRepository characterInfoRepository) {
+                          CharacterInfoRepository characterInfoRepository, EpisodeReviewRepository episodeReviewRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -76,6 +77,7 @@ public class ProfileService {
         this.likedCollectionsRepository = likedCollectionsRepository;
         this.userSocialRepository = userSocialRepository;
         this.characterInfoRepository = characterInfoRepository;
+        this.episodeReviewRepository = episodeReviewRepository;
     }
 
     /**
@@ -99,7 +101,8 @@ public class ProfileService {
         profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
         profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
-        profileDetails.setShowReviews(getReviews(session));
+        profileDetails.setShowReviews(getShowReviews(session));
+        profileDetails.setEpisodeReviews(getEpisodeReviews(session));
         profileDetails.setNumFollowers(getFollowersCount(session));
         profileDetails.setNumFollowing(getFollowingCount(session));
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
@@ -503,8 +506,12 @@ public class ProfileService {
 
 
 
-    public List<ShowReviewWithUserInfoDto> getReviews(HttpSession session) {
+    public List<ShowReviewWithUserInfoDto> getShowReviews(HttpSession session) {
         return showReviewRepository.findByUserId((Long) session.getAttribute("user"));
+    }
+
+    public List<EpisodeReviewWithUserInfoDto> getEpisodeReviews(HttpSession session) {
+        return episodeReviewRepository.findByUserId((Long) session.getAttribute("user"));
     }
 
     public List<UserSearchDto> getFollowers(String name, HttpSession session) {

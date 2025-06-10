@@ -45,8 +45,14 @@ public class ProfileController {
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getReviews(HttpSession session) {
-        List<ShowReviewWithUserInfoDto> reviews = profileService.getReviews(session);
+    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getShowReviews(HttpSession session) {
+        List<ShowReviewWithUserInfoDto> reviews = profileService.getShowReviews(session);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/episode-reviews")
+    public ResponseEntity<List<EpisodeReviewWithUserInfoDto>> getEpisodeReviews(HttpSession session) {
+        List<EpisodeReviewWithUserInfoDto> reviews = profileService.getEpisodeReviews(session);
         return ResponseEntity.ok(reviews);
     }
 

@@ -34,8 +34,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}/reviews")
-    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getUserReviews(@PathVariable Long id) {
-        List<ShowReviewWithUserInfoDto> reviews = userService.getUserReviews(id);
+    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getUserShowReviews(@PathVariable Long id) {
+        List<ShowReviewWithUserInfoDto> reviews = userService.getUserShowReviews(id);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/{id}/episode-reviews")
+    public ResponseEntity<List<EpisodeReviewWithUserInfoDto>> getUserEpisodeReviews(@PathVariable Long id) {
+        List<EpisodeReviewWithUserInfoDto> reviews = userService.getUserEpisodeReviews(id);
         return ResponseEntity.ok(reviews);
     }
 

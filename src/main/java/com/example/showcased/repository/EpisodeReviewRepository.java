@@ -41,6 +41,39 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
         """)
     List<EpisodeReviewWithUserInfoDto> findAllByEpisodeId(@Param("episodeId") Long episodeId, @Param("userId") Long userId);
 
+    @Query(""" 
+        SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
+                r.id,
+                u.username,
+                u.profilePicture,
+                r.userId,
+                e.showId,
+                e.season,
+                e.episode,
+                e.showTitle,
+                e.episodeTitle,
+                r.rating,
+                r.commentary,
+                r.containsSpoilers,
+                r.numLikes,
+                r.reviewDate,
+                CASE
+                    WHEN :userId IS NULL THEN FALSE
+                    WHEN EXISTS (
+                            SELECT lr FROM LikedEpisodeReview lr
+                            WHERE lr.id.reviewId = r.id AND lr.id.userId = :userId
+                    ) THEN TRUE
+                    ELSE FALSE
+                 END
+            )
+            FROM EpisodeReview r
+            JOIN EpisodeInfo e ON e.id = r.episodeId
+            JOIN User u ON u.id = r.userId
+            WHERE r.userId = :userId
+            ORDER BY r.reviewDate DESC
+        """)
+    List<EpisodeReviewWithUserInfoDto> findByUserId(@Param("userId") Long userId);
+
     void deleteByUserIdAndEpisodeId(Long userId, Long episodeId);
 
     @Modifying
