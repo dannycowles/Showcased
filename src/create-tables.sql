@@ -19,16 +19,16 @@ CREATE TABLE show_reviews (
     review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE (user_id, show_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (show_id) REFERENCES show_info(show_id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (show_id) REFERENCES show_info(show_id) ON DELETE CASCADE
 );
 
 CREATE TABLE liked_show_reviews (
     user_id INT,
     review_id INT,
     PRIMARY KEY(user_id, review_id),
-    FOREIGN KEY(user_id) REFERENCES users(id),
-    FOREIGN KEY(review_id) REFERENCES show_reviews(id)
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(review_id) REFERENCES show_reviews(id) ON DELETE CASCADE
 );
 
 CREATE TABLE episode_reviews (
@@ -42,16 +42,16 @@ CREATE TABLE episode_reviews (
     review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE (user_id, episode_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (episode_id) REFERENCES episode_info(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (episode_id) REFERENCES episode_info(id) ON DELETE CASCADE
 );
 
 CREATE TABLE liked_episode_reviews (
     user_id INT,
     review_id INT,
     PRIMARY KEY (user_id, review_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (review_id) REFERENCES episode_reviews(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (review_id) REFERENCES episode_reviews(id) ON DELETE CASCADE
 );
 
 CREATE TABLE currently_watching (

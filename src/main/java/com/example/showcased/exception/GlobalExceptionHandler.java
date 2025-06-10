@@ -178,4 +178,12 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> alreadyInCollectionHandler(AlreadyInCollectionException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler when some item being requested was not found
+     */
+    @ExceptionHandler(ItemNotFoundException.class)
+    ResponseEntity<ErrorResponse> itemNotFoundHandler(ItemNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
+    }
 }

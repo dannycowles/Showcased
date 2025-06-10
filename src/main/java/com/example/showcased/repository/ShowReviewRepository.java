@@ -70,7 +70,6 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
 
     @Query("SELECT r FROM ShowReview r WHERE r.id = :reviewId")
     ShowReview findByReviewId(@Param("reviewId") Long reviewId);
-    boolean existsByUserIdAndShowId(Long userId, Long showId);
 
     @Transactional
     void deleteByUserIdAndShowId(Long userId, Long showId);

@@ -3,6 +3,7 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.ShowService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,7 +66,7 @@ public class ShowController {
     }
 
 
-    // ========== REVIEWS ==========
+    // ========== SHOW REVIEWS ==========
 
     @PostMapping("/{id}/reviews")
     public ResponseEntity<Void> addReviewToShow(@PathVariable Long id, @RequestBody ShowReviewDto review, HttpSession session) {
@@ -74,8 +75,9 @@ public class ShowController {
     }
 
     @GetMapping("/{id}/reviews")
-    public List<ShowReviewWithUserInfoDto> getShowReviews(@PathVariable Long id, HttpSession session) {
-        return showService.getShowReviews(id, session);
+    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getShowReviews(@PathVariable Long id, HttpSession session) {
+        List<ShowReviewWithUserInfoDto> reviews = showService.getShowReviews(id, session);
+        return ResponseEntity.ok(reviews);
     }
 
     @PostMapping("/reviews/{reviewId}/likes")
@@ -89,6 +91,37 @@ public class ShowController {
         showService.unlikeShowReview(reviewId, session);
         return ResponseEntity.ok().build();
     }
+
+
+
+
+    // ========== EPISODE REVIEWS ==========
+
+    @PostMapping("/episodes/{episodeId}/reviews")
+    public ResponseEntity<Void> addReviewToEpisode(@PathVariable Long episodeId, @RequestBody EpisodeReviewDto review, HttpSession session) {
+        showService.addReviewToEpisode(episodeId, review, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/episodes/{episodeId}/reviews")
+    public ResponseEntity<List<EpisodeReviewWithUserInfoDto>> getEpisodeReviews(@PathVariable Long episodeId, HttpSession session) {
+        List<EpisodeReviewWithUserInfoDto> reviews = showService.getEpisodeReviews(episodeId, session);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @PostMapping("/episode-reviews/{reviewId}/likes")
+    public ResponseEntity<Void> likeEpisodeReview(@PathVariable Long reviewId, HttpSession session) {
+        showService.likeEpisodeReview(reviewId, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/episode-reviews/{reviewId}/likes")
+    public ResponseEntity<Void> unlikeEpisodeReview(@PathVariable Long reviewId, HttpSession session) {
+        showService.unlikeEpisodeReview(reviewId, session);
+        return ResponseEntity.ok().build();
+    }
+
+
 
 
     // ========== DISCOVER ==========

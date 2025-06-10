@@ -4,8 +4,10 @@ import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
 import com.example.showcased.exception.AlreadyLikedException;
 import com.example.showcased.exception.HaventLikedException;
+import com.example.showcased.exception.ItemNotFoundException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import org.json.JSONArray;
@@ -21,10 +23,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ShowService {
 
     private final ModelMapper modelMapper;
     private final ShowInfoRepository showInfoRepository;
+    private final EpisodeInfoRepository episodeInfoRepository;
     @Value("${omdbApi}")
     private String omdbKey;
 
@@ -34,6 +38,8 @@ public class ShowService {
     private final WatchingRepository watchingRepository;
     private final ShowRankingRepository showRankingRepository;
     private final SeasonRankingRepository seasonRankingRepository;
+    private final EpisodeReviewRepository episodeReviewRepository;
+    private final LikedEpisodeReviewsRepository likedEpisodeReviewsRepository;
     private final TMDBClient tmdbClient;
     private final OMDBClient omdbClient;
 
@@ -45,7 +51,10 @@ public class ShowService {
                        ShowRankingRepository showRankingRepository,
                        SeasonRankingRepository seasonRankingRepository,
                        TMDBClient tmdbClient,
-                       OMDBClient omdbClient, ShowInfoRepository showInfoRepository) {
+                       OMDBClient omdbClient,
+                       ShowInfoRepository showInfoRepository,
+                       EpisodeReviewRepository episodeReviewRepository,
+                       LikedEpisodeReviewsRepository likedEpisodeReviewsRepository, EpisodeInfoRepository episodeInfoRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -56,6 +65,9 @@ public class ShowService {
         this.tmdbClient = tmdbClient;
         this.omdbClient = omdbClient;
         this.showInfoRepository = showInfoRepository;
+        this.episodeReviewRepository = episodeReviewRepository;
+        this.likedEpisodeReviewsRepository = likedEpisodeReviewsRepository;
+        this.episodeInfoRepository = episodeInfoRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -367,27 +379,25 @@ public class ShowService {
         return episode;
     }
 
-    public void addReviewToShow(Long showId, ShowReviewDto review, HttpSession session) {
+    public void addReviewToShow(Long showId, ShowReviewDto reviewDto, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
         // Delete existing review if it exists
-        if (showReviewRepository.existsByUserIdAndShowId(userId, showId)) {
-            showReviewRepository.deleteByUserIdAndShowId(userId, showId);
-        }
+        showReviewRepository.deleteByUserIdAndShowId(userId, showId);
 
         // Check if the show exists in the show info table
         if (!showInfoRepository.existsById(showId)) {
             ShowInfo showInfo = new ShowInfo();
             showInfo.setShowId(showId);
-            showInfo.setPosterPath(review.getPosterPath());
-            showInfo.setTitle(review.getShowTitle());
+            showInfo.setPosterPath(reviewDto.getPosterPath());
+            showInfo.setTitle(reviewDto.getShowTitle());
             showInfoRepository.save(showInfo);
         }
 
-        ShowReview newReview = modelMapper.map(review, ShowReview.class);
-        newReview.setUserId(userId);
-        newReview.setShowId(showId);
-        showReviewRepository.save(newReview);
+        ShowReview review = modelMapper.map(reviewDto, ShowReview.class);
+        review.setUserId(userId);
+        review.setShowId(showId);
+        showReviewRepository.save(review);
     }
 
     public List<ShowReviewWithUserInfoDto> getShowReviews(Long showId, HttpSession session) {
@@ -431,6 +441,67 @@ public class ShowService {
         review.setNumLikes(review.getNumLikes() - 1);
         showReviewRepository.save(review);
     }
+
+    public void addReviewToEpisode(Long episodeId, EpisodeReviewDto reviewDto, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Delete existing review if it exists
+        episodeReviewRepository.deleteByUserIdAndEpisodeId(userId, episodeId);
+        episodeReviewRepository.flush();
+
+        // Check if the episode exists in the episode info table
+        if (!episodeInfoRepository.existsById(episodeId)) {
+            EpisodeInfo episodeInfo = modelMapper.map(reviewDto, EpisodeInfo.class);
+            episodeInfo.setId(episodeId);
+            episodeInfoRepository.save(episodeInfo);
+        }
+
+        EpisodeReview review = modelMapper.map(reviewDto, EpisodeReview.class);
+        review.setId(null);
+        review.setEpisodeId(episodeId);
+        review.setUserId(userId);
+        episodeReviewRepository.save(review);
+    }
+
+    public List<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return episodeReviewRepository.findAllByEpisodeId(episodeId, userId);
+    }
+
+    public void likeEpisodeReview(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (!episodeReviewRepository.existsById(reviewId)) {
+            throw new ItemNotFoundException("Didn't find an episode review with the ID: " + reviewId);
+        }
+
+        // Check if the user has already liked the review, if so we throw an exception
+        LikedEpisodeReview likedReview = new LikedEpisodeReview(new LikedEpisodeReviewId(userId, reviewId));
+        if (likedEpisodeReviewsRepository.existsById(likedReview.getId())) {
+            throw new AlreadyLikedException("You have already liked this episode review");
+        }
+
+        likedEpisodeReviewsRepository.save(likedReview);
+        episodeReviewRepository.incrementLikes(reviewId);
+    }
+
+    public void unlikeEpisodeReview(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (!episodeReviewRepository.existsById(reviewId)) {
+            throw new ItemNotFoundException("Didn't find an episode review with the ID: " + reviewId);
+        }
+
+        // Check if the user hasn't liked the review yet
+        LikedEpisodeReview likedReview = new LikedEpisodeReview(new LikedEpisodeReviewId(userId, reviewId));
+        if (!likedEpisodeReviewsRepository.existsById(likedReview.getId())) {
+            throw new HaventLikedException("You have not liked this episode review");
+        }
+
+        likedEpisodeReviewsRepository.delete(likedReview);
+        episodeReviewRepository.decrementLikes(reviewId);
+    }
+
+    // TODO: refactor show review likes using repository method just like the episode ones
+
 
     public ShowResultsPageDto getTrendingShows(Integer page) {
         // Make request to TMDB trending TV endpoint
