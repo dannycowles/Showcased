@@ -2,8 +2,8 @@ package com.example.showcased.repository;
 
 import com.example.showcased.dto.ShowReviewWithUserInfoDto;
 import com.example.showcased.entity.ShowReview;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -68,9 +68,13 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
     """)
     List<ShowReviewWithUserInfoDto> findByUserId(@Param("id") Long id);
 
-    @Query("SELECT r FROM ShowReview r WHERE r.id = :reviewId")
-    ShowReview findByReviewId(@Param("reviewId") Long reviewId);
-
-    @Transactional
     void deleteByUserIdAndShowId(Long userId, Long showId);
+
+    @Modifying
+    @Query("UPDATE ShowReview r SET r.numLikes = r.numLikes + 1 WHERE r.id = :reviewId")
+    void incrementLikes(@Param("reviewId") Long reviewId);
+
+    @Modifying
+    @Query("UPDATE ShowReview r SET r.numLikes = r.numLikes - 1 WHERE r.id = :reviewId")
+    void decrementLikes(@Param("reviewId") Long reviewId);
 }

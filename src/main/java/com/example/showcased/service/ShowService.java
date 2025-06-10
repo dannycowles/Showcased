@@ -7,11 +7,11 @@ import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.exception.ItemNotFoundException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class ShowService {
 
     private final ModelMapper modelMapper;
@@ -379,11 +378,13 @@ public class ShowService {
         return episode;
     }
 
+    @Transactional
     public void addReviewToShow(Long showId, ShowReviewDto reviewDto, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
         // Delete existing review if it exists
         showReviewRepository.deleteByUserIdAndShowId(userId, showId);
+        showReviewRepository.flush();
 
         // Check if the show exists in the show info table
         if (!showInfoRepository.existsById(showId)) {
@@ -405,8 +406,12 @@ public class ShowService {
         return showReviewRepository.findAllByShowId(showId, userId);
     }
 
+    @Transactional
     public void likeShowReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
+        if (!showReviewRepository.existsById(reviewId)) {
+            throw new ItemNotFoundException("Didn't find a show review with ID: " + reviewId);
+        }
 
         // Check if the user has already liked the review, if so we throw an exception
         LikedShowReviews likedReview = new LikedShowReviews(new LikedShowReviewsId(userId, reviewId));
@@ -414,34 +419,28 @@ public class ShowService {
             throw new AlreadyLikedException("You have already liked this show review");
         }
 
-        // Store the review like information in the DB
         likedShowReviewsRepository.save(likedReview);
-
-        // Retrieve the review from the repository and increment the like count
-        ShowReview review = showReviewRepository.findByReviewId(reviewId);
-        review.setNumLikes(review.getNumLikes() + 1);
-        showReviewRepository.save(review);
+        showReviewRepository.incrementLikes(reviewId);
     }
 
+    @Transactional
     public void unlikeShowReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
+        if (!showReviewRepository.existsById(reviewId)) {
+            throw new ItemNotFoundException("Didn't find a show review with ID: " + reviewId);
+        }
 
-        // Check if the user has liked the review, if they haven't they can't unlike it so
-        // we throw an exception
+        // Check if the user has liked the review, if not we throw an exception
         LikedShowReviews likedReview = new LikedShowReviews(new LikedShowReviewsId(userId, reviewId));
         if (!likedShowReviewsRepository.existsById(likedReview.getId())) {
             throw new HaventLikedException("You have not liked this show review");
         }
 
-        // Delete the review like information from the DB
         likedShowReviewsRepository.delete(likedReview);
-
-        // Retrieve the review from the repository and decrement the like count
-        ShowReview review = showReviewRepository.findByReviewId(reviewId);
-        review.setNumLikes(review.getNumLikes() - 1);
-        showReviewRepository.save(review);
+        showReviewRepository.decrementLikes(reviewId);
     }
 
+    @Transactional
     public void addReviewToEpisode(Long episodeId, EpisodeReviewDto reviewDto, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
@@ -468,10 +467,11 @@ public class ShowService {
         return episodeReviewRepository.findAllByEpisodeId(episodeId, userId);
     }
 
+    @Transactional
     public void likeEpisodeReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         if (!episodeReviewRepository.existsById(reviewId)) {
-            throw new ItemNotFoundException("Didn't find an episode review with the ID: " + reviewId);
+            throw new ItemNotFoundException("Didn't find an episode review with ID: " + reviewId);
         }
 
         // Check if the user has already liked the review, if so we throw an exception
@@ -484,10 +484,11 @@ public class ShowService {
         episodeReviewRepository.incrementLikes(reviewId);
     }
 
+    @Transactional
     public void unlikeEpisodeReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         if (!episodeReviewRepository.existsById(reviewId)) {
-            throw new ItemNotFoundException("Didn't find an episode review with the ID: " + reviewId);
+            throw new ItemNotFoundException("Didn't find an episode review with ID: " + reviewId);
         }
 
         // Check if the user hasn't liked the review yet
@@ -499,8 +500,6 @@ public class ShowService {
         likedEpisodeReviewsRepository.delete(likedReview);
         episodeReviewRepository.decrementLikes(reviewId);
     }
-
-    // TODO: refactor show review likes using repository method just like the episode ones
 
 
     public ShowResultsPageDto getTrendingShows(Integer page) {
