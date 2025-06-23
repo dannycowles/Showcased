@@ -1,6 +1,6 @@
 package com.example.showcased.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,16 +9,16 @@ import lombok.Setter;
 public class SearchDto {
     private String id;
 
-    @JsonProperty("poster_path")
+    @JsonAlias("poster_path")
     private String posterPath;
 
-    @JsonProperty("name")
+    @JsonAlias("name")
     private String title;
 
-    @JsonProperty("first_air_date")
+    @JsonAlias("first_air_date")
     private String startYear;
 
-    @JsonProperty("last_air_date")
+    @JsonAlias("last_air_date")
     private String endYear;
 
     public void setPosterPath(String posterPath) {

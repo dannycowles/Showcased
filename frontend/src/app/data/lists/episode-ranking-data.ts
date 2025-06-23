@@ -1,4 +1,4 @@
-export class EpisodeRankingData {
+export interface EpisodeRankingData {
   readonly id: number;
   readonly showId: number;
   rankNum: number;
@@ -7,15 +7,4 @@ export class EpisodeRankingData {
   readonly season: number;
   readonly episode: number;
   readonly posterPath: string;
-
-  constructor(jsonObject: { [key: string]: any }) {
-    this.id = jsonObject['id'];
-    this.showId = jsonObject['showId'];
-    this.rankNum = jsonObject['rankNum'];
-    this.showTitle = jsonObject['showTitle'];
-    this.episodeTitle = jsonObject['episodeTitle'];
-    this.season = jsonObject['season'];
-    this.episode = jsonObject['episode'];
-    this.posterPath = jsonObject['posterPath'];
-  }
 }

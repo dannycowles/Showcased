@@ -1,13 +1,6 @@
-export class CollectionShowData {
-  id: number;
+export interface CollectionShowData {
+  showId: number;
   title: string;
   posterPath: string;
   rankNum: number | null;
-
-  constructor(jsonObject: {[key: string]: any}) {
-    this.id = jsonObject["showId"];
-    this.title = jsonObject["title"];
-    this.posterPath = jsonObject["posterPath"];
-    this.rankNum = jsonObject["rankNum"];
-  }
 }

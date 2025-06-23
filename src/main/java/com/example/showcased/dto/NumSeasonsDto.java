@@ -1,12 +1,12 @@
 package com.example.showcased.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class NumSeasonsDto {
-    @JsonProperty("number_of_seasons")
+    @JsonAlias("number_of_seasons")
     private int numSeasons;
 }

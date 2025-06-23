@@ -46,3 +46,55 @@ export class UtilsService {
     helpBlockElement.innerText = `${charactersLeft} characters remaining`;
   }
 }
+
+
+/*get relativeDate():string {
+  let diffInSeconds = Math.floor(new Date().getTime() - this.reviewDate.getTime()) / 1000;
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} seconds ago`;
+  }
+
+  let diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    if (diffInMinutes === 1) {
+      return `${diffInMinutes} minute ago`;
+    } else {
+      return `${diffInMinutes} minutes ago`;
+    }
+  }
+
+  let diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    if (diffInHours === 1) {
+      return `${diffInHours} hour ago`;
+    } else {
+      return `${diffInHours} hours ago`;
+    }
+  }
+
+  let diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7) {
+    if (diffInDays === 1) {
+      return `${diffInDays} day ago`;
+    } else {
+      return `${diffInDays} days ago`;
+    }
+  }
+
+  return this.utilsService.getFormattedDate(this.reviewDate);
+}
+}*/
+
+/*  get userHeaderData(): UserHeaderData {
+    return {
+      username: this.username,
+      profilePicture: this.profilePicture,
+      bio: this.bio,
+      numFollowers: this.numFollowers,
+      numFollowing: this.numFollowing,
+      socials: this.socials,
+      isFollowing: this.isFollowing,
+      isOwnProfile: this.isOwnProfile
+    };
+  }*/
+

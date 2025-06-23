@@ -1,5 +1,6 @@
 package com.example.showcased.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Data;
 
 import java.util.List;
@@ -8,6 +9,10 @@ import java.util.List;
 public class ShowResultsPageDto {
     private int page;
     private List<SearchDto> results;
-    private int total_pages;
-    private int total_results;
+
+    @JsonAlias("total_pages")
+    private int totalPages;
+
+    @JsonAlias("total_results")
+    private int totalResults;
 }

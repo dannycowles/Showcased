@@ -1,6 +1,6 @@
 package com.example.showcased.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ public class CreatorDto {
     private String id;
     private String name;
 
-    @JsonProperty("profile_path")
+    @JsonAlias("profile_path")
     private String profilePath;
 
     void setProfilePath(String profilePath) {

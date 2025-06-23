@@ -1,24 +1,24 @@
 package com.example.showcased.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class SeasonEpisodeDto {
-    @JsonProperty("air_date")
+    @JsonAlias("air_date")
     private String airDate;
 
-    @JsonProperty("episode_number")
+    @JsonAlias("episode_number")
     private int episodeNumber;
 
     private String name;
 
-    @JsonProperty("overview")
+    @JsonAlias("overview")
     private String plot;
 
-    @JsonProperty("still_path")
+    @JsonAlias("still_path")
     private String stillPath;
 
     private String imdbRating;

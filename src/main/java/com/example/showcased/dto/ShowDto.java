@@ -1,6 +1,6 @@
 package com.example.showcased.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,40 +15,40 @@ public class ShowDto {
     private String imdbRating;
     private String imdbVotes;
 
-    @JsonProperty("backdrop_path")
+    @JsonAlias("backdrop_path")
     private String backdropPath;
 
-    @JsonProperty("poster_path")
+    @JsonAlias("poster_path")
     private String posterPath;
 
-    @JsonProperty("name")
+    @JsonAlias("name")
     private String title;
 
     private String tagline;
     private String plot;
     private String rating;
 
-    @JsonProperty("average_runtime")
+    @JsonAlias("average_runtime")
     private String averageRuntime;
 
-    @JsonProperty("first_air_date")
+    @JsonAlias("first_air_date")
     private String startYear;
 
-    @JsonProperty("last_air_date")
+    @JsonAlias("last_air_date")
     private String endYear = "";
 
-    @JsonProperty("number_of_episodes")
+    @JsonAlias("number_of_episodes")
     private int numEpisodes;
 
-    @JsonProperty("number_of_seasons")
+    @JsonAlias("number_of_seasons")
     private int numSeasons;
     private List<GenresDto> genres;
 
-    @JsonProperty("created_by")
-    private List<CreatorDto> creator;
+    @JsonAlias("created_by")
+    private List<CreatorDto> creators;
     private List<CastDto> cast;
 
-    @JsonProperty("in_production")
+    @JsonAlias("in_production")
     private boolean inProduction;
 
     private String awards;

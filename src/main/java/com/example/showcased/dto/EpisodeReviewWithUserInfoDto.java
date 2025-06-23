@@ -11,7 +11,7 @@ public class EpisodeReviewWithUserInfoDto {
     private Long id;
     private String username;
     private String profilePicture;
-    private Long reviewerId;
+    private Long userId;
     private Long showId;
     private int season;
     private int episode;

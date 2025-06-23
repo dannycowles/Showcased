@@ -38,8 +38,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return new ProfileData(data);
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -159,10 +158,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return data.map((show: {}) => {
-        return new ShowListData(show);
-      });
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -236,10 +232,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return data.map((show: {}) => {
-        return new ShowListData(show);
-      });
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -313,10 +306,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return data.map((show: {}) => {
-        return new ShowRankingData(show);
-      });
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -394,10 +384,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return data.map((episode: {}) => {
-        return new EpisodeRankingData(episode);
-      });
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -493,10 +480,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return data.map((season: {}) => {
-        return new SeasonRankingData(season);
-      });
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -516,10 +500,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return data.map((user: {}) => {
-        return new UserSearchData(user);
-      });
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -561,10 +542,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return data.map((user: {}) => {
-        return new UserSearchData(user);
-      });
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -580,8 +558,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return new CharacterRankingsData(data);
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -678,10 +655,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return data.map((collection: {}) => {
-        return new CollectionData(collection);
-      });
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -784,8 +758,7 @@ export class ProfileService {
       });
 
       this.checkUnauthorizedUser(response);
-      const data = await response.json();
-      return new SingleCollectionData(data);
+      return await response.json();
     } catch (error) {
       throw error;
     }

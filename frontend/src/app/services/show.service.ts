@@ -1,14 +1,11 @@
 import {Injectable} from '@angular/core';
-import {ShowReviewData} from '../data/show-review-data';
-import {UtilsService} from './utils.service';
 import {ShowData} from '../data/show/show-data';
 import {SeasonData} from '../data/show/season-data';
 import {EpisodeData} from '../data/show/episode-data';
-import {TrendingShowsData} from '../data/trending-shows-data';
 import {ShowGenresData} from '../data/show-genres-data';
-import {TopRatedShowsData} from '../data/top-rated-shows-data';
 import {ResultPageData} from '../data/show/result-page-data';
 import {RoleData} from '../data/role-data';
+import {EpisodeReviewData, ShowReviewData} from '../data/reviews-data';
 
 @Injectable({
   providedIn: 'root'
@@ -34,15 +31,9 @@ export class ShowService {
    * Fetches search results for a user query
     * @param searchString
    */
-  async searchForShows(searchString: string): Promise<TopRatedShowsData> {
-    try {
-      const response = await fetch(`${this.baseUrl}?name=${encodeURIComponent(searchString)}`);
-
-      const data = await response.json();
-      return new TopRatedShowsData(data);
-    } catch(error) {
-      throw error;
-    }
+  async searchForShows(searchString: string): Promise<ResultPageData> {
+    const response = await fetch(`${this.baseUrl}?name=${encodeURIComponent(searchString)}`);
+    return await response.json();
   }
 
   /**
@@ -51,14 +42,8 @@ export class ShowService {
    * @param page
    */
   async searchByGenre(genreId: number, page: number = 1): Promise<ResultPageData> {
-    try {
-      const response = await fetch(`${this.baseUrl}?genre=${genreId}&page=${page}`);
-
-      const data = await response.json();
-      return new ResultPageData(data);
-    } catch(error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}?genre=${genreId}&page=${page}`);
+    return await response.json();
   }
 
   /**
@@ -70,15 +55,8 @@ export class ShowService {
     const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
     const url = `${this.baseUrl}/${showId}/characters${params}`;
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data.map((role: {}) => {
-        return new RoleData(role);
-      });
-    } catch (error) {
-      throw error;
-    }
+    const response = await fetch(url);
+    return await response.json();
   }
 
   /**
@@ -86,17 +64,12 @@ export class ShowService {
    * @param showId
    */
   async fetchShowDetails(showId: number): Promise<ShowData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${showId}`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/${showId}`, {
+      credentials: 'include'
+    });
 
-      this.checkPageNotFound(response);
-      const data = await response.json();
-      return new ShowData(data);
-    } catch (error) {
-      throw error;
-    }
+    this.checkPageNotFound(response);
+    return await response.json();
   }
 
   /**
@@ -104,14 +77,9 @@ export class ShowService {
    * @param showId
    */
   async fetchNumberOfSeasons(showId: number): Promise<number> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${showId}/num-seasons`);
-
-      const data = await response.json();
-      return data['number_of_seasons'];
-    } catch (error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/${showId}/num-seasons`);
+    const data = await response.json();
+    return data['numSeasons'];
   }
 
   /**
@@ -119,18 +87,12 @@ export class ShowService {
    * @param showId
    */
   async fetchShowReviews(showId: number): Promise<ShowReviewData[]> {
-    try {
-      let response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
+      credentials: 'include'
+    });
 
-      const data = await response.json();
-      return data.map((review: {}) => {
-        return new ShowReviewData(review, new UtilsService());
-      });
-    } catch (error) {
-      throw error;
-    }
+    return await response.json();
+
   }
 
   /**
@@ -139,21 +101,17 @@ export class ShowService {
    * @param data
    */
   async addShowReview(showId:number, data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch(error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -161,17 +119,13 @@ export class ShowService {
    * @param reviewId
    */
   async likeShowReview(reviewId: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/likes`, {
-        method: 'POST',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/likes`, {
+      method: 'POST',
+      credentials: 'include'
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch(error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -179,17 +133,69 @@ export class ShowService {
    * @param reviewId
    */
   async unlikeShowReview(reviewId: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/likes`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/likes`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch(error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Adds a review to an episode by ID
+   * @param episodeId
+   * @param data
+   */
+  async addEpisodeReview(episodeId: number, data: {}): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Retrieves the reviews for an episode by its ID
+   * @param episodeId
+   */
+  async fetchEpisodeReviews(episodeId: number): Promise<EpisodeReviewData[]> {
+    const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews`);
+    return await response.json();
+  }
+
+  /**
+   * Likes an episode review by its ID
+   * @param reviewId
+   */
+  async likeEpisodeReview(reviewId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/likes`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Unlikes an episode review by its ID
+   * @param reviewId
+   */
+  async unlikeEpisodeReview(reviewId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/likes`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -198,17 +204,12 @@ export class ShowService {
    * @param seasonNumber
    */
   async fetchSeasonDetails(showId: number, seasonNumber: number): Promise<SeasonData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}`, {
+      credentials: 'include'
+    });
 
-      this.checkPageNotFound(response);
-      const data = await response.json();
-      return new SeasonData(data);
-    } catch (error) {
-      throw error;
-    }
+    this.checkPageNotFound(response);
+    return await response.json();
   }
 
   /**
@@ -218,58 +219,35 @@ export class ShowService {
    * @param episodeNumber
    */
   async fetchEpisodeDetails(showId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}/episodes/${episodeNumber}`);
+    const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}/episodes/${episodeNumber}`);
 
-      this.checkPageNotFound(response);
-      const data = await response.json();
-      return new EpisodeData(data);
-    } catch (error) {
-      throw error;
-    }
+    this.checkPageNotFound(response);
+    return await response.json();
   }
 
   /**
    * Fetches a page of the trending shows on TMDB
    * @param page
    */
-  async fetchTrendingShows(page: number = 1): Promise<TrendingShowsData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/trending?page=${page}`);
-
-      const data = await response.json();
-      return new TrendingShowsData(data);
-    } catch (error) {
-      throw error;
-    }
+  async fetchTrendingShows(page: number = 1): Promise<ResultPageData> {
+    const response = await fetch(`${this.baseUrl}/trending?page=${page}`);
+    return await response.json();
   }
 
   /**
    * Fetches all show genres on TMDB
    */
   async fetchShowGenres(): Promise<ShowGenresData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/genres`);
-
-      const data = await response.json();
-      return new ShowGenresData(data);
-    } catch (error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/genres`);
+    return await response.json();
   }
 
   /**
    * Fetches a page of the top-rated shows on TMDB
    * @param page
    */
-  async fetchTopRatedShows(page: number = 1): Promise<TopRatedShowsData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/top?page=${page}`);
-
-      const data = await response.json();
-      return new TopRatedShowsData(data);
-    } catch (error) {
-      throw error;
-    }
+  async fetchTopRatedShows(page: number = 1): Promise<ResultPageData> {
+    const response = await fetch(`${this.baseUrl}/top?page=${page}`);
+    return await response.json();
   }
 }

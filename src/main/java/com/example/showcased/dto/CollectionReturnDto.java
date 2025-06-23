@@ -10,11 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CollectionReturnDto {
-    private String collectionName;
+    private String name;
     private boolean isPrivate;
     private boolean isRanked;
     private String description;
     private int numLikes;
     private List<RankingReturnDto> shows;
-    private boolean likedByUser;
+    private boolean isLikedByUser;
 }

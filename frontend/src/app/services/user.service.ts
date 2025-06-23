@@ -27,16 +27,8 @@ export class UserService {
    * @param query
    */
   async searchUsers(query: string): Promise<UserSearchData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(query)}`);
-
-      const data = await response.json();
-      return data.map((result: {}) => {
-        return new UserSearchData(result);
-      });
-    } catch(error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(query)}`);
+    return await response.json();
   }
 
   /**
@@ -44,16 +36,11 @@ export class UserService {
    * @param id
    */
   async getUserDetails(id: number): Promise<ProfileData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/details`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/${id}/details`, {
+      credentials: 'include'
+    });
 
-      const data= await response.json();
-      return new ProfileData(data);
-    } catch(error) {
-      throw error;
-    }
+    return await response.json();
   }
 
   /**
@@ -61,16 +48,8 @@ export class UserService {
    * @param id
    */
   async getFullWatchlist(id: number): Promise<ShowListData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/watchlist`);
-
-      const data = await response.json();
-      return data.map((show: {}) => {
-        return new ShowListData(show);
-      });
-    } catch(error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/${id}/watchlist`);
+    return await response.json();
   }
 
   /**
@@ -78,16 +57,8 @@ export class UserService {
    * @param id
    */
   async getFullWatchingList(id:number): Promise<ShowListData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/currently-watching`);
-
-      const data = await response.json();
-      return data.map((show: {}) => {
-        return new ShowListData(show);
-      });
-    } catch(error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/${id}/currently-watching`);
+    return await response.json();
   }
 
   /**
@@ -95,16 +66,8 @@ export class UserService {
    * @param id
    */
   async getFullShowRankingList(id:number): Promise<ShowRankingData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/show-rankings`);
-
-      const data = await response.json();
-      return data.map((show: {}) => {
-        return new ShowRankingData(show);
-      });
-    } catch(error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/${id}/show-rankings`);
+    return await response.json();
   }
 
   /**
@@ -112,16 +75,8 @@ export class UserService {
    * @param id
    */
   async getFullEpisodeRankingList(id:number): Promise<EpisodeRankingData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/episode-rankings`);
-
-      const data = await response.json();
-      return data.map((show: {}) => {
-        return new EpisodeRankingData(show);
-      });
-    } catch(error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/${id}/episode-rankings`);
+    return await response.json();
   }
 
   /**
@@ -129,16 +84,8 @@ export class UserService {
    * @param id
    */
   async getFullSeasonRankingList(id:number): Promise<SeasonRankingData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/season-rankings`);
-
-      const data = await response.json();
-      return data.map((season: {}) => {
-        return new SeasonRankingData(season);
-      });
-    } catch(error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/${id}/season-rankings`);
+    return await response.json();
   }
 
   /**
@@ -146,14 +93,8 @@ export class UserService {
    * @param id
    */
   async getAllCharacterRankingLists(id: number): Promise<CharacterRankingsData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/character-rankings`);
-
-      const data = await response.json();
-      return new CharacterRankingsData(data);
-    } catch(error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/${id}/character-rankings`);
+    return await response.json();
   }
 
   /**
@@ -161,17 +102,13 @@ export class UserService {
    * @param id
    */
   async unfollowUser(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/followers`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/${id}/followers`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -179,17 +116,13 @@ export class UserService {
    * @param id
    */
   async followUser(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/${id}/followers`, {
-        method: 'POST',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/${id}/followers`, {
+      method: 'POST',
+      credentials: 'include'
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -201,18 +134,11 @@ export class UserService {
     const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
     const url = `${this.baseUrl}/${id}/followers${params}`;
 
-    try {
-      const response = await fetch(url, {
-        credentials: 'include'
-      });
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
 
-      const data = await response.json();
-      return data.map((user: {}) => {
-        return new UserSearchData(user);
-      });
-    } catch(error) {
-      throw error;
-    }
+    return await response.json();
   }
 
   /**
@@ -224,18 +150,11 @@ export class UserService {
     const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
     const url = `${this.baseUrl}/${id}/following${params}`;
 
-    try {
-      const response = await fetch(url, {
-        credentials: 'include'
-      });
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
 
-      const data = await response.json();
-      return data.map((user: {}) => {
-        return new UserSearchData(user);
-      });
-    } catch(error) {
-      throw error;
-    }
+    return await response.json();
   }
 
   /**
@@ -247,16 +166,8 @@ export class UserService {
     const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
     const url = `${this.baseUrl}/${id}/collections${params}`;
 
-    try {
-      const response = await fetch(url);
-
-      const data = await response.json();
-      return data.map((collection: {}) => {
-        return new CollectionData(collection);
-      });
-    } catch (error) {
-      throw error;
-    }
+    const response = await fetch(url);
+    return await response.json();
   }
 
   /**
@@ -264,16 +175,10 @@ export class UserService {
    * @param collectionId
    */
   async getCollectionDetails(collectionId: number): Promise<SingleCollectionData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/collections/${collectionId}`, {
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-      return new SingleCollectionData(data);
-    } catch (error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/collections/${collectionId}`, {
+      credentials: 'include'
+    });
+    return await response.json();
   }
 
   /**
@@ -281,14 +186,13 @@ export class UserService {
    * @param collectionId
    */
   async likeCollection(collectionId: number): Promise<Response> {
-    try {
-      return await fetch(`${this.baseUrl}/collections/${collectionId}/likes`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-    } catch (error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/collections/${collectionId}/likes`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -296,13 +200,12 @@ export class UserService {
    * @param collectionId
    */
   async unlikeCollection(collectionId: number): Promise<Response> {
-    try {
-      return await fetch(`${this.baseUrl}/collections/${collectionId}/likes`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-    } catch (error) {
-      throw error;
-    }
+    const response = await fetch(`${this.baseUrl}/collections/${collectionId}/likes`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 }
