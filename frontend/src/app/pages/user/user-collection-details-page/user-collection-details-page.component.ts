@@ -32,8 +32,8 @@ export class UserCollectionDetailsPageComponent implements OnInit {
 
   async toggleLikeState() {
     try {
-      this.collection.likedByUser = !this.collection.likedByUser;
-      if (this.collection.likedByUser) {
+      this.collection.isLikedByUser = !this.collection.isLikedByUser;
+      if (this.collection.isLikedByUser) {
         const response = await this.userService.likeCollection(this.collectionId);
 
         if (response.status === 401) {

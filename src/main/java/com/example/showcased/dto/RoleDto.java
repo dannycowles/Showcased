@@ -7,6 +7,7 @@ import lombok.Data;
 public class RoleDto {
     @JsonAlias("credit_id")
     private String id;
-    private String character;
+    @JsonAlias("character")
+    private String name;
     private int episode_count;
 }

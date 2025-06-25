@@ -1,8 +1,8 @@
 import {Component, Input} from '@angular/core';
-import {ShowReviewData} from '../../data/show-review-data';
 import {UtilsService} from '../../services/utils.service';
 import {ButtonHeartComponent} from '../../pages/show/button-heart.component';
 import {ShowService} from '../../services/show.service';
+import {ShowReviewData} from '../../data/reviews-data';
 
 @Component({
   selector: 'app-profile-show-review',
@@ -21,13 +21,13 @@ export class ProfileShowReviewComponent {
 
   async toggleLikeState(review: ShowReviewData) {
     try {
-      review.likedByUser = !review.likedByUser;
-      if (review.likedByUser) {
+      review.isLikedByUser = !review.isLikedByUser;
+      if (review.isLikedByUser) {
         await this.showService.likeShowReview(review.id);
-        review.likes++;
+        review.numLikes++;
       } else {
         await this.showService.unlikeShowReview(review.id);
-        review.likes--;
+        review.numLikes--;
       }
     } catch (error) {
       console.error(error);

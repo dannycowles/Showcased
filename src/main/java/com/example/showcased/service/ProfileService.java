@@ -96,19 +96,22 @@ public class ProfileService {
         User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        ProfileDetailsDto profileDetails = modelMapper.map(user, ProfileDetailsDto.class);
+        ProfileDetailsDto profileDetails = new ProfileDetailsDto();
+        UserHeaderDataDto headerData = modelMapper.map(user, UserHeaderDataDto.class);
+        headerData.setNumFollowers(getFollowersCount(session));
+        headerData.setNumFollowing(getFollowingCount(session));
+        headerData.setSocialAccounts(getSocialAccounts(session));
+        headerData.setOwnProfile(true);
+        profileDetails.setHeaderData(headerData);
+
         profileDetails.setWatchlistTop(getWatchlist(numTopEntries, session));
         profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
         profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
         profileDetails.setShowReviews(getShowReviews(session));
         profileDetails.setEpisodeReviews(getEpisodeReviews(session));
-        profileDetails.setNumFollowers(getFollowersCount(session));
-        profileDetails.setNumFollowing(getFollowingCount(session));
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
-        profileDetails.setSocialAccounts(retrieveSocialAccounts(session));
-        profileDetails.setOwnProfile(true);
         return profileDetails;
     }
 
@@ -177,7 +180,7 @@ public class ProfileService {
         userSocialRepository.deleteById(new UserSocialId(userId, socialId));
     }
 
-    private List<SocialAccountReturnDto> retrieveSocialAccounts(HttpSession session) {
+    private List<SocialAccountReturnDto> getSocialAccounts(HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         return userSocialRepository.findByIdUserId(userId);
     }

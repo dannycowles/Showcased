@@ -85,50 +85,52 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        ProfileDetailsDto userDetails = modelMapper.map(user, ProfileDetailsDto.class);
-
-        userDetails.setWatchlistTop(getUserWatchlist(userId, numTopEntries));
-        if (watchlistRepository.countByIdUserId(userId) > numTopEntries) {
-            userDetails.setMoreWatchlist(true);
-        }
-
-        userDetails.setWatchingTop(getUserWatchingList(userId, numTopEntries));
-        if (watchingRepository.countByIdUserId(userId) > numTopEntries) {
-            userDetails.setMoreWatching(true);
-        }
-
-        userDetails.setShowRankingTop(getUserShowRankings(userId, numTopEntries));
-        if (showRankingRepository.countByIdUserId(userId) > numTopEntries) {
-            userDetails.setMoreShowRanking(true);
-        }
-
-        userDetails.setEpisodeRankingTop(getUserEpisodeRankings(userId, numTopEntries));
-        if (episodeRankingRepository.countByIdUserId(userId) > numTopEntries) {
-            userDetails.setMoreEpisodeRanking(true);
-        }
-
-        userDetails.setSeasonRankingTop(getUserSeasonRankings(userId, numTopEntries));
-        if (seasonRankingRepository.countByIdUserId(userId) > numTopEntries) {
-            userDetails.setMoreSeasonRanking(true);
-        }
-
-        userDetails.setShowReviews(getUserShowReviews(userId));
-        userDetails.setEpisodeReviews(getUserEpisodeReviews(userId));
-        userDetails.setNumFollowers(getFollowersCount(userId));
-        userDetails.setNumFollowing(getFollowingCount(userId));
-        userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
-        userDetails.setSocialAccounts(retrieveSocialAccounts(userId));
+        ProfileDetailsDto userDetails = new ProfileDetailsDto();
+        UserHeaderDataDto headerData = modelMapper.map(user, UserHeaderDataDto.class);
+        headerData.setNumFollowers(getFollowersCount(userId));
+        headerData.setNumFollowing(getFollowingCount(userId));
+        headerData.setSocialAccounts(getSocialAccounts(userId));
 
         // Check if the user is logged in, if so we check they are following this user
         Long loggedInUserId = (Long) session.getAttribute("user");
         if (loggedInUserId != null) {
-            userDetails.setFollowing(followersRepository.existsById(new FollowerId(loggedInUserId, userId)));
-            userDetails.setOwnProfile(loggedInUserId.equals(userId));
+            headerData.setFollowing(followersRepository.existsById(new FollowerId(loggedInUserId, userId)));
+            headerData.setOwnProfile(loggedInUserId.equals(userId));
         }
+        userDetails.setHeaderData(headerData);
+
+        userDetails.setWatchlistTop(getUserWatchlist(userId, numTopEntries));
+        if (watchlistRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setHasMoreWatchlist(true);
+        }
+
+        userDetails.setWatchingTop(getUserWatchingList(userId, numTopEntries));
+        if (watchingRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setHasMoreWatching(true);
+        }
+
+        userDetails.setShowRankingTop(getUserShowRankings(userId, numTopEntries));
+        if (showRankingRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setHasMoreShowRanking(true);
+        }
+
+        userDetails.setEpisodeRankingTop(getUserEpisodeRankings(userId, numTopEntries));
+        if (episodeRankingRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setHasMoreEpisodeRanking(true);
+        }
+
+        userDetails.setSeasonRankingTop(getUserSeasonRankings(userId, numTopEntries));
+        if (seasonRankingRepository.countByIdUserId(userId) > numTopEntries) {
+            userDetails.setHasMoreSeasonRanking(true);
+        }
+
+        userDetails.setShowReviews(getUserShowReviews(userId));
+        userDetails.setEpisodeReviews(getUserEpisodeReviews(userId));
+        userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
         return userDetails;
     }
 
-    private List<SocialAccountReturnDto> retrieveSocialAccounts(Long userId) {
+    private List<SocialAccountReturnDto> getSocialAccounts(Long userId) {
         ensureUserExists(userId);
         return userSocialRepository.findByIdUserId(userId);
     }

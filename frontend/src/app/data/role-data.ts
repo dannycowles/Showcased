@@ -1,4 +1,4 @@
 export interface RoleData {
   readonly id: string;
-  readonly character: string;
+  readonly name: string;
 }

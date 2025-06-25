@@ -1,18 +1,18 @@
 @if (userDetails) {
-  <app-user-info [headerData]="headerData" [editable]="false" [userId]="userId"></app-user-info>
+  <app-user-info [headerData]="userDetails.headerData" [editable]="false" [userId]="userId"></app-user-info>
 
   <app-show-list title="Watchlist" [shows]="userDetails.watchlistTop"></app-show-list>
-  @if (userDetails.moreWatchlist) {
+  @if (userDetails.hasMoreWatchlist) {
     <button class="btn btn-primary mt-3 mb-3" routerLink="watchlist">View Full List</button>
   }
 
   <app-show-list title="Currently Watching" [shows]="userDetails.watchingTop"></app-show-list>
-  @if (userDetails.moreWatching) {
+  @if (userDetails.hasMoreWatching) {
     <button class="btn btn-primary mt-3 mb-3" routerLink="watching">View Full List</button>
   }
 
   <app-show-list title="Favorite Shows" [shows]="userDetails.showRankingTop" ranked></app-show-list>
-  @if (userDetails.moreShowRanking) {
+  @if (userDetails.hasMoreShowRanking) {
     <button class="btn btn-primary mt-3 mb-3" routerLink="show-ranking">View Full List</button>
   }
 
@@ -20,7 +20,7 @@
   <button class="btn btn-primary mt-3 mb-3" routerLink="season-ranking">View Full List</button>
 
   <app-episode-list [episodes]="userDetails.episodeRankingTop"></app-episode-list>
-  @if (userDetails.moreEpisodeRanking) {
+  @if (userDetails.hasMoreEpisodeRanking) {
     <button class="btn btn-primary mt-3 mb-3" routerLink="episode-ranking">View Full List</button>
   }
 

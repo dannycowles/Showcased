@@ -2,15 +2,15 @@
 
 @if (resultData) {
   @for (show of resultData.results; track show.id) {
-    <h2>{{show.name}}</h2>
+    <h2>{{show.title}}</h2>
 
     <!-- If the show didn't air for more than one year only display once -->
-    @if (!show.firstAirDate && !show.lastAirDate) {
+    @if (!show.startYear && !show.endYear) {
       <h3>Air Dates Unknown</h3>
-    } @else if (show.firstAirDate === show.lastAirDate) {
-      <h3>{{show.firstAirDate}}</h3>
+    } @else if (show.startYear === show.endYear) {
+      <h3>{{show.startYear}}</h3>
     } @else {
-      <h3>{{ show.firstAirDate }} - {{ show.lastAirDate }}</h3>
+      <h3>{{ show.startYear }} - {{ show.endYear }}</h3>
     }
 
     <!-- Poster images are sized w185, using 2:3 ratio -->

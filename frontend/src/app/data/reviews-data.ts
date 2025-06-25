@@ -9,8 +9,8 @@ interface BaseReviewData {
   readonly commentary: string;
   readonly containsSpoilers: boolean;
   numLikes: number;
-  readonly reviewDate: Date;
-  likedByUser: boolean;
+  readonly reviewDate: string;
+  isLikedByUser: boolean;
 }
 
 export interface ShowReviewData extends BaseReviewData { }

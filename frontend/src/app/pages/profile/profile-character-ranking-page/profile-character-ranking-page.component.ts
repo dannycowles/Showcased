@@ -6,9 +6,9 @@ import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {UtilsService} from '../../../services/utils.service';
 import {ShowService} from '../../../services/show.service';
-import {TopRatedShowsData} from '../../../data/top-rated-shows-data';
 import {SearchResultData} from '../../../data/search-result-data';
 import {RoleData} from '../../../data/role-data';
+import {ResultPageData} from '../../../data/show/result-page-data';
 
 @Component({
   selector: 'app-profile-character-ranking-page',
@@ -24,7 +24,7 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
 
   debouncedSearchShows: () => void;
   searchShowString: string = "";
-  searchShowResults: TopRatedShowsData;
+  searchShowResults: ResultPageData;
   selectedShow: SearchResultData;
 
   debouncedSearchCharacters: () => void;
@@ -142,19 +142,20 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
       const data = {
         id: this.selectedCharacter.id,
         showId: this.selectedShow.id,
-        name: this.selectedCharacter.characterName,
+        name: this.selectedCharacter.name,
         type: this.characterType != "side" ? this.characterType.slice(0,this.characterType.length-1) : this.characterType
       }
 
       const response = await this.profileService.addCharacterToRankingList(data);
       if (response.ok) {
-        const newData = {
+        const newData: CharacterRankingData = {
           id: this.selectedCharacter.id,
           showId: this.selectedShow.id,
-          characterName: this.selectedCharacter.characterName,
-          showName: this.selectedShow.name
+          name: this.selectedCharacter.name,
+          showName: this.selectedShow.title,
+          rankNum: this.characterRankings[this.characterType].length + 1
         }
-        this.characterRankings[this.characterType].push(new CharacterRankingData(newData));
+        this.characterRankings[this.characterType].push(newData);
       }
     } catch (error) {
       console.error(error);

@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {GenreData} from '../data/show/genre-data';
 
 @Injectable({
   providedIn: 'root'
@@ -6,13 +7,12 @@ import {Injectable} from '@angular/core';
 export class UtilsService {
 
   getFormattedDate(date: Date): string {
-
     const months = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
 
-    let month = months[date.getMonth()];
-    let day = date.getDate();
-    let year = date.getFullYear();
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
 
     let daySuffix;
     if (day === 1 || day === 21 || day === 31) {
@@ -45,56 +45,42 @@ export class UtilsService {
     const charactersLeft = maxLength - inputElement.value.length;
     helpBlockElement.innerText = `${charactersLeft} characters remaining`;
   }
+
+  getRelativeDate(dateString: string): string {
+    const actualDate = new Date(dateString);
+    const diffInSeconds = Math.floor(new Date().getTime() - actualDate.getTime()) / 1000;
+    if (diffInSeconds < 60) {
+      return "Just now";
+    }
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} minute${diffInMinutes === 1 ? "" : "s"} ago`;
+    }
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+      return `${diffInHours} hour${diffInHours === 1 ? "" : "s"} ago`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) {
+      return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
+    }
+
+    // For dates longer than one week, just display the formatted date
+    return this.getFormattedDate(actualDate);
+  }
+
+  getGenreString(genres: GenreData[]): string {
+    let returnstr: string = "";
+    for (let i = 0; i < genres.length; i++) {
+      returnstr += genres[i].name;
+
+      if (i < genres.length - 1) {
+        returnstr += ", ";
+      }
+    }
+    return returnstr;
+  }
 }
-
-
-/*get relativeDate():string {
-  let diffInSeconds = Math.floor(new Date().getTime() - this.reviewDate.getTime()) / 1000;
-  if (diffInSeconds < 60) {
-    return `${diffInSeconds} seconds ago`;
-  }
-
-  let diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) {
-    if (diffInMinutes === 1) {
-      return `${diffInMinutes} minute ago`;
-    } else {
-      return `${diffInMinutes} minutes ago`;
-    }
-  }
-
-  let diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) {
-    if (diffInHours === 1) {
-      return `${diffInHours} hour ago`;
-    } else {
-      return `${diffInHours} hours ago`;
-    }
-  }
-
-  let diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 7) {
-    if (diffInDays === 1) {
-      return `${diffInDays} day ago`;
-    } else {
-      return `${diffInDays} days ago`;
-    }
-  }
-
-  return this.utilsService.getFormattedDate(this.reviewDate);
-}
-}*/
-
-/*  get userHeaderData(): UserHeaderData {
-    return {
-      username: this.username,
-      profilePicture: this.profilePicture,
-      bio: this.bio,
-      numFollowers: this.numFollowers,
-      numFollowing: this.numFollowing,
-      socials: this.socials,
-      isFollowing: this.isFollowing,
-      isOwnProfile: this.isOwnProfile
-    };
-  }*/
-

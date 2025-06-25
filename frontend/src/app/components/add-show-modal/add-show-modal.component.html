@@ -18,7 +18,7 @@
                 @for (show of showSearchResults.results; track show.id) {
                   <li class="list-group-item">
                     <input class="form-check-input me-1" type="radio" name="listGroupRadio" [value]="show.id" [id]="show.id" [(ngModel)]="selectedShowId">
-                    <label class="form-check-label" [for]="show.id">{{show.name}}</label>
+                    <label class="form-check-label" [for]="show.id">{{show.title}}</label>
                   </li>
                 }
               </ul>

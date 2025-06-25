@@ -2,7 +2,7 @@
 
 <div cdkDropList class="show-list" [cdkDropListDisabled]="!editable" (cdkDropListDropped)="drop($event)">
   @for (show of shows; track show.showId; let rank = $index) {
-    <div class="show-box" [attr.cdkDrag]="editable" [style.cursor]="editable ? 'move' : 'default'">
+    <div class="show-box" cdkDrag [attr.cdkDrag]="editable" [style.cursor]="editable ? 'move' : 'default'">
       <h5 class="fs-3 fw-bold">{{rank + 1}}</h5>
       <h5>{{show.title}}</h5>
 

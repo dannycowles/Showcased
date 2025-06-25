@@ -1,6 +1,7 @@
 package com.example.showcased.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,16 +50,23 @@ public class ShowDto {
     private List<CastDto> cast;
 
     @JsonAlias("in_production")
-    private boolean inProduction;
+    private boolean isInProduction;
 
     private String awards;
-    private List<WatchOptionDto> streamOptions = new ArrayList<>();
+
+    @JsonAlias("streamOptions")
+    private List<WatchOptionDto> streamingOptions = new ArrayList<>();
     private List<WatchOptionDto> buyOptions = new ArrayList<>();
     private List<SearchDto> recommendations = new ArrayList<>();
 
-    private boolean onWatchlist = false;
-    private boolean onWatchingList = false;
-    private boolean onRankingList = false;
+    @JsonProperty("isOnWatchlist")
+    private boolean isOnWatchlist = false;
+
+    @JsonProperty("isOnWatchingList")
+    private boolean isOnWatchingList = false;
+
+    @JsonProperty("isOnRankingList")
+    private boolean isOnRankingList = false;
 
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {
@@ -83,7 +91,7 @@ public class ShowDto {
     }
 
     void setEndYear(String endYear) {
-        if (!this.inProduction) {
+        if (!this.isInProduction) {
             if (endYear != null) {
                 this.endYear = endYear.split("-")[0];
             }

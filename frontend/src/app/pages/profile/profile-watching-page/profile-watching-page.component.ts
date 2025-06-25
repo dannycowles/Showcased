@@ -50,9 +50,9 @@ export class ProfileWatchingPageComponent implements OnInit {
 
   async handleAddShow(show: SearchResultData) {
     try {
-      const data = {
+      const data: ShowListData = {
         showId: show.id,
-        title: show.name,
+        title: show.title,
         posterPath: show.posterPath
       };
       const response = await this.profileService.addShowToWatchingList(data);
@@ -60,7 +60,7 @@ export class ProfileWatchingPageComponent implements OnInit {
       if (response.ok) {
         this.modalMessage = "Successfully added!";
         this.modalColor = "green";
-        this.watchingEntries.push(new ShowListData(data));
+        this.watchingEntries.push(data);
       } else if (response.status === 409) {
         this.modalMessage = "You already have this show on your watching list.";
         this.modalColor = "red";

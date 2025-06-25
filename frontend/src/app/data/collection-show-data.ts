@@ -1,5 +1,5 @@
 export interface CollectionShowData {
-  showId: number;
+  id: number;
   title: string;
   posterPath: string;
   rankNum: number | null;

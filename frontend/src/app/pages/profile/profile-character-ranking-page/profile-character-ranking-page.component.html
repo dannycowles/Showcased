@@ -31,7 +31,7 @@
                 @for (show of searchShowResults.results; track show.id) {
                   <li class="list-group-item">
                     <input class="form-check-input me-1" type="radio" name="showRadios" [value]="show" [id]="show.id" [(ngModel)]="selectedShow">
-                    <label class="form-check-label stretched-link" [for]="show.id">{{show.name}}</label>
+                    <label class="form-check-label stretched-link" [for]="show.id">{{show.title}}</label>
                   </li>
                 }
               } @else {
@@ -64,7 +64,7 @@
                 @for (character of searchCharacterResults; track character.id) {
                   <li class="list-group-item">
                     <input class="form-check-input me-1" type="radio" name="characterRadios" [value]="character" [id]="character.id" [(ngModel)]="selectedCharacter">
-                    <label class="form-check-label stretched-link" [for]="character.id">{{character.characterName}}</label>
+                    <label class="form-check-label stretched-link" [for]="character.id">{{character.name}}</label>
                   </li>
                 }
               } @else {

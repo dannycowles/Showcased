@@ -2,8 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {UtilsService} from '../../services/utils.service';
 import {ShowService} from '../../services/show.service';
-import {TrendingShowsData} from '../../data/trending-shows-data';
 import {SearchResultData} from '../../data/search-result-data';
+import {ResultPageData} from '../../data/show/result-page-data';
 
 @Component({
   selector: 'app-add-show-modal',
@@ -23,7 +23,7 @@ export class AddShowModalComponent implements OnInit {
   searchString: string;
   selectedShowId: number;
   debouncedSearchShows: () => void;
-  showSearchResults: TrendingShowsData;
+  showSearchResults: ResultPageData;
 
   constructor(private showService: ShowService,
               private utils: UtilsService) { };

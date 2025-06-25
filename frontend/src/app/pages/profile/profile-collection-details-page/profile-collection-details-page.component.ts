@@ -146,8 +146,8 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
 
   async toggleLikeState() {
     try {
-      this.collectionData.likedByUser = !this.collectionData.likedByUser;
-      if (this.collectionData.likedByUser) {
+      this.collectionData.isLikedByUser = !this.collectionData.isLikedByUser;
+      if (this.collectionData.isLikedByUser) {
         await this.userService.likeCollection(this.collectionId);
         this.collectionData.numLikes++;
       } else {
@@ -161,17 +161,18 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
 
   async handleAddShow(show: SearchResultData) {
     try {
-      const data = {
-        showId: show.id,
-        title: show.name,
-        posterPath: show.posterPath
+      const data: CollectionShowData = {
+        id: show.id,
+        title: show.title,
+        posterPath: show.posterPath,
+        rankNum: this.collectionData.shows.length + 1
       };
       const response = await this.profileService.addShowToCollection(this.collectionId, data);
 
       if (response.ok) {
-        this.modalMessage = `Successfully added ${show.name}`;
+        this.modalMessage = `Successfully added ${show.title}`;
         this.modalColor = "green";
-        this.collectionData.shows.push(new CollectionShowData(data));
+        this.collectionData.shows.push(data);
       } else {
         this.modalMessage = "You already have this show in this collection.";
         this.modalColor = "red";

@@ -215,7 +215,7 @@ public class ShowService {
             }
         }
 
-        show.setStreamOptions(streamingOptions);
+        show.setStreamingOptions(streamingOptions);
         show.setBuyOptions(buyOptions);
 
         return show;
@@ -237,7 +237,7 @@ public class ShowService {
         // If a name/query is provided fuzzy search on that
         if (name != null && !name.isEmpty()) {
             List<String> names = roles.stream()
-                    .map(role -> role.getCharacter())
+                    .map(role -> role.getName())
                     .distinct()
                     .toList();
             List<ExtractedResult> results = FuzzySearch.extractAll(name, names, 70);

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {UserSearchData} from '../data/user-search-data';
-import {ProfileData} from '../data/profile-data';
+import {UserData} from '../data/user-data';
 import {ShowRankingData} from '../data/lists/show-ranking-data';
 import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
 import {SeasonRankingData} from '../data/lists/season-ranking-data';
@@ -35,7 +35,7 @@ export class UserService {
    * Retrieves the user details for the given user id
    * @param id
    */
-  async getUserDetails(id: number): Promise<ProfileData> {
+  async getUserDetails(id: number): Promise<UserData> {
     const response = await fetch(`${this.baseUrl}/${id}/details`, {
       credentials: 'include'
     });

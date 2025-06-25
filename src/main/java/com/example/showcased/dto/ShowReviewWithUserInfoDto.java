@@ -1,5 +1,6 @@
 package com.example.showcased.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +22,6 @@ public class ShowReviewWithUserInfoDto {
     private boolean containsSpoilers;
     private Long numLikes;
     private Date reviewDate;
-    private boolean likedByUser;
+    @JsonProperty("isLikedByUser")
+    private boolean isLikedByUser;
 }

@@ -1,13 +1,13 @@
 @if (show) {
-  <h1>{{show.name}}</h1>
+  <h1>{{show.title}}</h1>
 
   <!-- If the show didn't air for more than one year only display once -->
-  @if (!show.firstAirDate && !show.lastAirDate) {
+  @if (!show.startYear && !show.endYear) {
     <h2>Air Dates Unknown</h2>
-  } @else if (show.firstAirDate === show.lastAirDate) {
-    <h2>{{show.firstAirDate}}</h2>
+  } @else if (show.startYear === show.endYear) {
+    <h2>{{show.startYear}}</h2>
   } @else {
-    <h2>{{show.firstAirDate}} - {{show.lastAirDate}}</h2>
+    <h2>{{show.startYear}} - {{show.endYear}}</h2>
   }
 
   <h3>Rating: {{show.rating}}</h3>
@@ -16,7 +16,7 @@
   <h3>Tagline: {{show.tagline}}</h3>
   <h3>Plot: {{show.plot}}</h3>
 
-  <h3>Genres: {{show.genreString}}</h3>
+  <h3>Genres: {{utilsService.getGenreString(show.genres)}}</h3>
 
   <h3>Awards: {{show.awards}}</h3>
 
@@ -67,7 +67,7 @@
   <br>
   <br>
 
-  @if (show.onWatchlist) {
+  @if (show.isOnWatchlist) {
     <button class="btn btn-danger ms-2" (click)="removeShowFromWatchlist()">Remove from Watchlist</button>
   } @else {
     <button class="btn btn-success ms-2" (click)="addShowToWatchlist()">Add to Watchlist</button>
@@ -76,7 +76,7 @@
   <br>
   <br>
 
-  @if (show.onWatchingList) {
+  @if (show.isOnWatchingList) {
     <button class="btn btn-danger ms-2" (click)="removeShowFromWatchingList()">Remove from Currently Watching</button>
   } @else {
     <button class="btn btn-success ms-2" (click)="addShowToWatchingList()">Add to Currently Watching</button>
@@ -85,7 +85,7 @@
   <br>
   <br>
 
-  @if (show.onRankingList) {
+  @if (show.isOnRankingList) {
     <button class="btn btn-danger ms-2" (click)="removeShowFromRankingList()">Remove from Ranking List</button>
   } @else {
     <button class="btn btn-success ms-2" (click)="addShowToRankingList()">Add to Ranking List</button>
@@ -100,7 +100,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add {{show.name}} to Collection</h5>
+          <h5 class="modal-title">Add {{show.title}} to Collection</h5>
           <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -144,7 +144,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="reviewModalLabel">New Review for {{show.name}}</h1>
+          <h1 class="modal-title fs-5" id="reviewModalLabel">New Review for {{show.title}}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -235,11 +235,11 @@
   @if (reviews.length != 0) {
     @for (review of reviews; track review.id) {
       <div class="mb-5 ms-2 d-flex flex-row align-items-start">
-        <img id="profile-picture" [ngSrc]="review.reviewerProfilePicture" alt="Profile Picture" width="100" height="100">
+        <img id="profile-picture" [ngSrc]="review.profilePicture" alt="Profile Picture" width="100" height="100">
         <div class="ms-3">
           <div>
-            <h4><a href="/user/{{review.userId}}" class="text-dark">{{review.reviewerUsername}}</a></h4>
-            <p>{{review.relativeDate}}</p>
+            <h4><a href="/user/{{review.userId}}" class="text-dark">{{review.username}}</a></h4>
+            <p>{{utilsService.getRelativeDate(review.reviewDate)}}</p>
           </div>
           <div>
             <p>{{review.rating}}/10</p>
@@ -248,8 +248,8 @@
           </div>
         </div>
         <div class="ms-auto me-5 d-flex align-items-center">
-          <yt-button-heart [isLiked]="review.likedByUser" [size]="heartSize" (click)="toggleLikeState(review)"></yt-button-heart>
-          <div id="like-count">{{review.likes}}</div>
+          <yt-button-heart [isLiked]="review.isLikedByUser" [size]="heartSize" (click)="toggleLikeState(review)"></yt-button-heart>
+          <div id="like-count">{{review.numLikes}}</div>
         </div>
       </div>
     }

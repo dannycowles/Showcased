@@ -9,14 +9,14 @@ export interface ShowData {
   readonly imdbId: string;
   readonly imdbRating: number;
   readonly imdbVotes: number;
-  readonly backdrop_path: string;
-  readonly poster_path: string;
-  readonly name: string;
+  readonly backdropPath: string;
+  readonly posterPath: string;
+  readonly title: string;
   readonly awards: string;
   readonly tagline: string;
   readonly plot: string;
   readonly rating: string;
-  readonly average_runtime: string;
+  readonly averageRuntime: string;
   readonly startYear: number;
   readonly endYear: number;
   readonly numEpisodes: number;
@@ -24,22 +24,10 @@ export interface ShowData {
   readonly genres: GenreData[];
   readonly creators: CreatorData[];
   readonly cast: CastData[];
-  readonly streamOptions: WatchOptionData[];
+  readonly streamingOptions: WatchOptionData[];
   readonly buyOptions: WatchOptionData[];
   readonly recommendations: SearchResultData[];
-  onWatchlist: boolean;
-  onWatchingList: boolean;
-  onRankingList: boolean;
-
-/*  get genreString():string {
-    let returnStr:string = "";
-    for (let i = 0; i < this.genres.length; i++) {
-      returnStr += this.genres[i].name;
-
-      if (i < this.genres.length - 1) {
-        returnStr += ", ";
-      }
-    }
-    return returnStr;
-  }*/
+  isOnWatchlist: boolean;
+  isOnWatchingList: boolean;
+  isOnRankingList: boolean;
 }

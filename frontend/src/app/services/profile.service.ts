@@ -1,19 +1,19 @@
-import {Injectable} from "@angular/core";
-import {ProfileData} from '../data/profile-data';
-import {ShowRankingData} from '../data/lists/show-ranking-data';
-import {EpisodeRankingData} from '../data/lists/episode-ranking-data';
-import {UserSearchData} from '../data/user-search-data';
-import {SeasonRankingData} from '../data/lists/season-ranking-data';
-import {CharacterRankingsData} from '../data/character-rankings-data';
-import {CollectionData} from '../data/collection-data';
-import {SingleCollectionData} from '../data/single-collection-data';
-import {ShowListData} from '../data/lists/show-list-data';
+import { Injectable } from '@angular/core';
+import { UserData } from '../data/user-data';
+import { ShowRankingData } from '../data/lists/show-ranking-data';
+import { EpisodeRankingData } from '../data/lists/episode-ranking-data';
+import { UserSearchData } from '../data/user-search-data';
+import { SeasonRankingData } from '../data/lists/season-ranking-data';
+import { CharacterRankingsData } from '../data/character-rankings-data';
+import { CollectionData } from '../data/collection-data';
+import { SingleCollectionData } from '../data/single-collection-data';
+import { ShowListData } from '../data/lists/show-list-data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfileService {
-  readonly baseUrl: string = "http://localhost:8080/profile";
+  readonly baseUrl: string = 'http://localhost:8080/profile';
 
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
@@ -23,25 +23,15 @@ export class ProfileService {
   }
 
   /**
-   * Retrieves all profile information including:
-   * - username
-   * - profile picture
-   * - watchlist top
-   * - watching top
-   * - show ranking top
-   * - episode ranking top
+   * Retrieves all profile information
    */
-  async getProfileDetails(): Promise<ProfileData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/details`, {
-        credentials: 'include'
-      });
+  async getProfileDetails(): Promise<UserData> {
+    const response = await fetch(`${this.baseUrl}/details`, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -49,21 +39,17 @@ export class ProfileService {
    * @param data
    */
   async updateProfileDetails(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/details`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/details`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -72,21 +58,17 @@ export class ProfileService {
    * @param data
    */
   async addSocialAccount(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/socials`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/socials`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -94,17 +76,13 @@ export class ProfileService {
    * @param socialId
    */
   async removeSocialAccount(socialId: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/socials/${socialId}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/socials/${socialId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -112,18 +90,14 @@ export class ProfileService {
    * @param formData
    */
   async uploadProfilePicture(formData: FormData): Promise<string> {
-    try {
-      const response = await fetch(`${this.baseUrl}/profile-picture`, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData
-      });
+    const response = await fetch(`${this.baseUrl}/profile-picture`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.text();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.text();
   }
 
   /**
@@ -131,37 +105,29 @@ export class ProfileService {
    * @param data
    */
   async addShowToWatchlist(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/watchlist`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/watchlist`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
    * Retrieves the full watchlist for the profile
    */
   async getFullWatchlist(): Promise<ShowListData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/watchlist`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/watchlist`, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -169,17 +135,13 @@ export class ProfileService {
    * @param id
    */
   async removeShowFromWatchlist(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -187,17 +149,13 @@ export class ProfileService {
    * @param id
    */
   async moveShowToWatchingList(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
-        method: 'PUT',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -205,37 +163,29 @@ export class ProfileService {
    * @param data
    */
   async addShowToWatchingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/currently-watching`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/currently-watching`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
    * Retrieves the full watching list for the profile
    */
   async getFullWatchingList(): Promise<ShowListData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/currently-watching`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/currently-watching`, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -243,17 +193,13 @@ export class ProfileService {
    * @param id
    */
   async removeShowFromWatchingList(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/currently-watching/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/currently-watching/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -261,17 +207,13 @@ export class ProfileService {
    * @param id
    */
   async moveShowToRankingList(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/currently-watching/${id}`, {
-        method: 'PUT',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/currently-watching/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -279,37 +221,29 @@ export class ProfileService {
    * @param data
    */
   async addShowToRankingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/show-rankings`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/show-rankings`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
    * Retrieves the full show ranking list for the profile
    */
   async getFullShowRankingList(): Promise<ShowRankingData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/show-rankings`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/show-rankings`, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -317,17 +251,13 @@ export class ProfileService {
    * @param id
    */
   async removeShowFromRankingList(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/show-rankings/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/show-rankings/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -335,21 +265,17 @@ export class ProfileService {
    * @param data
    */
   async updateShowRankingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/show-rankings`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/show-rankings`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -357,37 +283,29 @@ export class ProfileService {
    * @param data
    */
   async addEpisodeToRankingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/episode-rankings`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/episode-rankings`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
    * Retrieves the full episode ranking list for the profile
    */
   async getFullEpisodeRankingList(): Promise<EpisodeRankingData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/episode-rankings`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/episode-rankings`, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -395,17 +313,13 @@ export class ProfileService {
    * @param id
    */
   async removeEpisodeFromRankingList(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/episode-rankings/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/episode-rankings/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -413,21 +327,17 @@ export class ProfileService {
    * @param data
    */
   async updateEpisodeRankingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/episode-rankings`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/episode-rankings`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -435,21 +345,17 @@ export class ProfileService {
    * @param data
    */
   async addSeasonToRankingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/season-rankings`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/season-rankings`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -457,33 +363,25 @@ export class ProfileService {
    * @param id
    */
   async removeSeasonFromRankingList(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/season-rankings/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/season-rankings/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
    * Retrieves the full season ranking list for the logged-in user
    */
   async getSeasonRankingList(): Promise<SeasonRankingData[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/season-rankings`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/season-rankings`, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -491,19 +389,15 @@ export class ProfileService {
    * @param name
    */
   async getFollowersList(name?: string): Promise<UserSearchData[]> {
-    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const params = name?.length > 0 ? `?name=${encodeURIComponent(name)}` : '';
     const url = `${this.baseUrl}/followers${params}`;
 
-    try {
-      const response = await fetch(url, {
-        credentials: 'include'
-      });
+    const response = await fetch(url, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -511,21 +405,17 @@ export class ProfileService {
    * @param data
    */
   async updateSeasonRankingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/season-rankings`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/season-rankings`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -533,35 +423,27 @@ export class ProfileService {
    * @param name
    */
   async getFollowingList(name?: string): Promise<UserSearchData[]> {
-    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const params = name?.length > 0 ? `?name=${encodeURIComponent(name)}` : '';
     const url = `${this.baseUrl}/following${params}`;
 
-    try {
-      const response = await fetch(url, {
-        credentials: 'include'
-      });
+    const response = await fetch(url, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
    * Retrieves all the character ranking lists for the logged-in user
    */
   async getCharacterRankingLists(): Promise<CharacterRankingsData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/character-rankings`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/character-rankings`, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -569,59 +451,47 @@ export class ProfileService {
    * @param data
    */
   async addCharacterToRankingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/character-rankings`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/character-rankings`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch(error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
    * Remove a character by ID
    */
   async removeCharacterFromRankingList(id: string): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/character-rankings/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/character-rankings/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
    * Updates a character ranking list for the logged-in user
    */
   async updateCharacterRankingList(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/character-rankings`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/character-rankings`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -629,36 +499,28 @@ export class ProfileService {
    * @param id
    */
   async removeFollower(id: number): Promise<Response> {
-    try {
-      const response: Response = await fetch(`${this.baseUrl}/followers/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response: Response = await fetch(`${this.baseUrl}/followers/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
    * Retrieves all collections for the logged-in user
    */
   async getCollections(name?: string): Promise<CollectionData[]> {
-    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
+    const params = name?.length > 0 ? `?name=${encodeURIComponent(name)}` : '';
     const url = `${this.baseUrl}/collections${params}`;
 
-    try {
-      const response = await fetch(url, {
-        credentials: 'include'
-      });
+    const response = await fetch(url, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -666,21 +528,17 @@ export class ProfileService {
    * @param data
    */
   async createCollection(data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/collections`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/collections`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -688,17 +546,13 @@ export class ProfileService {
    * @param id
    */
   async deleteCollection(id: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/collections/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/collections/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -707,21 +561,17 @@ export class ProfileService {
    * @param data
    */
   async updateCollection(id: number, data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/collections/${id}`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/collections/${id}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -730,21 +580,17 @@ export class ProfileService {
    * @param data
    */
   async addShowToCollection(id: number, data: {}): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/collections/${id}/shows`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const response = await fetch(`${this.baseUrl}/collections/${id}/shows`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 
   /**
@@ -752,16 +598,12 @@ export class ProfileService {
    * @param id
    */
   async getCollectionDetails(id: number): Promise<SingleCollectionData> {
-    try {
-      const response = await fetch(`${this.baseUrl}/collections/${id}`, {
-        credentials: 'include'
-      });
+    const response = await fetch(`${this.baseUrl}/collections/${id}`, {
+      credentials: 'include',
+    });
 
-      this.checkUnauthorizedUser(response);
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return await response.json();
   }
 
   /**
@@ -770,16 +612,15 @@ export class ProfileService {
    * @param showId
    */
   async removeShowFromCollection(collectionId: number, showId: number): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/collections/${collectionId}/shows/${showId}`, {
+    const response = await fetch(
+      `${this.baseUrl}/collections/${collectionId}/shows/${showId}`,
+      {
         method: 'DELETE',
-        credentials: 'include'
-      });
+        credentials: 'include',
+      },
+    );
 
-      this.checkUnauthorizedUser(response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    this.checkUnauthorizedUser(response);
+    return response;
   }
 }

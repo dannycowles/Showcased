@@ -3,7 +3,6 @@ import {ActivatedRoute} from '@angular/router';
 
 import $ from 'jquery';
 import 'jquery-serializejson';
-import {ShowReviewData} from '../../../data/show-review-data';
 import {ShowService} from '../../../services/show.service';
 import {ProfileService} from '../../../services/profile.service';
 import {ToastDisplayService} from '../../../services/toast.service';
@@ -11,6 +10,7 @@ import {UtilsService} from '../../../services/utils.service';
 import {AuthenticationService} from '../../../services/auth.service';
 import {ShowData} from '../../../data/show/show-data';
 import {CollectionData} from '../../../data/collection-data';
+import {ShowReviewData} from '../../../data/reviews-data';
 
 @Component({
   selector: 'app-show-page',
@@ -70,22 +70,22 @@ export class ShowPageComponent implements OnInit {
   // Adds the current show to the user's watchlist
   async addShowToWatchlist() {
     if (this.isUserListConflict()) {
-      this.toastService.addConflictToast(this.show.name);
+      this.toastService.addConflictToast(this.show.title);
       return;
     }
 
     try {
-      let data = {
+      const data = {
         "showId": this.showId,
-        "title": this.show.name,
-        "posterPath": this.show.posterPath
+        "title": this.show.title,
+        "posterPath": this.show
       };
-      let response = await this.profileService.addShowToWatchlist(data);
+      const response = await this.profileService.addShowToWatchlist(data);
 
       if (response.status == 201) {
         // Display a toast that confirms the show was successfully added
-        this.toastService.addToWatchlistToast(this.show.name);
-        this.show.onWatchlist = true;
+        this.toastService.addToWatchlistToast(this.show.title);
+        this.show.isOnWatchlist = true;
       }
     } catch (error) {
       console.error(error);
@@ -95,7 +95,7 @@ export class ShowPageComponent implements OnInit {
   async removeShowFromWatchlist() {
     try {
       await this.profileService.removeShowFromWatchlist(this.showId);
-      this.show.onWatchlist = false;
+      this.show.isOnWatchlist = false;
     } catch(error) {
       console.error(error);
     }
@@ -104,22 +104,22 @@ export class ShowPageComponent implements OnInit {
   // Adds the current show to the user's currently watching list
   async addShowToWatchingList() {
     if (this.isUserListConflict()) {
-      this.toastService.addConflictToast(this.show.name);
+      this.toastService.addConflictToast(this.show.title);
       return;
     }
 
     try {
       let data = {
         "showId": this.showId,
-        "title": this.show.name,
+        "title": this.show.title,
         "posterPath": this.show.posterPath
       };
       let response = await this.profileService.addShowToWatchingList(data);
 
       if (response.status == 201) {
         // Display a toast that confirms the show was successfully added
-        this.toastService.addToWatchingListToast(this.show.name);
-        this.show.onWatchingList = true;
+        this.toastService.addToWatchingListToast(this.show.title);
+        this.show.isOnWatchingList = true;
       }
     } catch (error) {
       console.error(error);
@@ -129,7 +129,7 @@ export class ShowPageComponent implements OnInit {
   async removeShowFromWatchingList() {
     try {
       await this.profileService.removeShowFromWatchingList(this.showId);
-      this.show.onWatchingList = false;
+      this.show.isOnWatchingList = false;
     } catch(error) {
       console.error(error);
     }
@@ -138,22 +138,22 @@ export class ShowPageComponent implements OnInit {
   // Adds the current show to the user's ranking list
   async addShowToRankingList() {
     if (this.isUserListConflict()) {
-      this.toastService.addConflictToast(this.show.name);
+      this.toastService.addConflictToast(this.show.title);
       return;
     }
 
     try {
-      let data = {
+      const data = {
         "showId": this.showId,
-        "title": this.show.name,
+        "title": this.show.title,
         "posterPath": this.show.posterPath
       };
-      let response = await this.profileService.addShowToRankingList(data);
+      const response = await this.profileService.addShowToRankingList(data);
 
       if (response.status == 201) {
         // Display a toast that confirms the show was successfully added
-        this.toastService.addToShowRankingToast(this.show.name);
-        this.show.onRankingList = true;
+        this.toastService.addToShowRankingToast(this.show.title);
+        this.show.isOnRankingList = true;
       }
     } catch (error) {
       console.error(error);
@@ -163,7 +163,7 @@ export class ShowPageComponent implements OnInit {
   async removeShowFromRankingList() {
     try {
       await this.profileService.removeShowFromRankingList(this.showId);
-      this.show.onRankingList = false;
+      this.show.isOnRankingList = false;
     } catch(error) {
       console.error(error);
     }
@@ -171,13 +171,13 @@ export class ShowPageComponent implements OnInit {
 
   async toggleLikeState(review: ShowReviewData) {
     try {
-      review.likedByUser = !review.likedByUser;
-      if (review.likedByUser) {
+      review.isLikedByUser = !review.isLikedByUser;
+      if (review.isLikedByUser) {
         await this.showService.likeShowReview(review.id);
-        review.likes++;
+        review.numLikes++;
       } else {
         await this.showService.unlikeShowReview(review.id);
-        review.likes--;
+        review.numLikes--;
       }
     } catch (error) {
       console.error(error);
@@ -210,7 +210,7 @@ export class ShowPageComponent implements OnInit {
     try {
       const showData = {
         showId: this.showId,
-        title: this.show.name,
+        title: this.show.title,
         posterPath: this.show.posterPath
       };
 
@@ -235,7 +235,7 @@ export class ShowPageComponent implements OnInit {
   // If the user already has a show on ANY of their lists it cannot be added to another one
   // It wouldn't make sense for a show to be both on watchlist and currently watching for instance
   isUserListConflict(): boolean {
-    return (this.show.onWatchingList || this.show.onWatchlist || this.show.onRankingList);
+    return (this.show.isOnWatchingList || this.show.isOnWatchlist || this.show.isOnRankingList);
   }
 
   // Triggered when the user enters or pastes into the review commentary box, computes and display the remaining characters
@@ -250,7 +250,7 @@ export class ShowPageComponent implements OnInit {
     let reviewForm = $("#review-form").serializeJSON();
     let data = {
       "rating": reviewForm["rating"],
-      "showTitle": this.show.name,
+      "showTitle": this.show.title,
       "commentary": reviewForm["commentary"],
       "containsSpoilers": "spoilers" in reviewForm,
       "posterPath": this.show.posterPath

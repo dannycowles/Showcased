@@ -5,7 +5,7 @@
   <pre>{{collectionData.description}}</pre>
 
   <div class="d-flex align-items-center">
-    <yt-button-heart [isLiked]="collectionData.likedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
+    <yt-button-heart [isLiked]="collectionData.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
     <div id="like-count">{{collectionData.numLikes}}</div>
   </div>
 

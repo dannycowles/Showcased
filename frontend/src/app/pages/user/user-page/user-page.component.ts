@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ProfileData} from '../../../data/profile-data';
+import {UserData} from '../../../data/user-data';
 import {UserService} from '../../../services/user.service';
 import {UtilsService} from '../../../services/utils.service';
 import {UserHeaderData} from '../../../data/user-header-data';
@@ -13,7 +13,7 @@ import {UserHeaderData} from '../../../data/user-header-data';
 })
 export class UserPageComponent implements OnInit {
   readonly userId: number;
-  userDetails: ProfileData;
+  userDetails: UserData;
   headerData: UserHeaderData;
 
   constructor(private route: ActivatedRoute,
@@ -26,7 +26,6 @@ export class UserPageComponent implements OnInit {
     // Retrieve user details from the backend
     try {
       this.userDetails = await this.userService.getUserDetails(this.userId);
-      this.headerData = this.userDetails.userHeaderData;
     } catch(error) {
       console.error(error);
     }

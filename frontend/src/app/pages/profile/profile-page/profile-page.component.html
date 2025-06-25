@@ -1,5 +1,5 @@
 @if (profileData) {
-  <app-user-info [headerData]="headerData"></app-user-info>
+  <app-user-info [headerData]="profileData.headerData"></app-user-info>
 
   <app-show-list title="Watchlist" [shows]="profileData.watchlistTop"></app-show-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="watchlist">Manage Watchlist</button>

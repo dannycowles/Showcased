@@ -6,12 +6,7 @@ import java.util.List;
 
 @Data
 public class ProfileDetailsDto {
-    private String username;
-    private String profilePicture;
-    private String bio;
-    private List<SocialAccountReturnDto> socialAccounts;
-    private Long numFollowers;
-    private Long numFollowing;
+    private UserHeaderDataDto headerData;
 
     private List<WatchReturnDto> watchlistTop;
     private List<WatchReturnDto> watchingTop;
@@ -20,15 +15,12 @@ public class ProfileDetailsDto {
     private List<SeasonRankingReturnDto> seasonRankingTop;
     private AllCharacterRankingDto characterRankings;
 
-    private boolean moreWatchlist = false;
-    private boolean moreWatching = false;
-    private boolean moreShowRanking = false;
-    private boolean moreSeasonRanking = false;
-    private boolean moreEpisodeRanking = false;
+    private boolean hasMoreWatchlist = false;
+    private boolean hasMoreWatching = false;
+    private boolean hasMoreShowRanking = false;
+    private boolean hasMoreSeasonRanking = false;
+    private boolean hasMoreEpisodeRanking = false;
 
     private List<ShowReviewWithUserInfoDto> showReviews;
     private List<EpisodeReviewWithUserInfoDto> episodeReviews;
-
-    private boolean isFollowing = false;
-    private boolean isOwnProfile = false;
 }
