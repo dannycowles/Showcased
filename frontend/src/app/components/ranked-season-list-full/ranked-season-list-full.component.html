@@ -1,17 +1,21 @@
 <h1>{{ title }}</h1>
 
-<div cdkDropList [cdkDropListDisabled]="!editable" class="season-list" (cdkDropListDropped)="drop($event)">
-  @for (season of seasons; track season.id; let rank = $index) {
-    <div class="season-box" cdkDrag [attr.cdkDrag]="editable" [style.cursor]="editable ? 'move' : 'default'">
-      <h5>{{rank + 1}}</h5>
-      <h5>{{season.showTitle}} S{{season.season}}</h5>
+@if (seasons?.length != 0) {
+  <div cdkDropList [cdkDropListDisabled]="!editable" class="season-list" (cdkDropListDropped)="drop($event)">
+    @for (season of seasons; track season.id; let rank = $index) {
+      <div class="season-box" cdkDrag [attr.cdkDrag]="editable" [style.cursor]="editable ? 'move' : 'default'">
+        <h5>{{rank + 1}}</h5>
+        <h5>{{season.showTitle}} S{{season.season}}</h5>
 
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+        <!-- Poster images are sized w185, using 2:3 ratio -->
+        <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Show Poster" width="185" height="278" priority></a>
 
-      @if (editable) {
-        <button class="btn btn-danger" (click)="removeEvent(season.id)">Remove Season</button>
-      }
-    </div>
-  }
-</div>
+        @if (editable) {
+          <button class="btn btn-danger" (click)="removeEvent(season.id)">Remove Season</button>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <p>Nothing ranked yet!</p>
+}

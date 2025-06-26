@@ -6,7 +6,7 @@ export interface UserHeaderData {
   profilePicture: string;
   numFollowers: number;
   numFollowing: number;
-  socials: UserSocialData[];
+  socialAccounts: UserSocialData[];
   isFollowing: boolean;
   isOwnProfile: boolean;
 }

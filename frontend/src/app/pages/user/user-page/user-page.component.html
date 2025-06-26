@@ -24,19 +24,19 @@
     <button class="btn btn-primary mt-3 mb-3" routerLink="episode-ranking">View Full List</button>
   }
 
-  <app-character-list title="Favorite Protagonists" [characters]="userDetails.protagonistRankingTop"></app-character-list>
+  <app-character-list title="Favorite Protagonists" [characters]="userDetails.characterRankings.protagonists"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/protagonists">View Full List</button>
 
-  <app-character-list title="Favorite Deuteragonists" [characters]="userDetails.deuteragonistRankingTop"></app-character-list>
+  <app-character-list title="Favorite Deuteragonists" [characters]="userDetails.characterRankings.deuteragonists"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/deuteragonists">View Full List</button>
 
-  <app-character-list title="Favorite Antagonists" [characters]="userDetails.antagonistRankingTop"></app-character-list>
+  <app-character-list title="Favorite Antagonists" [characters]="userDetails.characterRankings.antagonists"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">View Full List</button>
 
-  <app-character-list title="Favorite Tritagonists" [characters]="userDetails.tritagonistRankingTop"></app-character-list>
+  <app-character-list title="Favorite Tritagonists" [characters]="userDetails.characterRankings.tritagonists"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/tritagonists">View Full List</button>
 
-  <app-character-list title="Favorite Side Characters" [characters]="userDetails.sideCharacterRankingTop"></app-character-list>
+  <app-character-list title="Favorite Side Characters" [characters]="userDetails.characterRankings.side"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">View Full List</button>
 
   <h3>Show Reviews</h3>

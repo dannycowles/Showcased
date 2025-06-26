@@ -8,4 +8,6 @@ public class CharacterRankingDto {
     private Long showId;
     private String name;
     private String type;
+    private String title;
+    private String posterPath;
 }

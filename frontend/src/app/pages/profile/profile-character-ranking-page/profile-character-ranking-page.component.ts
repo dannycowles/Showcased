@@ -143,7 +143,9 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
         id: this.selectedCharacter.id,
         showId: this.selectedShow.id,
         name: this.selectedCharacter.name,
-        type: this.characterType != "side" ? this.characterType.slice(0,this.characterType.length-1) : this.characterType
+        type: this.characterType != "side" ? this.characterType.slice(0,this.characterType.length-1) : this.characterType,
+        title: this.selectedShow.title,
+        posterPath: this.selectedShow.posterPath
       }
 
       const response = await this.profileService.addCharacterToRankingList(data);

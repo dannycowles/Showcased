@@ -426,6 +426,12 @@ public class ProfileService {
             characterInfoRepository.save(characterInfo);
         }
 
+        // Check if the show already exists in the show info table, if not add it
+        if (!showInfoRepository.existsById(character.getShowId())) {
+            ShowInfo showInfo = modelMapper.map(character, ShowInfo.class);
+            showInfoRepository.save(showInfo);
+        }
+
         CharacterRanking ranking = new CharacterRanking();
         ranking.setId(new CharacterRankingId(userId, character.getId()));
         ranking.setCharacterType(character.getType());

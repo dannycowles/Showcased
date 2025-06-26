@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {SeasonRankingData} from '../../../data/lists/season-ranking-data';
+import {UtilsService} from '../../../services/utils.service';
+import {ResultPageData} from '../../../data/show/result-page-data';
+import {ShowService} from '../../../services/show.service';
 
 @Component({
   selector: 'app-profile-season-ranking-page',
@@ -10,8 +13,14 @@ import {SeasonRankingData} from '../../../data/lists/season-ranking-data';
 })
 export class ProfileSeasonRankingPageComponent implements OnInit{
   rankingEntries: SeasonRankingData[];
+  searchString: string = "";
+  showSearchResults: ResultPageData;
 
-  constructor(private profileService: ProfileService) { };
+  debouncedSearchSeasons: () => void;
+
+  constructor(private profileService: ProfileService,
+              private utilsService: UtilsService,
+              private showService: ShowService) { };
 
   async ngOnInit() {
     try {
@@ -19,6 +28,10 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
     } catch (error) {
       console.error(error);
     }
+
+    this.debouncedSearchSeasons = this.utilsService.debounce(() => {
+      this.searchShows();
+    })
   };
 
   async removeSeasonFromRankingList(removeId: number) {
@@ -44,4 +57,13 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
     }
   }
 
+  async searchShows() {
+    if (this.searchString) {
+      try {
+        this.showSearchResults = await this.showService.searchForShows(this.searchString);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
 }

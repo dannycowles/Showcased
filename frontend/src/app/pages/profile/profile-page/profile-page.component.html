@@ -16,19 +16,19 @@
   <app-episode-list [episodes]="profileData.episodeRankingTop"></app-episode-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="episode-ranking">Manage Favorite Episodes</button>
 
-  <app-character-list title="Favorite Protagonists" [characters]="profileData.protagonistRankingTop"></app-character-list>
+  <app-character-list title="Favorite Protagonists" [characters]="profileData.characterRankings.protagonists"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/protagonists">Manage Favorite Protagonists</button>
 
-  <app-character-list title="Favorite Deuteragonists" [characters]="profileData.deuteragonistRankingTop"></app-character-list>
+  <app-character-list title="Favorite Deuteragonists" [characters]="profileData.characterRankings.deuteragonists"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/deuteragonists">Manage Favorite Deuteragonists</button>
 
-  <app-character-list title="Favorite Antagonists" [characters]="profileData.antagonistRankingTop"></app-character-list>
+  <app-character-list title="Favorite Antagonists" [characters]="profileData.characterRankings.antagonists"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">Manage Favorite Antagonists</button>
 
-  <app-character-list title="Favorite Tritagonists" [characters]="profileData.tritagonistRankingTop"></app-character-list>
+  <app-character-list title="Favorite Tritagonists" [characters]="profileData.characterRankings.tritagonists"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/tritagonists">Manage Favorite Tritagonists</button>
 
-  <app-character-list title="Favorite Side Characters" [characters]="profileData.sideCharacterRankingTop"></app-character-list>
+  <app-character-list title="Favorite Side Characters" [characters]="profileData.characterRankings.side"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">Manage Favorite Side Characters</button>
 
   <h3>Show Reviews</h3>
