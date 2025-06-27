@@ -6,18 +6,66 @@
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Add Season to Ranking List</h5>
+        <h5 class="modal-title" id="addSeasonModalLabel">Add Season to Ranking List</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="seasonSearchInput" class="form-label">Search Shows</label>
+          <input type="text" class="form-control" id="seasonSearchInput" placeholder="Search..." [(ngModel)]="searchString" (input)="debouncedSearchSeasons()">
+
+          @if (isLoading) {
+            <div class="d-flex justify-content-center mt-3">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          } @else if (showSearchResults?.results?.length) {
+            <ul class="list-group overflow-auto mt-3" style="max-height: 25vh">
+              @for (show of showSearchResults.results; track show.id) {
+                <li class="list-group-item">
+                  <input class="form-check-input me-1" type="radio" name="listGroupRadio" [value]="show.id" [id]="show.id" [(ngModel)]="selectedShowId">
+                  <label class="form-check-label stretched-link" [for]="show.id">{{show.title}}</label>
+                </li>
+              }
+            </ul>
+          } @else if (hasSearched && searchString.trim().length > 0) {
+            <p>No results found!</p>
+          }
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" [disabled]="selectedShowId == null" data-bs-toggle="modal" data-bs-target="#seasonSelectModal">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="seasonSelectModal" aria-labelledby="seasonSelectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="bi bi-arrow-left-square fs-3 me-3" [style.cursor]="'pointer'" data-bs-toggle="modal" data-bs-target="#addSeasonModal"></i>
+        <h5 class="modal-title" id="seasonSelectModalLabel">Select Season from {{selectedShowTitle}}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <div class="modal-body">
-        <div class="mb-3">
-          <input type="text" class="form-control" id="seasonSearchInput" placeholder="Search..." [(ngModel)]="searchString">
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Season Dropdown
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item">1</a></li>
+            <li><a class="dropdown-item">2</a></li>
+          </ul>
         </div>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Add</button>
       </div>
     </div>
   </div>

@@ -1,16 +1,15 @@
 import {booleanAttribute, Component, EventEmitter, Input, Output} from '@angular/core';
 import {SeasonRankingData} from '../../data/lists/season-ranking-data';
-import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDrag, CdkDragDrop, CdkDropList, DragDropModule, moveItemInArray} from '@angular/cdk/drag-drop';
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-ranked-season-list-full',
   imports: [
-    CdkDropList,
-    CdkDrag,
     RouterLink,
-    NgOptimizedImage
+    NgOptimizedImage,
+    DragDropModule
   ],
   templateUrl: './ranked-season-list-full.component.html',
   styleUrl: './ranked-season-list-full.component.css',

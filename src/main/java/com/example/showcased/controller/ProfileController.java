@@ -217,9 +217,9 @@ public class ProfileController {
     // ========== SEASON RANKINGS ==========
 
     @PostMapping("/season-rankings")
-    public ResponseEntity<Void> addSeasonToRankingList(@RequestBody SeasonRankingDto season, HttpSession session) {
-        profileService.addSeasonToRankingList(season, session);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<SeasonRankingReturnDto> addSeasonToRankingList(@RequestBody SeasonRankingDto season, HttpSession session) {
+        SeasonRankingReturnDto seasonReturnDto = profileService.addSeasonToRankingList(season, session);
+        return ResponseEntity.status(HttpStatus.CREATED).body(seasonReturnDto);
     }
 
     @GetMapping("/season-rankings")

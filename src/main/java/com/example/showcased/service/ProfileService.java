@@ -40,6 +40,7 @@ public class ProfileService {
     private final UserSocialRepository userSocialRepository;
     private final CharacterInfoRepository characterInfoRepository;
     private final EpisodeReviewRepository episodeReviewRepository;
+    private final ShowService showService;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -58,7 +59,7 @@ public class ProfileService {
                           ShowsInCollectionRepository showsInCollectionRepository,
                           LikedCollectionsRepository likedCollectionsRepository,
                           UserSocialRepository userSocialRepository,
-                          CharacterInfoRepository characterInfoRepository, EpisodeReviewRepository episodeReviewRepository) {
+                          CharacterInfoRepository characterInfoRepository, EpisodeReviewRepository episodeReviewRepository, ShowService showService) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -78,6 +79,7 @@ public class ProfileService {
         this.userSocialRepository = userSocialRepository;
         this.characterInfoRepository = characterInfoRepository;
         this.episodeReviewRepository = episodeReviewRepository;
+        this.showService = showService;
     }
 
     /**
@@ -352,15 +354,21 @@ public class ProfileService {
 
 
 
-    public void addSeasonToRankingList(SeasonRankingDto season, HttpSession session) {
+    public SeasonRankingReturnDto addSeasonToRankingList(SeasonRankingDto season, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
+
+        // Retrieve additional needed season information
+        SeasonPartialDto seasonDetails = showService.getSeasonPartialDetails(season.getShowId(), season.getSeason());
+        seasonDetails.setShowId(season.getShowId());
+        seasonDetails.setShowTitle(season.getShowTitle());
+
         SeasonRanking ranking = new SeasonRanking();
-        SeasonRankingId rankingId = new SeasonRankingId(userId, season.getId());
+        SeasonRankingId rankingId = new SeasonRankingId(userId, seasonDetails.getId());
         ranking.setId(rankingId);
 
         // If season doesn't exist in season info table add it
-        if (!seasonInfoRepository.existsById(season.getId())) {
-            SeasonInfo seasonInfo = modelMapper.map(season, SeasonInfo.class);
+        if (!seasonInfoRepository.existsById(seasonDetails.getId())) {
+            SeasonInfo seasonInfo = modelMapper.map(seasonDetails, SeasonInfo.class);
             seasonInfoRepository.save(seasonInfo);
         }
 
@@ -377,6 +385,10 @@ public class ProfileService {
             ranking.setRankNum(maxRank + 1L);
         }
         seasonRankingRepository.save(ranking);
+
+        SeasonRankingReturnDto seasonReturnDto = modelMapper.map(seasonDetails, SeasonRankingReturnDto.class);
+        seasonReturnDto.setRankNum(ranking.getRankNum());
+        return seasonReturnDto;
     }
 
     public List<SeasonRankingReturnDto> getSeasonRankingList(Integer limit, HttpSession session) {

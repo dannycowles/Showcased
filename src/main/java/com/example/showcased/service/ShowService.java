@@ -315,7 +315,6 @@ public class ShowService {
                         .queryParam("Season", seasonNumber)
                         .queryParam("Episode", episode.getEpisodeNumber())
                         .toUriString();
-                System.out.println(url2);
                 JSONObject response = new JSONObject(omdbClient.getRaw(url2));
 
                 if (!response.optString("Plot").equals("N/A") && response.optBoolean("Plot")) {
@@ -334,6 +333,15 @@ public class ShowService {
             season.setOnRankingList(seasonRankingRepository.existsById(new SeasonRankingId(userId, season.getId())));;
         }
         return season;
+    }
+
+    public SeasonPartialDto getSeasonPartialDetails(Long showId, int seasonNumber) {
+        // Make a request to TMDB season details endpoint
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv")
+                .pathSegment(String.valueOf(showId), "season", String.valueOf(seasonNumber))
+                .toUriString();
+        return tmdbClient.get(url, SeasonPartialDto.class);
     }
 
     public EpisodeDto getEpisodeDetails(String episodeNumber, String seasonNumber, String showId) {

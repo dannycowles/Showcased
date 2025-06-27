@@ -14,7 +14,11 @@ import {ShowService} from '../../../services/show.service';
 export class ProfileSeasonRankingPageComponent implements OnInit{
   rankingEntries: SeasonRankingData[];
   searchString: string = "";
-  showSearchResults: ResultPageData;
+  showSearchResults: ResultPageData | null = null;
+  selectedShowId: number | null = null;
+
+  hasSearched: boolean = false;
+  isLoading: boolean = false;
 
   debouncedSearchSeasons: () => void;
 
@@ -58,12 +62,25 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
   }
 
   async searchShows() {
-    if (this.searchString) {
+    if (this.searchString.trim().length != 0) {
+      this.hasSearched = true;
+      this.isLoading = true;
+
       try {
         this.showSearchResults = await this.showService.searchForShows(this.searchString);
       } catch (error) {
         console.error(error);
+      } finally {
+        this.isLoading = false;
       }
+    } else {
+      this.hasSearched = false;
+      this.showSearchResults = null;
     }
+  }
+
+  get selectedShowTitle(): string {
+    if (this.selectedShowId == null) return "";
+    return this.showSearchResults.results.find(show => show.id == this.selectedShowId).title;
   }
 }
