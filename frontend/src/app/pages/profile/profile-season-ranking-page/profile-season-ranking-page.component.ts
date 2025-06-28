@@ -16,11 +16,16 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
   searchString: string = "";
   showSearchResults: ResultPageData | null = null;
   selectedShowId: number | null = null;
+  numSeasons: number | null = null;
+  selectedSeason: number = 1;
 
   hasSearched: boolean = false;
   isLoading: boolean = false;
+  message: string = "";
+  messageColor: string;
 
   debouncedSearchSeasons: () => void;
+  debouncedAddSeason: () => void;
 
   constructor(private profileService: ProfileService,
               private utilsService: UtilsService,
@@ -33,9 +38,8 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
       console.error(error);
     }
 
-    this.debouncedSearchSeasons = this.utilsService.debounce(() => {
-      this.searchShows();
-    })
+    this.debouncedSearchSeasons = this.utilsService.debounce(() => this.searchShows());
+    this.debouncedAddSeason = this.utilsService.debounce(() => this.addSeasonToRanking());
   };
 
   async removeSeasonFromRankingList(removeId: number) {
@@ -80,7 +84,43 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
   }
 
   get selectedShowTitle(): string {
-    if (this.selectedShowId == null) return "";
-    return this.showSearchResults.results.find(show => show.id == this.selectedShowId).title;
+    if (this.selectedShowId == null || this.showSearchResults == null) return "";
+    const selectedShow = this.showSearchResults.results.find(show => show.id === this.selectedShowId);
+    return selectedShow != null ? selectedShow.title : "";
+  }
+
+  async getNumberOfSeasons() {
+    try {
+      this.numSeasons = await this.showService.fetchNumberOfSeasons(this.selectedShowId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async addSeasonToRanking() {
+    try {
+      const data = {
+        showId: this.selectedShowId,
+        season: this.selectedSeason,
+        showTitle: this.selectedShowTitle
+      }
+      const response = await this.profileService.addSeasonToRankingList(data);
+
+      if (response.ok) {
+        const newRanking: SeasonRankingData = await response.json();
+        this.message = `Added ${this.selectedShowTitle} Season ${this.selectedSeason} to your ranking list!`;
+        this.messageColor = "green";
+        this.rankingEntries.push(newRanking);
+      } else {
+        this.message = `You already have ${this.selectedShowTitle} Season ${this.selectedSeason} on your ranking list.`;
+        this.messageColor = "red";
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        this.message = "";
+      }, 3000);
+    }
   }
 }

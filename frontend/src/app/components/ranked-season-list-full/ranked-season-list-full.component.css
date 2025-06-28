@@ -43,6 +43,11 @@
   border: none;
 }
 
-.season-list.cdk-drop-list-dragging .show-season:not(.cdk-drag-placeholder) {
+.season-list.cdk-drop-list-dragging .season-box:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.scrollable-container {
+  max-height: 80vh;
+  overflow-y: auto;
 }
