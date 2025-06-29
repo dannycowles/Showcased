@@ -26,8 +26,8 @@ export class RankedSeasonListFullComponent {
   @Output() remove = new EventEmitter<number>();
 
   @ViewChild("scrollableContainer") scrollableContainer!: ElementRef<HTMLElement>;
-  private scrollThreshold = 50;
-  private scrollSpeed = 10;
+  private readonly scrollThreshold = 50;
+  private readonly scrollSpeed = 10;
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.seasons, event.previousIndex, event.currentIndex);

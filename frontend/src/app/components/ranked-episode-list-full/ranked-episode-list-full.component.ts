@@ -1,8 +1,9 @@
-import {booleanAttribute, Component, EventEmitter, Input, Output} from '@angular/core';
+import {booleanAttribute, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {EpisodeRankingData} from '../../data/lists/episode-ranking-data';
-import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
+import {CdkScrollableModule} from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-ranked-episode-list-full',
@@ -10,18 +11,23 @@ import {NgOptimizedImage} from '@angular/common';
     CdkDropList,
     CdkDrag,
     RouterLink,
-    NgOptimizedImage
+    NgOptimizedImage,
+    CdkScrollableModule,
   ],
   templateUrl: './ranked-episode-list-full.component.html',
-  styleUrl: './ranked-episode-list-full.component.css'
+  styleUrl: './ranked-episode-list-full.component.css',
 })
 export class RankedEpisodeListFullComponent {
-  @Input({required : true}) title: string;
-  @Input({required : true}) episodes: EpisodeRankingData[];
-  @Input({transform : booleanAttribute}) editable: boolean = false;
+  @Input({ required: true }) title: string;
+  @Input({ required: true }) episodes: EpisodeRankingData[];
+  @Input({ transform: booleanAttribute }) editable: boolean = false;
 
   @Output() update = new EventEmitter<void>();
   @Output() remove = new EventEmitter<number>();
+
+  @ViewChild('scrollableContainer') scrollableContainer!: ElementRef<HTMLElement>;
+  private readonly  scrollThreshold = 50;
+  private readonly scrollSpeed = 10;
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.episodes, event.previousIndex, event.currentIndex);
@@ -35,5 +41,17 @@ export class RankedEpisodeListFullComponent {
 
   removeEvent(removeId: number) {
     this.remove.emit(removeId);
+  }
+
+  onDragMoved(event: CdkDragMove) {
+    const scrollElement = this.scrollableContainer.nativeElement;
+    const { y } = event.pointerPosition;
+    const rect = scrollElement.getBoundingClientRect();
+
+    if (y - rect.top < this.scrollThreshold) {
+      scrollElement.scrollTop -= this.scrollSpeed;
+    } else if (rect.bottom - y < this.scrollThreshold) {
+      scrollElement.scrollTop += this.scrollSpeed;
+    }
   }
 }

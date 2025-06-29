@@ -77,13 +77,10 @@
   </div>
 </div>
 
-@if (rankingEntries) {
-  <app-ranked-season-list-full title="Season Ranking"
-                               [seasons]="rankingEntries"
-                               editable
-                               (update)="updateSeasonRankingList()"
-                               (remove)="removeSeasonFromRankingList($event)"
-  ></app-ranked-season-list-full>
-} @else {
-  <p>You have no seasons on your ranking list yet!</p>
-}
+<app-ranked-season-list-full title="Season Ranking"
+                             [seasons]="rankingEntries"
+                             editable
+                             (update)="updateSeasonRankingList()"
+                             (remove)="removeSeasonFromRankingList($event)"
+></app-ranked-season-list-full>
+
