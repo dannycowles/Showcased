@@ -1,0 +1,33 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="searchShowsModal">Add Season to Ranking List</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <div class="mb-3">
+    <label for="seasonSearchInput" class="form-label">Search Shows</label>
+    <input ngbAutofocus type="text" class="form-control" id="seasonSearchInput" placeholder="Search..." [(ngModel)]="searchString" (input)="debouncedSearchShows()">
+
+    @if (isLoading) {
+      <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    } @else if (showSearchResults?.results?.length) {
+      <ul class="list-group overflow-auto mt-3" style="max-height: 25vh">
+        @for (show of showSearchResults.results; track show.id) {
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="radio" name="listGroupRadio" [value]="show.id" [id]="show.id" [(ngModel)]="selectedShowId">
+            <label class="form-check-label stretched-link" [for]="show.id">{{show.title}}</label>
+          </li>
+        }
+      </ul>
+    } @else if (hasSearched && searchString.trim().length > 0) {
+      <div class="mt-3">No results found!</div>
+    }
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
+  <button type="button" class="btn btn-primary" [disabled]="selectedShowId == null" (click)="passBack()">Next</button>
+</div>

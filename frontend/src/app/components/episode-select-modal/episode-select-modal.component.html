@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <i class="bi bi-arrow-left-square fs-3 me-3" role="button" aria-label="Go back" [style.cursor]="'pointer'" (click)="goBack()"></i>
+  <h5 class="modal-title" id="episodeSelectModal">{{selectedShowTitle}} Season {{selectedSeason}}</h5>
+  <button type="button" class="btn-close" (click)="activeModal.dismiss()" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+  @if (seasonEpisodes) {
+    <div ngbDropdown>
+      <div class="form-label">Select Episode</div>
+      <button type="button" class="btn btn-secondary" ngbDropdownToggle id="episodeDropdown">
+        Episode {{selectedEpisode.episodeNumber}} - {{selectedEpisode.name}}
+      </button>
+      <div ngbDropdownMenu aria-labelledby="episodeDropdown" class="overflow-auto" style="max-height: 25vh">
+        @for (episode of seasonEpisodes.episodes; track episode.episodeNumber) {
+          <button ngbDropdownItem (click)="selectedEpisode = episode">Episode {{episode.episodeNumber}} - {{episode.name}}</button>
+        }
+      </div>
+    </div>
+  } @else {
+    <div>Loading...</div>
+  }
+  <div class="mt-3" [style.color]="messageColor">{{message}}</div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
+  <button type="button" class="btn btn-primary" (click)="addEpisodeToRankingList()">Add</button>
+</div>

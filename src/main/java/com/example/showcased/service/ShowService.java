@@ -335,6 +335,15 @@ public class ShowService {
         return season;
     }
 
+    public ShowEpisodesDto getSeasonEpisodes(String showId, String seasonNumber) {
+        // Make a request to TMDB season details endpoint
+        String url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv")
+                .pathSegment(showId, "season", seasonNumber)
+                .toUriString();
+        return tmdbClient.get(url, ShowEpisodesDto.class);
+    }
+
     public SeasonPartialDto getSeasonPartialDetails(Long showId, int seasonNumber) {
         // Make a request to TMDB season details endpoint
         String url = UriComponentsBuilder

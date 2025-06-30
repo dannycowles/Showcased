@@ -1,4 +1,4 @@
-import {SeasonEpisode} from './season-episode';
+import {SeasonEpisodeFull} from './season-episode';
 
 export interface SeasonData {
   readonly id: number;
@@ -6,6 +6,6 @@ export interface SeasonData {
   readonly overview: string;
   readonly seasonNumber: number;
   readonly posterPath: string;
-  readonly episodes: SeasonEpisode[];
+  readonly episodes: SeasonEpisodeFull[];
   onRankingList: boolean;
 }

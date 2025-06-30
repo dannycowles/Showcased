@@ -6,6 +6,7 @@ import {ShowGenresData} from '../data/show-genres-data';
 import {ResultPageData} from '../data/show/result-page-data';
 import {RoleData} from '../data/role-data';
 import {EpisodeReviewData, ShowReviewData} from '../data/reviews-data';
+import {SeasonEpisodes} from '../data/show/season-episode';
 
 @Injectable({
   providedIn: 'root'
@@ -207,6 +208,18 @@ export class ShowService {
     const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}`, {
       credentials: 'include'
     });
+
+    this.checkPageNotFound(response);
+    return await response.json();
+  }
+
+  /**
+   * Fetches all episodes for a season given the show's ID and season number
+   * @param showId
+   * @param seasonNumber
+   */
+  async fetchSeasonEpisodes(showId: number, seasonNumber: number): Promise<SeasonEpisodes> {
+    const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}/episodes`);
 
     this.checkPageNotFound(response);
     return await response.json();

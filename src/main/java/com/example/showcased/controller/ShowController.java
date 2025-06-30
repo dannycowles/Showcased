@@ -53,6 +53,12 @@ public class ShowController {
         return ResponseEntity.ok(season);
     }
 
+    @GetMapping("/{id}/seasons/{seasonNumber}/episodes")
+    public ResponseEntity<ShowEpisodesDto> getSeasonEpisodes(@PathVariable String id, @PathVariable String seasonNumber) {
+        ShowEpisodesDto episodes = showService.getSeasonEpisodes(id, seasonNumber);
+        return ResponseEntity.ok(episodes);
+    }
+
     @GetMapping("/{id}/seasons/{seasonNumber}/episodes/{episodeNumber}")
     public ResponseEntity<EpisodeDto> getEpisodeDetails(@PathVariable String episodeNumber, @PathVariable String seasonNumber, @PathVariable String id) {
         EpisodeDto episode = showService.getEpisodeDetails(episodeNumber, seasonNumber, id);

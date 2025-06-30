@@ -69,6 +69,7 @@ import {ShowListFullComponent} from './components/show-list-full/show-list-full.
 import {RankedShowListFullComponent} from './components/ranked-show-list-full/ranked-show-list-full.component';
 import {RankedSeasonListFullComponent} from './components/ranked-season-list-full/ranked-season-list-full.component';
 import {RankedEpisodeListFullComponent} from './components/ranked-episode-list-full/ranked-episode-list-full.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -131,7 +132,8 @@ import {RankedEpisodeListFullComponent} from './components/ranked-episode-list-f
     ShowListFullComponent,
     RankedShowListFullComponent,
     RankedSeasonListFullComponent,
-    RankedEpisodeListFullComponent
+    RankedEpisodeListFullComponent,
+    NgbModule
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],

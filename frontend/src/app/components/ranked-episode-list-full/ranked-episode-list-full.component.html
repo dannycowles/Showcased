@@ -3,7 +3,7 @@
 @if (episodes?.length != 0) {
   <div cdkScrollable #scrollableContainer class="scrollable-container">
     <div cdkDropList class="episode-list" [cdkDropListDisabled]="!editable" (cdkDropListDropped)="drop($event)">
-      @for (episode of episodes; track episode.showId; let rank = $index) {
+      @for (episode of episodes; track episode.id; let rank = $index) {
         <div class="episode-box" cdkDrag [attr.cdkDrag]="editable" [style.cursor]="editable ? 'move' : 'default'" (cdkDragMoved)="onDragMoved($event)">
           <h5>{{rank + 1}}</h5>
           <h5>{{episode.showTitle}}</h5>
