@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
-import {SearchResultData} from '../../../data/search-result-data';
 import {ShowListData} from '../../../data/lists/show-list-data';
+import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
+import {AddShowType} from '../../../data/enums';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-profile-watchlist-page',
@@ -11,10 +13,9 @@ import {ShowListData} from '../../../data/lists/show-list-data';
 })
 export class ProfileWatchlistPageComponent implements OnInit {
   watchlistEntries: ShowListData[];
-  modalMessage: string;
-  modalColor: string;
 
-  constructor(private profileService: ProfileService) { };
+  constructor(private profileService: ProfileService,
+              private modalService: NgbModal) { };
 
   async ngOnInit() {
     // Retrieve all watchlist entries for profile
@@ -22,6 +23,19 @@ export class ProfileWatchlistPageComponent implements OnInit {
       this.watchlistEntries = await this.profileService.getFullWatchlist();
     } catch(error) {
       console.error(error);
+    }
+  }
+
+  async openSearchShowsModal() {
+    const searchModalRef = this.modalService.open(SearchShowsModalComponent, {
+      ariaLabelledBy: "searchShowsModal",
+      centered: true
+    });
+    searchModalRef.componentInstance.showRanking = true;
+    searchModalRef.componentInstance.modalTitle = "Add Show to Watchlist";
+    searchModalRef.componentInstance.addType = AddShowType.Watchlist;
+    searchModalRef.componentInstance.onAddShow = (show: ShowListData) => {
+      this.watchlistEntries.push(show);
     }
   }
 
@@ -44,32 +58,6 @@ export class ProfileWatchlistPageComponent implements OnInit {
       this.watchlistEntries = this.watchlistEntries.filter(show => show.showId != moveId);
     } catch(error) {
       console.error(error);
-    }
-  }
-
-  async handleAddShow(show: SearchResultData) {
-    try {
-      const data: ShowListData = {
-        showId: show.id,
-        title: show.title,
-        posterPath: show.posterPath
-      };
-      const response = await this.profileService.addShowToWatchlist(data);
-
-      if (response.ok) {
-        this.modalMessage = "Successfully added!";
-        this.modalColor = "green";
-        this.watchlistEntries.push(data);
-      } else if (response.status === 409) {
-        this.modalMessage = "You already have this show on your watchlist.";
-        this.modalColor = "red";
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        this.modalMessage = "";
-      }, 3000);
     }
   }
 }

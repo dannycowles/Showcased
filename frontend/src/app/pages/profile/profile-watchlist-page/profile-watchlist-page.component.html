@@ -1,13 +1,6 @@
 <button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
 <br>
-<button class="btn btn-success mt-3 mb-3" data-bs-toggle="modal" data-bs-target="#addShowModal">Add Show</button>
-
-<!-- TODO: fix this since i reworked modal -->
-<!--<app-add-show-modal (addShow)="handleAddShow($event)"-->
-<!--                    title="Add Show to Watchlist"-->
-<!--                    [message]="modalMessage"-->
-<!--                    [messageColor]="modalColor"-->
-<!--&gt;</app-add-show-modal>-->
+<button class="btn btn-success mt-3 mb-3" (click)="openSearchShowsModal()">Add Show</button>
 
 @if (watchlistEntries) {
   <app-show-list-full title="Watchlist"

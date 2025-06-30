@@ -3,6 +3,7 @@ import { ProfileService } from '../../../services/profile.service';
 import { ShowRankingData } from '../../../data/lists/show-ranking-data';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AddShowType} from '../../../data/enums';
 
 @Component({
   selector: 'app-profile-show-ranking-page',
@@ -32,6 +33,7 @@ export class ProfileShowRankingPageComponent implements OnInit {
     });
     searchModalRef.componentInstance.showRanking = true;
     searchModalRef.componentInstance.modalTitle = "Add Show to Ranking List";
+    searchModalRef.componentInstance.addType = AddShowType.Ranking;
     searchModalRef.componentInstance.onAddShow = (show: ShowRankingData) => {
       show.rankNum = this.rankingEntries.length + 1;
       this.rankingEntries.push(show);

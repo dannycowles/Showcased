@@ -59,8 +59,8 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
 
       const seasonResult = await seasonModalRef.result;
       this.selectedSeason = seasonResult.selectedSeason;
-    } catch (reason) {
-      if (reason === "backFromSeason"){
+    } catch (modalDismissReason) {
+      if (modalDismissReason === "backFromSeason"){
         await this.openSearchShowsModal();
       }
     }

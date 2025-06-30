@@ -58,8 +58,8 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
       this.selectedSeason = seasonResult.selectedSeason;
 
       await this.openEpisodeSelectModal();
-    } catch (reason) {
-      if (reason === "backFromSeason"){
+    } catch (modalDismissReason) {
+      if (modalDismissReason === "backFromSeason"){
         await this.openSearchShowsModal();
       }
     }
@@ -81,8 +81,8 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
       }
 
       await episodeModalRef.result;
-    } catch (reason) {
-      if (reason === "backFromEpisode") {
+    } catch (modalDismissReason) {
+      if (modalDismissReason === "backFromEpisode") {
         await this.openSeasonSelectModal();
       }
     }

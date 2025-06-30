@@ -31,7 +31,7 @@
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
   @if (showRanking) {
-    <button type="button" class="btn btn-primary" [disabled]="selectedShowId == null" (click)="addShowToRankingList()">Add</button>
+    <button type="button" class="btn btn-primary" [disabled]="selectedShowId == null" (click)="addShow()">Add</button>
   } @else {
     <button type="button" class="btn btn-primary" [disabled]="selectedShowId == null" (click)="passBack()">Next</button>
   }
