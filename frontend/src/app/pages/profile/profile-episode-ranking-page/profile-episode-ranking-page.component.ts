@@ -31,23 +31,26 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
   }
 
   async openSearchShowsModal() {
-    try {
-      const searchModalRef = this.modalService.open(SearchShowsModalComponent, { ariaLabelledBy: "searchShowsModal"});
+    const searchModalRef = this.modalService.open(SearchShowsModalComponent, {
+      ariaLabelledBy: "searchShowsModal",
+      centered: true
+    });
+    searchModalRef.componentInstance.modalTitle = "Add Episode to Ranking List";
 
-      const searchResult = await searchModalRef.result;
-      this.selectedShowId = searchResult.selectedShowId;
-      this.selectedShowTitle = searchResult.selectedShowTitle;
+    const searchResult = await searchModalRef.result;
+    this.selectedShowId = searchResult.selectedShowId;
+    this.selectedShowTitle = searchResult.selectedShowTitle;
 
-      await this.openSeasonSelectModal();
-    } catch (reason) {
-      console.log(reason);
-    }
+    await this.openSeasonSelectModal();
   }
 
   async openSeasonSelectModal() {
     try {
       // Open season select modal and send required data
-      const seasonModalRef = this.modalService.open(SeasonSelectModalComponent, { ariaLabelledBy: "seasonSelectModal"});
+      const seasonModalRef = this.modalService.open(SeasonSelectModalComponent, {
+        ariaLabelledBy: "seasonSelectModal",
+        centered: true
+      });
       seasonModalRef.componentInstance.selectedShowId = this.selectedShowId;
       seasonModalRef.componentInstance.selectedShowTitle = this.selectedShowTitle;
 
@@ -65,7 +68,10 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
   async openEpisodeSelectModal() {
     try {
       // Open episode select modal and send required data
-      const episodeModalRef = this.modalService.open(EpisodeSelectModalComponent, { ariaLabelledBy: "episodeSelectModal"});
+      const episodeModalRef = this.modalService.open(EpisodeSelectModalComponent, {
+        ariaLabelledBy: "episodeSelectModal",
+        centered: true
+      });
       episodeModalRef.componentInstance.selectedShowId = this.selectedShowId;
       episodeModalRef.componentInstance.selectedShowTitle = this.selectedShowTitle;
       episodeModalRef.componentInstance.selectedSeason = this.selectedSeason;

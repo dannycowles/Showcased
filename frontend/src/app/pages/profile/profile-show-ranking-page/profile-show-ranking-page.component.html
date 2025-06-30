@@ -1,22 +1,10 @@
 <button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
 <br />
-<button class="btn btn-success mt-3 mb-3" data-bs-toggle="modal" data-bs-target="#addShowModal">Add Show</button>
+<button class="btn btn-success mt-3 mb-3" (click)="openSearchShowsModal()">Add Show</button>
 
-<app-add-show-modal
-  (addShow)="handleAddShow($event)"
-  title="Add Show to Ranking List"
-  [message]="modalMessage"
-  [messageColor]="modalColor"
-></app-add-show-modal>
-
-@if (rankingEntries) {
-  <app-ranked-show-list-full
-    title="Show Ranking"
-    [shows]="rankingEntries"
-    editable
-    (update)="updateShowRankingList()"
-    (remove)="removeShowFromRankingList($event)"
-  ></app-ranked-show-list-full>
-} @else {
-  <p>You have no shows ranked yet!</p>
-}
+<app-ranked-show-list-full title="Show Ranking"
+                           [shows]="rankingEntries"
+                           editable
+                           (update)="updateShowRankingList()"
+                           (remove)="removeShowFromRankingList($event)"
+></app-ranked-show-list-full>

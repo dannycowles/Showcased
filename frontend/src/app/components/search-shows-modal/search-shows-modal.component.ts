@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {EpisodeRankingData} from '../../data/lists/episode-ranking-data';
 import {ResultPageData} from '../../data/show/result-page-data';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {UtilsService} from '../../services/utils.service';
 import {ShowService} from '../../services/show.service';
+import {ProfileService} from '../../services/profile.service';
+import {SearchResultData} from '../../data/search-result-data';
 
 @Component({
   selector: 'app-search-shows-modal',
@@ -14,7 +15,7 @@ import {ShowService} from '../../services/show.service';
   standalone: true,
 })
 export class SearchShowsModalComponent {
-  rankingEntries: EpisodeRankingData[];
+  @Input({required: true}) modalTitle: string;
   searchString: string = "";
   showSearchResults: ResultPageData | null = null;
   selectedShowId: number | null = null;
@@ -22,11 +23,18 @@ export class SearchShowsModalComponent {
   hasSearched: boolean = false;
   isLoading: boolean = false;
 
+  // These variables are used when the component calling this modal is adding shows to ranking list
+  @Input() showRanking: boolean = false;
+  @Input() onAddShow: (show: {}) => void;
+  message: string;
+  messageColor: string;
+
   debouncedSearchShows: () => void;
 
   constructor (public activeModal: NgbActiveModal,
                private utilsService: UtilsService,
-               private showService: ShowService) {
+               private showService: ShowService,
+               private profileService: ProfileService) {
     this.debouncedSearchShows = this.utilsService.debounce(() => this.searchShows());
   };
 
@@ -54,10 +62,50 @@ export class SearchShowsModalComponent {
     return selectedShow != null ? selectedShow.title : "";
   }
 
+  get selectedShowPosterPath(): string {
+    if (this.selectedShowId == null || this.showSearchResults == null) return "";
+    const selectedShow = this.showSearchResults.results.find(show => show.id === this.selectedShowId);
+    return selectedShow != null ? selectedShow.posterPath : "";
+  }
+
+  showYears(show: SearchResultData): string {
+    if (show.startYear === show.endYear) {
+      return `(${show.startYear})`;
+    } else if (show.endYear == null) {
+      return `(${show.startYear} - )`;
+    } else {
+      return `(${show.startYear} - ${show.endYear})`;
+    }
+  }
+
   passBack() {
     this.activeModal.close({
       selectedShowId: this.selectedShowId,
       selectedShowTitle: this.selectedShowTitle
     });
+  }
+
+  async addShowToRankingList() {
+    try {
+      const data = {
+        showId: this.selectedShowId,
+        title: this.selectedShowTitle,
+        posterPath: this.selectedShowPosterPath,
+      };
+      const response = await this.profileService.addShowToRankingList(data);
+
+      if (response.ok) {
+        this.message = `Added ${this.selectedShowTitle} to your ranking list!`;
+        this.messageColor = 'green';
+        this.onAddShow(data);
+      } else if (response.status === 409) {
+        this.message = `You already have ${this.selectedShowTitle} on your ranking list.`;
+        this.messageColor = 'red';
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => this.message = "", 3000);
+    }
   }
 }

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ProfileService } from '../../../services/profile.service';
 import { ShowRankingData } from '../../../data/lists/show-ranking-data';
-import { SearchResultData } from '../../../data/search-result-data';
+import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-profile-show-ranking-page',
@@ -12,10 +12,9 @@ import { SearchResultData } from '../../../data/search-result-data';
 })
 export class ProfileShowRankingPageComponent implements OnInit {
   rankingEntries: ShowRankingData[];
-  modalMessage: string;
-  modalColor: string;
 
-  constructor(private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService,
+              private modalService: NgbModal) {}
 
   async ngOnInit() {
     // Retrieve the show ranking entries for the profile
@@ -23,6 +22,19 @@ export class ProfileShowRankingPageComponent implements OnInit {
       this.rankingEntries = await this.profileService.getFullShowRankingList();
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async openSearchShowsModal() {
+    const searchModalRef = this.modalService.open(SearchShowsModalComponent, {
+      ariaLabelledBy: "searchShowsModal",
+      centered: true
+    });
+    searchModalRef.componentInstance.showRanking = true;
+    searchModalRef.componentInstance.modalTitle = "Add Show to Ranking List";
+    searchModalRef.componentInstance.onAddShow = (show: ShowRankingData) => {
+      show.rankNum = this.rankingEntries.length + 1;
+      this.rankingEntries.push(show);
     }
   }
 
@@ -48,33 +60,6 @@ export class ProfileShowRankingPageComponent implements OnInit {
       await this.profileService.updateShowRankingList(updates);
     } catch (error) {
       console.error(error);
-    }
-  }
-
-  async handleAddShow(show: SearchResultData) {
-    try {
-      const data: ShowRankingData = {
-        showId: show.id,
-        title: show.title,
-        posterPath: show.posterPath,
-        rankNum: this.rankingEntries.length + 1
-      };
-      const response = await this.profileService.addShowToRankingList(data);
-
-      if (response.ok) {
-        this.modalMessage = 'Successfully added!';
-        this.modalColor = 'green';
-        this.rankingEntries.push(data);
-      } else if (response.status === 409) {
-        this.modalMessage = 'You already have this show on your ranking list.';
-        this.modalColor = 'red';
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        this.modalMessage = '';
-      }, 3000);
     }
   }
 }

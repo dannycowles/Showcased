@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {SeasonRankingData} from '../../../data/lists/season-ranking-data';
-import {UtilsService} from '../../../services/utils.service';
-import {ResultPageData} from '../../../data/show/result-page-data';
-import {ShowService} from '../../../services/show.service';
+import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
+import {SeasonSelectModalComponent} from '../../../components/season-select-modal/season-select-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-profile-season-ranking-page',
@@ -13,23 +13,12 @@ import {ShowService} from '../../../services/show.service';
 })
 export class ProfileSeasonRankingPageComponent implements OnInit{
   rankingEntries: SeasonRankingData[];
-  searchString: string = "";
-  showSearchResults: ResultPageData | null = null;
   selectedShowId: number | null = null;
-  numSeasons: number | null = null;
+  selectedShowTitle: string = "";
   selectedSeason: number = 1;
 
-  hasSearched: boolean = false;
-  isLoading: boolean = false;
-  message: string = "";
-  messageColor: string;
-
-  debouncedSearchSeasons: () => void;
-  debouncedAddSeason: () => void;
-
   constructor(private profileService: ProfileService,
-              private utilsService: UtilsService,
-              private showService: ShowService) { };
+              private modalService: NgbModal) { };
 
   async ngOnInit() {
     try {
@@ -37,10 +26,45 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
     } catch (error) {
       console.error(error);
     }
-
-    this.debouncedSearchSeasons = this.utilsService.debounce(() => this.searchShows());
-    this.debouncedAddSeason = this.utilsService.debounce(() => this.addSeasonToRanking());
   };
+
+  async openSearchShowsModal() {
+    const searchModalRef = this.modalService.open(SearchShowsModalComponent, {
+      ariaLabelledBy: "searchShowsModal",
+      centered: true
+    });
+    searchModalRef.componentInstance.modalTitle = "Add Season to Ranking List";
+
+    const searchResult = await searchModalRef.result;
+    this.selectedShowId = searchResult.selectedShowId;
+    this.selectedShowTitle = searchResult.selectedShowTitle;
+
+    await this.openSeasonSelectModal();
+  }
+
+  async openSeasonSelectModal() {
+    try {
+      // Open season select modal and send required data
+      const seasonModalRef = this.modalService.open(SeasonSelectModalComponent, {
+        ariaLabelledBy: "seasonSelectModal",
+        centered: true
+      });
+      seasonModalRef.componentInstance.selectedShowId = this.selectedShowId;
+      seasonModalRef.componentInstance.selectedShowTitle = this.selectedShowTitle;
+      seasonModalRef.componentInstance.seasonRanking = true;
+      seasonModalRef.componentInstance.onAddSeason = (season: SeasonRankingData) => {
+        season.rankNum = this.rankingEntries.length + 1;
+        this.rankingEntries.push(season);
+      }
+
+      const seasonResult = await seasonModalRef.result;
+      this.selectedSeason = seasonResult.selectedSeason;
+    } catch (reason) {
+      if (reason === "backFromSeason"){
+        await this.openSearchShowsModal();
+      }
+    }
+  }
 
   async removeSeasonFromRankingList(removeId: number) {
     try {
@@ -62,65 +86,6 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
       await this.profileService.updateSeasonRankingList(updates);
     } catch(error) {
       console.error(error);
-    }
-  }
-
-  async searchShows() {
-    if (this.searchString.trim().length != 0) {
-      this.hasSearched = true;
-      this.isLoading = true;
-
-      try {
-        this.showSearchResults = await this.showService.searchForShows(this.searchString);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        this.isLoading = false;
-      }
-    } else {
-      this.hasSearched = false;
-      this.showSearchResults = null;
-    }
-  }
-
-  get selectedShowTitle(): string {
-    if (this.selectedShowId == null || this.showSearchResults == null) return "";
-    const selectedShow = this.showSearchResults.results.find(show => show.id === this.selectedShowId);
-    return selectedShow != null ? selectedShow.title : "";
-  }
-
-  async getNumberOfSeasons() {
-    try {
-      this.numSeasons = await this.showService.fetchNumberOfSeasons(this.selectedShowId);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async addSeasonToRanking() {
-    try {
-      const data = {
-        showId: this.selectedShowId,
-        season: this.selectedSeason,
-        showTitle: this.selectedShowTitle
-      }
-      const response = await this.profileService.addSeasonToRankingList(data);
-
-      if (response.ok) {
-        const newRanking: SeasonRankingData = await response.json();
-        this.message = `Added ${this.selectedShowTitle} Season ${this.selectedSeason} to your ranking list!`;
-        this.messageColor = "green";
-        this.rankingEntries.push(newRanking);
-      } else {
-        this.message = `You already have ${this.selectedShowTitle} Season ${this.selectedSeason} on your ranking list.`;
-        this.messageColor = "red";
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        this.message = "";
-      }, 3000);
     }
   }
 }

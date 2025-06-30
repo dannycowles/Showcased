@@ -53,11 +53,12 @@
   <br>
   <br>
 
-  <app-add-show-modal (addShow)="handleAddShow($event)"
-                      title="Add Show to Collection"
-                      [message]="modalMessage"
-                      [messageColor]="modalColor"
-  ></app-add-show-modal>
+  <!-- TODO: fix this since i reworked the modal -->
+<!--  <app-add-show-modal (addShow)="handleAddShow($event)"-->
+<!--                      title="Add Show to Collection"-->
+<!--                      [message]="modalMessage"-->
+<!--                      [messageColor]="modalColor"-->
+<!--  ></app-add-show-modal>-->
 
   <div class="btn-group" id="visibility-radios" role="group" aria-label="Toggle private/public visibility" (change)="toggleCollectionVisibility()">
     <input type="radio" class="btn-check" name="visibilityRadio" id="privateRadio" autocomplete="off" value="private" [checked]="collectionData.isPrivate">

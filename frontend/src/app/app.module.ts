@@ -57,7 +57,6 @@ import {UserCollectionsPageComponent} from './pages/user/user-collections-page/u
 import {
   UserCollectionDetailsPageComponent
 } from './pages/user/user-collection-details-page/user-collection-details-page.component';
-import {AddShowModalComponent} from "./components/add-show-modal/add-show-modal.component";
 import {FollowersFollowingComponent} from "./components/followers-following/followers-following.component";
 import {UserInfoComponent} from './components/user-info/user-info.component';
 import {ShowListComponent} from './components/show-list/show-list.component';
@@ -121,7 +120,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     ButtonHeartComponent,
-    AddShowModalComponent,
     FollowersFollowingComponent,
     UserInfoComponent,
     ShowListComponent,
