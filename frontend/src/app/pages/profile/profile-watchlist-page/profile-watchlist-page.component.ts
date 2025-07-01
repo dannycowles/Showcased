@@ -26,7 +26,7 @@ export class ProfileWatchlistPageComponent implements OnInit {
     }
   }
 
-  async openSearchShowsModal() {
+  openSearchShowsModal() {
     const searchModalRef = this.modalService.open(SearchShowsModalComponent, {
       ariaLabelledBy: "searchShowsModal",
       centered: true

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -281,9 +282,9 @@ public class ProfileController {
     }
 
     @PostMapping("/collections")
-    public ResponseEntity<Void> createCollection(@RequestBody CreateCollectionDto collection, HttpSession session) {
-        profileService.createCollection(collection, session);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<CollectionDto> createCollection(@RequestBody CreateCollectionDto collection, HttpSession session) {
+        CollectionDto newCollection = profileService.createCollection(collection, session);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newCollection);
     }
 
     @DeleteMapping("/collections/{id}")

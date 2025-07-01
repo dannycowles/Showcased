@@ -31,6 +31,9 @@ export class SearchShowsModalComponent {
   message: string;
   messageColor: string;
 
+  // Used if the component calling the modal is adding the show to a collection
+  @Input() collectionId: number;
+
   debouncedSearchShows: () => void;
 
   constructor (public activeModal: NgbActiveModal,
@@ -109,14 +112,18 @@ export class SearchShowsModalComponent {
           response = await this.profileService.addShowToWatchlist(showData);
           break;
         }
+        case AddShowType.Collection: {
+          response = await this.profileService.addShowToCollection(this.collectionId, showData);
+          break;
+        }
       }
 
       if (response.ok) {
-        this.message = `Added ${this.selectedShowTitle} to your ${this.addType} list!`;
+        this.message = `Added ${this.selectedShowTitle} to your ${this.addType}!`;
         this.messageColor = 'green';
         this.onAddShow(showData);
       } else if (response.status === 409) {
-        this.message = `You already have ${this.selectedShowTitle} on your ${this.addType} list.`;
+        this.message = `You already have ${this.selectedShowTitle} on your ${this.addType}.`;
         this.messageColor = 'red';
       }
     } catch (error) {

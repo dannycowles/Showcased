@@ -583,7 +583,7 @@ public class ProfileService {
         }
     }
 
-    public void createCollection(CreateCollectionDto collection, HttpSession session) {
+    public CollectionDto createCollection(CreateCollectionDto collection, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
         // Check to make sure user doesn't have a collection with the provided name already
@@ -594,6 +594,7 @@ public class ProfileService {
         // Save new collection to database
         Collection newCollection = new Collection(userId, collection.getCollectionName());
         collectionsRepository.save(newCollection);
+        return modelMapper.map(newCollection, CollectionDto.class);
     }
 
     public void deleteCollection(Long collectionId, HttpSession session) {

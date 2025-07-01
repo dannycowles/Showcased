@@ -7,8 +7,10 @@ import 'jquery-serializejson';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {UtilsService} from '../../../services/utils.service';
 import {UserService} from '../../../services/user.service';
-import {SearchResultData} from '../../../data/search-result-data';
 import {CollectionShowData} from '../../../data/collection-show-data';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
+import {AddShowType} from '../../../data/enums';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -19,14 +21,13 @@ import {CollectionShowData} from '../../../data/collection-show-data';
 export class ProfileCollectionDetailsPageComponent implements OnInit {
   collectionData: SingleCollectionData;
   readonly collectionId: number;
-  modalMessage: string;
-  modalColor: string;
 
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
               private router: Router,
               public utils : UtilsService,
-              private userService: UserService) {
+              private userService: UserService,
+              private modalService: NgbModal) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
@@ -39,10 +40,22 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
     }
   };
 
+  openSearchShowsModal() {
+    const searchShowsModalRef = this.modalService.open(SearchShowsModalComponent, {
+      ariaLabelledBy: "searchShowsModal",
+      centered: true
+    });
+    searchShowsModalRef.componentInstance.showRanking = true;
+    searchShowsModalRef.componentInstance.modalTitle = "Add Show to Collection";
+    searchShowsModalRef.componentInstance.addType = AddShowType.Collection;
+    searchShowsModalRef.componentInstance.collectionId = this.collectionId;
+    searchShowsModalRef.componentInstance.onAddShow = (show: CollectionShowData) => this.collectionData.shows.push(show);
+  }
+
   async removeShowFromCollection(showId: number ) {
     try {
       await this.profileService.removeShowFromCollection(this.collectionId, showId);
-      this.collectionData.shows = this.collectionData.shows.filter(show => show.id != showId);
+      this.collectionData.shows = this.collectionData.shows.filter(show => show.showId != showId);
     } catch (error) {
       console.error(error);
     }
@@ -91,7 +104,7 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       const data = {
         isRanked: this.collectionData.isRanked,
         shows: this.collectionData.shows.map(show => {
-          return { showId: show.id };
+          return { showId: show.showId };
         })
       };
       await this.profileService.updateCollection(this.collectionId, data);
@@ -156,33 +169,6 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       }
     } catch (error) {
       console.error(error);
-    }
-  }
-
-  async handleAddShow(show: SearchResultData) {
-    try {
-      const data: CollectionShowData = {
-        id: show.id,
-        title: show.title,
-        posterPath: show.posterPath,
-        rankNum: this.collectionData.shows.length + 1
-      };
-      const response = await this.profileService.addShowToCollection(this.collectionId, data);
-
-      if (response.ok) {
-        this.modalMessage = `Successfully added ${show.title}`;
-        this.modalColor = "green";
-        this.collectionData.shows.push(data);
-      } else {
-        this.modalMessage = "You already have this show in this collection.";
-        this.modalColor = "red";
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        this.modalMessage = "";
-      }, 3000);
     }
   }
 }

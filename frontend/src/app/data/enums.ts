@@ -1,5 +1,6 @@
 export enum AddShowType {
-  Ranking = "ranking",
+  Ranking = "ranking list",
   Watchlist = "watchlist",
-  Watching = "watching"
+  Watching = "watching list",
+  Collection = "collection"
 }

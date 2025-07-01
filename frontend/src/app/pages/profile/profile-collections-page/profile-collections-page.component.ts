@@ -2,6 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {CollectionData} from '../../../data/collection-data';
 import {UtilsService} from '../../../services/utils.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {
+  CreateCollectionModalComponent
+} from '../../../components/create-collection-modal/create-collection-modal.component';
 
 @Component({
   selector: 'app-profile-collections-page',
@@ -11,12 +15,14 @@ import {UtilsService} from '../../../services/utils.service';
 })
 export class ProfileCollectionsPageComponent implements OnInit {
   collectionData: CollectionData[];
-  searchCollectionString: string;
-  newCollectionName: string;
+  searchCollectionString: string = "";
   debouncedSearchCollections: () => void;
 
   constructor(private profileService: ProfileService,
-              public utilsService: UtilsService) { };
+              public utilsService: UtilsService,
+              private modalService: NgbModal) {
+    this.debouncedSearchCollections = this.utilsService.debounce(() => this.searchCollections());
+  };
 
   async ngOnInit() {
     try {
@@ -24,42 +30,21 @@ export class ProfileCollectionsPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
-
-    this.debouncedSearchCollections = this.utilsService.debounce(() => {
-      this.searchCollections();
-    });
   };
+
+  openCreateCollectionModal() {
+    const createCollectionModalRef = this.modalService.open(CreateCollectionModalComponent, {
+      centered: true,
+      ariaLabelledBy: "createCollectionModal"
+    });
+    createCollectionModalRef.componentInstance.onCreate = (collection: CollectionData)=> this.collectionData.push(collection);
+  }
 
   async searchCollections() {
     try {
       this.collectionData = await this.profileService.getCollections(this.searchCollectionString);
     } catch (error) {
       console.error(error);
-    }
-  }
-
-  async createNewCollection() {
-    const collectionMessage = document.getElementById("collectionError")
-    try {
-      const data = {
-        collectionName: this.newCollectionName
-      };
-
-      const response = await this.profileService.createCollection(data);
-      if (response.ok) {
-        this.collectionData = await this.profileService.getCollections();
-        collectionMessage.innerText = "Collection created!";
-        collectionMessage.style.color = "green";
-      } else {
-        collectionMessage.innerText = "You already have a collection with this name!";
-        collectionMessage.style.color = "red";
-      }
-    } catch(error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        collectionMessage.innerText = "";
-      }, 3000);
     }
   }
 }

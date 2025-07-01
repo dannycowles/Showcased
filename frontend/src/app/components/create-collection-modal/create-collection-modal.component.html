@@ -1,0 +1,17 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="createCollectionModal">Create New Collection</h5>
+  <button type="button" class="btn-close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <div class="mb-3">
+    <label for="collectionNameInput" class="form-label"></label>
+    <input type="text" class="form-control" id="collectionNameInput" placeholder="Enter Collection Name..." [(ngModel)]="newCollectionName"
+           maxlength="100" (input)="utilsService.displayCharactersLeft('collectionNameInput', 'nameHelpBlock', 100)">
+    <div id="nameHelpBlock" class="form-text">{{ 100 - newCollectionName?.length }} characters remaining</div>
+  </div>
+  <div id="collectionError" class="mt-3"></div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
+  <button type="button" class="btn btn-primary" [disabled]="newCollectionName.trim().length == 0" (click)="createNewCollection()">Create</button>
+</div>

@@ -1,31 +1,7 @@
 <button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
 
 <h1>Collections</h1>
-<button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#collectionModal">Create New Collection</button>
-
-<div class="modal fade" id="collectionModal" aria-labelledby="collectionModal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Create New Collection</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label for="collectionNameInput" class="form-label"></label>
-          <input type="text" class="form-control" id="collectionNameInput" placeholder="Enter Collection Name..." [(ngModel)]="newCollectionName"
-          maxlength="100" (input)="utilsService.displayCharactersLeft('collectionNameInput', 'nameHelpBlock', 100)">
-          <div id="nameHelpBlock" class="form-text">{{ 100 - newCollectionName?.length }} characters remaining</div>
-        </div>
-        <div id="collectionError" class="mt-3"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" (click)="createNewCollection()">Create</button>
-      </div>
-    </div>
-  </div>
-</div>
+<button class="btn btn-secondary" (click)="openCreateCollectionModal()">Create New Collection</button>
 
 <div class="mb-3">
   <label for="search-bar" class="form-label">Search Collections</label>

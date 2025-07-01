@@ -18,7 +18,6 @@ export class ProfileWatchingPageComponent implements OnInit {
               private modalService: NgbModal) { }
 
   async ngOnInit() {
-
     // Retrieve watching entries for profile
     try {
       this.watchingEntries = await this.profileService.getFullWatchingList();
@@ -27,7 +26,7 @@ export class ProfileWatchingPageComponent implements OnInit {
     }
   }
 
-  async openSearchShowsModal() {
+  openSearchShowsModal() {
     const searchModalRef = this.modalService.open(SearchShowsModalComponent, {
       ariaLabelledBy: "searchShowsModal",
       centered: true
