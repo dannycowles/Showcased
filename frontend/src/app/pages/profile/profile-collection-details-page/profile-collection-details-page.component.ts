@@ -11,6 +11,7 @@ import {CollectionShowData} from '../../../data/collection-show-data';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {AddShowType} from '../../../data/enums';
+import {EditCollectionModalComponent} from '../../../components/edit-collection-modal/edit-collection-modal.component';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -50,6 +51,20 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
     searchShowsModalRef.componentInstance.addType = AddShowType.Collection;
     searchShowsModalRef.componentInstance.collectionId = this.collectionId;
     searchShowsModalRef.componentInstance.onAddShow = (show: CollectionShowData) => this.collectionData.shows.push(show);
+  }
+
+  openEditCollectionModal() {
+    const editCollectionModalRef = this.modalService.open(EditCollectionModalComponent, {
+      ariaLabelledBy: "editCollectionModal",
+      centered: true
+    });
+    editCollectionModalRef.componentInstance.collectionId = this.collectionId;
+    editCollectionModalRef.componentInstance.collectionName = this.collectionData.name;
+    editCollectionModalRef.componentInstance.collectionDescription = this.collectionData.description;
+    editCollectionModalRef.componentInstance.onUpdate = (updates: any) => {
+      if (updates.collectionName) this.collectionData.name = updates.collectionName;
+      if (updates.description) this.collectionData.description = updates.description;
+    }
   }
 
   async removeShowFromCollection(showId: number ) {
@@ -110,50 +125,6 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
       await this.profileService.updateCollection(this.collectionId, data);
     } catch (error) {
       console.error(error);
-    }
-  }
-
-  async updateCollectionDetails() {
-    const collectionError = document.getElementById("edit-collection-error-message");
-    try {
-      // @ts-ignore
-      const collectionForm = $("#collection-form").serializeJSON();
-
-      // Prevent user from entering blank collection name
-      if (collectionForm["collectionName"].length === 0) {
-        collectionError.innerText = "Collection name cannot be empty";
-        collectionError.style.color = "red";
-        return;
-      }
-
-      const data: any = {};
-      if (collectionForm["collectionName"] !== this.collectionData.name) data.collectionName = collectionForm["collectionName"];
-      if (collectionForm["description"] !== this.collectionData.description) data.description = collectionForm["description"];
-
-      if (Object.keys(data).length === 0) {
-        collectionError.innerText = "No changes to save.";
-        collectionError.style.color = "gray";
-        return;
-      }
-
-      const response = await this.profileService.updateCollection(this.collectionId, data);
-      if (response.ok) {
-        collectionError.innerText = "Changes saved!";
-        collectionError.style.color = "green";
-
-        // Update local state
-        if (data.collectionName) this.collectionData.name = data.collectionName;
-        if (data.description) this.collectionData.description = data.description;
-      } else if (response.status == 409) {
-        collectionError.innerText = "You already have a collection with that name";
-        collectionError.style.color = "red";
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        collectionError.innerText = "";
-      }, 3000);
     }
   }
 

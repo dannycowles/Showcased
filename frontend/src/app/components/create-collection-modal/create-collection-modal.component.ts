@@ -14,13 +14,16 @@ import {ProfileService} from '../../services/profile.service';
 export class CreateCollectionModalComponent {
   newCollectionName: string = "";
   @Input({required: true}) onCreate: (collection: {}) => void;
+  message: string = "";
+  messageColor: string = "";
+
+  readonly maxNameLength = 100;
 
   constructor (public activeModal: NgbActiveModal,
                public utilsService: UtilsService,
                private profileService: ProfileService) {};
 
   async createNewCollection() {
-    const collectionMessage = document.getElementById("collectionError")
     try {
       const data = {
         collectionName: this.newCollectionName
@@ -28,18 +31,18 @@ export class CreateCollectionModalComponent {
 
       const response = await this.profileService.createCollection(data);
       if (response.ok) {
-        collectionMessage.innerText = "Collection created!";
-        collectionMessage.style.color = "green";
+        this.message = "Collection created!";
+        this.messageColor = "green";
         const newCollection = await response.json();
         this.onCreate(newCollection);
       } else {
-        collectionMessage.innerText = "You already have a collection with this name!";
-        collectionMessage.style.color = "red";
+        this.message = "You already have a collection with this name!";
+        this.messageColor = "red";
       }
     } catch(error) {
       console.error(error);
     } finally {
-      setTimeout(() => collectionMessage.innerText = "", 3000);
+      setTimeout(() => this.message = "", 3000);
     }
   }
 }
