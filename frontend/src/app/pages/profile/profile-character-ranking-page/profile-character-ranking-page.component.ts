@@ -6,9 +6,10 @@ import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {UtilsService} from '../../../services/utils.service';
 import {ShowService} from '../../../services/show.service';
-import {SearchResultData} from '../../../data/search-result-data';
-import {RoleData} from '../../../data/role-data';
 import {ResultPageData} from '../../../data/show/result-page-data';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
+import {SearchCharactersModalComponent} from '../../../components/search-characters-modal/search-characters-modal.component';
 
 @Component({
   selector: 'app-profile-character-ranking-page',
@@ -25,18 +26,16 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
   debouncedSearchShows: () => void;
   searchShowString: string = "";
   searchShowResults: ResultPageData;
-  selectedShow: SearchResultData;
 
-  debouncedSearchCharacters: () => void;
-  searchCharacterString: string = "";
-  searchCharacterResults: RoleData[];
-  selectedCharacter: RoleData;
+  selectedShowId: number | null = null;
+  selectedShowTitle: string = "";
 
   constructor(private route: ActivatedRoute,
               private profileService: ProfileService,
               private router: Router,
               public utils: UtilsService,
-              private showService: ShowService) {
+              private showService: ShowService,
+              private modalService: NgbModal) {
     this.route.params.subscribe(params => {
       this.characterType = params['type'];
     });
@@ -45,6 +44,8 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     if (!this.validCharacterTypes.includes(this.characterType)) {
       this.router.navigate(['not-found']);
     }
+
+    this.debouncedSearchShows = this.utils.debounce(() => this.searchShows());
   };
 
   async ngOnInit() {
@@ -54,13 +55,42 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+  }
 
-    this.debouncedSearchShows = this.utils.debounce(() => {
-      this.searchShows();
+  async openSearchShowsModal() {
+    const searchShowsModalRef = this.modalService.open(SearchShowsModalComponent, {
+      ariaLabelledBy: "searchShowsModal",
+      centered: true
     });
-    this.debouncedSearchCharacters = this.utils.debounce(() => {
-      this.searchCharacters();
-    });
+    searchShowsModalRef.componentInstance.modalTitle = "Add Character to Ranking List";
+
+    const searchResult = await searchShowsModalRef.result;
+    this.selectedShowId = searchResult.selectedShowId;
+    this.selectedShowTitle = searchResult.selectedShowTitle;
+
+    await this.openSearchCharactersModal();
+  }
+
+  async openSearchCharactersModal() {
+    try {
+      const searchCharactersModalRef = this.modalService.open(SearchCharactersModalComponent, {
+        ariaLabelledBy: "searchCharactersModal",
+        centered: true
+      });
+
+      searchCharactersModalRef.componentInstance.selectedShow = null;
+      searchCharactersModalRef.componentInstance.selectedCharacterType =  this.characterType;
+      searchCharactersModalRef.componentInstance.onAdd = (character: CharacterRankingData) => {
+        // add rank num based on proper list
+        // add to proper list
+      }
+
+      const response = await searchCharactersModalRef.result;
+    } catch (modalDismissReason) {
+      if (modalDismissReason === "backFrom") {
+        await this.openSearchShowsModal();
+      }
+    }
   }
 
   characterTypeTitle(type?: string): string {
@@ -77,20 +107,6 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
-  }
-
-  async searchCharacters() {
-    try {
-      this.searchCharacterResults = await this.showService.searchCharacters(this.selectedShow.id, this.searchCharacterString);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  backButtonPressed() {
-    this.searchCharacterResults = null;
-    this.searchCharacterString = "";
-    this.selectedCharacter = null;
   }
 
   /**
@@ -131,33 +147,6 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
       const response = await this.profileService.removeCharacterFromRankingList(removeId);
       if (response.ok) {
         this.characterRankings[this.characterType] = this.characterRankings[this.characterType].filter(character => character.id !== removeId);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async addCharacter() {
-    try {
-      const data = {
-        id: this.selectedCharacter.id,
-        showId: this.selectedShow.id,
-        name: this.selectedCharacter.name,
-        type: this.characterType != "side" ? this.characterType.slice(0,this.characterType.length-1) : this.characterType,
-        title: this.selectedShow.title,
-        posterPath: this.selectedShow.posterPath
-      }
-
-      const response = await this.profileService.addCharacterToRankingList(data);
-      if (response.ok) {
-        const newData: CharacterRankingData = {
-          id: this.selectedCharacter.id,
-          showId: this.selectedShow.id,
-          name: this.selectedCharacter.name,
-          showName: this.selectedShow.title,
-          rankNum: this.characterRankings[this.characterType].length + 1
-        }
-        this.characterRankings[this.characterType].push(newData);
       }
     } catch (error) {
       console.error(error);

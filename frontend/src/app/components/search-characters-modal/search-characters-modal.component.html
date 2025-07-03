@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <i class="bi bi-arrow-left-square fs-3 me-3" [style.cursor]="'pointer'" (click)="goBack()"></i>
+  <h1 class="modal-title fs-5" id="searchCharactersModal">{{selectedShow.title}}</h1>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchCharacterString" (input)="debouncedSearchCharacters()">
+  <ul class="list-group overflow-auto" [style.max-height]="'25vh'">
+    @if (searchCharacterResults) {
+      @if (searchCharacterResults.length > 0) {
+        @for (character of searchCharacterResults; track character.id) {
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="radio" name="characterRadios" [id]="character.id" [(ngModel)]="selectedCharacter">
+            <label class="form-check-label stretched-link" [for]="character.id">{{character.name}}</label>
+          </li>
+        }
+      } @else {
+        <p>No results found!</p>
+      }
+    }
+  </ul>
+  <div [style.color]="messageColor">{{message}}</div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
+  <button type="button" [disabled]="!selectedCharacter" class="btn btn-primary" (click)="addCharacter()">Add Character</button>
+</div>

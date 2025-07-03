@@ -4,6 +4,7 @@ import {SeasonRankingData} from '../../../data/lists/season-ranking-data';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {SeasonSelectModalComponent} from '../../../components/season-select-modal/season-select-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {SearchResultData} from '../../../data/search-result-data';
 
 @Component({
   selector: 'app-profile-season-ranking-page',
@@ -13,9 +14,8 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 })
 export class ProfileSeasonRankingPageComponent implements OnInit{
   rankingEntries: SeasonRankingData[];
-  selectedShowId: number | null = null;
-  selectedShowTitle: string = "";
   selectedSeason: number = 1;
+  selectedShow: SearchResultData | null = null;
 
   constructor(private profileService: ProfileService,
               private modalService: NgbModal) { };
@@ -35,10 +35,7 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
     });
     searchModalRef.componentInstance.modalTitle = "Add Season to Ranking List";
 
-    const searchResult = await searchModalRef.result;
-    this.selectedShowId = searchResult.selectedShowId;
-    this.selectedShowTitle = searchResult.selectedShowTitle;
-
+    this.selectedShow = await searchModalRef.result;
     await this.openSeasonSelectModal();
   }
 
@@ -49,8 +46,8 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
         ariaLabelledBy: "seasonSelectModal",
         centered: true
       });
-      seasonModalRef.componentInstance.selectedShowId = this.selectedShowId;
-      seasonModalRef.componentInstance.selectedShowTitle = this.selectedShowTitle;
+      seasonModalRef.componentInstance.selectedShowId = this.selectedShow.id;
+      seasonModalRef.componentInstance.selectedShowTitle = this.selectedShow.title;
       seasonModalRef.componentInstance.seasonRanking = true;
       seasonModalRef.componentInstance.onAddSeason = (season: SeasonRankingData) => {
         season.rankNum = this.rankingEntries.length + 1;

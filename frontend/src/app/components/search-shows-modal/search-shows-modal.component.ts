@@ -61,16 +61,9 @@ export class SearchShowsModalComponent {
     }
   }
 
-  get selectedShowTitle(): string {
-    if (this.selectedShowId == null || this.showSearchResults == null) return "";
-    const selectedShow = this.showSearchResults.results.find(show => show.id === this.selectedShowId);
-    return selectedShow != null ? selectedShow.title : "";
-  }
-
-  get selectedShowPosterPath(): string {
-    if (this.selectedShowId == null || this.showSearchResults == null) return "";
-    const selectedShow = this.showSearchResults.results.find(show => show.id === this.selectedShowId);
-    return selectedShow != null ? selectedShow.posterPath : "";
+  get selectedShow(): SearchResultData {
+    if (this.selectedShowId == null || this.showSearchResults == null) return null;
+    return this.showSearchResults.results.find(show => show.id === this.selectedShowId);
   }
 
   showYears(show: SearchResultData): string {
@@ -84,18 +77,16 @@ export class SearchShowsModalComponent {
   }
 
   passBack() {
-    this.activeModal.close({
-      selectedShowId: this.selectedShowId,
-      selectedShowTitle: this.selectedShowTitle
-    });
+    this.activeModal.close(this.selectedShow);
   }
 
   async addShow() {
     try {
+      const selectedShow = this.selectedShow;
       const showData = {
         showId: this.selectedShowId,
-        title: this.selectedShowTitle,
-        posterPath: this.selectedShowPosterPath
+        title: selectedShow.title,
+        posterPath: selectedShow.posterPath
       };
 
       let response;
@@ -119,11 +110,11 @@ export class SearchShowsModalComponent {
       }
 
       if (response.ok) {
-        this.message = `Added ${this.selectedShowTitle} to your ${this.addType}!`;
+        this.message = `Added ${selectedShow.title} to your ${this.addType}!`;
         this.messageColor = 'green';
         this.onAddShow(showData);
       } else if (response.status === 409) {
-        this.message = `You already have ${this.selectedShowTitle} on your ${this.addType}.`;
+        this.message = `You already have ${selectedShow.title} on your ${this.addType}.`;
         this.messageColor = 'red';
       }
     } catch (error) {

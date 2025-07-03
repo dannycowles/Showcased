@@ -5,6 +5,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {SeasonSelectModalComponent} from '../../../components/season-select-modal/season-select-modal.component';
 import {EpisodeSelectModalComponent} from '../../../components/episode-select-modal/episode-select-modal.component';
+import {SearchResultData} from '../../../data/search-result-data';
 
 @Component({
   selector: 'app-profile-episode-ranking-page',
@@ -14,9 +15,8 @@ import {EpisodeSelectModalComponent} from '../../../components/episode-select-mo
 })
 export class ProfileEpisodeRankingPageComponent implements OnInit {
   rankingEntries: EpisodeRankingData[];
-  selectedShowId: number | null = null;
-  selectedShowTitle: string = "";
   selectedSeason: number = 1;
+  selectedShow: SearchResultData | null = null;
 
   constructor(private profileService: ProfileService,
               private modalService: NgbModal) {};
@@ -37,10 +37,7 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
     });
     searchModalRef.componentInstance.modalTitle = "Add Episode to Ranking List";
 
-    const searchResult = await searchModalRef.result;
-    this.selectedShowId = searchResult.selectedShowId;
-    this.selectedShowTitle = searchResult.selectedShowTitle;
-
+    this.selectedShow = await searchModalRef.result;
     await this.openSeasonSelectModal();
   }
 
@@ -51,8 +48,8 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
         ariaLabelledBy: "seasonSelectModal",
         centered: true
       });
-      seasonModalRef.componentInstance.selectedShowId = this.selectedShowId;
-      seasonModalRef.componentInstance.selectedShowTitle = this.selectedShowTitle;
+      seasonModalRef.componentInstance.selectedShowId = this.selectedShow.id;
+      seasonModalRef.componentInstance.selectedShowTitle = this.selectedShow.title;
 
       const seasonResult = await seasonModalRef.result;
       this.selectedSeason = seasonResult.selectedSeason;
@@ -72,8 +69,8 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
         ariaLabelledBy: "episodeSelectModal",
         centered: true
       });
-      episodeModalRef.componentInstance.selectedShowId = this.selectedShowId;
-      episodeModalRef.componentInstance.selectedShowTitle = this.selectedShowTitle;
+      episodeModalRef.componentInstance.selectedShowId = this.selectedShow.id;
+      episodeModalRef.componentInstance.selectedShowTitle = this.selectedShow.title;
       episodeModalRef.componentInstance.selectedSeason = this.selectedSeason;
       episodeModalRef.componentInstance.onAddEpisode = (episode: EpisodeRankingData) => {
         episode.rankNum = this.rankingEntries.length + 1;
