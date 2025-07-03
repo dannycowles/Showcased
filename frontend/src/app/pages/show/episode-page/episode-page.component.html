@@ -1,10 +1,10 @@
 @if (episode) {
-  <button [routerLink]="['/show', showId, 'season', seasonNumber]">Return to Season Details</button>
+  <button class="btn btn-primary" [routerLink]="['/show', showId, 'season', seasonNumber]">Return to Season Details</button>
 
   <h2>Name: {{episode.name}}</h2>
 
   <h3>IMDb Rating: {{episode.imdbRating}} with {{episode.imdbVotes}} votes</h3>
-  <h3>Release Date: {{utilsService.getFormattedDate(episode.airDate)}}</h3>
+  <h3>Release Date: {{utilsService.getRelativeDate(episode.airDate)}}</h3>
   <h3>Runtime: {{episode.runtime}} minutes</h3>
   <h3>Plot: {{episode.overview}}</h3>
 
@@ -13,7 +13,7 @@
 
   <br>
   <br>
-  <button (click)="addToRankingList()">Add to Ranking List</button>
+  <button class="btn btn-outline-success" (click)="addToRankingList()">Add to Ranking List</button>
 }
 
 

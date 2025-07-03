@@ -8,7 +8,7 @@ export interface SeasonEpisode {
 export interface SeasonEpisodeFull extends SeasonEpisode {
   readonly plot: string;
   readonly imdbRating: string;
-  readonly airDate: Date;
+  readonly airDate: string;
 }
 
 export interface SeasonEpisodes {

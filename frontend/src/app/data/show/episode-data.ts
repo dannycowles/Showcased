@@ -6,6 +6,6 @@ export interface EpisodeData {
   readonly imdbRating: string;
   readonly imdbVotes: number;
   readonly runtime: number;
-  readonly airDate: Date;
+  readonly airDate: string;
   readonly stillPath: string;
 }

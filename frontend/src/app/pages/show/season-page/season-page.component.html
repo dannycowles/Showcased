@@ -1,5 +1,5 @@
 @if (season) {
-  <button [routerLink]="['/show', showId]">Return to Show Details</button>
+  <button class="btn btn-primary" [routerLink]="['/show', showId]">Return to Show Details</button>
 
   <h2>Season {{seasonNumber}}</h2>
   <h3>Overview: {{season.overview}}</h3>
@@ -17,7 +17,7 @@
   @if (numSeasons) {
     <h3>Season Select:</h3>
     @for (_ of [].constructor(numSeasons); let season = $index; track season) {
-      <button [routerLink]="['/show', showId, 'season', season + 1]">{{season + 1}}</button>
+      <button class="btn btn-secondary me-3" [routerLink]="['/show', showId, 'season', season + 1]">{{season + 1}}</button>
     }
   }
   <br>
@@ -26,7 +26,7 @@
   @for (episode of season.episodes; track episode.episodeNumber) {
     <h4>S{{seasonNumber}} E{{episode.episodeNumber}}</h4>
     <h4>Name: {{episode.name}}</h4>
-    <h4>Release Date: {{utilsService.getFormattedDate(episode.airDate)}}</h4>
+    <h4>Release Date: {{utilsService.getRelativeDate(episode.airDate)}}</h4>
     <h4>IMDb Rating: {{episode.imdbRating}}</h4>
     <h4>Plot: {{episode.plot}}</h4>
 
