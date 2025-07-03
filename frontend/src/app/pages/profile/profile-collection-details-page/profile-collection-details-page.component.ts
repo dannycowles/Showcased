@@ -114,6 +114,7 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
     }
   }
 
+  // TODO: update collection ranking not working when reordering shows, seems to be issue cause be UNIQUE in SQL table
   async updateCollectionRanking() {
     try {
       const data = {

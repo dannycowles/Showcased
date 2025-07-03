@@ -12,24 +12,24 @@
   @if (collection.shows.length != 0) {
     @if (collection.isRanked) {
       <div class="show-list">
-        @for (show of collection.shows; track show.id; let rank = $index) {
+        @for (show of collection.shows; track show.showId; let rank = $index) {
           <div class="show-box">
             <h3>{{rank + 1}}</h3>
             <h3>{{show.title}}</h3>
 
             <!-- Poster images are sized w185, using 2:3 ratio -->
-            <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+            <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
           </div>
         }
       </div>
     } @else {
       <div>
-        @for (show of collection.shows; track show.id; let rank = $index) {
+        @for (show of collection.shows; track show.showId; let rank = $index) {
           <div>
             <h3>{{show.title}}</h3>
 
             <!-- Poster images are sized w185, using 2:3 ratio -->
-            <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
+            <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
           </div>
         }
       </div>

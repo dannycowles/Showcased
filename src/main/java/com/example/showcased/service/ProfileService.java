@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -607,6 +608,7 @@ public class ProfileService {
         collectionsRepository.deleteById(collectionId);
     }
 
+    @Transactional
     public void updateCollection(Long collectionId, UpdateCollectionDto collection, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         Collection updateCollection = collectionsRepository.findById(collectionId)
@@ -634,8 +636,14 @@ public class ProfileService {
         // If ranked is toggled we need to do extra processing
         if (collection.getIsRanked() != null) {
             updateCollection.setRanked(collection.getIsRanked());
-            List<UpdateCollectionRankingDto> updates = collection.getShows();
 
+            // If the collection is ranked, negate all ranks in the collection temporarily, so that the unique constraint is not violate
+            if (updateCollection.isRanked()) {
+                showsInCollectionRepository.negateCollectionRanks(collectionId);
+            }
+
+            // Updates the ranks as necessary based on private or not
+            List<UpdateCollectionRankingDto> updates = collection.getShows();
             if (updates != null && !updates.isEmpty()) {
                 List<ShowsInCollection> updatedShows = new ArrayList<>();
                 for (int i = 0; i < updates.size(); i++) {
