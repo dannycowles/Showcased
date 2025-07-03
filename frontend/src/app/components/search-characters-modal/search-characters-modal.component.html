@@ -5,21 +5,26 @@
 </div>
 <div class="modal-body">
   <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchCharacterString" (input)="debouncedSearchCharacters()">
-  <ul class="list-group overflow-auto" [style.max-height]="'25vh'">
-    @if (searchCharacterResults) {
-      @if (searchCharacterResults.length > 0) {
-        @for (character of searchCharacterResults; track character.id) {
-          <li class="list-group-item">
-            <input class="form-check-input me-1" type="radio" name="characterRadios" [id]="character.id" [(ngModel)]="selectedCharacter">
-            <label class="form-check-label stretched-link" [for]="character.id">{{character.name}}</label>
-          </li>
-        }
-      } @else {
-        <p>No results found!</p>
+
+  @if (isLoading) {
+    <div class="d-flex justify-content-center mt-3">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  } @else if (searchCharacterResults?.length) {
+    <ul class="list-group overflow-auto mt-3" style="max-height: 25vh">
+      @for (character of searchCharacterResults; track character.id) {
+        <li class="list-group-item">
+          <input class="form-check-input me-1" type="radio" name="characterRadios" [value]="character" [id]="character.id" [(ngModel)]="selectedCharacter">
+          <label class="form-check-label stretched-link" [for]="character.id">{{character.name}}</label>
+        </li>
       }
-    }
-  </ul>
-  <div [style.color]="messageColor">{{message}}</div>
+    </ul>
+  } @else {
+    <div class="mt-3">No results found!</div>
+  }
+  <div class="mt-3" [style.color]="messageColor">{{message}}</div>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>

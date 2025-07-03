@@ -10,6 +10,7 @@ import {ResultPageData} from '../../../data/show/result-page-data';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {SearchCharactersModalComponent} from '../../../components/search-characters-modal/search-characters-modal.component';
+import {SearchResultData} from '../../../data/search-result-data';
 
 @Component({
   selector: 'app-profile-character-ranking-page',
@@ -26,9 +27,7 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
   debouncedSearchShows: () => void;
   searchShowString: string = "";
   searchShowResults: ResultPageData;
-
-  selectedShowId: number | null = null;
-  selectedShowTitle: string = "";
+  selectedShow: SearchResultData | null = null;
 
   constructor(private route: ActivatedRoute,
               private profileService: ProfileService,
@@ -64,10 +63,7 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     });
     searchShowsModalRef.componentInstance.modalTitle = "Add Character to Ranking List";
 
-    const searchResult = await searchShowsModalRef.result;
-    this.selectedShowId = searchResult.selectedShowId;
-    this.selectedShowTitle = searchResult.selectedShowTitle;
-
+    this.selectedShow = await searchShowsModalRef.result;
     await this.openSearchCharactersModal();
   }
 
@@ -78,16 +74,16 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
         centered: true
       });
 
-      searchCharactersModalRef.componentInstance.selectedShow = null;
+      searchCharactersModalRef.componentInstance.selectedShow = this.selectedShow;
       searchCharactersModalRef.componentInstance.selectedCharacterType =  this.characterType;
       searchCharactersModalRef.componentInstance.onAdd = (character: CharacterRankingData) => {
-        // add rank num based on proper list
-        // add to proper list
+        character.rankNum = this.selectedCharacterRankings.length + 1;
+        this.selectedCharacterRankings.push(character);
       }
 
-      const response = await searchCharactersModalRef.result;
+      await searchCharactersModalRef.result;
     } catch (modalDismissReason) {
-      if (modalDismissReason === "backFrom") {
+      if (modalDismissReason === "backFromCharacters") {
         await this.openSearchShowsModal();
       }
     }
@@ -129,7 +125,7 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
   async updateCharacterRankingList() {
     try {
       const data = {
-        characterType: this.characterType != "side" ? this.characterType.slice(0,this.characterType.length-1) : this.characterType,
+        characterType: this.characterType != "side" ? this.characterType.slice(0,-1) : this.characterType,
         updates: this.characterRankings[this.characterType].map(character => ({
           id: character.id,
           rankNum: character.rankNum
