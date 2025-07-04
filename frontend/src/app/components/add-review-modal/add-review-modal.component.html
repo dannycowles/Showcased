@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="addReviewModal">{{ modalTitle }}</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <div class="mb-3">
+    <label for="ratingInput" class="form-label">Rating</label>
+    <input ngbAutofocus id="ratingInput" type="range" value="0" max="10" step="0.1" [(ngModel)]="rating" class="form-range" >
+    <div>{{rating}}</div>
+  </div>
+  <div class="mb-3">
+    <label for="commentaryInput" class="form-label">Commentary</label>
+    <textarea class="form-control" id="commentaryInput" rows="10" [maxLength]="maxCommentaryLength" aria-describedby="commentaryHelpBlock" [(ngModel)]="commentary"></textarea>
+    <div id="commentaryHelpBlock" class="form-text">{{ maxCommentaryLength - commentary.length }} characters remaining</div>
+  </div>
+  <div class="mb-3">
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="spoilersCheck" [(ngModel)]="containsSpoilers">
+      <label for="spoilersCheck" class="form-check-label">Contains Spoilers</label>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
+  <button type="button" class="btn btn-primary" (click)="submitReview()">Add Review</button>
+</div>

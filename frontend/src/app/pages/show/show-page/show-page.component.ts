@@ -1,16 +1,16 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
-import $ from 'jquery';
-import 'jquery-serializejson';
 import {ShowService} from '../../../services/show.service';
 import {ProfileService} from '../../../services/profile.service';
 import {ToastDisplayService} from '../../../services/toast.service';
 import {UtilsService} from '../../../services/utils.service';
-import {AuthenticationService} from '../../../services/auth.service';
 import {ShowData} from '../../../data/show/show-data';
-import {CollectionData} from '../../../data/collection-data';
 import {ShowReviewData} from '../../../data/reviews-data';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AddReviewModalComponent} from '../../../components/add-review-modal/add-review-modal.component';
+import {AddToCollectionModalComponent} from '../../../components/add-to-collection-modal/add-to-collection-modal.component';
+import {AuthenticationService} from '../../../services/auth.service';
 
 @Component({
   selector: 'app-show-page',
@@ -23,18 +23,16 @@ export class ShowPageComponent implements OnInit {
   show: ShowData;
   reviews: ShowReviewData[];
   readonly heartSize: number = 100;
-  collections: CollectionData[];
-  collectionSelection: number;
-  newCollectionName: string;
-  searchCollectionString: string;
-  debouncedSearchCollections: () => void;
+  isLoggedIn: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
               private profileService: ProfileService,
               private toastService: ToastDisplayService,
               public utilsService: UtilsService,
-              private authService: AuthenticationService) {
+              private modalService: NgbModal,
+              private authService: AuthenticationService,
+              private router: Router) {
     this.route.params.subscribe(params => {
       this.showId = params['id'];
       this.loadShowData();
@@ -42,9 +40,65 @@ export class ShowPageComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.debouncedSearchCollections = this.utilsService.debounce(() => {
-      this.searchCollections();
-    });
+    try {
+      this.isLoggedIn = await this.authService.loginStatus();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async openAddReviewModal() {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['login']);
+      return;
+    }
+
+    try {
+      const addReviewModalRef =  this.modalService.open(AddReviewModalComponent, {
+        ariaLabelledBy: "addReviewModal",
+        centered: true
+      });
+      addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.show.title}`;
+
+      const result =  await addReviewModalRef.result;
+      await this.reviewSubmitted(result);
+    } catch (modalDismissReason) {}
+  }
+
+  async openAddToCollectionModal() {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['login']);
+      return;
+    }
+
+    try {
+      const addToCollectionModalRef = this.modalService.open(AddToCollectionModalComponent, {
+        ariaLabelledBy: "addToCollectionModal",
+        centered: true
+      });
+
+      addToCollectionModalRef.componentInstance.show = {
+        showId: this.showId,
+        title: this.show.title,
+        posterPath: this.show.posterPath
+      };
+    } catch (modalDismissReason) {}
+  }
+
+  async reviewSubmitted(data: any) {
+    const reviewData = {
+      rating: data.rating,
+      showTitle: this.show.title,
+      commentary: data.commentary,
+      containsSpoilers: data.containsSpoilers,
+      posterPath: this.show.posterPath
+    };
+
+    try {
+      await this.showService.addShowReview(this.showId, reviewData);
+    } catch(error) {
+      console.error(error);
+    }
   }
 
   async loadShowData() {
@@ -63,9 +117,6 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  seasonSelected(seasonNumber:string) {
-    window.location.href = `${window.location.pathname}/season/${seasonNumber}`;
-  }
 
   // Adds the current show to the user's watchlist
   async addShowToWatchlist() {
@@ -184,115 +235,10 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  // If the user is not logged in they are redirected, else the review modal will appear
-  async addReviewPressed() {
-    try {
-      let loginStatus = await this.authService.loginStatus();
-
-      if (!loginStatus) {
-        window.location.href = "login";
-      }
-    } catch(error) {
-      console.error(error);
-    }
-  }
-
-  async addToCollectionPressed() {
-    try {
-      this.collections = await this.profileService.getCollections();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async collectionSubmitted() {
-    const collectionMessage = document.getElementById("collection-message");
-    try {
-      const showData = {
-        showId: this.showId,
-        title: this.show.title,
-        posterPath: this.show.posterPath
-      };
-
-      const response = await this.profileService.addShowToCollection(this.collectionSelection, showData);
-      if (response.ok) {
-        collectionMessage.innerText = "Successfully added to collection!";
-        collectionMessage.style.color = "green";
-      } else {
-        collectionMessage.innerText = "Show is already in this collection!";
-        collectionMessage.style.color = "red";
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        collectionMessage.innerText = "";
-      }, 3000);
-    }
-  }
-
   // This method is called whenever a user attempts to add a show to any of their lists
   // If the user already has a show on ANY of their lists it cannot be added to another one
   // It wouldn't make sense for a show to be both on watchlist and currently watching for instance
   isUserListConflict(): boolean {
     return (this.show.isOnWatchingList || this.show.isOnWatchlist || this.show.isOnRankingList);
-  }
-
-  // Triggered when the user enters or pastes into the review commentary box, computes and display the remaining characters
-  displayCommentaryCharactersLeft() {
-    let commentaryTextArea = document.getElementById("commentaryInput") as HTMLTextAreaElement ;
-    document.getElementById("commentaryHelpBlock").innerText = String(5000 - commentaryTextArea.value.length) + " characters left";
-  }
-
-  // Triggered when the user submits a review, it will format and send the data to the backend
-  async reviewSubmitted() {
-    // @ts-ignore
-    let reviewForm = $("#review-form").serializeJSON();
-    let data = {
-      "rating": reviewForm["rating"],
-      "showTitle": this.show.title,
-      "commentary": reviewForm["commentary"],
-      "containsSpoilers": "spoilers" in reviewForm,
-      "posterPath": this.show.posterPath
-    };
-
-    try {
-      await this.showService.addShowReview(this.showId, data);
-    } catch(error) {
-      console.error(error);
-    }
-  }
-
-  async createNewCollection() {
-    const collectionMessage = document.getElementById("collection-message")
-    try {
-      const data = {
-        collectionName: this.newCollectionName
-      };
-
-      const response = await this.profileService.createCollection(data);
-      if (response.ok) {
-        this.collections = await this.profileService.getCollections();
-        collectionMessage.innerText = "Collection created!";
-        collectionMessage.style.color = "green";
-      } else {
-        collectionMessage.innerText = "You already have a collection with this name!";
-        collectionMessage.style.color = "red";
-      }
-    } catch(error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        collectionMessage.innerText = "";
-      }, 3000);
-    }
-  }
-
-  async searchCollections() {
-    try {
-      this.collections = await this.profileService.getCollections(this.searchCollectionString);
-    } catch (error) {
-      console.error(error);
-    }
   }
 }

@@ -47,14 +47,15 @@
   }
   <h3>Number of Episodes: {{show.numEpisodes}}</h3>
 
-  <!-- Display season dropdown -->
   <h3>Seasons: </h3>
-  <select #seasonsDropdown (change)="seasonSelected(seasonsDropdown.value)">
-    <option value="---"></option>
-    @for (_ of [].constructor(show.numSeasons); let season = $index; track season) {
-      <option [value]="season + 1">{{season + 1}}</option>
-    }
-  </select>
+  <div ngbDropdown>
+    <button type="button" class="btn btn-secondary" id="seasonsDropdown" ngbDropdownToggle>Select Season</button>
+    <div ngbDropdownMenu aria-labelledby="seasonsDropdown">
+      @for (_ of [].constructor(show.numSeasons); let season = $index; track season) {
+        <button [routerLink]="['season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
+      }
+    </div>
+  </div>
 
   <!-- Backdrop images are sized w1280, using 16:9 ratio -->
   <h3>Backdrop</h3>
@@ -94,85 +95,11 @@
   <br>
   <br>
 
-  <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#collectionModal" (click)="addToCollectionPressed()">Add to Collection</button>
-
-  <div class="modal fade" id="collectionModal" aria-labelledby="collectionModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add {{show.title}} to Collection</h5>
-          <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="search-bar" class="form-label">Search Collections</label>
-            <input type="text" id="search-bar" class="form-control" placeholder="Search..." [(ngModel)]="searchCollectionString" (input)="debouncedSearchCollections()">
-          </div>
-          @if (collections?.length != 0) {
-            <ul class="list-group overflow-auto scrollable-list">
-              @for (collection of collections; track collection.id) {
-                <li class="list-group-item">
-                  <input class="form-check-input me-2" type="radio" name="collectionRadio" value="" (click)="collectionSelection = collection.id">
-                  <label class="form-check-label" >{{collection.name}}</label>
-                </li>
-              }
-            </ul>
-          } @else {
-            <p>No Collections Found!</p>
-          }
-          <div class="input-group mt-5">
-            <input type="text" class="form-control" placeholder="New Collection" aria-label="New Collection" aria-describedby="createCollectionButton" id="newCollectionInput" [(ngModel)]="newCollectionName" (keyup.enter)="createNewCollection()">
-            <button class="btn btn-primary" id="createCollectionButton" (click)="createNewCollection()" [disabled]="newCollectionName == null || newCollectionName.length == 0">Create</button>
-          </div>
-          <div id="collection-message" class="mt-3"></div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button class="btn btn-primary" [disabled]="collectionSelection == null" (click)="collectionSubmitted()">Add to Collection</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <button class="btn btn-success ms-2" (click)="openAddToCollectionModal()">Add to Collection</button>
 
   <br>
   <br>
-  <button class="btn btn-primary ms-2" (click)="addReviewPressed()" type="button" data-bs-toggle="modal" data-bs-target="#reviewModal">
-    Add Review
-  </button>
-
-  <div class="modal fade" id="reviewModal" aria-labelledby="reviewModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="reviewModalLabel">New Review for {{show.title}}</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="review-form">
-            <div class="mb-3">
-              <label for="ratingInput" class="form-label">Rating</label>
-              <input type="range" value="0" max="10" step="0.1" oninput="num.value = this.value" class="form-range" id="ratingInput" name="rating">
-              <output id="num">0</output>
-            </div>
-            <div class="mb-3">
-              <label for="commentaryInput" class="form-label">Commentary</label>
-              <textarea class="form-control" id="commentaryInput" name="commentary" rows="10" maxlength="5000" aria-describedby="commentaryHelpBlock"
-                        (keyup)="displayCommentaryCharactersLeft()" (input)="displayCommentaryCharactersLeft()"></textarea>
-              <div id="commentaryHelpBlock" class="form-text">5000 characters remaining</div>
-            </div>
-            <div class="mb-3 form-check">
-              <label for="spoilersCheck" class="form-check-label">Contains Spoilers</label>
-              <input type="checkbox" class="form-check-input" id="spoilersCheck" name="spoilers">
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" (click)="reviewSubmitted()" data-bs-dismiss="modal">Add Review</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <button type="button" class="btn btn-primary ms-2" (click)="openAddReviewModal()">Add Review</button>
 
   <h2 class="ms-2">Cast</h2>
   <div class="container ms-0">
