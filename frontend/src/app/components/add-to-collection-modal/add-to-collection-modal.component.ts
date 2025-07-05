@@ -18,7 +18,7 @@ export class AddToCollectionModalComponent implements OnInit {
   searchCollectionString: string = "";
   collections: CollectionData[];
   newCollectionName: string = "";
-  collectionSelection: number | null = null;
+  selectedCollection: CollectionData | null = null;
 
   message: string = "";
   messageColor: string = "";
@@ -58,8 +58,8 @@ export class AddToCollectionModalComponent implements OnInit {
       if (response.ok) {
         this.message = "Collection created!";
         this.messageColor = "green";
-
-        // TODO: on successful creation, push the new collection object to the list of collections, will need to update backend to return created object
+        const newCollection = await response.json();
+        this.collections.push(newCollection);
       } else {
         this.message = "You already have a collection with this name!";
         this.messageColor = "red";
@@ -79,12 +79,12 @@ export class AddToCollectionModalComponent implements OnInit {
         posterPath: this.show.posterPath
       };
 
-      const response = await this.profileService.addShowToCollection(this.collectionSelection, showData);
+      const response = await this.profileService.addShowToCollection(this.selectedCollection.id, showData);
       if (response.ok) {
-        this.message = "Successfully added to collection!";
+        this.message = `Successfully added to ${this.selectedCollection.name}!`;
         this.messageColor = "green";
       } else {
-        this.message = "Show is already in this collection!";
+        this.message = `Show is already in ${this.selectedCollection.name}!`;
         this.messageColor = "red";
       }
     } catch (error) {

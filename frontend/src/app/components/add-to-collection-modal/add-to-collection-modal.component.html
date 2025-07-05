@@ -15,10 +15,10 @@
       </div>
     </div>
   } @else if (collections?.length) {
-    <ul class="list-group overflow-auto scrollable-list">
+    <ul class="list-group overflow-auto" style="max-height: 25vh">
       @for (collection of collections; track collection.id) {
         <li class="list-group-item">
-          <input class="form-check-input me-2" type="radio" name="collectionRadio" [value]="collection.id" [id]="collection.id" [(ngModel)]="collectionSelection">
+          <input class="form-check-input me-2" type="radio" name="collectionRadio" [value]="collection" [id]="collection.id" [(ngModel)]="selectedCollection">
           <label class="form-check-label stretched-link" [for]="collection.id">{{collection.name}}</label>
         </li>
       }
@@ -36,5 +36,5 @@
 </div>
 <div class="modal-footer">
   <button class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
-  <button class="btn btn-primary" [disabled]="collectionSelection == null" (click)="addToCollection()">Add to Collection</button>
+  <button class="btn btn-primary" [disabled]="selectedCollection == null" (click)="addToCollection()">Add to Collection</button>
 </div>
