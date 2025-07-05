@@ -4,3 +4,8 @@ export enum AddShowType {
   Watching = "watching list",
   Collection = "collection"
 }
+
+export enum ReviewType {
+  Show,
+  Episode
+}

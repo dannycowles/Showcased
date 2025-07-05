@@ -32,7 +32,7 @@ import {UserEpisodeRankingPageComponent} from './pages/user/user-episode-ranking
 import {ResetPasswordPageComponent} from './pages/auth/reset-password-page/reset-password-page.component';
 import {NgOtpInputModule} from 'ng-otp-input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ButtonHeartComponent} from './pages/show/button-heart.component';
+import {ButtonHeartComponent} from './components/button-heart.component';
 import {ProfileFollowingPageComponent} from './pages/profile/profile-following-page/profile-following-page.component';
 import {ProfileFollowersPageComponent} from './pages/profile/profile-followers-page/profile-followers-page.component';
 import {UserFollowersPageComponent} from './pages/user/user-followers-page/user-followers-page.component';
@@ -69,6 +69,7 @@ import {RankedShowListFullComponent} from './components/ranked-show-list-full/ra
 import {RankedSeasonListFullComponent} from './components/ranked-season-list-full/ranked-season-list-full.component';
 import {RankedEpisodeListFullComponent} from './components/ranked-episode-list-full/ranked-episode-list-full.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {ReviewComponent} from './components/review/review.component';
 
 @NgModule({
   declarations: [
@@ -106,7 +107,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ProfileCollectionsPageComponent,
     ProfileCollectionDetailsPageComponent,
     UserCollectionsPageComponent,
-    UserCollectionDetailsPageComponent
+    UserCollectionDetailsPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -131,10 +132,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     RankedShowListFullComponent,
     RankedSeasonListFullComponent,
     RankedEpisodeListFullComponent,
-    NgbModule
+    NgbModule,
+    ReviewComponent,
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule { }
+export class AppModule {}

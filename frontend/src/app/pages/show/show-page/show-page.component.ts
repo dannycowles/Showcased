@@ -11,6 +11,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddReviewModalComponent} from '../../../components/add-review-modal/add-review-modal.component';
 import {AddToCollectionModalComponent} from '../../../components/add-to-collection-modal/add-to-collection-modal.component';
 import {AuthenticationService} from '../../../services/auth.service';
+import {ReviewType} from '../../../data/enums';
 
 @Component({
   selector: 'app-show-page',
@@ -22,7 +23,6 @@ export class ShowPageComponent implements OnInit {
   showId: number;
   show: ShowData;
   reviews: ShowReviewData[];
-  readonly heartSize: number = 100;
   isLoggedIn: boolean = false;
 
   constructor(private route: ActivatedRoute,
@@ -220,25 +220,12 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  async toggleLikeState(review: ShowReviewData) {
-    try {
-      review.isLikedByUser = !review.isLikedByUser;
-      if (review.isLikedByUser) {
-        await this.showService.likeShowReview(review.id);
-        review.numLikes++;
-      } else {
-        await this.showService.unlikeShowReview(review.id);
-        review.numLikes--;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   // This method is called whenever a user attempts to add a show to any of their lists
   // If the user already has a show on ANY of their lists it cannot be added to another one
   // It wouldn't make sense for a show to be both on watchlist and currently watching for instance
   isUserListConflict(): boolean {
     return (this.show.isOnWatchingList || this.show.isOnWatchlist || this.show.isOnRankingList);
   }
+
+  protected readonly ReviewType = ReviewType;
 }

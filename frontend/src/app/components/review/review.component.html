@@ -1,0 +1,18 @@
+<div class="mb-5 ms-2 d-flex flex-row align-items-start">
+  <img id="profile-picture" [ngSrc]="review.profilePicture" alt="Profile Picture" width="100" height="100">
+  <div class="ms-3">
+    <div>
+      <h4><a [routerLink]="['/user', review.userId]" class="text-dark">{{review.username}}</a></h4>
+      <p>{{utilsService.getRelativeDate(review.reviewDate)}}</p>
+    </div>
+    <div>
+      <p>{{review.rating}}/10</p>
+      <p>{{review.commentary}}</p>
+      <p>Contains Spoilers: {{review.containsSpoilers}}</p>
+    </div>
+  </div>
+  <div class="ms-auto me-5 d-flex align-items-center">
+    <yt-button-heart [isLiked]="review.isLikedByUser" [size]="heartSize" (click)="toggleLikeState()"></yt-button-heart>
+    <div id="like-count">{{review.numLikes}}</div>
+  </div>
+</div>

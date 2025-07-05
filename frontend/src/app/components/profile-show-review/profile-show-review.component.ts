@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {UtilsService} from '../../services/utils.service';
-import {ButtonHeartComponent} from '../../pages/show/button-heart.component';
+import {ButtonHeartComponent} from '../button-heart.component';
 import {ShowService} from '../../services/show.service';
 import {ShowReviewData} from '../../data/reviews-data';
 
