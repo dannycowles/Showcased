@@ -45,7 +45,7 @@ export class EpisodePageComponent implements OnInit {
         "id": this.episode.id,
         "showId": this.showId,
         "showTitle": this.episode.showTitle,
-        "episodeTitle": this.episode.name,
+        "episodeTitle": this.episode.episodeTitle,
         "season": this.seasonNumber,
         "episode": this.episodeNumber,
         "posterPath": this.episode.stillPath
@@ -53,7 +53,7 @@ export class EpisodePageComponent implements OnInit {
 
       const response = await this.profileService.addEpisodeToRankingList(data);
       if (response.ok) {
-        this.toastService.addToEpisodeRankingToast(this.episode.name);
+        this.toastService.addToEpisodeRankingToast(this.episode.episodeTitle);
       }
     } catch (error) {
     console.error(error);}
