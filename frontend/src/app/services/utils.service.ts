@@ -71,16 +71,4 @@ export class UtilsService {
     // For dates longer than one week, just display the formatted date
     return this.getFormattedDate(actualDate);
   }
-
-  getGenreString(genres: GenreData[]): string {
-    let returnstr: string = "";
-    for (let i = 0; i < genres.length; i++) {
-      returnstr += genres[i].name;
-
-      if (i < genres.length - 1) {
-        returnstr += ", ";
-      }
-    }
-    return returnstr;
-  }
 }

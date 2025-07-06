@@ -1,23 +1,19 @@
-<h1>Search Page</h1>
-<input [(ngModel)]="searchString" (keyup.enter)="search()">
-<button (click)="search()">Search</button>
+<label for="searchInput" class="form-label fs-1">Search Shows</label>
+<input class="form-control" id="searchInput" style="max-width: 50vw" [(ngModel)]="searchString" placeholder="Search..." (input)="debouncedSearchShows()">
+<br>
 
-@if (searchResults) {
-  @for (result of searchResults.results; track result.id) {
-    <h2>{{result.title}}</h2>
-
-    <!-- If the show didn't air for more than one year only display once -->
-    @if (!result.startYear && !result.endYear) {
-      <h3>Air Dates Unknown</h3>
-    } @else if (result.startYear === result.endYear) {
-      <h3>{{result.startYear}}</h3>
-    } @else {
-      <h3>{{result.startYear}} - {{result.endYear}}</h3>
-    }
-
+@if (isLoading) {
+  <div class="spinner-border mt-3" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+} @else if (searchResults?.results.length) {
+  @for (show of searchResults.results; track show.id) {
+    <h2>{{show.title}}</h2>
+    <h3>{{showYears(show)}}</h3>
     <!-- Poster images are sized w185, using 2:3 ratio -->
-    <a href="/show/{{result.id}}"><img [ngSrc]="result.posterPath" alt="Poster Image" width="185" height="278"></a>
+    <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Poster Image" width="185" height="278"></a>
     <br>
   }
-
+} @else if (hasSearched && searchString.trim().length > 0) {
+  <div class="mt-3">No results found!</div>
 }

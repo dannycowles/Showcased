@@ -16,7 +16,11 @@
   <h3>Tagline: {{show.tagline}}</h3>
   <h3>Plot: {{show.plot}}</h3>
 
-  <h3>Genres: {{utilsService.getGenreString(show.genres)}}</h3>
+  <h3>Genres:
+  @for (genre of show.genres; track genre.id;) {
+    <button [routerLink]="['/discover/show']" [queryParams]="{ genre: genre.id }" class="btn btn-secondary me-3">{{genre.name}}</button>
+  }
+  </h3>
 
   <h3>Awards: {{show.awards}}</h3>
 
