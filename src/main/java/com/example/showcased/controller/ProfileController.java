@@ -273,6 +273,33 @@ public class ProfileController {
 
 
 
+
+    // ========== CHARACTER DYNAMICS RANKING ==========
+    @GetMapping("character-dynamics")
+    public ResponseEntity<List<DynamicRankingReturnDto>> getDynamicsRankingList(@RequestParam(required = false) Integer limit, HttpSession session) {
+        List<DynamicRankingReturnDto> dynamics = profileService.getDyanmicsRankingList(limit, session);
+        return ResponseEntity.ok(dynamics);
+    }
+
+    @PostMapping("character-dynamics")
+    public ResponseEntity<Void> addDynamicToRankingList(@RequestBody DynamicRankingDto dynamic, HttpSession session) {
+        profileService.addDynamicToRankingList(dynamic, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("character-dynamics/{id}")
+    public ResponseEntity<Void> removeDynamicFromRankingList(@PathVariable Long id, HttpSession session) {
+        return null;
+    }
+
+    @PatchMapping("character-dynamics")
+    public ResponseEntity<Void> updateDynamicRankingList(HttpSession session) {
+        return null;
+    }
+
+
+
+
     // ========== COLLECTIONS ==========
 
     @GetMapping("/collections")

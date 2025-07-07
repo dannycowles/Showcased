@@ -155,6 +155,19 @@ CREATE TABLE IF NOT EXISTS user_character_rankings (
     CHECK (character_type IN ('Protagonist', 'Deuteragonist', 'Antagonist', 'Tritagonist', 'Side'))
 );
 
+CREATE TABLE IF NOT EXISTS user_dynamics_rankings (
+  id INT AUTO_INCREMENT,
+  user_id INT,
+  character1_id VARCHAR(255),
+  character2_id VARCHAR(255),
+  rank_num INT NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (user_id, character1_id, character2_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (character1_id) REFERENCES character_info(id) ON DELETE CASCADE,
+  FOREIGN KEY (character2_id) REFERENCES character_info(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS user_collections (
     user_id INT NOT NULL,
     collection_id INT AUTO_INCREMENT,

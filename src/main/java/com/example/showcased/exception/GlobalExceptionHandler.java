@@ -186,4 +186,12 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> itemNotFoundHandler(ItemNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler when same characters is duplicated in dynamic ranking
+     */
+    @ExceptionHandler(InvalidDynamicException.class)
+    ResponseEntity<ErrorResponse> invalidDynamicHandler(InvalidDynamicException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
 }

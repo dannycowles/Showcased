@@ -2,6 +2,7 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
+import com.example.showcased.entity.Collection;
 import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -11,11 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ProfileService {
@@ -41,6 +40,7 @@ public class ProfileService {
     private final UserSocialRepository userSocialRepository;
     private final CharacterInfoRepository characterInfoRepository;
     private final EpisodeReviewRepository episodeReviewRepository;
+    private final DynamicRankingRepository dynamicRankingRepository;
     private final ShowService showService;
 
     public ProfileService(WatchlistRepository watchlistRepository,
@@ -60,7 +60,10 @@ public class ProfileService {
                           ShowsInCollectionRepository showsInCollectionRepository,
                           LikedCollectionsRepository likedCollectionsRepository,
                           UserSocialRepository userSocialRepository,
-                          CharacterInfoRepository characterInfoRepository, EpisodeReviewRepository episodeReviewRepository, ShowService showService) {
+                          CharacterInfoRepository characterInfoRepository,
+                          EpisodeReviewRepository episodeReviewRepository,
+                          DynamicRankingRepository dynamicRankingRepository,
+                          ShowService showService) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -80,6 +83,7 @@ public class ProfileService {
         this.userSocialRepository = userSocialRepository;
         this.characterInfoRepository = characterInfoRepository;
         this.episodeReviewRepository = episodeReviewRepository;
+        this.dynamicRankingRepository = dynamicRankingRepository;
         this.showService = showService;
     }
 
@@ -725,5 +729,66 @@ public class ProfileService {
             }
             showsInCollectionRepository.saveAll(shows);
         }
+    }
+
+    public List<DynamicRankingReturnDto> getDyanmicsRankingList(Integer limit, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return dynamicRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    }
+
+    public void addDynamicToRankingList(DynamicRankingDto dynamic, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Sort by character ID when checking existing of dynamic... (12, 31) is the same as (31, 12)
+        record CharacterData(String id, String name) {}
+        List<CharacterData> sortedCharacters = Stream.of(new CharacterData(dynamic.getCharacter1Id(), dynamic.getCharacter1Name()),
+                new CharacterData(dynamic.getCharacter2Id(), dynamic.getCharacter2Name())
+        ).sorted(Comparator.comparing(CharacterData::id)).toList();
+        CharacterData character1 = sortedCharacters.get(0);
+        CharacterData character2 = sortedCharacters.get(1);
+
+        // Check to make sure that the characters are not the same
+        if (Objects.equals(character1.id(), character2.id())) {
+            throw new InvalidDynamicException("Characters in dynamic must be different");
+        }
+
+        // Check if the dynamic is already on the user's ranking list
+        if (dynamicRankingRepository.existsByUserIdAndCharacter1IdAndCharacter2Id(userId, character1.id(),  character2.id())) {
+            throw new AlreadyOnListException("Dynamic is already on your ranking list");
+        }
+
+        // Now, if each character doesn't exist in database, add it
+        if (!characterInfoRepository.existsById(character1.id())) {
+            CharacterInfo character1Info = new CharacterInfo();
+            character1Info.setId(character1.id());
+            character1Info.setShowId(dynamic.getShowId());
+            character1Info.setName(character1.name());
+            characterInfoRepository.save(character1Info);
+        }
+
+        if (!characterInfoRepository.existsById(character2.id())) {
+            CharacterInfo character2Info = new CharacterInfo();
+            character2Info.setId(character2.id());
+            character2Info.setShowId(dynamic.getShowId());
+            character2Info.setName(character2.name());
+            characterInfoRepository.save(character2Info);
+        }
+
+        // If show doesn't exist in database, add it
+        if (!showInfoRepository.existsById(dynamic.getShowId())) {
+            ShowInfo show  = new ShowInfo();
+            show.setShowId(dynamic.getShowId());
+            show.setTitle(dynamic.getShowTitle());
+            show.setPosterPath(dynamic.getPosterPath());
+            showInfoRepository.save(show);
+        }
+
+        DynamicRanking dynamicRanking = new DynamicRanking();
+        dynamicRanking.setCharacter1Id(character1.id());
+        dynamicRanking.setCharacter2Id(character2.id());
+        dynamicRanking.setUserId(userId);
+        Integer maxRank = dynamicRankingRepository.findMaxRankNumByUserId(userId);
+        dynamicRanking.setRankNum(maxRank == null ?  1 : maxRank + 1);
+        dynamicRankingRepository.save(dynamicRanking);
     }
 }
