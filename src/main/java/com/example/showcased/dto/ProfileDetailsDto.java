@@ -14,6 +14,7 @@ public class ProfileDetailsDto {
     private List<EpisodeRankingReturnDto> episodeRankingTop;
     private List<SeasonRankingReturnDto> seasonRankingTop;
     private AllCharacterRankingDto characterRankings;
+    private List<DynamicRankingReturnDto> dynamicRankingTop;
 
     private boolean hasMoreWatchlist = false;
     private boolean hasMoreWatching = false;

@@ -99,6 +99,12 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{id}/character-dynamics")
+    public ResponseEntity<List<DynamicRankingReturnDto>> getUserDynamicRankings(@PathVariable Long id, @RequestParam(required = false) Integer limit) {
+        List<DynamicRankingReturnDto> rankings = userService.getUserDynamicRankings(id, limit);
+        return ResponseEntity.ok(rankings);
+    }
+
 
     // ========== SOCIAL ==========
 

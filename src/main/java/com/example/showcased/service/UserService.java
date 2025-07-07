@@ -35,6 +35,7 @@ public class UserService {
     private final LikedCollectionsRepository likedCollectionsRepository;
     private final UserSocialRepository userSocialRepository;
     private final EpisodeReviewRepository episodeReviewRepository;
+    private final DynamicRankingRepository dynamicRankingRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -49,7 +50,9 @@ public class UserService {
                        CollectionRepository collectionsRepository,
                        ShowsInCollectionRepository showsInCollectionRepository,
                        LikedCollectionsRepository likedCollectionsRepository,
-                       UserSocialRepository userSocialRepository, EpisodeReviewRepository episodeReviewRepository) {
+                       UserSocialRepository userSocialRepository,
+                       EpisodeReviewRepository episodeReviewRepository,
+                       DynamicRankingRepository dynamicRankingRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -65,6 +68,7 @@ public class UserService {
         this.likedCollectionsRepository = likedCollectionsRepository;
         this.userSocialRepository = userSocialRepository;
         this.episodeReviewRepository = episodeReviewRepository;
+        this.dynamicRankingRepository = dynamicRankingRepository;
     }
 
     private void ensureUserExists(Long userId) {
@@ -127,6 +131,7 @@ public class UserService {
         userDetails.setShowReviews(getUserShowReviews(userId));
         userDetails.setEpisodeReviews(getUserEpisodeReviews(userId));
         userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
+        userDetails.setDynamicRankingTop(getUserDynamicRankings(userId, numTopEntries));
         return userDetails;
     }
 
@@ -330,4 +335,8 @@ public class UserService {
         likedCollectionsRepository.delete(removeLike);
     }
 
+    public List<DynamicRankingReturnDto> getUserDynamicRankings(Long userId, Integer limit) {
+        ensureUserExists(userId);
+        return dynamicRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    }
 }

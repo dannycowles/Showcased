@@ -157,9 +157,9 @@ CREATE TABLE IF NOT EXISTS user_character_rankings (
 
 CREATE TABLE IF NOT EXISTS user_dynamics_rankings (
   id INT AUTO_INCREMENT,
-  user_id INT,
-  character1_id VARCHAR(255),
-  character2_id VARCHAR(255),
+  user_id INT NOT NULL,
+  character1_id VARCHAR(255) NOT NULL,
+  character2_id VARCHAR(255) NOT NULL,
   rank_num INT NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (user_id, character1_id, character2_id),

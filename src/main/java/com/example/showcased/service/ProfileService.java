@@ -119,6 +119,7 @@ public class ProfileService {
         profileDetails.setEpisodeReviews(getEpisodeReviews(session));
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
+        profileDetails.setDynamicRankingTop(getDynamicsRankingList(numTopEntries, session));
         return profileDetails;
     }
 
@@ -731,7 +732,9 @@ public class ProfileService {
         }
     }
 
-    public List<DynamicRankingReturnDto> getDyanmicsRankingList(Integer limit, HttpSession session) {
+
+
+    public List<DynamicRankingReturnDto> getDynamicsRankingList(Integer limit, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         return dynamicRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
@@ -790,5 +793,53 @@ public class ProfileService {
         Integer maxRank = dynamicRankingRepository.findMaxRankNumByUserId(userId);
         dynamicRanking.setRankNum(maxRank == null ?  1 : maxRank + 1);
         dynamicRankingRepository.save(dynamicRanking);
+    }
+
+    @Transactional
+    public void removeDynamicFromRankingList(Long dynamicId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        DynamicRanking dynamic = dynamicRankingRepository.findById(dynamicId)
+                .orElseThrow(() -> new ItemNotFoundException("Could not find a dynamic with id: " + dynamicId));
+
+        // Check to make sure the user id's match aka this is the users dynamic ranking
+        if (!Objects.equals(userId, dynamic.getUserId())) {
+            throw new UnauthorizedCollectionAccessException("You do not have permission to modify this dynamic");
+        }
+        dynamicRankingRepository.delete(dynamic);
+
+        // Retrieve the ranking entries and update the rank number using index
+        List<DynamicRanking> rankings = dynamicRankingRepository.findByUserIdOrderByRankNumAsc(userId);
+        for (int i = 0; i < rankings.size(); i++) {
+            rankings.get(i).setRankNum(i + 1);
+        }
+        dynamicRankingRepository.saveAll(rankings);
+    }
+
+    @Transactional
+    public void updateDynamicRankingList(List<UpdateCharacterDynamicDto> updates, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Create a set of all provided dynamic ids
+        Set<Long> dynamicIds = updates.stream()
+                .map(UpdateCharacterDynamicDto::getId)
+                .collect(Collectors.toSet());
+        List<DynamicRanking> dynamics = dynamicRankingRepository.findByIdIn(dynamicIds);
+
+        // Check to ensure that each of the IDs in the updates dto exists in the database
+        if (dynamics.size() != updates.size()) {
+            throw new ItemNotFoundException("One or more dynamics could not be found");
+        }
+
+        // Map each of the update IDs to its rank number for easy access for entity updates
+        Map<Long, Integer> newRanks = updates.stream()
+                .collect(Collectors.toMap(UpdateCharacterDynamicDto::getId, UpdateCharacterDynamicDto::getRankNum));
+        for (DynamicRanking dynamic : dynamics) {
+            // Validate that the dynamic being updated belongs to the user
+            if (!Objects.equals(userId, dynamic.getUserId())) {
+                throw new UnauthorizedCollectionAccessException("You do not have permission to modify this dynamic");
+            }
+            dynamic.setRankNum(newRanks.get(dynamic.getId()));
+        }
+        dynamicRankingRepository.saveAll(dynamics);
     }
 }

@@ -277,7 +277,7 @@ public class ProfileController {
     // ========== CHARACTER DYNAMICS RANKING ==========
     @GetMapping("character-dynamics")
     public ResponseEntity<List<DynamicRankingReturnDto>> getDynamicsRankingList(@RequestParam(required = false) Integer limit, HttpSession session) {
-        List<DynamicRankingReturnDto> dynamics = profileService.getDyanmicsRankingList(limit, session);
+        List<DynamicRankingReturnDto> dynamics = profileService.getDynamicsRankingList(limit, session);
         return ResponseEntity.ok(dynamics);
     }
 
@@ -289,12 +289,14 @@ public class ProfileController {
 
     @DeleteMapping("character-dynamics/{id}")
     public ResponseEntity<Void> removeDynamicFromRankingList(@PathVariable Long id, HttpSession session) {
-        return null;
+        profileService.removeDynamicFromRankingList(id, session);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("character-dynamics")
-    public ResponseEntity<Void> updateDynamicRankingList(HttpSession session) {
-        return null;
+    public ResponseEntity<Void> updateDynamicRankingList(@RequestBody List<UpdateCharacterDynamicDto> updates, HttpSession session) {
+        profileService.updateDynamicRankingList(updates, session);
+        return ResponseEntity.noContent().build();
     }
 
 

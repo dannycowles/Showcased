@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DynamicRankingRepository extends JpaRepository<DynamicRanking, Long> {
     @Query("""
@@ -25,6 +26,7 @@ public interface DynamicRankingRepository extends JpaRepository<DynamicRanking, 
         JOIN CharacterInfo c2 ON d.character2Id = c2.id
         JOIN ShowInfo s ON c1.showId = s.showId
         WHERE d.userId = :userId
+        ORDER BY d.rankNum ASC
 """)
     List<DynamicRankingReturnDto> findByIdUserId(@Param("userId") Long userId, Pageable pageable);
 
@@ -32,4 +34,8 @@ public interface DynamicRankingRepository extends JpaRepository<DynamicRanking, 
     Integer findMaxRankNumByUserId(@Param("userId") Long userId);
 
     boolean existsByUserIdAndCharacter1IdAndCharacter2Id(Long userId, String character1Id, String character2Id);
+
+    List<DynamicRanking> findByUserIdOrderByRankNumAsc(Long userId);
+
+    List<DynamicRanking> findByIdIn(Set<Long> dynamicIds);
 }
