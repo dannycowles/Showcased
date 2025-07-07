@@ -8,6 +8,8 @@ import {CharacterRankingsData} from '../data/character-rankings-data';
 import {CollectionData} from '../data/collection-data';
 import {SingleCollectionData} from '../data/single-collection-data';
 import {ShowListData} from '../data/lists/show-list-data';
+import {Router} from '@angular/router';
+import {DynamicRankingData} from '../data/lists/dynamic-ranking-data';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +17,12 @@ import {ShowListData} from '../data/lists/show-list-data';
 export class UserService {
   readonly baseUrl: string = "http://localhost:8080/users";
 
+  constructor(public router: Router) {};
+
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
     if (response.status === 401) {
-      window.location.href = '/login';
+      this.router.navigate(['/login']);
     }
   }
 
@@ -207,5 +211,14 @@ export class UserService {
 
     this.checkUnauthorizedUser(response);
     return response;
+  }
+
+  /**
+   * Retrieves the full character dynamic ranking list for the user with the specified id
+   * @param id
+   */
+  async getFullDynamicRankingList(id: number): Promise<DynamicRankingData[]> {
+    const response = await fetch(`${this.baseUrl}/${id}/character-dynamics`);
+    return await response.json();
   }
 }

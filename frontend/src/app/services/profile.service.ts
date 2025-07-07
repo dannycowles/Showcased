@@ -8,6 +8,8 @@ import { CharacterRankingsData } from '../data/character-rankings-data';
 import { CollectionData } from '../data/collection-data';
 import { SingleCollectionData } from '../data/single-collection-data';
 import { ShowListData } from '../data/lists/show-list-data';
+import {DynamicRankingData} from '../data/lists/dynamic-ranking-data';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -15,10 +17,12 @@ import { ShowListData } from '../data/lists/show-list-data';
 export class ProfileService {
   readonly baseUrl: string = 'http://localhost:8080/profile';
 
+  constructor(public router: Router) {};
+
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
     if (response.status === 401) {
-      window.location.href = '/login';
+      this.router.navigate(['/login']);
     }
   }
 
@@ -599,7 +603,7 @@ export class ProfileService {
    */
   async getCollectionDetails(id: number): Promise<SingleCollectionData> {
     const response = await fetch(`${this.baseUrl}/collections/${id}`, {
-      credentials: 'include',
+      credentials: 'include'
     });
 
     this.checkUnauthorizedUser(response);
@@ -612,13 +616,72 @@ export class ProfileService {
    * @param showId
    */
   async removeShowFromCollection(collectionId: number, showId: number): Promise<Response> {
-    const response = await fetch(
-      `${this.baseUrl}/collections/${collectionId}/shows/${showId}`,
-      {
+    const response = await fetch(`${this.baseUrl}/collections/${collectionId}/shows/${showId}`, {
         method: 'DELETE',
-        credentials: 'include',
+        credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Retrieves the full character dynamic ranking list for the logged-in user
+   */
+  async getDynamicRankingList(): Promise<DynamicRankingData[]> {
+    const response = await fetch(`${this.baseUrl}/character-dynamics`, {
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return await response.json();
+  }
+
+  /**
+   * Adds a character dynamic to the ranking list for the logged-in user
+   * @param data
+   */
+  async addDynamicToRankingList(data: {}): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/character-dynamics`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
       },
-    );
+      body: JSON.stringify(data)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Removes a character dynamic from the ranking list for the logged-in user by its ID
+   * @param dynamicId
+   */
+  async removeDynamicFromRankingList(dynamicId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/character-dynamics/${dynamicId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Updates the character dynamic ranking list for the logged-in user
+   * @param data
+   */
+  async updateDynamicRankingList(data: {}): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/character-dynamics`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
 
     this.checkUnauthorizedUser(response);
     return response;
