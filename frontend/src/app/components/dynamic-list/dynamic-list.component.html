@@ -1,0 +1,12 @@
+<h3>Favorite Character Dynamics</h3>
+
+@if (dynamics?.length) {
+  @for (dynamic of dynamics; track dynamic.id) {
+    <div class="d-flex align-items-center gap-5 mb-3">
+      <h2 class="fw-bold">{{dynamic.rankNum}}</h2>
+      <h5>{{dynamic.character1Name}} & {{dynamic.character2Name}} - {{dynamic.showTitle}}</h5>
+    </div>
+  }
+} @else {
+  <div>Nothing ranked yet!</div>
+}

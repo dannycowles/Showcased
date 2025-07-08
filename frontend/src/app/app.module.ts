@@ -70,6 +70,10 @@ import {RankedSeasonListFullComponent} from './components/ranked-season-list-ful
 import {RankedEpisodeListFullComponent} from './components/ranked-episode-list-full/ranked-episode-list-full.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {ReviewComponent} from './components/review/review.component';
+import {DynamicListComponent} from './components/dynamic-list/dynamic-list.component';
+import {
+  ProfileDynamicsRankingPageComponent
+} from './pages/profile/profile-dynamics-ranking-page/profile-dynamics-ranking-page.component';
 
 @NgModule({
   declarations: [
@@ -106,6 +110,7 @@ import {ReviewComponent} from './components/review/review.component';
     DiscoverGenresPageComponent,
     ProfileCollectionsPageComponent,
     ProfileCollectionDetailsPageComponent,
+    ProfileDynamicsRankingPageComponent,
     UserCollectionsPageComponent,
     UserCollectionDetailsPageComponent,
   ],
@@ -134,6 +139,7 @@ import {ReviewComponent} from './components/review/review.component';
     RankedEpisodeListFullComponent,
     NgbModule,
     ReviewComponent,
+    DynamicListComponent,
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],

@@ -29,6 +29,9 @@ export class SearchCharactersModalComponent implements OnInit {
 
   @Input({required: true}) onAdd: (character: {}) => void;
 
+  // Used if the caller is adding a character dynamic, will return instead of adding
+  @Input() dynamicSearch: boolean = false;
+
   constructor(public activeModal: NgbActiveModal,
               private showService: ShowService,
               private utilsService: UtilsService,
@@ -38,6 +41,10 @@ export class SearchCharactersModalComponent implements OnInit {
 
   async ngOnInit() {
     await this.searchCharacters();
+  }
+
+  passBack() {
+    this.activeModal.close(this.selectedCharacter);
   }
 
   goBack() {
