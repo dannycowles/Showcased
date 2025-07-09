@@ -1,0 +1,16 @@
+@if (dynamics?.length) {
+  <div cdkDropList class="dynamic-list" [cdkDropListDisabled]="!editable" (cdkDropListDropped)="drop($event)">
+    @for (dynamic of dynamics; track dynamic.id; let rank = $index) {
+      <div class="dynamic-box" cdkDrag [style.cursor]="editable ? 'move' : 'default'">
+        <h3>{{rank + 1}}</h3>
+        <h3>{{dynamic.character1Name}} & {{dynamic.character2Name}} - {{dynamic.showTitle}}</h3>
+
+        @if (editable) {
+          <button class="btn btn-danger" (click)="removeEvent(dynamic.id)">Remove Dynamic</button>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <div>Nothing ranked yet!</div>
+}

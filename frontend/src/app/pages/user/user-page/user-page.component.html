@@ -39,6 +39,11 @@
   <app-character-list title="Favorite Side Characters" [characters]="userDetails.characterRankings.side"></app-character-list>
   <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">View Full List</button>
 
+  <app-dynamic-list [dynamics]="userDetails.dynamicRankingTop"></app-dynamic-list>
+  <button class="btn btn-primary my-3" routerLink="dynamic-ranking">View Full List</button>
+  <br>
+  <button class="btn btn-primary my-3" routerLink="collections">View Collections</button>
+
   <h3>Show Reviews</h3>
   @if (userDetails.showReviews.length != 0) {
     @for (review of userDetails.showReviews; track review.id) {

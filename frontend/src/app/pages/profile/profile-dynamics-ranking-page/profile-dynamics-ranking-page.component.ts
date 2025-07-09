@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {DynamicRankingData} from '../../../data/lists/dynamic-ranking-data';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {SearchResultData} from '../../../data/search-result-data';
@@ -33,10 +32,6 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
-  }
-
-  drop(event: CdkDragDrop<DynamicRankingData[]>) {
-    moveItemInArray(this.dynamics, event.previousIndex, event.currentIndex);
   }
 
   async openSearchShowsModal() {
@@ -76,12 +71,40 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
       });
       searchCharacter2ModalRef.componentInstance.selectedShow = this.selectedShow;
       searchCharacter2ModalRef.componentInstance.selectedCharacter1 = this.selectedCharacter1;
+      searchCharacter2ModalRef.componentInstance.onAdd = (dynamic: DynamicRankingData) => {
+        dynamic.rankNum = this.dynamics.length + 1;
+        this.dynamics.push(dynamic);
+      }
 
       await searchCharacter2ModalRef.result;
     } catch (modalDismissReason) {
       if (modalDismissReason === "backFromCharacters2") {
         await this.openSearchCharacter1Modal();
       }
+    }
+  }
+
+  async removeDynamic(removeId: number) {
+    try {
+      await this.profileService.removeDynamicFromRankingList(removeId);
+
+      // Remove the dynamic from the list visible to the user
+      this.dynamics = this.dynamics.filter(dynamic => dynamic.id !== removeId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async updateDynamicRankingList() {
+    try {
+      const updates = this.dynamics.map(dynamic => ({
+        id: dynamic.id,
+        rankNum: dynamic.rankNum
+      }));
+
+      await this.profileService.updateDynamicRankingList(updates);
+    } catch (error) {
+      console.error(error);
     }
   }
 }

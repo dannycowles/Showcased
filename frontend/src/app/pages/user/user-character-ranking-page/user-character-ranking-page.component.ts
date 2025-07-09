@@ -12,7 +12,7 @@ import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 })
 export class UserCharacterRankingPageComponent implements OnInit {
   characterRankings: CharacterRankingsData;
-  readonly validCharacterTypes: string[] = ["protagonists", "deuteragonists", "antagonists"];
+  readonly validCharacterTypes: string[] = ["protagonists", "deuteragonists", "antagonists", "tritagonists", "side"];
   characterType: string;
   readonly userId: number;
 

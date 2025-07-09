@@ -74,6 +74,10 @@ import {DynamicListComponent} from './components/dynamic-list/dynamic-list.compo
 import {
   ProfileDynamicsRankingPageComponent
 } from './pages/profile/profile-dynamics-ranking-page/profile-dynamics-ranking-page.component';
+import {RankedDynamicListFullComponent} from "./components/ranked-dynamic-list-full/ranked-dynamic-list-full.component";
+import {
+  UserDynamicRankingPageComponent
+} from './pages/user/user-dynamic-ranking-page/user-dynamic-ranking-page.component';
 
 @NgModule({
   declarations: [
@@ -113,6 +117,7 @@ import {
     ProfileDynamicsRankingPageComponent,
     UserCollectionsPageComponent,
     UserCollectionDetailsPageComponent,
+    UserDynamicRankingPageComponent
   ],
   imports: [
     BrowserModule,
@@ -140,6 +145,7 @@ import {
     NgbModule,
     ReviewComponent,
     DynamicListComponent,
+    RankedDynamicListFullComponent,
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],

@@ -6,6 +6,7 @@ import {FormsModule} from '@angular/forms';
 import {RoleData} from '../../data/role-data';
 import {UtilsService} from '../../services/utils.service';
 import {ProfileService} from '../../services/profile.service';
+import {DynamicRankingData} from '../../data/lists/dynamic-ranking-data';
 
 @Component({
   selector: 'app-search-characters-dynamic-modal',
@@ -25,6 +26,8 @@ export class SearchCharactersDynamicModalComponent implements OnInit {
   isLoading: boolean = false;
 
   debouncedSearchCharacters: () => void;
+
+  @Input({ required: true}) onAdd: (dynamic: {}) => void;
 
   constructor(private showService: ShowService,
               public activeModal: NgbActiveModal,
@@ -75,7 +78,8 @@ export class SearchCharactersDynamicModalComponent implements OnInit {
       if (response.ok) {
         this.message = "Added dynamic to ranking list!";
         this.messageColor = "green";
-        // TODO: retrieve json response from backend and pass back to parent
+        const newDynamic: DynamicRankingData = await response.json();
+        this.onAdd(newDynamic);
       } else if (response.status === 409) {
         this.message = "You already have this dynamic on your ranking list.";
         this.messageColor = "red";

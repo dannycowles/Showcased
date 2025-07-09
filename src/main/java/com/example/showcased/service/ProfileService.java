@@ -739,7 +739,7 @@ public class ProfileService {
         return dynamicRankingRepository.findByIdUserId(userId, getPageRequest(limit));
     }
 
-    public void addDynamicToRankingList(DynamicRankingDto dynamic, HttpSession session) {
+    public DynamicRankingReturnDto addDynamicToRankingList(DynamicRankingDto dynamic, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
         // Sort by character ID when checking existing of dynamic... (12, 31) is the same as (31, 12)
@@ -793,6 +793,8 @@ public class ProfileService {
         Integer maxRank = dynamicRankingRepository.findMaxRankNumByUserId(userId);
         dynamicRanking.setRankNum(maxRank == null ?  1 : maxRank + 1);
         dynamicRankingRepository.save(dynamicRanking);
+
+        return new DynamicRankingReturnDto(dynamicRanking.getId(), character1.id(), character1.name(), character2.id(), character2.name(), dynamic.getShowTitle(), dynamicRanking.getRankNum());
     }
 
     @Transactional

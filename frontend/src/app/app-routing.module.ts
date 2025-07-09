@@ -49,6 +49,9 @@ import {
 import {
   ProfileDynamicsRankingPageComponent
 } from './pages/profile/profile-dynamics-ranking-page/profile-dynamics-ranking-page.component';
+import {
+  UserDynamicRankingPageComponent
+} from './pages/user/user-dynamic-ranking-page/user-dynamic-ranking-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -78,6 +81,7 @@ const routes: Routes = [
     { path: 'user/:id/following', component: UserFollowingPageComponent},
     { path: 'user/:id/collections', component: UserCollectionsPageComponent},
     { path: 'user/:id/collections/:collectionId', component: UserCollectionDetailsPageComponent},
+    { path: 'user/:id/dynamic-ranking', component: UserDynamicRankingPageComponent},
     { path: 'search', component: SearchPageComponent},
     { path: 'search-users', component: UserSearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},

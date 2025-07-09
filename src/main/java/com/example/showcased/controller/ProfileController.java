@@ -282,9 +282,9 @@ public class ProfileController {
     }
 
     @PostMapping("character-dynamics")
-    public ResponseEntity<Void> addDynamicToRankingList(@RequestBody DynamicRankingDto dynamic, HttpSession session) {
-        profileService.addDynamicToRankingList(dynamic, session);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<DynamicRankingReturnDto> addDynamicToRankingList(@RequestBody DynamicRankingDto dynamic, HttpSession session) {
+        DynamicRankingReturnDto newDynamic = profileService.addDynamicToRankingList(dynamic, session);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newDynamic);
     }
 
     @DeleteMapping("character-dynamics/{id}")
