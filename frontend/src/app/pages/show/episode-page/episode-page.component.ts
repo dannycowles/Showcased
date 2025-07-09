@@ -5,6 +5,10 @@ import {EpisodeData} from '../../../data/show/episode-data';
 import {ProfileService} from '../../../services/profile.service';
 import {ToastDisplayService} from '../../../services/toast.service';
 import {UtilsService} from '../../../services/utils.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AddReviewModalComponent} from '../../../components/add-review-modal/add-review-modal.component';
+import {EpisodeReviewData} from '../../../data/reviews-data';
+import {ReviewType} from '../../../data/enums';
 
 
 @Component({
@@ -18,12 +22,14 @@ export class EpisodePageComponent implements OnInit {
   readonly seasonNumber: number;
   readonly episodeNumber: number;
   episode: EpisodeData;
+  reviews: EpisodeReviewData[];
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
               private profileService: ProfileService,
               private toastService: ToastDisplayService,
-              public utilsService: UtilsService) {
+              public utilsService: UtilsService,
+              private modalService: NgbModal) {
     this.showId = this.route.snapshot.params['id'];
     this.seasonNumber = this.route.snapshot.params['seasonNumber'];
     this.episodeNumber = this.route.snapshot.params['episodeNumber'];
@@ -33,6 +39,7 @@ export class EpisodePageComponent implements OnInit {
     // Fetch episode details from the backend
     try {
       this.episode = await this.showService.fetchEpisodeDetails(this.showId, this.seasonNumber, this.episodeNumber);
+      this.reviews = await this.showService.fetchEpisodeReviews(this.episode.id);
     } catch (error) {
       console.error(error);
     }
@@ -58,4 +65,33 @@ export class EpisodePageComponent implements OnInit {
     } catch (error) {
     console.error(error);}
   }
+
+  async openAddReviewModal() {
+    const addReviewModalRef = this.modalService.open(AddReviewModalComponent, {
+      ariaLabelledBy: "addReviewModal",
+      centered: true
+    });
+    addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.episode.showTitle} S${this.seasonNumber} E${this.episodeNumber}: ${this.episode.episodeTitle}`;
+
+    const result = await addReviewModalRef.result;
+    const newReview = {
+      rating: result.rating,
+      showId: this.showId,
+      showTitle: this.episode.showTitle,
+      episodeTitle: this.episode.episodeTitle,
+      season: this.seasonNumber,
+      episode: this.episodeNumber,
+      commentary: result.commentary,
+      containsSpoilers: result.containsSpoilers,
+      posterPath: this.episode.stillPath
+    };
+
+    try {
+      await this.showService.addEpisodeReview(this.episode.id, newReview);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  protected readonly ReviewType = ReviewType;
 }

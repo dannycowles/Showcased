@@ -63,7 +63,7 @@ import {ShowListComponent} from './components/show-list/show-list.component';
 import {SeasonListComponent} from './components/season-list/season-list.component';
 import {EpisodeListComponent} from './components/episode-list/episode-list.component';
 import {CharacterListComponent} from './components/character-list/character-list.component';
-import {ProfileShowReviewComponent} from './components/profile-show-review/profile-show-review.component';
+import {ProfileReviewComponent} from './components/profile-review/profile-review.component';
 import {ShowListFullComponent} from './components/show-list-full/show-list-full.component';
 import {RankedShowListFullComponent} from './components/ranked-show-list-full/ranked-show-list-full.component';
 import {RankedSeasonListFullComponent} from './components/ranked-season-list-full/ranked-season-list-full.component';
@@ -137,7 +137,7 @@ import {
     SeasonListComponent,
     EpisodeListComponent,
     CharacterListComponent,
-    ProfileShowReviewComponent,
+    ProfileReviewComponent,
     ShowListFullComponent,
     RankedShowListFullComponent,
     RankedSeasonListFullComponent,

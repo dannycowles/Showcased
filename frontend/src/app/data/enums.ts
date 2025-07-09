@@ -7,5 +7,5 @@ export enum AddShowType {
 
 export enum ReviewType {
   Show,
-  Episode
+  Episode,
 }

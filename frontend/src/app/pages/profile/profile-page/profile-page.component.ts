@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {UserData} from '../../../data/user-data';
 import {ProfileService} from '../../../services/profile.service';
 import {UtilsService} from '../../../services/utils.service';
+import {ReviewType} from '../../../data/enums';
 
 @Component({
   selector: 'app-profile-page',
@@ -23,4 +24,6 @@ export class ProfilePageComponent implements OnInit {
       console.error(error);
     }
   }
+
+  protected readonly ReviewType = ReviewType;
 }
