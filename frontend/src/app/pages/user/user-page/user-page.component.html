@@ -45,11 +45,20 @@
   <button class="btn btn-primary my-3" routerLink="collections">View Collections</button>
 
   <h3>Show Reviews</h3>
-  @if (userDetails.showReviews.length != 0) {
+  @if (userDetails.showReviews.length) {
     @for (review of userDetails.showReviews; track review.id) {
-      <app-profile-show-review [review]="review"></app-profile-show-review>
+      <app-profile-review [review]="review" [reviewType]="ReviewType.Show"></app-profile-review>
     }
   } @else {
-    <p>No reviews yet!</p>
+    <div>No reviews yet!</div>
+  }
+
+  <h3>Episode Reviews</h3>
+  @if (userDetails.episodeReviews.length) {
+    @for (review of userDetails.episodeReviews; track review.id) {
+      <app-profile-review [review]="review" [reviewType]="ReviewType.Episode"></app-profile-review>
+    }
+  } @else {
+    <div>No reviews yet!</div>
   }
 }

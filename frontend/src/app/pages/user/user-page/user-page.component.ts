@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {UserData} from '../../../data/user-data';
 import {UserService} from '../../../services/user.service';
 import {UtilsService} from '../../../services/utils.service';
-import {UserHeaderData} from '../../../data/user-header-data';
+import {ReviewType} from '../../../data/enums';
 
 @Component({
   selector: 'app-user-page',
@@ -14,7 +14,7 @@ import {UserHeaderData} from '../../../data/user-header-data';
 export class UserPageComponent implements OnInit {
   readonly userId: number;
   userDetails: UserData;
-  headerData: UserHeaderData;
+  readonly ReviewType = ReviewType;
 
   constructor(private route: ActivatedRoute,
               private userService: UserService,
