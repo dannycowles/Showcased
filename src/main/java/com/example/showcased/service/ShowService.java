@@ -28,6 +28,7 @@ public class ShowService {
     private final ModelMapper modelMapper;
     private final ShowInfoRepository showInfoRepository;
     private final EpisodeInfoRepository episodeInfoRepository;
+    private final EpisodeRankingRepository episodeRankingRepository;
     @Value("${omdbApi}")
     private String omdbKey;
 
@@ -53,7 +54,7 @@ public class ShowService {
                        OMDBClient omdbClient,
                        ShowInfoRepository showInfoRepository,
                        EpisodeReviewRepository episodeReviewRepository,
-                       LikedEpisodeReviewsRepository likedEpisodeReviewsRepository, EpisodeInfoRepository episodeInfoRepository) {
+                       LikedEpisodeReviewsRepository likedEpisodeReviewsRepository, EpisodeInfoRepository episodeInfoRepository, EpisodeRankingRepository episodeRankingRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -67,6 +68,7 @@ public class ShowService {
         this.episodeReviewRepository = episodeReviewRepository;
         this.likedEpisodeReviewsRepository = likedEpisodeReviewsRepository;
         this.episodeInfoRepository = episodeInfoRepository;
+        this.episodeRankingRepository = episodeRankingRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -353,7 +355,7 @@ public class ShowService {
         return tmdbClient.get(url, SeasonPartialDto.class);
     }
 
-    public EpisodeDto getEpisodeDetails(String episodeNumber, String seasonNumber, String showId) {
+    public EpisodeDto getEpisodeDetails(String episodeNumber, String seasonNumber, String showId, HttpSession session) {
         // Make a request to TMDB episode endpoint
         String url = UriComponentsBuilder
                 .fromUriString("https://api.themoviedb.org/3/tv")
@@ -391,6 +393,12 @@ public class ShowService {
 
         if (!jsonResponse.optString("Plot").equals("N/A") && jsonResponse.optBoolean("Plot")) {
             episode.setPlot(jsonResponse.optString("Plot"));
+        }
+
+        // If the user is logged in check if it's on their ranking list
+        Long userId = (Long) session.getAttribute("user");
+        if (userId != null) {
+            episode.setOnRankingList(episodeRankingRepository.existsById(new  EpisodeRankingId(userId, episode.getId())));
         }
         return episode;
     }

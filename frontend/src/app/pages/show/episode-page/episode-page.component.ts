@@ -23,6 +23,7 @@ export class EpisodePageComponent implements OnInit {
   readonly episodeNumber: number;
   episode: EpisodeData;
   reviews: EpisodeReviewData[];
+  readonly ReviewType = ReviewType;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
@@ -60,10 +61,23 @@ export class EpisodePageComponent implements OnInit {
 
       const response = await this.profileService.addEpisodeToRankingList(data);
       if (response.ok) {
+        this.episode.isOnRankingList = true;
         this.toastService.addToEpisodeRankingToast(this.episode.episodeTitle);
       }
     } catch (error) {
     console.error(error);}
+  }
+
+  async removeFromRankingList() {
+    try {
+      const response = await this.profileService.removeEpisodeFromRankingList(this.episode.id);
+
+      if (response.ok) {
+        this.episode.isOnRankingList = false;
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async openAddReviewModal() {
@@ -92,6 +106,4 @@ export class EpisodePageComponent implements OnInit {
       console.error(error);
     }
   }
-
-  protected readonly ReviewType = ReviewType;
 }

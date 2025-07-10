@@ -78,6 +78,10 @@ import {RankedDynamicListFullComponent} from "./components/ranked-dynamic-list-f
 import {
   UserDynamicRankingPageComponent
 } from './pages/user/user-dynamic-ranking-page/user-dynamic-ranking-page.component';
+import {DiscoverTrendingPageComponent} from './pages/discover/discover-trending-page/discover-trending-page.component';
+import {
+  DiscoverTopRatedPageComponent
+} from './pages/discover/discover-top-rated-page/discover-top-rated-page.component';
 
 @NgModule({
   declarations: [
@@ -117,7 +121,9 @@ import {
     ProfileDynamicsRankingPageComponent,
     UserCollectionsPageComponent,
     UserCollectionDetailsPageComponent,
-    UserDynamicRankingPageComponent
+    UserDynamicRankingPageComponent,
+    DiscoverTrendingPageComponent,
+    DiscoverTopRatedPageComponent
   ],
   imports: [
     BrowserModule,

@@ -23,6 +23,7 @@ export class ProfileService {
   checkUnauthorizedUser(response: Response): void {
     if (response.status === 401) {
       this.router.navigate(['/login']);
+      throw new Error("Unauthorized");
     }
   }
 

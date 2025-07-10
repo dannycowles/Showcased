@@ -7,6 +7,6 @@
   }
 }
 
-<button class="btn btn-primary mb-3">View Trending Shows</button>
+<button class="btn btn-primary mb-3" routerLink="trending" [queryParams]="{ page: 1 }">View Trending Shows</button>
 <br>
-<button class="btn btn-primary">View Top Rated Shows</button>
+<button class="btn btn-primary" routerLink="top" [queryParams]="{ page: 1 }">View Top Rated Shows</button>

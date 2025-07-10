@@ -37,6 +37,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
             JOIN User u ON r.userId = u.id
             JOIN ShowInfo s ON r.showId = s.showId
             WHERE r.showId = :showId
+            ORDER BY r.reviewDate DESC
         """)
     List<ShowReviewWithUserInfoDto> findAllByShowId(@Param("showId") Long showId, @Param("userId") Long userId);
 

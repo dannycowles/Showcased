@@ -52,6 +52,10 @@ import {
 import {
   UserDynamicRankingPageComponent
 } from './pages/user/user-dynamic-ranking-page/user-dynamic-ranking-page.component';
+import {DiscoverTrendingPageComponent} from './pages/discover/discover-trending-page/discover-trending-page.component';
+import {
+  DiscoverTopRatedPageComponent
+} from './pages/discover/discover-top-rated-page/discover-top-rated-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -89,6 +93,8 @@ const routes: Routes = [
     { path: 'show/:id/season/:seasonNumber/episode/:episodeNumber', component: EpisodePageComponent },
     { path: 'discover', component: DiscoverPageComponent},
     { path: 'discover/show', component: DiscoverGenresPageComponent},
+    { path: 'discover/trending', component: DiscoverTrendingPageComponent },
+    { path: 'discover/top', component: DiscoverTopRatedPageComponent},
     { path: 'not-found', component: PageNotFoundComponent},
     { path: '**', redirectTo: 'not-found'}
 ];

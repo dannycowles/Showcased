@@ -8,4 +8,5 @@ export interface EpisodeData {
   readonly runtime: number;
   readonly airDate: string;
   readonly stillPath: string;
+  isOnRankingList: boolean;
 }

@@ -1,6 +1,7 @@
 package com.example.showcased.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
@@ -27,6 +28,9 @@ public class EpisodeDto {
     private String imdbRating;
     private String imdbVotes;
     private int runtime;
+
+    @JsonProperty("isOnRankingList")
+    private boolean isOnRankingList = false;
 
     public void setStillPath(String stillPath) {
         this.stillPath = "https://image.tmdb.org/t/p/w780" + stillPath;

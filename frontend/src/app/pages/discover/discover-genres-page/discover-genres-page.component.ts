@@ -22,7 +22,7 @@ export class DiscoverGenresPageComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe(async params => {
-      this.page = +params['page'] || 1;
+      this.page = +params['page'];
       try {
         this.resultData = await this.showService.searchByGenre(this.genre, this.page);
       } catch(error) {

@@ -7,6 +7,7 @@ import {ResultPageData} from '../data/show/result-page-data';
 import {RoleData} from '../data/role-data';
 import {EpisodeReviewData, ShowReviewData} from '../data/reviews-data';
 import {SeasonEpisodes} from '../data/show/season-episode';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -14,17 +15,20 @@ import {SeasonEpisodes} from '../data/show/season-episode';
 export class ShowService {
   baseUrl: string = "http://localhost:8080/shows";
 
+  constructor(public router: Router) {};
+
   // If the user is unauthorized, we redirect user to the login page
   checkUnauthorizedUser(response: Response) {
     if (response.status === 401) {
-      window.location.href = "/login";
+      this.router.navigate(['/login']);
+      throw new Error("Unauthorized");
     }
   }
 
   // If the show / season / episode is not found, we redirect user to the 404 page
   checkPageNotFound(response: Response) {
     if (response.status === 500) {
-      window.location.href = "/not-found";
+      this.router.navigate(['/not-found']);
     }
   }
 
@@ -167,7 +171,9 @@ export class ShowService {
    * @param episodeId
    */
   async fetchEpisodeReviews(episodeId: number): Promise<EpisodeReviewData[]> {
-    const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews`);
+    const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews`, {
+      credentials: 'include'
+    });
     return await response.json();
   }
 
@@ -232,7 +238,9 @@ export class ShowService {
    * @param episodeNumber
    */
   async fetchEpisodeDetails(showId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeData> {
-    const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}/episodes/${episodeNumber}`);
+    const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}/episodes/${episodeNumber}`, {
+      credentials: 'include'
+    });
 
     this.checkPageNotFound(response);
     return await response.json();
