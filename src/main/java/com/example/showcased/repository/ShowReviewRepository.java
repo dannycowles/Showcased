@@ -78,4 +78,26 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
     @Modifying
     @Query("UPDATE ShowReview r SET r.numLikes = r.numLikes - 1 WHERE r.id = :reviewId")
     void decrementLikes(@Param("reviewId") Long reviewId);
+
+    @Query("""
+        SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
+            r.id,
+            u.username,
+            u.profilePicture,
+            r.userId,
+            r.showId,
+            s.title,
+            r.rating,
+            r.commentary,
+            r.containsSpoilers,
+            r.numLikes,
+            r.reviewDate,
+            FALSE
+        )
+        FROM ShowReview r
+        JOIN User u ON r.userId = u.id
+        JOIN ShowInfo s ON r.showId = s.showId
+        WHERE r.id = :id
+""")
+    ShowReviewWithUserInfoDto findByIdWithUserInfo(@Param("id") Long id);
 }

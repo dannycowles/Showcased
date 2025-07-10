@@ -95,7 +95,12 @@ export class ShowPageComponent implements OnInit {
     };
 
     try {
-      await this.showService.addShowReview(this.showId, reviewData);
+      const response = await this.showService.addShowReview(this.showId, reviewData);
+
+      if (response.ok) {
+        const newReview: ShowReviewData = await response.json();
+        this.reviews.unshift(newReview);
+      }
     } catch(error) {
       console.error(error);
     }

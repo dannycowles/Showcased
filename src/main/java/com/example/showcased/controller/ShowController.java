@@ -75,9 +75,9 @@ public class ShowController {
     // ========== SHOW REVIEWS ==========
 
     @PostMapping("/{id}/reviews")
-    public ResponseEntity<Void> addReviewToShow(@PathVariable Long id, @RequestBody ShowReviewDto review, HttpSession session) {
-        showService.addReviewToShow(id, review, session);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ShowReviewWithUserInfoDto> addReviewToShow(@PathVariable Long id, @RequestBody ShowReviewDto review, HttpSession session) {
+        ShowReviewWithUserInfoDto newReview = showService.addReviewToShow(id, review, session);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newReview);
     }
 
     @GetMapping("/{id}/reviews")

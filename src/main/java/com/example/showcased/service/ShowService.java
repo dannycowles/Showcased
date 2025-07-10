@@ -404,7 +404,7 @@ public class ShowService {
     }
 
     @Transactional
-    public void addReviewToShow(Long showId, ShowReviewDto reviewDto, HttpSession session) {
+    public ShowReviewWithUserInfoDto addReviewToShow(Long showId, ShowReviewDto reviewDto, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
         // Delete existing review if it exists
@@ -424,6 +424,7 @@ public class ShowService {
         review.setUserId(userId);
         review.setShowId(showId);
         showReviewRepository.save(review);
+        return showReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
     public List<ShowReviewWithUserInfoDto> getShowReviews(Long showId, HttpSession session) {
