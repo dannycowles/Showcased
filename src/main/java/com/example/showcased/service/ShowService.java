@@ -467,7 +467,7 @@ public class ShowService {
     }
 
     @Transactional
-    public void addReviewToEpisode(Long episodeId, EpisodeReviewDto reviewDto, HttpSession session) {
+    public EpisodeReviewWithUserInfoDto addReviewToEpisode(Long episodeId, EpisodeReviewDto reviewDto, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
         // Delete existing review if it exists
@@ -486,6 +486,7 @@ public class ShowService {
         review.setEpisodeId(episodeId);
         review.setUserId(userId);
         episodeReviewRepository.save(review);
+        return episodeReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
     public List<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, HttpSession session) {

@@ -85,4 +85,29 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
     @Modifying
     @Query("UPDATE EpisodeReview r SET r.numLikes = r.numLikes - 1 WHERE r.id = :reviewId")
     void decrementLikes(@Param("reviewId") Long reviewId);
+
+    @Query("""
+        SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
+            r.id,
+            u.username,
+            u.profilePicture,
+            r.userId,
+            e.showId,
+            e.season,
+            e.episode,
+            e.showTitle,
+            e.episodeTitle,
+            r.rating,
+            r.commentary,
+            r.containsSpoilers,
+            r.numLikes,
+            r.reviewDate,
+            FALSE
+        )
+        FROM EpisodeReview r
+        JOIN EpisodeInfo e ON e.id = r.episodeId
+        JOIN User u ON r.userId = u.id
+        WHERE r.id = :id
+""")
+    EpisodeReviewWithUserInfoDto findByIdWithUserInfo(@Param("id") Long id);
 }

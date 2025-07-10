@@ -104,9 +104,9 @@ public class ShowController {
     // ========== EPISODE REVIEWS ==========
 
     @PostMapping("/episodes/{episodeId}/reviews")
-    public ResponseEntity<Void> addReviewToEpisode(@PathVariable Long episodeId, @RequestBody EpisodeReviewDto review, HttpSession session) {
-        showService.addReviewToEpisode(episodeId, review, session);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<EpisodeReviewWithUserInfoDto> addReviewToEpisode(@PathVariable Long episodeId, @RequestBody EpisodeReviewDto review, HttpSession session) {
+        EpisodeReviewWithUserInfoDto newReview = showService.addReviewToEpisode(episodeId, review, session);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newReview);
     }
 
     @GetMapping("/episodes/{episodeId}/reviews")

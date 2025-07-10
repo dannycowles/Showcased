@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ShowService} from '../../../services/show.service';
 import {EpisodeData} from '../../../data/show/episode-data';
 import {ProfileService} from '../../../services/profile.service';
@@ -9,6 +9,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddReviewModalComponent} from '../../../components/add-review-modal/add-review-modal.component';
 import {EpisodeReviewData} from '../../../data/reviews-data';
 import {ReviewType} from '../../../data/enums';
+import {AuthenticationService} from '../../../services/auth.service';
 
 
 @Component({
@@ -24,13 +25,16 @@ export class EpisodePageComponent implements OnInit {
   episode: EpisodeData;
   reviews: EpisodeReviewData[];
   readonly ReviewType = ReviewType;
+  isLoggedIn: boolean = false;
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private showService: ShowService,
               private profileService: ProfileService,
               private toastService: ToastDisplayService,
               public utilsService: UtilsService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private authService: AuthenticationService) {
     this.showId = this.route.snapshot.params['id'];
     this.seasonNumber = this.route.snapshot.params['seasonNumber'];
     this.episodeNumber = this.route.snapshot.params['episodeNumber'];
@@ -41,6 +45,7 @@ export class EpisodePageComponent implements OnInit {
     try {
       this.episode = await this.showService.fetchEpisodeDetails(this.showId, this.seasonNumber, this.episodeNumber);
       this.reviews = await this.showService.fetchEpisodeReviews(this.episode.id);
+      this.isLoggedIn = await this.authService.loginStatus();
     } catch (error) {
       console.error(error);
     }
@@ -81,6 +86,11 @@ export class EpisodePageComponent implements OnInit {
   }
 
   async openAddReviewModal() {
+    if (!this.isLoggedIn){
+      this.router.navigate(['/login']);
+      return;
+    }
+
     const addReviewModalRef = this.modalService.open(AddReviewModalComponent, {
       ariaLabelledBy: "addReviewModal",
       centered: true
@@ -88,7 +98,7 @@ export class EpisodePageComponent implements OnInit {
     addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.episode.showTitle} S${this.seasonNumber} E${this.episodeNumber}: ${this.episode.episodeTitle}`;
 
     const result = await addReviewModalRef.result;
-    const newReview = {
+    const reviewData = {
       rating: result.rating,
       showId: this.showId,
       showTitle: this.episode.showTitle,
@@ -101,7 +111,12 @@ export class EpisodePageComponent implements OnInit {
     };
 
     try {
-      await this.showService.addEpisodeReview(this.episode.id, newReview);
+      const response = await this.showService.addEpisodeReview(this.episode.id, reviewData);
+
+      if (response.ok) {
+        const newReview: EpisodeReviewData = await response.json();
+        this.reviews.unshift(newReview);
+      }
     } catch (error) {
       console.error(error);
     }
