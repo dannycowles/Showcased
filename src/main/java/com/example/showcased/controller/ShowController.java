@@ -98,6 +98,18 @@ public class ShowController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/reviews/{reviewId}/comments")
+    public ResponseEntity<ReviewCommentWithUserInfoDto> addCommentToShowReview(@PathVariable Long reviewId, @RequestBody ReviewCommentDto reviewComment, HttpSession session) {
+        ReviewCommentWithUserInfoDto newComment = showService.addCommentToShowReview(reviewId, reviewComment, session);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newComment);
+    }
+
+    @GetMapping("/reviews/{reviewId}/comments")
+    public ResponseEntity<List<ReviewCommentWithUserInfoDto>> getShowReviewComments(@PathVariable Long reviewId, HttpSession session) {
+        List<ReviewCommentWithUserInfoDto> comments = showService.getShowReviewComments(reviewId, session);
+        return ResponseEntity.ok(comments);
+    }
+
 
 
 

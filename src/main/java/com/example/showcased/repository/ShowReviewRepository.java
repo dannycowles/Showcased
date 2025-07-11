@@ -23,6 +23,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
                 r.commentary,
                 r.containsSpoilers,
                 r.numLikes,
+                r.numComments,
                 r.reviewDate,
                 CASE
                     WHEN :userId IS NULL THEN FALSE
@@ -53,6 +54,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
             r.commentary,
             r.containsSpoilers,
             r.numLikes,
+            r.numComments,
             r.reviewDate,
             CASE
                 WHEN EXISTS (
@@ -91,6 +93,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
             r.commentary,
             r.containsSpoilers,
             r.numLikes,
+            r.numComments,
             r.reviewDate,
             FALSE
         )
@@ -100,4 +103,12 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
         WHERE r.id = :id
 """)
     ShowReviewWithUserInfoDto findByIdWithUserInfo(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE ShowReview r SET r.numComments = r.numComments + 1 WHERE r.id = :reviewId")
+    void incrementNumComments(@Param("reviewId") Long reviewId);
+
+    @Modifying
+    @Query("UPDATE ShowReview r SET r.numComments = r.numComments - 1 WHERE r.id = :reviewId")
+    void decrementNumComments(@Param("reviewId") Long reviewId);
 }

@@ -20,7 +20,7 @@ public class ShowReviewsFilter implements Filter {
         HttpSession session = request.getSession();
 
         // If the user is not logged in we send an error and return
-        if (request.getRequestURI().endsWith("/reviews") && request.getMethod().equals("POST") && session.getAttribute("user") == null) {
+        if ((request.getRequestURI().endsWith("/reviews") || request.getRequestURI().endsWith("/comments")) && request.getMethod().equals("POST") && session.getAttribute("user") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS show_reviews (
     commentary TEXT DEFAULT NULL,
     contains_spoilers BOOLEAN DEFAULT false,
     num_likes INT DEFAULT 0,
+    num_comments INT DEFAULT 0,
     review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE (user_id, show_id),

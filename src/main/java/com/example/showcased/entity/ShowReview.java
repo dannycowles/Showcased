@@ -18,5 +18,6 @@ public class ShowReview {
     private String commentary;
     private boolean containsSpoilers;
     private Long numLikes = 0L;
+    private int numComments = 0;
     private Date reviewDate = new Date();
 }
