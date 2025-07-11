@@ -212,3 +212,43 @@ CREATE TABLE IF NOT EXISTS user_socials (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (social_id) REFERENCES social_platforms(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS show_review_comments (
+    id INT AUTO_INCREMENT,
+    review_id INT NOT NULL,
+    user_id INT NOT NULL,
+    comment_text TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    num_likes INT DEFAULT 0,
+    PRIMARY KEY (id),
+    FOREIGN KEY (review_id) REFERENCES show_reviews(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS liked_show_review_comments (
+    user_id INT,
+    comment_id INT,
+    PRIMARY KEY (user_id, comment_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES show_review_comments(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS episode_review_comments (
+    id INT AUTO_INCREMENT,
+    review_id INT NOT NULL,
+    user_id INT NOT NULL,
+    comment_text TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    num_likes INT DEFAULT 0,
+    PRIMARY KEY (id),
+    FOREIGN KEY (review_id) REFERENCES episode_reviews(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS liked_episode_review_comments (
+    user_id INT,
+    comment_id INT,
+    PRIMARY KEY (user_id, comment_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES episode_review_comments(id) ON DELETE CASCADE
+);
