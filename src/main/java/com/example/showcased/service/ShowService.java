@@ -43,6 +43,7 @@ public class ShowService {
     private final TMDBClient tmdbClient;
     private final OMDBClient omdbClient;
     private final ShowReviewCommentRepository showReviewCommentRepository;
+    private final LikedShowReviewCommentsRepository  likedShowReviewCommentsRepository;
 
     public ShowService(ShowReviewRepository showReviewRepository,
                        ModelMapper modelMapper,
@@ -58,7 +59,8 @@ public class ShowService {
                        LikedEpisodeReviewsRepository likedEpisodeReviewsRepository,
                        EpisodeInfoRepository episodeInfoRepository,
                        EpisodeRankingRepository episodeRankingRepository,
-                       ShowReviewCommentRepository showReviewCommentRepository) {
+                       ShowReviewCommentRepository showReviewCommentRepository,
+                       LikedShowReviewCommentsRepository likedShowReviewCommentsRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -74,6 +76,7 @@ public class ShowService {
         this.episodeInfoRepository = episodeInfoRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.showReviewCommentRepository = showReviewCommentRepository;
+        this.likedShowReviewCommentsRepository = likedShowReviewCommentsRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -583,5 +586,39 @@ public class ShowService {
     public List<ReviewCommentWithUserInfoDto> getShowReviewComments(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         return showReviewCommentRepository.findAllByReviewId(reviewId, userId);
+    }
+
+    @Transactional
+    public void likeShowReviewComment(Long commentId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (!showReviewCommentRepository.existsById(commentId)) {
+            throw new ItemNotFoundException("Didn't find an show review comment with ID: " + commentId);
+        }
+
+        // Check if the user has already liked the comment
+        LikedShowReviewComment likedComment = new LikedShowReviewComment(new LikedShowReviewCommentId(userId, commentId));
+        if (likedShowReviewCommentsRepository.existsById(likedComment.getId())) {
+            throw new AlreadyLikedException("You have already liked this show review comment");
+        }
+
+        likedShowReviewCommentsRepository.save(likedComment);
+        showReviewCommentRepository.incrementNumLikes(commentId);
+    }
+
+    @Transactional
+    public void unlikeShowReviewComment(Long commentId, HttpSession session) {
+        Long  userId = (Long) session.getAttribute("user");
+        if (!showReviewCommentRepository.existsById(commentId)) {
+            throw new ItemNotFoundException("Didn't find an show review comment with ID: " + commentId);
+        }
+
+        // Check to ensure the user has liked the comment
+        LikedShowReviewComment likedComment = new LikedShowReviewComment(new LikedShowReviewCommentId(userId, commentId));
+        if (!likedShowReviewCommentsRepository.existsById(likedComment.getId())) {
+            throw new HaventLikedException("You have not liked this show review comment");
+        }
+
+        likedShowReviewCommentsRepository.delete(likedComment);
+        showReviewCommentRepository.decrementNumLikes(commentId);
     }
 }

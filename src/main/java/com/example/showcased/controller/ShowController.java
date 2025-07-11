@@ -110,6 +110,18 @@ public class ShowController {
         return ResponseEntity.ok(comments);
     }
 
+    @PostMapping("/reviews/comments/{commentId}/likes")
+    public ResponseEntity<Void> likeShowReviewComment(@PathVariable Long commentId, HttpSession session) {
+        showService.likeShowReviewComment(commentId, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/reviews/comments/{commentId}/likes")
+    public ResponseEntity<Void> unlikeShowReviewComment(@PathVariable Long commentId, HttpSession session) {
+        showService.unlikeShowReviewComment(commentId, session);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 
