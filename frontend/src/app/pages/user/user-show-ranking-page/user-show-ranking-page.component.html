@@ -1,16 +1,5 @@
-<button [routerLink]="['../']">Return to User Profile</button>
+<button class="btn btn-primary" [routerLink]="['../']">Return to User Profile</button>
 
-@if (rankingEntries) {
-  <h3>Favorite Shows</h3>
-  @if (rankingEntries.length != 0) {
-    @for (show of rankingEntries; track show.showId) {
-      <h5>{{show.rankNum}}</h5>
-      <h5>{{show.title}}</h5>
-
-      <!-- Poster images are sized w185, using 2:3 ratio -->
-      <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-    }
-  } @else {
-    <p>Nothing ranked yet!</p>
-  }
-}
+<app-ranked-show-list-full title="Favorite Shows"
+                           [shows]="rankingEntries"
+></app-ranked-show-list-full>
