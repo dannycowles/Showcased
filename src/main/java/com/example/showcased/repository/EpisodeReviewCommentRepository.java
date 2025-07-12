@@ -3,6 +3,7 @@ package com.example.showcased.repository;
 import com.example.showcased.dto.ReviewCommentWithUserInfoDto;
 import com.example.showcased.entity.EpisodeReviewComment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -38,7 +39,14 @@ public interface EpisodeReviewCommentRepository extends JpaRepository<EpisodeRev
             c.commentText,
             c.numLikes,
             c.createdAt,
-            FALSE
+            CASE
+                WHEN :userId IS NULL THEN FALSE
+                WHEN EXISTS (
+                    SELECT lr FROM LikedEpisodeReviewComment lr
+                    WHERE lr.id.commentId = c.id AND lr.id.userId = :userId
+                ) THEN TRUE
+                ELSE FALSE
+            END
         )
         FROM EpisodeReview r
         JOIN EpisodeReviewComment c ON r.id = c.reviewId
@@ -47,5 +55,12 @@ public interface EpisodeReviewCommentRepository extends JpaRepository<EpisodeRev
         ORDER BY c.createdAt ASC
 """)
     List<ReviewCommentWithUserInfoDto> findAllByReviewId(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
-    // TODO: after doing liked episode review comments come back and use case instead of false
+
+    @Modifying
+    @Query("UPDATE EpisodeReviewComment c SET c.numLikes = c.numLikes + 1 WHERE c.id = :commentId")
+    void incrementNumLikes(@Param("commentId") Long commentId);
+
+    @Modifying
+    @Query("UPDATE EpisodeReviewComment c SET c.numLikes = c.numLikes - 1 WHERE c.id = :commentId")
+    void decrementNumLikes(@Param("commentId") Long commentId);
 }

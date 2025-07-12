@@ -45,6 +45,7 @@ public class ShowService {
     private final ShowReviewCommentRepository showReviewCommentRepository;
     private final LikedShowReviewCommentsRepository  likedShowReviewCommentsRepository;
     private final EpisodeReviewCommentRepository episodeReviewCommentRepository;
+    private final LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository;
 
     public ShowService(ShowReviewRepository showReviewRepository,
                        ModelMapper modelMapper,
@@ -62,7 +63,8 @@ public class ShowService {
                        EpisodeRankingRepository episodeRankingRepository,
                        ShowReviewCommentRepository showReviewCommentRepository,
                        LikedShowReviewCommentsRepository likedShowReviewCommentsRepository,
-                       EpisodeReviewCommentRepository episodeReviewCommentRepository) {
+                       EpisodeReviewCommentRepository episodeReviewCommentRepository,
+                       LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -80,6 +82,7 @@ public class ShowService {
         this.showReviewCommentRepository = showReviewCommentRepository;
         this.likedShowReviewCommentsRepository = likedShowReviewCommentsRepository;
         this.episodeReviewCommentRepository = episodeReviewCommentRepository;
+        this.likedEpisodeReviewCommentsRepository = likedEpisodeReviewCommentsRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -645,5 +648,39 @@ public class ShowService {
     public List<ReviewCommentWithUserInfoDto> getEpisodeReviewComments(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         return episodeReviewCommentRepository.findAllByReviewId(reviewId, userId);
+    }
+
+    @Transactional
+    public void likeEpisodeReviewComment(Long commentId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (!episodeReviewCommentRepository.existsById(commentId)) {
+            throw new ItemNotFoundException("Didn't find an episode review comment with ID: " + commentId);
+        }
+
+        // Check if the user has already liked the comment
+        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment(new LikedEpisodeReviewCommentId(userId, commentId));
+        if (likedEpisodeReviewCommentsRepository.existsById(likedComment.getId())) {
+            throw new AlreadyLikedException("You have already liked this episode review comment");
+        }
+
+        likedEpisodeReviewCommentsRepository.save(likedComment);
+        episodeReviewCommentRepository.incrementNumLikes(commentId);
+    }
+
+    @Transactional
+    public void unlikeEpisodeReviewComment(Long commentId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (!episodeReviewCommentRepository.existsById(commentId)) {
+            throw new ItemNotFoundException("Didn't find an episode review comment with ID: " + commentId);
+        }
+
+        // Check to ensure the user has liked the comment
+        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment(new LikedEpisodeReviewCommentId(userId, commentId));
+        if (!likedEpisodeReviewCommentsRepository.existsById(likedComment.getId())) {
+            throw new HaventLikedException("You have not liked this episode review comment");
+        }
+
+        likedEpisodeReviewCommentsRepository.delete(likedComment);
+        episodeReviewCommentRepository.decrementNumLikes(commentId);
     }
 }
