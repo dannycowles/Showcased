@@ -44,6 +44,7 @@ public class ShowService {
     private final OMDBClient omdbClient;
     private final ShowReviewCommentRepository showReviewCommentRepository;
     private final LikedShowReviewCommentsRepository  likedShowReviewCommentsRepository;
+    private final EpisodeReviewCommentRepository episodeReviewCommentRepository;
 
     public ShowService(ShowReviewRepository showReviewRepository,
                        ModelMapper modelMapper,
@@ -60,7 +61,8 @@ public class ShowService {
                        EpisodeInfoRepository episodeInfoRepository,
                        EpisodeRankingRepository episodeRankingRepository,
                        ShowReviewCommentRepository showReviewCommentRepository,
-                       LikedShowReviewCommentsRepository likedShowReviewCommentsRepository) {
+                       LikedShowReviewCommentsRepository likedShowReviewCommentsRepository,
+                       EpisodeReviewCommentRepository episodeReviewCommentRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -77,6 +79,7 @@ public class ShowService {
         this.episodeRankingRepository = episodeRankingRepository;
         this.showReviewCommentRepository = showReviewCommentRepository;
         this.likedShowReviewCommentsRepository = likedShowReviewCommentsRepository;
+        this.episodeReviewCommentRepository = episodeReviewCommentRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -620,5 +623,27 @@ public class ShowService {
 
         likedShowReviewCommentsRepository.delete(likedComment);
         showReviewCommentRepository.decrementNumLikes(commentId);
+    }
+
+    @Transactional
+    public ReviewCommentWithUserInfoDto addCommentToEpisodeReview(Long reviewId, ReviewCommentDto reviewComment, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (!episodeReviewRepository.existsById(reviewId)) {
+            throw new ItemNotFoundException("Didn't find an episode review with ID: " + reviewId);
+        }
+
+        EpisodeReviewComment newComment = new EpisodeReviewComment();
+        newComment.setUserId(userId);
+        newComment.setReviewId(reviewId);
+        newComment.setCommentText(reviewComment.getCommentText());
+        episodeReviewCommentRepository.save(newComment);
+        episodeReviewRepository.incrementNumComments(reviewId);
+
+        return episodeReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
+    }
+
+    public List<ReviewCommentWithUserInfoDto> getEpisodeReviewComments(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return episodeReviewCommentRepository.findAllByReviewId(reviewId, userId);
     }
 }

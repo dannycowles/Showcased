@@ -151,6 +151,18 @@ public class ShowController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/episode-reviews/{reviewId}/comments")
+    public ResponseEntity<ReviewCommentWithUserInfoDto> addCommentToEpisodeReview(@PathVariable Long reviewId, @RequestBody ReviewCommentDto reviewComment, HttpSession session) {
+        ReviewCommentWithUserInfoDto newComment = showService.addCommentToEpisodeReview(reviewId, reviewComment, session);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newComment);
+    }
+
+    @GetMapping("/episode-reviews/{reviewId}/comments")
+    public ResponseEntity<List<ReviewCommentWithUserInfoDto>> getEpisodeReviewComments(@PathVariable Long reviewId, HttpSession session) {
+        List<ReviewCommentWithUserInfoDto> comments = showService.getEpisodeReviewComments(reviewId, session);
+        return ResponseEntity.ok(comments);
+    }
+
 
 
 

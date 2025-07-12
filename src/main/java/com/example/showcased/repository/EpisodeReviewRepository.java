@@ -25,6 +25,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                 r.commentary,
                 r.containsSpoilers,
                 r.numLikes,
+                r.numComments,
                 r.reviewDate,
                 CASE
                     WHEN :userId IS NULL THEN FALSE
@@ -58,6 +59,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                 r.commentary,
                 r.containsSpoilers,
                 r.numLikes,
+                r.numComments,
                 r.reviewDate,
                 CASE
                     WHEN :userId IS NULL THEN FALSE
@@ -101,6 +103,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
             r.commentary,
             r.containsSpoilers,
             r.numLikes,
+            r.numComments,
             r.reviewDate,
             FALSE
         )
@@ -110,4 +113,8 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
         WHERE r.id = :id
 """)
     EpisodeReviewWithUserInfoDto findByIdWithUserInfo(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE EpisodeReview r SET r.numComments = r.numComments + 1 WHERE r.id = :reviewId")
+    void incrementNumComments(@Param("reviewId") Long reviewId);
 }

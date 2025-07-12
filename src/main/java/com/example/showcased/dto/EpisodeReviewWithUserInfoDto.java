@@ -22,6 +22,7 @@ public class EpisodeReviewWithUserInfoDto {
     private String commentary;
     private boolean containsSpoilers;
     private Long numLikes;
+    private int numComments;
     private Date reviewDate;
     @JsonProperty("isLikedByUser")
     private boolean isLikedByUser;
