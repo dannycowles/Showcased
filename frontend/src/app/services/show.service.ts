@@ -8,6 +8,7 @@ import {RoleData} from '../data/role-data';
 import {EpisodeReviewData, ShowReviewData} from '../data/reviews-data';
 import {SeasonEpisodes} from '../data/show/season-episode';
 import {Router} from '@angular/router';
+import {ReviewCommentData} from '../data/review-comment-data';
 
 @Injectable({
   providedIn: 'root'
@@ -148,6 +149,64 @@ export class ShowService {
   }
 
   /**
+   * Adds a comment to a show review by its ID
+   * @param reviewId
+   * @param data
+   */
+  async addCommentToShowReview(reviewId: number, data: {}): Promise<ReviewCommentData> {
+    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/comments`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Retrieves all comments for a show review by its ID
+   * @param reviewId
+   */
+  async getShowReviewComments(reviewId: number): Promise<ReviewCommentData[]> {
+    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/comments`, {
+      credentials: 'include'
+    });
+    return response.json();
+  }
+
+  /**
+   * Likes a show review comment by its ID
+   * @param commentId
+   */
+  async likeShowReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}/likes`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Unlikes a show review comment by its ID
+   * @param commentId
+   */
+  async unlikeShowReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}/likes`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
    * Adds a review to an episode by ID
    * @param episodeId
    * @param data
@@ -199,6 +258,64 @@ export class ShowService {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/likes`, {
       method: 'DELETE',
       credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Adds a comment to an episode review by its ID
+   * @param reviewId
+   * @param data
+   */
+  async addCommentToEpisodeReview(reviewId: number, data: {}): Promise<ReviewCommentData> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/comments`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Retrieves all comments for an episode review by its ID
+   * @param reviewId
+   */
+  async getEpisodeReviewComments(reviewId: number): Promise<ReviewCommentData[]> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/comments`, {
+      credentials: 'include'
+    });
+    return response.json();
+  }
+
+  /**
+   * Likes an episode review comment by its ID
+   * @param commentId
+   */
+  async likeEpisodeReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}/likes`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Unlikes an episode review comment by its ID
+   * @param commentId
+   */
+  async unlikeEpisodeReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}/likes`, {
+      method: 'DELETE',
+      credentials: 'include',
     });
 
     this.checkUnauthorizedUser(response);
