@@ -1,3 +1,5 @@
+import {ReviewCommentData} from './review-comment-data';
+
 interface BaseReviewData {
   readonly id: number;
   readonly showId: number;
@@ -9,8 +11,12 @@ interface BaseReviewData {
   readonly commentary: string;
   readonly containsSpoilers: boolean;
   numLikes: number;
+  numComments: number;
+  comments?: ReviewCommentData[];
   readonly reviewDate: string;
   isLikedByUser: boolean;
+  isLoadingComments?: boolean;
+  areCommentsHidden?: boolean;
 }
 
 export interface ShowReviewData extends BaseReviewData { }

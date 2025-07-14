@@ -1,0 +1,12 @@
+<div class="mb-5 d-flex align-items-start border border-primary">
+  <img class="profile-picture" [ngSrc]="comment.profilePicture" alt="Comment Profile Picture" width="100" height="100">
+  <div class="ms-3">
+    <h4><a [routerLink]="['/user', comment.userId]" class="text-dark">{{comment.username}}</a></h4>
+    <p>{{utilsService.getRelativeDate(comment.createdAt)}}</p>
+    <p>{{comment.commentText}}</p>
+  </div>
+  <div class="ms-auto me-5 d-flex align-items-center">
+    <yt-button-heart [isLiked]="comment.isLikedByUser" [size]="heartSize" (click)="toggleCommentLikeState()"></yt-button-heart>
+    <div id="numLikes">{{comment.numLikes}}</div>
+  </div>
+</div>

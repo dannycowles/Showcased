@@ -6,10 +6,6 @@
   border-radius: 50%;
 }
 
-.review-heart:hover {
-  cursor: pointer;
-}
-
-#like-count {
+#numLikes {
   font-size: 1.5rem;
 }
