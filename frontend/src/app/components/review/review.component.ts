@@ -28,6 +28,8 @@ export class ReviewComponent {
   readonly heartSize = 100;
   commentText: string = "";
   showCommentBox: boolean = false;
+  isLoadingComments: boolean = false;
+  areCommentsHidden: boolean = true;
 
   readonly maxCommentLength = 1000;
   commentMessage: string = "";
@@ -70,11 +72,21 @@ export class ReviewComponent {
   }
 
   async getReviewComments() {
+    // If we have already retrieved the comments, use those to avoid another backend call
+    if (this.review?.comments) {
+      this.areCommentsHidden = false;
+      return;
+    }
+
     try {
+      this.isLoadingComments = true;
       const handler = this.reviewHandlers[this.reviewType];
       this.review.comments = await handler.getComments();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.areCommentsHidden = false;
+      this.isLoadingComments = false;
     }
   }
 

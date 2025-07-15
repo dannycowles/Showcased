@@ -12,7 +12,7 @@
     </div>
 
     @if (review.numComments > 0) {
-      <button type="button" class="btn btn-secondary" (click)="getReviewComments()">View {{review.numComments}} repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
+      <button type="button" class="btn btn-secondary" [hidden]="!areCommentsHidden" (click)="getReviewComments()">View {{review.numComments}} repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
       <button type="button" class="btn btn-secondary ms-2" (click)="resetCommentBox()">Reply</button>
       <br>
       <br>
@@ -35,9 +35,16 @@
   </div>
   <div class="my-3" style="color: green">{{commentMessage}}</div>
 
-  @if (review.numComments > 0) {
-    @for (comment of review.comments; track comment.id) {
-      <app-comment [comment]="comment" [reviewType]="reviewType"></app-comment>
-    }
+  @if (isLoadingComments) {
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  }@else if (review.numComments > 0) {
+    <div [hidden]="areCommentsHidden">
+      @for (comment of review.comments; track comment.id) {
+        <app-comment [comment]="comment" [reviewType]="reviewType"></app-comment>
+      }
+    </div>
   }
+  <button type="button" [hidden]="areCommentsHidden" (click)="areCommentsHidden = true" class="btn btn-secondary">Hide Repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
 </div>
