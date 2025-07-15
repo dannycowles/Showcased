@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, ElementRef, Input, ViewChild} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {NgOptimizedImage} from '@angular/common';
 import {EpisodeReviewData, ShowReviewData} from '../../data/reviews-data';
@@ -23,6 +23,7 @@ import {CommentComponent} from '../comment/comment.component';
   standalone: true,
 })
 export class ReviewComponent {
+  @ViewChild("commentBox") commentBoxRef: ElementRef<HTMLTextAreaElement>;
   @Input({ required: true }) review: EpisodeReviewData | ShowReviewData;
   @Input({ required: true }) reviewType: ReviewType;
   readonly heartSize = 100;
@@ -93,6 +94,13 @@ export class ReviewComponent {
   resetCommentBox() {
     this.showCommentBox = !this.showCommentBox;
     this.commentText = "";
+
+    if (this.showCommentBox) {
+      setTimeout(() => {
+        this.commentBoxRef.nativeElement.focus();
+        this.commentBoxRef.nativeElement.scrollIntoView();
+      });
+    }
   }
 
   async addComment() {
