@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../../../services/auth.service';
 import $ from 'jquery';
 import 'jquery-serializejson';
+import {LoginDto} from '../../../data/dto/login-dto';
 
 @Component({
   selector: 'app-login-page',
@@ -34,7 +35,7 @@ export class LoginPageComponent implements OnInit {
   async loginValidationSuccess() {
     try {
       // @ts-ignore
-      let data = $('#login-form').serializeJSON();
+      const data: LoginDto = $('#login-form').serializeJSON();
       await this.authService.loginUser(data);
 
       // If the login attempt was successful route the user back to the page they were previously on

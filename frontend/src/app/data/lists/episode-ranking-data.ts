@@ -1,5 +1,5 @@
 export interface EpisodeRankingData {
-  readonly id: number;
+  readonly episodeId: number;
   readonly showId: number;
   rankNum: number;
   readonly showTitle: string;

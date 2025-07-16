@@ -9,6 +9,8 @@ import {EpisodeReviewData, ShowReviewData} from '../data/reviews-data';
 import {SeasonEpisodes} from '../data/show/season-episode';
 import {Router} from '@angular/router';
 import {ReviewCommentData} from '../data/review-comment-data';
+import {AddCommentDto} from '../data/dto/add-comment-dto';
+import {AddEpisodeReviewDto, AddShowReviewDto} from '../data/dto/add-review-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -106,7 +108,7 @@ export class ShowService {
    * @param showId
    * @param data
    */
-  async addShowReview(showId:number, data: {}): Promise<Response> {
+  async addShowReview(showId:number, data: AddShowReviewDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
       method: 'POST',
       credentials: 'include',
@@ -153,7 +155,7 @@ export class ShowService {
    * @param reviewId
    * @param data
    */
-  async addCommentToShowReview(reviewId: number, data: {}): Promise<ReviewCommentData> {
+  async addCommentToShowReview(reviewId: number, data: AddCommentDto): Promise<ReviewCommentData> {
     const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/comments`, {
       method: 'POST',
       credentials: 'include',
@@ -211,7 +213,7 @@ export class ShowService {
    * @param episodeId
    * @param data
    */
-  async addEpisodeReview(episodeId: number, data: {}): Promise<Response> {
+  async addEpisodeReview(episodeId: number, data: AddEpisodeReviewDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews`, {
       method: 'POST',
       credentials: 'include',
@@ -269,7 +271,7 @@ export class ShowService {
    * @param reviewId
    * @param data
    */
-  async addCommentToEpisodeReview(reviewId: number, data: {}): Promise<ReviewCommentData> {
+  async addCommentToEpisodeReview(reviewId: number, data: AddCommentDto): Promise<ReviewCommentData> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/comments`, {
       method: 'POST',
       credentials: 'include',

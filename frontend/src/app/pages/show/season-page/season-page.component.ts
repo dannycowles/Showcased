@@ -4,6 +4,7 @@ import {SeasonData} from '../../../data/show/season-data';
 import {ShowService} from '../../../services/show.service';
 import {UtilsService} from '../../../services/utils.service';
 import {ProfileService} from '../../../services/profile.service';
+import {AddToSeasonRankingList} from '../../../data/dto/add-to-list-dto';
 
 
 @Component({
@@ -51,8 +52,7 @@ export class SeasonPageComponent implements OnInit {
 
   async addSeasonToRankingList() {
     try {
-      const data = {
-        id: this.season.id,
+      const data: AddToSeasonRankingList = {
         showId: this.showId,
         season: this.seasonNumber,
         posterPath: this.season.posterPath,

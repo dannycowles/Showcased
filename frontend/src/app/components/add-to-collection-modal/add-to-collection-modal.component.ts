@@ -5,6 +5,8 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {UtilsService} from '../../services/utils.service';
 import {ProfileService} from '../../services/profile.service';
 import {ShowListData} from '../../data/lists/show-list-data';
+import {CreateCollectionDto} from '../../data/dto/create-collection-dto';
+import {AddToCollection} from '../../data/dto/add-to-list-dto';
 
 @Component({
   selector: 'app-add-to-collection-modal',
@@ -50,7 +52,7 @@ export class AddToCollectionModalComponent implements OnInit {
 
   async createNewCollection() {
     try {
-      const data = {
+      const data: CreateCollectionDto = {
         collectionName: this.newCollectionName
       };
 
@@ -73,9 +75,9 @@ export class AddToCollectionModalComponent implements OnInit {
 
   async addToCollection() {
     try {
-      const showData = {
+      const showData: AddToCollection = {
         showId: this.show.showId,
-        title: this.show.title,
+        showTitle: this.show.title,
         posterPath: this.show.posterPath
       };
 

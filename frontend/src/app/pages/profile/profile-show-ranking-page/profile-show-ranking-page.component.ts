@@ -4,6 +4,7 @@ import { ShowRankingData } from '../../../data/lists/show-ranking-data';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddShowType} from '../../../data/enums';
+import {UpdateShowRankingDto} from '../../../data/dto/update-list-ranks-dto';
 
 @Component({
   selector: 'app-profile-show-ranking-page',
@@ -55,8 +56,8 @@ export class ProfileShowRankingPageComponent implements OnInit {
 
   async updateShowRankingList() {
     try {
-      let updates = this.rankingEntries.map((show) => ({
-        showId: show.showId,
+      const updates: UpdateShowRankingDto[] = this.rankingEntries.map((show) => ({
+        id: show.showId,
         rankNum: show.rankNum,
       }));
       await this.profileService.updateShowRankingList(updates);

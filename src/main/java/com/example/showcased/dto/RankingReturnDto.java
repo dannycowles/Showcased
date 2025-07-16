@@ -10,6 +10,6 @@ import lombok.Setter;
 public class RankingReturnDto {
     private Long showId;
     private Long rankNum;
-    private String title;
+    private String showTitle;
     private String posterPath;
 }

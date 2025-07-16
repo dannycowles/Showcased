@@ -11,6 +11,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {SearchCharactersModalComponent} from '../../../components/search-characters-modal/search-characters-modal.component';
 import {SearchResultData} from '../../../data/search-result-data';
+import {UpdateCharacterRankingDto} from '../../../data/dto/update-list-ranks-dto';
 
 @Component({
   selector: 'app-profile-character-ranking-page',
@@ -124,7 +125,7 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
 
   async updateCharacterRankingList() {
     try {
-      const data = {
+      const data: UpdateCharacterRankingDto = {
         characterType: this.characterType != "side" ? this.characterType.slice(0,-1) : this.characterType,
         updates: this.characterRankings[this.characterType].map(character => ({
           id: character.id,

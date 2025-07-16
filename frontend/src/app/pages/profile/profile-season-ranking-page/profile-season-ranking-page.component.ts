@@ -5,6 +5,7 @@ import {SearchShowsModalComponent} from '../../../components/search-shows-modal/
 import {SeasonSelectModalComponent} from '../../../components/season-select-modal/season-select-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SearchResultData} from '../../../data/search-result-data';
+import {UpdateSeasonRankingDto} from '../../../data/dto/update-list-ranks-dto';
 
 @Component({
   selector: 'app-profile-season-ranking-page',
@@ -76,9 +77,9 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
 
   async updateSeasonRankingList() {
     try {
-      let updates = this.rankingEntries.map(season => ({
-        "id": season.id,
-        "rankNum": season.rankNum
+      const updates: UpdateSeasonRankingDto[] = this.rankingEntries.map(season => ({
+        id: season.id,
+        rankNum: season.rankNum
       }));
       await this.profileService.updateSeasonRankingList(updates);
     } catch(error) {

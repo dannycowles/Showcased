@@ -1,4 +1,8 @@
 import {Injectable} from "@angular/core";
+import {LoginDto} from '../data/dto/login-dto';
+import {RegisterDto} from '../data/dto/register-dto';
+import {ValidateOtpDto} from '../data/dto/validate-otp-dto';
+import {ChangePasswordDto} from '../data/dto/change-password-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +14,8 @@ export class AuthenticationService {
    * Attempts to log in to an account using given email & password
    * @param data
    */
-  async loginUser(data: {}) {
-      let response = await fetch(`${this.baseUrl}/login`, {
+  async loginUser(data: LoginDto) {
+      const response = await fetch(`${this.baseUrl}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -31,11 +35,11 @@ export class AuthenticationService {
    */
   async loginStatus(): Promise<boolean> {
     try {
-      let response = await fetch(`${this.baseUrl}/login-status`, {
+      const response = await fetch(`${this.baseUrl}/login-status`, {
         credentials: 'include'
       });
 
-      let data = await response.json();
+      const data = await response.json();
       return data["loggedIn"];
     } catch (error) {
       throw error;
@@ -47,8 +51,8 @@ export class AuthenticationService {
    * will provide feedback if username or email is taken
    * @param data
    */
-  async registerUser(data: {}) {
-    let response = await fetch(`${this.baseUrl}/register`, {
+  async registerUser(data: RegisterDto) {
+    const response = await fetch(`${this.baseUrl}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -58,7 +62,7 @@ export class AuthenticationService {
 
     // If there is an email/username conflict return the error
     if (response.status === 409) {
-      let text = await response.json();
+      const text = await response.json();
       throw new Error(text["error"]);
     }
   }
@@ -68,9 +72,9 @@ export class AuthenticationService {
    * @param username
    */
   async checkUsernameAvailability(username: string): Promise<boolean> {
-    let response = await fetch(`${this.baseUrl}/check-username/${username}`);
+    const response = await fetch(`${this.baseUrl}/check-username/${username}`);
 
-    let text = await response.json();
+    const text = await response.json();
     return text["taken"];
   }
 
@@ -96,7 +100,7 @@ export class AuthenticationService {
    * Validates the given OTP against the backend DB
    * @param data
    */
-  async validateOTP(data: {}): Promise<Response> {
+  async validateOTP(data: ValidateOtpDto): Promise<Response> {
     try {
       return await fetch(`${this.baseUrl}/validate-otp`, {
         method: "POST",
@@ -115,9 +119,9 @@ export class AuthenticationService {
    * Used to change/reset a user's password
    * @param data
    */
-  async changePassword(data: {}) {
+  async changePassword(data: ChangePasswordDto) {
     try {
-      let response = await fetch(`${this.baseUrl}/change-password`, {
+      const response = await fetch(`${this.baseUrl}/change-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class EpisodeRankingReturnDto {
-    private Long id;
+    private Long episodeId;
     private Long showId;
     private Long rankNum;
     private String showTitle;

@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class UpdateCollectionRankingDto {
-    private Long showId;
+    private Long id;
 }

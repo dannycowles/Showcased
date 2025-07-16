@@ -5,7 +5,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 public class EpisodeRankingDto {
-    private Long id;
+    private Long episodeId;
     private Long showId;
     private String showTitle;
     private String episodeTitle;

@@ -7,6 +7,7 @@ import {RoleData} from '../../data/role-data';
 import {UtilsService} from '../../services/utils.service';
 import {ProfileService} from '../../services/profile.service';
 import {DynamicRankingData} from '../../data/lists/dynamic-ranking-data';
+import {AddToDynamicRankingList} from '../../data/dto/add-to-list-dto';
 
 @Component({
   selector: 'app-search-characters-dynamic-modal',
@@ -64,7 +65,7 @@ export class SearchCharactersDynamicModalComponent implements OnInit {
         this.messageColor = "red";
       }
 
-      const data = {
+      const data: AddToDynamicRankingList = {
         character1Id: this.selectedCharacter1.id,
         character1Name: this.selectedCharacter1.name,
         character2Id: this.selectedCharacter2.id,

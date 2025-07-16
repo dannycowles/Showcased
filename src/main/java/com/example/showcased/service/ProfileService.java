@@ -94,6 +94,7 @@ public class ProfileService {
     private void addToShowInfoRepository(WatchSendDto show) {
         if (!showInfoRepository.existsById(show.getShowId())) {
             ShowInfo showInfo = modelMapper.map(show, ShowInfo.class);
+            showInfo.setTitle(show.getShowTitle());
             showInfoRepository.save(showInfo);
         }
     }
@@ -295,13 +296,13 @@ public class ProfileService {
     public void addEpisodeToRankingList(EpisodeRankingDto episode, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         EpisodeRanking ranking = new EpisodeRanking();
-        EpisodeRankingId rankingId = new EpisodeRankingId(userId, episode.getId());
+        EpisodeRankingId rankingId = new EpisodeRankingId(userId, episode.getEpisodeId());
         ranking.setId(rankingId);
 
         // If the episode doesn't exist in the episode info table already we add it for easy access
-        if (!episodeInfoRepository.existsById(episode.getId())) {
+        if (!episodeInfoRepository.existsById(episode.getEpisodeId())) {
             EpisodeInfo episodeInfo = new EpisodeInfo();
-            episodeInfo.setId(episode.getId());
+            episodeInfo.setId(episode.getEpisodeId());
             episodeInfo.setShowId(episode.getShowId());
             episodeInfo.setShowTitle(episode.getShowTitle());
             episodeInfo.setEpisodeTitle(episode.getEpisodeTitle());
@@ -341,7 +342,7 @@ public class ProfileService {
         List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByIdUserId(userId, Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             EpisodeRanking ranking = new EpisodeRanking();
-            ranking.setId(new EpisodeRankingId(userId, rankings.get(i).getId()));
+            ranking.setId(new EpisodeRankingId(userId, rankings.get(i).getEpisodeId()));
             ranking.setRankNum(i + 1L);
             episodeRankingRepository.save(ranking);
         }
@@ -351,7 +352,7 @@ public class ProfileService {
         Long userId = (Long) session.getAttribute("user");
         for (UpdateEpisodeRankingDto episode : episodes) {
             EpisodeRanking newRanking = new EpisodeRanking();
-            newRanking.setId(new EpisodeRankingId(userId, episode.getEpisodeId()));
+            newRanking.setId(new EpisodeRankingId(userId, episode.getId()));
             newRanking.setRankNum(episode.getRankNum());
             episodeRankingRepository.save(newRanking);
         }
@@ -434,13 +435,15 @@ public class ProfileService {
         Long userId = (Long) session.getAttribute("user");
 
         // Check to ensure the character type is valid
-        if (!Arrays.asList(validCharacterTypes).contains(character.getType())) {
-            throw new InvalidCharacterType("Invalid character type: " + character.getType());
+        if (!Arrays.asList(validCharacterTypes).contains(character.getCharacterType())) {
+            throw new InvalidCharacterType("Invalid character type: " + character.getCharacterType());
         }
 
         // Check if the character already exists in the character info table, if not add it
-        if (!characterInfoRepository.existsById(character.getId())) {
+        if (!characterInfoRepository.existsById(character.getCharacterId())) {
             CharacterInfo characterInfo = modelMapper.map(character, CharacterInfo.class);
+            characterInfo.setId(character.getCharacterId());
+            characterInfo.setName(character.getCharacterName());
             characterInfoRepository.save(characterInfo);
         }
 
@@ -451,8 +454,8 @@ public class ProfileService {
         }
 
         CharacterRanking ranking = new CharacterRanking();
-        ranking.setId(new CharacterRankingId(userId, character.getId()));
-        ranking.setCharacterType(character.getType());
+        ranking.setId(new CharacterRankingId(userId, character.getCharacterId()));
+        ranking.setCharacterType(character.getCharacterType());
 
         // Check if the character is already on the user's list
         if (characterRankingRepository.existsById(ranking.getId())) {
@@ -460,7 +463,7 @@ public class ProfileService {
         }
 
         // If user's ranking list for that type is empty, start at 1 else append to end
-        Integer maxRank = characterRankingRepository.findMaxRankNumByCharacterType(userId, character.getType());
+        Integer maxRank = characterRankingRepository.findMaxRankNumByCharacterType(userId, character.getCharacterType());
         if (maxRank != null) {
             ranking.setRankNum(maxRank + 1);
         } else {
@@ -653,7 +656,7 @@ public class ProfileService {
                 List<ShowsInCollection> updatedShows = new ArrayList<>();
                 for (int i = 0; i < updates.size(); i++) {
                     ShowsInCollection show = new ShowsInCollection();
-                    show.setId(new ShowsInCollectionId(collectionId, updates.get(i).getShowId()));
+                    show.setId(new ShowsInCollectionId(collectionId, updates.get(i).getId()));
                     show.setRankNum(updateCollection.isRanked() ? i + 1L : null);
                     updatedShows.add(show);
                 }

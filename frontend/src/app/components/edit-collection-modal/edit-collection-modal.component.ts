@@ -3,6 +3,7 @@ import {UtilsService} from '../../services/utils.service';
 import {ProfileService} from '../../services/profile.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
+import {UpdateCollectionDetails} from '../../data/dto/update-collection-details';
 
 @Component({
   selector: 'app-edit-collection-modal',
@@ -48,7 +49,7 @@ export class EditCollectionModalComponent implements OnInit {
         return;
       }
 
-      const updates: any = {};
+      const updates: UpdateCollectionDetails = {};
       if (this.originalName !== this.collectionName) updates.collectionName = this.collectionName;
       if (this.originalDescription !== this.collectionDescription) updates.description = this.collectionDescription;
 

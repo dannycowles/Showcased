@@ -10,6 +10,8 @@ import {AddReviewModalComponent} from '../../../components/add-review-modal/add-
 import {EpisodeReviewData} from '../../../data/reviews-data';
 import {ReviewType} from '../../../data/enums';
 import {AuthenticationService} from '../../../services/auth.service';
+import {AddEpisodeReviewDto} from '../../../data/dto/add-review-dto';
+import {AddToEpisodeRankingList} from '../../../data/dto/add-to-list-dto';
 
 @Component({
   selector: 'app-episode-page',
@@ -53,14 +55,14 @@ export class EpisodePageComponent implements OnInit {
   // Add the episode to the user's ranking list
   async addToRankingList() {
     try {
-      const data = {
-        "id": this.episode.id,
-        "showId": this.showId,
-        "showTitle": this.episode.showTitle,
-        "episodeTitle": this.episode.episodeTitle,
-        "season": this.seasonNumber,
-        "episode": this.episodeNumber,
-        "posterPath": this.episode.stillPath
+      const data: AddToEpisodeRankingList = {
+        episodeId: this.episode.id,
+        showId: this.showId,
+        showTitle: this.episode.showTitle,
+        episodeTitle: this.episode.episodeTitle,
+        season: this.seasonNumber,
+        episode: this.episodeNumber,
+        posterPath: this.episode.stillPath
       };
 
       const response = await this.profileService.addEpisodeToRankingList(data);
@@ -97,7 +99,7 @@ export class EpisodePageComponent implements OnInit {
     addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.episode.showTitle} S${this.seasonNumber} E${this.episodeNumber}: ${this.episode.episodeTitle}`;
 
     const result = await addReviewModalRef.result;
-    const reviewData = {
+    const reviewData: AddEpisodeReviewDto = {
       rating: result.rating,
       showId: this.showId,
       showTitle: this.episode.showTitle,

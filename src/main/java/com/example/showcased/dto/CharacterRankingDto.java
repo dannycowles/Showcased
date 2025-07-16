@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class CharacterRankingDto {
-    private String id;
+    private String characterId;
     private Long showId;
-    private String name;
-    private String type;
-    private String title;
+    private String characterName;
+    private String characterType;
+    private String showTitle;
     private String posterPath;
 }

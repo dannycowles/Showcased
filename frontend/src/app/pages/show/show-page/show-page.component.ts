@@ -12,6 +12,8 @@ import {AddReviewModalComponent} from '../../../components/add-review-modal/add-
 import {AddToCollectionModalComponent} from '../../../components/add-to-collection-modal/add-to-collection-modal.component';
 import {AuthenticationService} from '../../../services/auth.service';
 import {ReviewType} from '../../../data/enums';
+import {AddShowReviewDto} from '../../../data/dto/add-review-dto';
+import {AddToShowRankingList, AddToWatchingListDto, AddToWatchlistDto} from '../../../data/dto/add-to-list-dto';
 
 @Component({
   selector: 'app-show-page',
@@ -86,7 +88,7 @@ export class ShowPageComponent implements OnInit {
   }
 
   async reviewSubmitted(data: any) {
-    const reviewData = {
+    const reviewData: AddShowReviewDto = {
       rating: data.rating,
       showTitle: this.show.title,
       commentary: data.commentary,
@@ -131,10 +133,10 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      const data = {
-        "showId": this.showId,
-        "title": this.show.title,
-        "posterPath": this.show
+      const data: AddToWatchlistDto = {
+        showId: this.showId,
+        showTitle: this.show.title,
+        posterPath: this.show.posterPath
       };
       const response = await this.profileService.addShowToWatchlist(data);
 
@@ -165,12 +167,12 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      let data = {
-        "showId": this.showId,
-        "title": this.show.title,
-        "posterPath": this.show.posterPath
+      const data: AddToWatchingListDto = {
+        showId: this.showId,
+        showTitle: this.show.title,
+        posterPath: this.show.posterPath
       };
-      let response = await this.profileService.addShowToWatchingList(data);
+      const response = await this.profileService.addShowToWatchingList(data);
 
       if (response.status == 201) {
         // Display a toast that confirms the show was successfully added
@@ -199,10 +201,10 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      const data = {
-        "showId": this.showId,
-        "title": this.show.title,
-        "posterPath": this.show.posterPath
+      const data: AddToShowRankingList = {
+        showId: this.showId,
+        showTitle: this.show.title,
+        posterPath: this.show.posterPath
       };
       const response = await this.profileService.addShowToRankingList(data);
 

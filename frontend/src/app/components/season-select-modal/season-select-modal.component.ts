@@ -3,6 +3,7 @@ import {NgbActiveModal, NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {ShowService} from '../../services/show.service';
 import {SeasonRankingData} from '../../data/lists/season-ranking-data';
 import {ProfileService} from '../../services/profile.service';
+import {AddToSeasonRankingList} from '../../data/dto/add-to-list-dto';
 
 @Component({
   selector: 'app-season-select-modal',
@@ -49,10 +50,11 @@ export class SeasonSelectModalComponent implements OnInit {
 
   async addSeasonToRankingList() {
     try {
-      const data = {
+      const data: AddToSeasonRankingList = {
         showId: this.selectedShowId,
         season: this.selectedSeason,
-        showTitle: this.selectedShowTitle
+        showTitle: this.selectedShowTitle,
+        posterPath: ''
       }
       const response = await this.profileService.addSeasonToRankingList(data);
 

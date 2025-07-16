@@ -1,6 +1,6 @@
 export interface ShowRankingData {
   readonly showId: number;
   rankNum: number;
-  readonly title: string;
+  readonly showTitle: string;
   readonly posterPath: string;
 }

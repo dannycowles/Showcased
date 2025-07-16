@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateShowRankingDto {
-    private Long showId;
+    private Long id;
     private Long rankNum;
 }

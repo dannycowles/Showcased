@@ -6,6 +6,6 @@ import lombok.Data;
 public class WatchSendDto {
     private Long userId;
     private Long showId;
-    private String title;
+    private String showTitle;
     private String posterPath;
 }

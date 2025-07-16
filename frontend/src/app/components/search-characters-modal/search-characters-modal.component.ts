@@ -7,6 +7,7 @@ import {UtilsService} from '../../services/utils.service';
 import {SearchResultData} from '../../data/search-result-data';
 import {ProfileService} from '../../services/profile.service';
 import {CharacterRankingData} from '../../data/lists/character-ranking-data';
+import {AddToCharacterRankingList} from '../../data/dto/add-to-list-dto';
 
 @Component({
   selector: 'app-search-characters-modal',
@@ -65,12 +66,12 @@ export class SearchCharactersModalComponent implements OnInit {
 
   async addCharacter() {
     try {
-      const data = {
-        id: this.selectedCharacter.id,
+      const data: AddToCharacterRankingList = {
+        characterId: this.selectedCharacter.id,
         showId: this.selectedShow.id,
-        name: this.selectedCharacter.name,
-        type: this.selectedCharacterType !== "side" ? this.selectedCharacterType.slice(0, -1) : this.selectedCharacterType,
-        title: this.selectedShow.title,
+        characterName: this.selectedCharacter.name,
+        characterType: this.selectedCharacterType !== "side" ? this.selectedCharacterType.slice(0, -1) : this.selectedCharacterType,
+        showTitle: this.selectedShow.title,
         posterPath: this.selectedShow.posterPath
       }
 

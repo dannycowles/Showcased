@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {AuthenticationService} from '../../../services/auth.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {ValidateOtpDto} from '../../../data/dto/validate-otp-dto';
+import {ChangePasswordDto} from '../../../data/dto/change-password-dto';
 
 @Component({
   selector: 'app-reset-password-page',
@@ -29,7 +31,7 @@ export class ResetPasswordPageComponent{
       return;
     }
 
-    let data: {} = {
+    const data: ChangePasswordDto = {
       email: this.email,
       newPassword: this.password.value
     };
@@ -55,7 +57,7 @@ export class ResetPasswordPageComponent{
 
   async verifyCode() {
     try {
-      let data = {
+      let data: ValidateOtpDto = {
         email: this.email,
         otp: this.otp
       };

@@ -8,6 +8,7 @@ import {ShowService} from '../../services/show.service';
 import {ReviewType} from '../../data/enums';
 import {Router, RouterLink} from '@angular/router';
 import {CommentComponent} from '../comment/comment.component';
+import {AddCommentDto} from '../../data/dto/add-comment-dto';
 
 @Component({
   selector: 'app-review',
@@ -45,12 +46,13 @@ export class ReviewComponent{
       like: () => this.showService.likeShowReview(this.review.id),
       unlike: () => this.showService.unlikeShowReview(this.review.id),
       getComments: () => this.showService.getShowReviewComments(this.review.id),
+      addComment: (comment: AddCommentDto) => this.showService.addCommentToShowReview(this.review.id, comment)
     },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReview(this.review.id),
       unlike: () => this.showService.unlikeEpisodeReview(this.review.id),
-      getComments: () =>
-        this.showService.getEpisodeReviewComments(this.review.id),
+      getComments: () => this.showService.getEpisodeReviewComments(this.review.id),
+      addComment: (comment: AddCommentDto) => this.showService.addCommentToEpisodeReview(this.review.id, comment)
     },
   };
 
@@ -110,10 +112,11 @@ export class ReviewComponent{
 
   async addComment() {
     try {
-      const data = {
+      const data: AddCommentDto = {
         commentText: this.commentText
       };
-      const newComment = await this.showService.addCommentToShowReview(this.review.id, data);
+      const handler = this.reviewHandlers[this.reviewType];
+      const newComment = await handler.addComment(data);
 
       // If the comments are already loaded from the backend, push the newComment
       if (this.review.comments) {

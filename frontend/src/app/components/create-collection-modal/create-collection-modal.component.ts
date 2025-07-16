@@ -3,6 +3,7 @@ import {FormsModule} from "@angular/forms";
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {UtilsService} from '../../services/utils.service';
 import {ProfileService} from '../../services/profile.service';
+import {CreateCollectionDto} from '../../data/dto/create-collection-dto';
 
 @Component({
   selector: 'app-create-collection-modal',
@@ -25,7 +26,7 @@ export class CreateCollectionModalComponent {
 
   async createNewCollection() {
     try {
-      const data = {
+      const data: CreateCollectionDto = {
         collectionName: this.newCollectionName
       };
 

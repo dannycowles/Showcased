@@ -11,6 +11,7 @@ import {RoleData} from '../../../data/role-data';
 import {
   SearchCharactersDynamicModalComponent
 } from '../../../components/search-characters-dynamic-modal/search-characters-dynamic-modal.component';
+import {UpdateDynamicRankingDto} from '../../../data/dto/update-list-ranks-dto';
 
 @Component({
   selector: 'app-profile-dynamics-ranking-page',
@@ -97,7 +98,7 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
 
   async updateDynamicRankingList() {
     try {
-      const updates = this.dynamics.map(dynamic => ({
+      const updates: UpdateDynamicRankingDto[] = this.dynamics.map(dynamic => ({
         id: dynamic.id,
         rankNum: dynamic.rankNum
       }));

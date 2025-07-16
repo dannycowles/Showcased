@@ -6,6 +6,7 @@ import {SearchShowsModalComponent} from '../../../components/search-shows-modal/
 import {SeasonSelectModalComponent} from '../../../components/season-select-modal/season-select-modal.component';
 import {EpisodeSelectModalComponent} from '../../../components/episode-select-modal/episode-select-modal.component';
 import {SearchResultData} from '../../../data/search-result-data';
+import {UpdateEpisodeRankingDto} from '../../../data/dto/update-list-ranks-dto';
 
 @Component({
   selector: 'app-profile-episode-ranking-page',
@@ -90,7 +91,7 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
       await this.profileService.removeEpisodeFromRankingList(removeId);
 
       // Remove the episode from entries shown to the user
-      this.rankingEntries = this.rankingEntries.filter(show => show.id !== removeId);
+      this.rankingEntries = this.rankingEntries.filter(episode => episode.episodeId !== removeId);
     } catch(error) {
       console.error(error);
     }
@@ -98,9 +99,9 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
 
   async updateEpisodeRankingList() {
     try {
-      const updates = this.rankingEntries.map(episode => ({
-        "episodeId": episode.id,
-        "rankNum": episode.rankNum
+      const updates: UpdateEpisodeRankingDto[] = this.rankingEntries.map(episode => ({
+        id: episode.episodeId,
+        rankNum: episode.rankNum
       }));
       await this.profileService.updateEpisodeRankingList(updates);
     } catch(error) {

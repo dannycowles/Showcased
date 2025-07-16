@@ -85,7 +85,7 @@ export class SearchShowsModalComponent {
       const selectedShow = this.selectedShow;
       const showData = {
         showId: this.selectedShowId,
-        title: selectedShow.title,
+        showTitle: selectedShow.title,
         posterPath: selectedShow.posterPath
       };
 

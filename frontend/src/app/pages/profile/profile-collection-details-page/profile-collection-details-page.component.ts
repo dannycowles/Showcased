@@ -12,6 +12,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
 import {AddShowType} from '../../../data/enums';
 import {EditCollectionModalComponent} from '../../../components/edit-collection-modal/edit-collection-modal.component';
+import {UpdateCollectionDetails} from '../../../data/dto/update-collection-details';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -80,7 +81,7 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
     const visibility = $('#visibility-radios input:radio:checked').val() as "private" | "public";
 
     try {
-      const data = {
+      const data: UpdateCollectionDetails = {
         isPrivate: visibility === 'private'
       };
       await this.profileService.updateCollection(this.collectionId, data);
@@ -116,12 +117,11 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
 
   async updateCollectionRanking() {
     try {
-      const data = {
+      const data: UpdateCollectionDetails = {
         isRanked: this.collectionData.isRanked,
-        shows: this.collectionData.shows.map(show => {
-          return { showId: show.showId };
-        })
-      };
+        shows: this.collectionData.shows.map(show => ({
+          id: show.showId
+      }))};
       await this.profileService.updateCollection(this.collectionId, data);
     } catch (error) {
       console.error(error);

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../../../services/auth.service';
 import $ from 'jquery';
 import 'jquery-serializejson';
+import {RegisterDto} from '../../../data/dto/register-dto';
 
 @Component({
   selector: 'app-register-page',
@@ -35,7 +36,7 @@ export class RegisterPageComponent implements OnInit {
   async registerValidationSuccess() {
     try {
       // @ts-ignore
-      let data = $("#register-form").serializeJSON();
+      let data: RegisterDto = $("#register-form").serializeJSON();
       await this.authService.registerUser(data);
 
 

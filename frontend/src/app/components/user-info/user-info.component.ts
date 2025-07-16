@@ -7,6 +7,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UtilsService} from '../../services/utils.service';
 import {UserSocialData} from '../../data/user-social-data';
 import {RouterLink} from '@angular/router';
+import {UpdateProfileDetailsDto} from '../../data/dto/update-profile-details-dto';
+import {AddSocialDto} from '../../data/dto/add-social-dto';
 
 @Component({
   selector: 'app-user-info',
@@ -86,7 +88,7 @@ export class UserInfoComponent implements OnInit {
     }
 
     try {
-      const data = {
+      const data: UpdateProfileDetailsDto = {
         bio: this.newBio
       };
 
@@ -117,7 +119,7 @@ export class UserInfoComponent implements OnInit {
 
   addSocialAccount(social: UserSocialData) {
     try {
-      const data = {
+      const data: AddSocialDto = {
         socialId: social.socialId,
         handle: social.handle
       };

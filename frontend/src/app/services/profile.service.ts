@@ -10,6 +10,23 @@ import { SingleCollectionData } from '../data/single-collection-data';
 import { ShowListData } from '../data/lists/show-list-data';
 import {DynamicRankingData} from '../data/lists/dynamic-ranking-data';
 import {Router} from '@angular/router';
+import {UpdateProfileDetailsDto} from '../data/dto/update-profile-details-dto';
+import {AddSocialDto} from '../data/dto/add-social-dto';
+import {
+  AddToCharacterRankingList, AddToCollection, AddToDynamicRankingList,
+  AddToEpisodeRankingList, AddToSeasonRankingList,
+  AddToShowRankingList,
+  AddToWatchingListDto,
+  AddToWatchlistDto
+} from '../data/dto/add-to-list-dto';
+import {
+  UpdateCharacterRankingDto, UpdateDynamicRankingDto,
+  UpdateEpisodeRankingDto,
+  UpdateSeasonRankingDto,
+  UpdateShowRankingDto
+} from '../data/dto/update-list-ranks-dto';
+import {CreateCollectionDto} from '../data/dto/create-collection-dto';
+import {UpdateCollectionDetails} from '../data/dto/update-collection-details';
 
 @Injectable({
   providedIn: 'root',
@@ -43,7 +60,7 @@ export class ProfileService {
    * Updates the profile information, currently it's just for bio updates
    * @param data
    */
-  async updateProfileDetails(data: {}): Promise<Response> {
+  async updateProfileDetails(data: UpdateProfileDetailsDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/details`, {
       method: 'PATCH',
       credentials: 'include',
@@ -62,7 +79,7 @@ export class ProfileService {
    * the given social page it will overwrite it
    * @param data
    */
-  async addSocialAccount(data: {}): Promise<Response> {
+  async addSocialAccount(data: AddSocialDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/socials`, {
       method: 'POST',
       credentials: 'include',
@@ -109,7 +126,7 @@ export class ProfileService {
    * Adds a show to the logged-in user's watchlist
    * @param data
    */
-  async addShowToWatchlist(data: {}): Promise<Response> {
+  async addShowToWatchlist(data: AddToWatchlistDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/watchlist`, {
       method: 'POST',
       credentials: 'include',
@@ -167,7 +184,7 @@ export class ProfileService {
    * Adds a show to the logged-in user's currently watching list
    * @param data
    */
-  async addShowToWatchingList(data: {}): Promise<Response> {
+  async addShowToWatchingList(data: AddToWatchingListDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/currently-watching`, {
       method: 'POST',
       credentials: 'include',
@@ -225,7 +242,7 @@ export class ProfileService {
    * Adds a show to the logged-in user's ranking list
    * @param data
    */
-  async addShowToRankingList(data: {}): Promise<Response> {
+  async addShowToRankingList(data: AddToShowRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/show-rankings`, {
       method: 'POST',
       credentials: 'include',
@@ -269,7 +286,7 @@ export class ProfileService {
    * Updates the show ranking list, in particular it updates the rank numbers of each show
    * @param data
    */
-  async updateShowRankingList(data: {}): Promise<Response> {
+  async updateShowRankingList(data: UpdateShowRankingDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/show-rankings`, {
       method: 'PATCH',
       credentials: 'include',
@@ -287,7 +304,7 @@ export class ProfileService {
    * Adds an episode to the logged-in user's ranking list
    * @param data
    */
-  async addEpisodeToRankingList(data: {}): Promise<Response> {
+  async addEpisodeToRankingList(data: AddToEpisodeRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-rankings`, {
       method: 'POST',
       credentials: 'include',
@@ -331,7 +348,7 @@ export class ProfileService {
    * Updates the episode ranking list, in particular it updates the rank numbers of each episode
    * @param data
    */
-  async updateEpisodeRankingList(data: {}): Promise<Response> {
+  async updateEpisodeRankingList(data: UpdateEpisodeRankingDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-rankings`, {
       method: 'PATCH',
       credentials: 'include',
@@ -349,7 +366,7 @@ export class ProfileService {
    * Adds a season to the logged-in user's ranking list
    * @param data
    */
-  async addSeasonToRankingList(data: {}): Promise<Response> {
+  async addSeasonToRankingList(data: AddToSeasonRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/season-rankings`, {
       method: 'POST',
       credentials: 'include',
@@ -409,7 +426,7 @@ export class ProfileService {
    * Updates the season ranking list for the logged-in user, in particular the rank nums
    * @param data
    */
-  async updateSeasonRankingList(data: {}): Promise<Response> {
+  async updateSeasonRankingList(data: UpdateSeasonRankingDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/season-rankings`, {
       method: 'PATCH',
       credentials: 'include',
@@ -455,7 +472,7 @@ export class ProfileService {
    * Adds a character to a character ranking list for the logged-in user
    * @param data
    */
-  async addCharacterToRankingList(data: {}): Promise<Response> {
+  async addCharacterToRankingList(data: AddToCharacterRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-rankings`, {
       method: 'POST',
       credentials: 'include',
@@ -485,7 +502,7 @@ export class ProfileService {
   /**
    * Updates a character ranking list for the logged-in user
    */
-  async updateCharacterRankingList(data: {}): Promise<Response> {
+  async updateCharacterRankingList(data: UpdateCharacterRankingDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-rankings`, {
       method: 'PATCH',
       credentials: 'include',
@@ -532,7 +549,7 @@ export class ProfileService {
    * Creates a new collection for the logged-in user
    * @param data
    */
-  async createCollection(data: {}): Promise<Response> {
+  async createCollection(data: CreateCollectionDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections`, {
       method: 'POST',
       credentials: 'include',
@@ -565,7 +582,7 @@ export class ProfileService {
    * @param id
    * @param data
    */
-  async updateCollection(id: number, data: {}): Promise<Response> {
+  async updateCollection(id: number, data: UpdateCollectionDetails): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections/${id}`, {
       method: 'PATCH',
       credentials: 'include',
@@ -584,7 +601,7 @@ export class ProfileService {
    * @param id
    * @param data
    */
-  async addShowToCollection(id: number, data: {}): Promise<Response> {
+  async addShowToCollection(id: number, data: AddToCollection): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections/${id}/shows`, {
       method: 'POST',
       credentials: 'include',
@@ -642,7 +659,7 @@ export class ProfileService {
    * Adds a character dynamic to the ranking list for the logged-in user
    * @param data
    */
-  async addDynamicToRankingList(data: {}): Promise<Response> {
+  async addDynamicToRankingList(data: AddToDynamicRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-dynamics`, {
       method: 'POST',
       credentials: 'include',
@@ -674,7 +691,7 @@ export class ProfileService {
    * Updates the character dynamic ranking list for the logged-in user
    * @param data
    */
-  async updateDynamicRankingList(data: {}): Promise<Response> {
+  async updateDynamicRankingList(data: UpdateDynamicRankingDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-dynamics`, {
       method: 'PATCH',
       credentials: 'include',
