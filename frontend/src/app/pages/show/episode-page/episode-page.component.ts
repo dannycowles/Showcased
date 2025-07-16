@@ -11,7 +11,6 @@ import {EpisodeReviewData} from '../../../data/reviews-data';
 import {ReviewType} from '../../../data/enums';
 import {AuthenticationService} from '../../../services/auth.service';
 
-
 @Component({
   selector: 'app-episode-page',
   templateUrl: './episode-page.component.html',

@@ -6,7 +6,7 @@ import {UtilsService} from '../../services/utils.service';
 import {ButtonHeartComponent} from '../button-heart.component';
 import {ShowService} from '../../services/show.service';
 import {ReviewType} from '../../data/enums';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {CommentComponent} from '../comment/comment.component';
 
 @Component({
@@ -22,7 +22,7 @@ import {CommentComponent} from '../comment/comment.component';
   styleUrl: './review.component.css',
   standalone: true,
 })
-export class ReviewComponent {
+export class ReviewComponent{
   @ViewChild("commentBox") commentBoxRef: ElementRef<HTMLTextAreaElement>;
   @Input({ required: true }) review: EpisodeReviewData | ShowReviewData;
   @Input({ required: true }) reviewType: ReviewType;
@@ -31,14 +31,14 @@ export class ReviewComponent {
   showCommentBox: boolean = false;
   isLoadingComments: boolean = false;
   areCommentsHidden: boolean = true;
+  @Input({ required: true }) isLoggedIn: boolean = false;
 
   readonly maxCommentLength = 1000;
   commentMessage: string = "";
 
-  constructor(
-    public utilsService: UtilsService,
-    private showService: ShowService,
-  ) {}
+  constructor(public utilsService: UtilsService,
+              private showService: ShowService,
+              private router: Router) {};
 
   readonly reviewHandlers = {
     [ReviewType.Show]: {
@@ -92,6 +92,11 @@ export class ReviewComponent {
   }
 
   resetCommentBox() {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.showCommentBox = !this.showCommentBox;
     this.commentText = "";
 

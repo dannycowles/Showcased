@@ -101,9 +101,7 @@
 
   <button class="btn btn-success ms-2" (click)="openAddToCollectionModal()">Add to Collection</button>
 
-  <br>
-  <br>
-  <button type="button" class="btn btn-primary ms-2" (click)="openAddReviewModal()">Add Review</button>
+
 
   <h2 class="ms-2">Cast</h2>
   <div class="container ms-0">
@@ -161,13 +159,13 @@
   </div>
 }
 
-@if (reviews) {
-  <h2 class="ms-2 mb-4">Reviews</h2>
-  @if (reviews.length != 0) {
-    @for (review of reviews; track review.id) {
-      <app-review [review]="review" [reviewType]="ReviewType.Show"></app-review>
-    }
-  } @else {
-    <h4 class="ms-2">No Reviews for this Show</h4>
+<h2 class="ms-2 mb-4">Reviews</h2>
+<button type="button" class="btn btn-primary ms-2 mb-4" (click)="openAddReviewModal()">Add Review</button>
+@if (reviews?.length) {
+  @for (review of reviews; track review.id) {
+    <app-review [review]="review" [reviewType]="ReviewType.Show" [isLoggedIn]="isLoggedIn"></app-review>
   }
+} @else {
+  <h4 class="ms-2">No Reviews for this Show</h4>
 }
+

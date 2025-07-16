@@ -12,11 +12,11 @@
     </div>
 
     @if (review.numComments > 0) {
-      <button type="button" class="btn btn-secondary" [hidden]="!areCommentsHidden" (click)="getReviewComments()">View {{review.numComments}} repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
-      <button type="button" class="btn btn-secondary ms-2" (click)="resetCommentBox()">Reply</button>
-      <br>
-      <br>
+      <button type="button" class="btn btn-secondary me-2" [hidden]="!areCommentsHidden" (click)="getReviewComments()">View {{review.numComments}} repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
     }
+    <button type="button" class="btn btn-secondary" (click)="resetCommentBox()">Reply</button>
+    <br>
+    <br>
   </div>
   <div class="ms-auto me-5 d-flex align-items-center">
     <yt-button-heart [isLiked]="review.isLikedByUser" [size]="heartSize" (click)="toggleReviewLikeState()"></yt-button-heart>

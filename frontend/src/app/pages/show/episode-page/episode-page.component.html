@@ -19,14 +19,11 @@
     <button class="btn btn-outline-success" (click)="addToRankingList()">Add to Ranking List</button>
   }
 
-  <br>
-  <br>
-  <button type="button" class="btn btn-primary" (click)="openAddReviewModal()">Add Review</button>
-
-  <h2 class="mt-3">Reviews</h2>
+  <h2 class="mt-3 mb-4">Reviews</h2>
+  <button type="button" class="btn btn-primary mb-4" (click)="openAddReviewModal()">Add Review</button>
   @if (reviews?.length) {
     @for (review of reviews; track review.id) {
-      <app-review [review]="review" [reviewType]="ReviewType.Episode"></app-review>
+      <app-review [review]="review" [reviewType]="ReviewType.Episode" [isLoggedIn]="isLoggedIn"></app-review>
     }
   } @else {
     <div>No reviews yet!</div>
