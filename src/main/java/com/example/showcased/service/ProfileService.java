@@ -554,7 +554,7 @@ public class ProfileService {
     }
 
     public Long getFollowersCount(HttpSession session) {
-        return followersRepository.countByIdFollowingId((Long) session.getAttribute("user"));
+        return followersRepository.countByFollowingId((Long) session.getAttribute("user"));
     }
 
     public List<UserSearchDto> getFollowing(String name, HttpSession session) {
@@ -567,12 +567,15 @@ public class ProfileService {
     }
 
     public Long getFollowingCount(HttpSession session) {
-        return followersRepository.countByIdFollowerId((Long) session.getAttribute("user"));
+        return followersRepository.countByFollowerId((Long) session.getAttribute("user"));
     }
 
     public void removeFollower(Long removeId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        followersRepository.deleteById(new FollowerId(removeId, userId));
+        Follower removeFollower = new Follower();
+        removeFollower.setFollowerId(removeId);
+        removeFollower.setFollowingId(userId);
+        followersRepository.delete(removeFollower);
     }
 
 

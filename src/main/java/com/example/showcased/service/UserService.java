@@ -36,6 +36,7 @@ public class UserService {
     private final UserSocialRepository userSocialRepository;
     private final EpisodeReviewRepository episodeReviewRepository;
     private final DynamicRankingRepository dynamicRankingRepository;
+    private final ActivitiesRepository activitiesRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -52,7 +53,8 @@ public class UserService {
                        LikedCollectionsRepository likedCollectionsRepository,
                        UserSocialRepository userSocialRepository,
                        EpisodeReviewRepository episodeReviewRepository,
-                       DynamicRankingRepository dynamicRankingRepository) {
+                       DynamicRankingRepository dynamicRankingRepository,
+                       ActivitiesRepository activitiesRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -69,6 +71,7 @@ public class UserService {
         this.userSocialRepository = userSocialRepository;
         this.episodeReviewRepository = episodeReviewRepository;
         this.dynamicRankingRepository = dynamicRankingRepository;
+        this.activitiesRepository = activitiesRepository;
     }
 
     private void ensureUserExists(Long userId) {
@@ -98,7 +101,7 @@ public class UserService {
         // Check if the user is logged in, if so we check they are following this user
         Long loggedInUserId = (Long) session.getAttribute("user");
         if (loggedInUserId != null) {
-            headerData.setFollowing(followersRepository.existsById(new FollowerId(loggedInUserId, userId)));
+            headerData.setFollowing(followersRepository.existsByFollowerIdAndFollowingId(loggedInUserId, userId));
             headerData.setOwnProfile(loggedInUserId.equals(userId));
         }
         userDetails.setHeaderData(headerData);
@@ -222,14 +225,27 @@ public class UserService {
             throw new FollowSelfException("A user cannot follow themselves.");
         }
 
-        Follower followEntry = new Follower(new FollowerId(userId, followId));
-        followersRepository.save(followEntry);
+        Follower newFollower = new Follower();
+        newFollower.setFollowerId(userId);
+        newFollower.setFollowingId(followId);
+        followersRepository.save(newFollower);
+
+        // Add the follow event to the activity table
+        Activity followEvent = new Activity();
+        followEvent.setUserId(followId);
+        followEvent.setActivityType(1);
+        followEvent.setExternalId(newFollower.getId());
+        activitiesRepository.save(followEvent);
     }
 
     public void unfollowUser(Long unfollowId, HttpSession session) {
         ensureUserExists(unfollowId);
         Long userId = (Long) session.getAttribute("user");
-        followersRepository.deleteById(new FollowerId(userId, unfollowId));
+
+        Follower removeFollower = new Follower();
+        removeFollower.setFollowerId(userId);
+        removeFollower.setFollowingId(unfollowId);
+        followersRepository.delete(removeFollower);
     }
 
     public List<UserSearchDto> getFollowers(Long userId, String name, HttpSession session) {
@@ -244,7 +260,7 @@ public class UserService {
 
     private Long getFollowersCount(Long userId) {
         ensureUserExists(userId);
-        return followersRepository.countByIdFollowingId(userId);
+        return followersRepository.countByFollowingId(userId);
     }
 
     public List<UserSearchDto> getFollowing(Long userId, String name, HttpSession session) {
@@ -259,7 +275,7 @@ public class UserService {
 
     private Long getFollowingCount(Long userId) {
         ensureUserExists(userId);
-        return followersRepository.countByIdFollowerId(userId);
+        return followersRepository.countByFollowerId(userId);
     }
 
     private void setFollowingFlags(List<UserSearchDto> following, HttpSession session) {

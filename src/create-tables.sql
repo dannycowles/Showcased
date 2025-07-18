@@ -114,10 +114,13 @@ CREATE TABLE IF NOT EXISTS otp_requests (
 );
 
 CREATE TABLE IF NOT EXISTS followers (
-    follower_id INT,
-    following_id INT,
-    PRIMARY KEY(follower_id, following_id),
-    FOREIGN KEY(follower_id) REFERENCES users(id) ON DELETE CASCADE,
+    id INT AUTO_INCREMENT,
+    follower_id INT NOT NULL,
+    following_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (follower_id, following_id),
+    FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -253,4 +256,20 @@ CREATE TABLE IF NOT EXISTS liked_episode_review_comments (
     PRIMARY KEY (user_id, comment_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES episode_review_comments(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS activity_descriptions (
+     activity_type INT,
+     description TEXT NOT NULL,
+     PRIMARY KEY (activity_type)
+);
+
+CREATE TABLE IF NOT EXISTS activities (
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    activity_type INT NOT NULL,
+    external_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (activity_type) REFERENCES activity_descriptions(activity_type) ON DELETE CASCADE
 );
