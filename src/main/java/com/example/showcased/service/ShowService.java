@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ public class ShowService {
     private final ShowInfoRepository showInfoRepository;
     private final EpisodeInfoRepository episodeInfoRepository;
     private final EpisodeRankingRepository episodeRankingRepository;
+    private final ActivitiesRepository activitiesRepository;
     @Value("${omdbApi}")
     private String omdbKey;
 
@@ -64,7 +66,7 @@ public class ShowService {
                        ShowReviewCommentRepository showReviewCommentRepository,
                        LikedShowReviewCommentsRepository likedShowReviewCommentsRepository,
                        EpisodeReviewCommentRepository episodeReviewCommentRepository,
-                       LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository) {
+                       LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository, ActivitiesRepository activitiesRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -83,6 +85,7 @@ public class ShowService {
         this.likedShowReviewCommentsRepository = likedShowReviewCommentsRepository;
         this.episodeReviewCommentRepository = episodeReviewCommentRepository;
         this.likedEpisodeReviewCommentsRepository = likedEpisodeReviewCommentsRepository;
+        this.activitiesRepository = activitiesRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -449,18 +452,29 @@ public class ShowService {
     @Transactional
     public void likeShowReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!showReviewRepository.existsById(reviewId)) {
+        Optional<ShowReview> reviewOpt = showReviewRepository.findById(reviewId);
+        if (reviewOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find a show review with ID: " + reviewId);
         }
+        ShowReview review = reviewOpt.get();
 
         // Check if the user has already liked the review, if so we throw an exception
-        LikedShowReviews likedReview = new LikedShowReviews(new LikedShowReviewsId(userId, reviewId));
-        if (likedShowReviewsRepository.existsById(likedReview.getId())) {
+        if (likedShowReviewsRepository.existsByUserIdAndReviewId(userId, reviewId)) {
             throw new AlreadyLikedException("You have already liked this show review");
         }
 
+        LikedShowReview likedReview = new LikedShowReview();
+        likedReview.setUserId(userId);
+        likedReview.setReviewId(reviewId);
         likedShowReviewsRepository.save(likedReview);
         showReviewRepository.incrementLikes(reviewId);
+
+        // Add the like show review event to the activity table
+        Activity likeEvent = new Activity();
+        likeEvent.setUserId(review.getUserId());
+        likeEvent.setActivityType(2);
+        likeEvent.setExternalId(likedReview.getId());
+        activitiesRepository.save(likeEvent);
     }
 
     @Transactional
@@ -471,7 +485,8 @@ public class ShowService {
         }
 
         // Check if the user has liked the review, if not we throw an exception
-        LikedShowReviews likedReview = new LikedShowReviews(new LikedShowReviewsId(userId, reviewId));
+        // TODO: fix this, needs to remove from activity table and better flow of check for existence
+        LikedShowReview likedReview = new LikedShowReview();
         if (!likedShowReviewsRepository.existsById(likedReview.getId())) {
             throw new HaventLikedException("You have not liked this show review");
         }

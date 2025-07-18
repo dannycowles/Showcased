@@ -28,8 +28,8 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
                 CASE
                     WHEN :userId IS NULL THEN FALSE
                     WHEN EXISTS (
-                            SELECT lr FROM LikedShowReviews lr
-                            WHERE lr.id.reviewId = r.id AND lr.id.userId = :userId
+                            SELECT lr FROM LikedShowReview lr
+                            WHERE lr.reviewId = r.id AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
                  END
@@ -58,8 +58,8 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
             r.reviewDate,
             CASE
                 WHEN EXISTS (
-                    SELECT lr FROM LikedShowReviews lr
-                    WHERE lr.id.reviewId = r.id AND lr.id.userId = :id
+                    SELECT lr FROM LikedShowReview lr
+                    WHERE lr.reviewId = r.id AND lr.userId = :id
                 ) THEN TRUE ELSE FALSE
             END
         )

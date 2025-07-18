@@ -32,9 +32,12 @@ CREATE TABLE IF NOT EXISTS show_reviews (
 );
 
 CREATE TABLE IF NOT EXISTS liked_show_reviews (
-    user_id INT,
-    review_id INT,
-    PRIMARY KEY(user_id, review_id),
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    review_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (user_id, review_id),
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(review_id) REFERENCES show_reviews(id) ON DELETE CASCADE
 );
@@ -67,9 +70,12 @@ CREATE TABLE IF NOT EXISTS episode_reviews (
 );
 
 CREATE TABLE IF NOT EXISTS liked_episode_reviews (
-    user_id INT,
-    review_id INT,
-    PRIMARY KEY (user_id, review_id),
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    review_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (user_id, review_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (review_id) REFERENCES episode_reviews(id) ON DELETE CASCADE
 );

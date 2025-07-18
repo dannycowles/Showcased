@@ -10,25 +10,33 @@ import java.util.List;
 
 public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
 
-    @Query("""
+    @Query(value = """
         SELECT new com.example.showcased.dto.ActivityDto(
             a.id,
             a.activityType,
             d.description,
             new com.example.showcased.dto.ActivityUserDto(
-                u.id,
-                u.username,
-                u.profilePicture
+                CAST(COALESCE(u1.id, u2.id) AS long),
+                COALESCE(u1.username, u2.username),
+                COALESCE(u1.profilePicture, u2.profilePicture)
             ),
-            f.createdAt
+            new com.example.showcased.dto.ActivityShowReviewLikeDto(
+                CASE WHEN a.activityType = 2 THEN lsr.reviewId ELSE NULL END,
+                CASE WHEN a.activityType = 2 THEN sr.showId ELSE NULL END,
+                CASE WHEN a.activityType = 2 THEN si.title ELSE NULL END
+            ),
+            COALESCE(f.createdAt, lsr.createdAt)
         )
         FROM Activity a
         JOIN ActivityDescription d ON a.activityType = d.activityType
-        JOIN Follower f ON a.externalId = f.id
-        JOIN User u ON f.followerId = u.id
-        WHERE a.userId = :userId AND a.activityType = 1
-        
-        ORDER BY f.createdAt DESC
+        LEFT JOIN Follower f ON a.externalId = f.id
+        LEFT JOIN User u1 ON f.followerId = u1.id
+        LEFT JOIN LikedShowReview lsr ON a.externalId = lsr.id
+        LEFT JOIN User u2 ON lsr.userId = u2.id
+        LEFT JOIN ShowReview sr ON lsr.reviewId = sr.id
+        LEFT JOIN ShowInfo si ON sr.showId = si.showId
+        WHERE a.userId = :userId
+        ORDER BY COALESCE(f.createdAt, lsr.createdAt) DESC
 """)
     List<ActivityDto> findByUserId(@Param("userId") Long userId);
 
