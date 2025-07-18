@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface FollowersRepository extends JpaRepository<Follower, Long> {
@@ -39,4 +40,6 @@ public interface FollowersRepository extends JpaRepository<Follower, Long> {
     List<UserSearchDto> getFollowingByIdFollowerIdFiltered(Long userId, String name);
 
     boolean existsByFollowerIdAndFollowingId(Long followerId, Long followingId);
+
+    Optional<Follower> findByFollowerIdAndFollowingId(Long userId, Long unfollowId);
 }

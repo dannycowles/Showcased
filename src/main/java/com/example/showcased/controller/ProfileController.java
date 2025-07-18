@@ -39,6 +39,12 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/activity")
+    public ResponseEntity<List<ActivityDto>> getProfileActivity(HttpSession session) {
+        List<ActivityDto> activity = profileService.getProfileActivity(session);
+        return ResponseEntity.ok(activity);
+    }
+
     @PostMapping("/profile-picture")
     public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, HttpSession session) {
         String fileUrl = fileService.uploadProfilePicture(file, session);

@@ -42,6 +42,7 @@ public class ProfileService {
     private final EpisodeReviewRepository episodeReviewRepository;
     private final DynamicRankingRepository dynamicRankingRepository;
     private final ShowService showService;
+    private final ActivitiesRepository activitiesRepository;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -63,7 +64,7 @@ public class ProfileService {
                           CharacterInfoRepository characterInfoRepository,
                           EpisodeReviewRepository episodeReviewRepository,
                           DynamicRankingRepository dynamicRankingRepository,
-                          ShowService showService) {
+                          ShowService showService, ActivitiesRepository activitiesRepository) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -85,6 +86,7 @@ public class ProfileService {
         this.episodeReviewRepository = episodeReviewRepository;
         this.dynamicRankingRepository = dynamicRankingRepository;
         this.showService = showService;
+        this.activitiesRepository = activitiesRepository;
     }
 
     /**
@@ -849,5 +851,10 @@ public class ProfileService {
             dynamic.setRankNum(newRanks.get(dynamic.getId()));
         }
         dynamicRankingRepository.saveAll(dynamics);
+    }
+
+    public List<ActivityDto> getProfileActivity(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return activitiesRepository.findByUserId(userId);
     }
 }

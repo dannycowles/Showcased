@@ -9,9 +9,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -238,14 +240,17 @@ public class UserService {
         activitiesRepository.save(followEvent);
     }
 
+    @Transactional
     public void unfollowUser(Long unfollowId, HttpSession session) {
         ensureUserExists(unfollowId);
         Long userId = (Long) session.getAttribute("user");
 
-        Follower removeFollower = new Follower();
-        removeFollower.setFollowerId(userId);
-        removeFollower.setFollowingId(unfollowId);
-        followersRepository.delete(removeFollower);
+        Optional<Follower> followerOpt = followersRepository.findByFollowerIdAndFollowingId(userId, unfollowId);
+        if (followerOpt.isPresent()) {
+            Follower removeFollower = followerOpt.get();
+            activitiesRepository.deleteByExternalId(removeFollower.getId());
+            followersRepository.delete(removeFollower);
+        }
     }
 
     public List<UserSearchDto> getFollowers(Long userId, String name, HttpSession session) {
