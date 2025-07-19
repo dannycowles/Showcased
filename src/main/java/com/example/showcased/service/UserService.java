@@ -2,6 +2,7 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
+import com.example.showcased.enums.ActivityType;
 import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -235,7 +236,7 @@ public class UserService {
         // Add the follow event to the activity table
         Activity followEvent = new Activity();
         followEvent.setUserId(followId);
-        followEvent.setActivityType(1);
+        followEvent.setActivityType(ActivityType.FOLLOW.getDbValue());
         followEvent.setExternalId(newFollower.getId());
         activitiesRepository.save(followEvent);
     }
@@ -248,7 +249,7 @@ public class UserService {
         Optional<Follower> followerOpt = followersRepository.findByFollowerIdAndFollowingId(userId, unfollowId);
         if (followerOpt.isPresent()) {
             Follower removeFollower = followerOpt.get();
-            activitiesRepository.deleteByExternalId(removeFollower.getId());
+            activitiesRepository.deleteByExternalIdAndActivityType(removeFollower.getId(), ActivityType.FOLLOW.getDbValue());
             followersRepository.delete(removeFollower);
         }
     }

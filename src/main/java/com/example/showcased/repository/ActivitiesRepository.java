@@ -40,5 +40,5 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
 """)
     List<ActivityDto> findByUserId(@Param("userId") Long userId);
 
-    void deleteByExternalId(Long externalId);
+    void deleteByExternalIdAndActivityType(Long id, int i);
 }

@@ -2,6 +2,7 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
+import com.example.showcased.enums.ActivityType;
 import com.example.showcased.exception.AlreadyLikedException;
 import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.exception.ItemNotFoundException;
@@ -472,7 +473,7 @@ public class ShowService {
         // Add the like show review event to the activity table
         Activity likeEvent = new Activity();
         likeEvent.setUserId(review.getUserId());
-        likeEvent.setActivityType(2);
+        likeEvent.setActivityType(ActivityType.LIKE_SHOW_REVIEW.getDbValue());
         likeEvent.setExternalId(likedReview.getId());
         activitiesRepository.save(likeEvent);
     }
@@ -480,19 +481,23 @@ public class ShowService {
     @Transactional
     public void unlikeShowReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!showReviewRepository.existsById(reviewId)) {
+
+        // Check if the review exists, and if so has the user liked it
+        if (showReviewRepository.existsById(reviewId)) {
+
+            Optional<LikedShowReview> likedReviewOpt = likedShowReviewsRepository.findByUserIdAndReviewId(userId, reviewId);
+            if (likedReviewOpt.isPresent()) {
+                LikedShowReview likedReview = likedReviewOpt.get();
+
+                likedShowReviewsRepository.delete(likedReview);
+                showReviewRepository.decrementLikes(reviewId);
+                activitiesRepository.deleteByExternalIdAndActivityType(likedReview.getId(), ActivityType.LIKE_SHOW_REVIEW.getDbValue());
+            } else {
+                throw new HaventLikedException("You have not liked this show review");
+            }
+        } else {
             throw new ItemNotFoundException("Didn't find a show review with ID: " + reviewId);
         }
-
-        // Check if the user has liked the review, if not we throw an exception
-        // TODO: fix this, needs to remove from activity table and better flow of check for existence
-        LikedShowReview likedReview = new LikedShowReview();
-        if (!likedShowReviewsRepository.existsById(likedReview.getId())) {
-            throw new HaventLikedException("You have not liked this show review");
-        }
-
-        likedShowReviewsRepository.delete(likedReview);
-        showReviewRepository.decrementLikes(reviewId);
     }
 
     @Transactional
