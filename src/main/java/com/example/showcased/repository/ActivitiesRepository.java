@@ -25,18 +25,32 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
                 CASE WHEN a.activityType = 2 THEN sr.showId ELSE NULL END,
                 CASE WHEN a.activityType = 2 THEN si.title ELSE NULL END
             ),
-            COALESCE(f.createdAt, lsr.createdAt)
+            new com.example.showcased.dto.ActivityShowReviewCommentDto(
+                CASE WHEN a.activityType = 3 THEN src.id ELSE NULL END,
+                CASE WHEN a.activityType = 3 THEN sr2.id ELSE NULL END,
+                CASE WHEN a.activityType = 3 THEN sr2.showId ELSE NULL END,
+                CASE WHEN a.activityType = 3 THEN si2.title ELSE NULL END,
+                CASE WHEN a.activityType = 3 THEN src.commentText ELSE NULL END
+            ),
+            COALESCE(f.createdAt, lsr.createdAt, src.createdAt)
         )
         FROM Activity a
         JOIN ActivityDescription d ON a.activityType = d.activityType
-        LEFT JOIN Follower f ON a.externalId = f.id
+        
+        LEFT JOIN Follower f ON a.externalId = f.id AND a.activityType = 1
         LEFT JOIN User u1 ON f.followerId = u1.id
-        LEFT JOIN LikedShowReview lsr ON a.externalId = lsr.id
+        
+        LEFT JOIN LikedShowReview lsr ON a.externalId = lsr.id AND a.activityType = 2
         LEFT JOIN User u2 ON lsr.userId = u2.id
         LEFT JOIN ShowReview sr ON lsr.reviewId = sr.id
         LEFT JOIN ShowInfo si ON sr.showId = si.showId
+        
+        LEFT JOIN ShowReviewComment src ON a.externalId = src.id AND a.activityType = 3
+        LEFT JOIN ShowReview sr2 ON src.reviewId = sr2.id
+        LEFT JOIN ShowInfo si2 ON sr2.showId = si2.showId
+        
         WHERE a.userId = :userId
-        ORDER BY COALESCE(f.createdAt, lsr.createdAt) DESC
+        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt) DESC
 """)
     List<ActivityDto> findByUserId(@Param("userId") Long userId);
 

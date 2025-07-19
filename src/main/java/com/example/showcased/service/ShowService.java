@@ -595,9 +595,11 @@ public class ShowService {
     @Transactional
     public ReviewCommentWithUserInfoDto addCommentToShowReview(Long reviewId, ReviewCommentDto reviewComment, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!showReviewRepository.existsById(reviewId)) {
+        Optional<ShowReview> reviewOpt = showReviewRepository.findById(reviewId);
+        if (reviewOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find an review with ID: " + reviewId);
         }
+        ShowReview review = reviewOpt.get();
 
         ShowReviewComment newComment = new ShowReviewComment();
         newComment.setUserId(userId);
@@ -605,6 +607,13 @@ public class ShowService {
         newComment.setCommentText(reviewComment.getCommentText());
         showReviewCommentRepository.save(newComment);
         showReviewRepository.incrementNumComments(reviewId);
+
+        // Add the show review comment event to activities table
+        Activity commentEvent = new Activity();
+        commentEvent.setUserId(review.getUserId());
+        commentEvent.setActivityType(ActivityType.COMMENT_SHOW_REVIEW.getDbValue());
+        commentEvent.setExternalId(newComment.getId());
+        activitiesRepository.save(commentEvent);
 
         return showReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }

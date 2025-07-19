@@ -13,5 +13,6 @@ public class ActivityDto {
     private String description;
     private ActivityUserDto follow;
     private ActivityShowReviewLikeDto showReviewLike;
+    private ActivityShowReviewCommentDto showReviewComment;
     private Date createdAt;
 }
