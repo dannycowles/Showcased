@@ -531,35 +531,50 @@ public class ShowService {
     @Transactional
     public void likeEpisodeReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!episodeReviewRepository.existsById(reviewId)) {
-            throw new ItemNotFoundException("Didn't find an episode review with ID: " + reviewId);
+        Optional<EpisodeReview> reviewOpt = episodeReviewRepository.findById(reviewId);
+        if (reviewOpt.isEmpty()) {
+            throw new ItemNotFoundException("Didn't find a episode review with ID: " + reviewId);
         }
+        EpisodeReview review = reviewOpt.get();
 
         // Check if the user has already liked the review, if so we throw an exception
-        LikedEpisodeReview likedReview = new LikedEpisodeReview(new LikedEpisodeReviewId(userId, reviewId));
-        if (likedEpisodeReviewsRepository.existsById(likedReview.getId())) {
+        if (likedEpisodeReviewsRepository.existsByUserIdAndReviewId(userId, reviewId)) {
             throw new AlreadyLikedException("You have already liked this episode review");
         }
 
+        LikedEpisodeReview likedReview =  new LikedEpisodeReview();
+        likedReview.setUserId(userId);
+        likedReview.setReviewId(reviewId);
         likedEpisodeReviewsRepository.save(likedReview);
         episodeReviewRepository.incrementLikes(reviewId);
+
+        // Add the like episode review event to the activities table
+        Activity likeEvent = new Activity();
+        likeEvent.setUserId(review.getUserId());
+        likeEvent.setActivityType(ActivityType.LIKE_EPISODE_REVIEW.getDbValue());
+        likeEvent.setExternalId(likedReview.getId());
+        activitiesRepository.save(likeEvent);
     }
 
     @Transactional
     public void unlikeEpisodeReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!episodeReviewRepository.existsById(reviewId)) {
+
+        // Check if the review exists, and if so, ensure the user has liked it already
+        if (episodeReviewRepository.existsById(reviewId)) {
+            Optional<LikedEpisodeReview> likedReviewOpt = likedEpisodeReviewsRepository.findByUserIdAndReviewId(userId, reviewId);
+            if (likedReviewOpt.isPresent()) {
+                LikedEpisodeReview likedReview = likedReviewOpt.get();
+
+                likedEpisodeReviewsRepository.delete(likedReview);
+                episodeReviewRepository.decrementLikes(reviewId);
+                activitiesRepository.deleteByExternalIdAndActivityType(likedReview.getId(), ActivityType.LIKE_EPISODE_REVIEW.getDbValue());
+            } else {
+                throw new HaventLikedException("You have not liked this episode review");
+            }
+        } else {
             throw new ItemNotFoundException("Didn't find an episode review with ID: " + reviewId);
         }
-
-        // Check if the user hasn't liked the review yet
-        LikedEpisodeReview likedReview = new LikedEpisodeReview(new LikedEpisodeReviewId(userId, reviewId));
-        if (!likedEpisodeReviewsRepository.existsById(likedReview.getId())) {
-            throw new HaventLikedException("You have not liked this episode review");
-        }
-
-        likedEpisodeReviewsRepository.delete(likedReview);
-        episodeReviewRepository.decrementLikes(reviewId);
     }
 
 

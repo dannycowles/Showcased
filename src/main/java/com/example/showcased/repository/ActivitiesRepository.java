@@ -16,9 +16,9 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
             a.activityType,
             d.description,
             new com.example.showcased.dto.ActivityUserDto(
-                CAST(COALESCE(u1.id, u2.id) AS long),
-                COALESCE(u1.username, u2.username),
-                COALESCE(u1.profilePicture, u2.profilePicture)
+                CAST(COALESCE(u1.id, u2.id, u3.id, u4.id) AS long),
+                COALESCE(u1.username, u2.username, u3.username, u4.id),
+                COALESCE(u1.profilePicture, u2.profilePicture, u3.profilePicture, u4.id)
             ),
             new com.example.showcased.dto.ActivityShowReviewLikeDto(
                 CASE WHEN a.activityType = 2 THEN lsr.reviewId ELSE NULL END,
@@ -32,7 +32,15 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
                 CASE WHEN a.activityType = 3 THEN si2.title ELSE NULL END,
                 CASE WHEN a.activityType = 3 THEN src.commentText ELSE NULL END
             ),
-            COALESCE(f.createdAt, lsr.createdAt, src.createdAt)
+            new com.example.showcased.dto.ActivityEpisodeReviewLikeDto(
+                CASE WHEN a.activityType = 4 THEN ler.reviewId ELSE NULL END,
+                CASE WHEN a.activityType = 4 THEN ei.showId ELSE NULL END,
+                CASE WHEN a.activityType = 4 THEN ei.showTitle ELSE NULL END,
+                CASE WHEN a.activityType = 4 THEN ei.season ELSE NULL END,
+                CASE WHEN a.activityType = 4 THEN ei.episode ELSE NULL END,
+                CASE WHEN a.activityType = 4 THEN ei.episodeTitle ELSE NULL END
+            ),
+            COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt)
         )
         FROM Activity a
         JOIN ActivityDescription d ON a.activityType = d.activityType
@@ -46,11 +54,17 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
         LEFT JOIN ShowInfo si ON sr.showId = si.showId
         
         LEFT JOIN ShowReviewComment src ON a.externalId = src.id AND a.activityType = 3
+        LEFT JOIN User u3 ON src.userId = u3.id
         LEFT JOIN ShowReview sr2 ON src.reviewId = sr2.id
         LEFT JOIN ShowInfo si2 ON sr2.showId = si2.showId
         
+        LEFT JOIN LikedEpisodeReview ler ON a.externalId = ler.id AND a.activityType = 4
+        LEFT JOIN User u4 ON ler.userId = u4.id
+        LEFT JOIN EpisodeReview er ON ler.reviewId = er.id
+        LEFT JOIN EpisodeInfo ei ON er.episodeId = ei.id
+        
         WHERE a.userId = :userId
-        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt) DESC
+        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt) DESC
 """)
     List<ActivityDto> findByUserId(@Param("userId") Long userId);
 

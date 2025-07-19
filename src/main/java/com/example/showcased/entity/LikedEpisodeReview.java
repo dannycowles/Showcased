@@ -1,11 +1,11 @@
 package com.example.showcased.entity;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @Entity
@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "liked_episode_reviews")
 public class LikedEpisodeReview {
-    @EmbeddedId
-    private LikedEpisodeReviewId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long userId;
+    private Long reviewId;
+    private Date createdAt = new Date();
 }

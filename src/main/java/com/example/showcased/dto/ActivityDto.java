@@ -11,8 +11,9 @@ public class ActivityDto {
     private Long id;
     private int activityType;
     private String description;
-    private ActivityUserDto follow;
+    private ActivityUserDto user;
     private ActivityShowReviewLikeDto showReviewLike;
     private ActivityShowReviewCommentDto showReviewComment;
+    private ActivityEpisodeReviewLikeDto episodeReviewLike;
     private Date createdAt;
 }

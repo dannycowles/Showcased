@@ -31,7 +31,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                     WHEN :userId IS NULL THEN FALSE
                     WHEN EXISTS (
                             SELECT lr FROM LikedEpisodeReview lr
-                            WHERE lr.id.reviewId = r.id AND lr.id.userId = :userId
+                            WHERE lr.reviewId = r.id AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
                  END
@@ -65,7 +65,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                     WHEN :userId IS NULL THEN FALSE
                     WHEN EXISTS (
                             SELECT lr FROM LikedEpisodeReview lr
-                            WHERE lr.id.reviewId = r.id AND lr.id.userId = :userId
+                            WHERE lr.reviewId = r.id AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
                  END

@@ -7,10 +7,11 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class ActivityShowReviewCommentDto {
-    private Long commentId;
+public class ActivityEpisodeReviewLikeDto {
     private Long reviewId;
     private Long showId;
     private String showTitle;
-    private String commentText;
+    private Integer season;
+    private Integer episode;
+    private String episodeTitle;
 }

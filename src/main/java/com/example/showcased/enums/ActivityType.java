@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum ActivityType {
     FOLLOW(1),
     LIKE_SHOW_REVIEW(2),
-    COMMENT_SHOW_REVIEW(3);
+    COMMENT_SHOW_REVIEW(3),
+    LIKE_EPISODE_REVIEW(4);
 
     private final int dbValue;
 
