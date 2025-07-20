@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ActivityEpisodeReviewCommentDto extends ActivityEpisodeReviewLikeDto {
+    private Long commentId;
     private String commentText;
 
     public ActivityEpisodeReviewCommentDto(
@@ -17,9 +18,11 @@ public class ActivityEpisodeReviewCommentDto extends ActivityEpisodeReviewLikeDt
             Integer season,
             Integer episode,
             String episodeTitle,
+            Long commentId,
             String commentText
     ) {
         super(reviewId, showId, showTitle, season, episode, episodeTitle);
+        this.commentId = commentId;
         this.commentText = commentText;
     }
 }

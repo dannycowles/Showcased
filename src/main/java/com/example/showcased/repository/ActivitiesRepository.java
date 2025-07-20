@@ -47,6 +47,7 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
                 CASE WHEN a.activityType = 5 THEN ei2.season ELSE NULL END,
                 CASE WHEN a.activityType = 5 THEN ei2.episode ELSE NULL END,
                 CASE WHEN a.activityType = 5 THEN ei2.episodeTitle ELSE NULL END,
+                CASE WHEN a.activityType = 5 THEN erc.id ELSE NULL END,
                 CASE WHEN a.activityType = 5 THEN erc.commentText ELSE NULL END
             ),
             new com.example.showcased.dto.ActivityShowReviewCommentLikeDto(

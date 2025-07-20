@@ -726,13 +726,13 @@ public class ShowService {
         }
 
         // Check if the user has already liked the comment
-        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment(new LikedEpisodeReviewCommentId(userId, commentId));
-        if (likedEpisodeReviewCommentsRepository.existsById(likedComment.getId())) {
-            throw new AlreadyLikedException("You have already liked this episode review comment");
-        }
-
-        likedEpisodeReviewCommentsRepository.save(likedComment);
-        episodeReviewCommentRepository.incrementNumLikes(commentId);
+//        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment(new LikedEpisodeReviewCommentId(userId, commentId));
+//        if (likedEpisodeReviewCommentsRepository.existsById(likedComment.getId())) {
+//            throw new AlreadyLikedException("You have already liked this episode review comment");
+//        }
+//
+//        likedEpisodeReviewCommentsRepository.save(likedComment);
+//        episodeReviewCommentRepository.incrementNumLikes(commentId);
     }
 
     @Transactional
@@ -743,12 +743,12 @@ public class ShowService {
         }
 
         // Check to ensure the user has liked the comment
-        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment(new LikedEpisodeReviewCommentId(userId, commentId));
-        if (!likedEpisodeReviewCommentsRepository.existsById(likedComment.getId())) {
-            throw new HaventLikedException("You have not liked this episode review comment");
-        }
-
-        likedEpisodeReviewCommentsRepository.delete(likedComment);
-        episodeReviewCommentRepository.decrementNumLikes(commentId);
+//        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment(new LikedEpisodeReviewCommentId(userId, commentId));
+//        if (!likedEpisodeReviewCommentsRepository.existsById(likedComment.getId())) {
+//            throw new HaventLikedException("You have not liked this episode review comment");
+//        }
+//
+//        likedEpisodeReviewCommentsRepository.delete(likedComment);
+//        episodeReviewCommentRepository.decrementNumLikes(commentId);
     }
 }
