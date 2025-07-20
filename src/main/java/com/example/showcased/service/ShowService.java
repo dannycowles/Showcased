@@ -641,35 +641,50 @@ public class ShowService {
     @Transactional
     public void likeShowReviewComment(Long commentId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!showReviewCommentRepository.existsById(commentId)) {
+        Optional<ShowReviewComment> commentOpt = showReviewCommentRepository.findById(commentId);
+        if (commentOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find an show review comment with ID: " + commentId);
         }
+        ShowReviewComment comment = commentOpt.get();
 
         // Check if the user has already liked the comment
-        LikedShowReviewComment likedComment = new LikedShowReviewComment(new LikedShowReviewCommentId(userId, commentId));
-        if (likedShowReviewCommentsRepository.existsById(likedComment.getId())) {
+        if (likedShowReviewCommentsRepository.existsByUserIdAndCommentId(userId, commentId)) {
             throw new AlreadyLikedException("You have already liked this show review comment");
         }
 
+        LikedShowReviewComment likedComment = new LikedShowReviewComment();
+        likedComment.setUserId(userId);
+        likedComment.setCommentId(commentId);
         likedShowReviewCommentsRepository.save(likedComment);
         showReviewCommentRepository.incrementNumLikes(commentId);
+
+        // Add the like show review comment event to the activities table
+        Activity likeCommentEvent = new Activity();
+        likeCommentEvent.setUserId(comment.getUserId());
+        likeCommentEvent.setActivityType(ActivityType.LIKE_SHOW_REVIEW_COMMENT.getDbValue());
+        likeCommentEvent.setExternalId(likedComment.getId());
+        activitiesRepository.save(likeCommentEvent);
     }
 
     @Transactional
     public void unlikeShowReviewComment(Long commentId, HttpSession session) {
-        Long  userId = (Long) session.getAttribute("user");
-        if (!showReviewCommentRepository.existsById(commentId)) {
+        Long userId = (Long) session.getAttribute("user");
+
+        if (showReviewCommentRepository.existsById(commentId)) {
+            // Check to ensure the user has liked the comment
+            Optional<LikedShowReviewComment> likedCommentOpt = likedShowReviewCommentsRepository.findByUserIdAndCommentId(userId, commentId);
+            if (likedCommentOpt.isPresent()) {
+                LikedShowReviewComment likedComment = likedCommentOpt.get();
+
+                likedShowReviewCommentsRepository.delete(likedComment);
+                showReviewCommentRepository.decrementNumLikes(commentId);
+                activitiesRepository.deleteByExternalIdAndActivityType(likedComment.getId(), ActivityType.LIKE_SHOW_REVIEW_COMMENT.getDbValue());
+            } else {
+                throw new HaventLikedException("You have not liked this show review comment");
+            }
+        } else {
             throw new ItemNotFoundException("Didn't find an show review comment with ID: " + commentId);
         }
-
-        // Check to ensure the user has liked the comment
-        LikedShowReviewComment likedComment = new LikedShowReviewComment(new LikedShowReviewCommentId(userId, commentId));
-        if (!likedShowReviewCommentsRepository.existsById(likedComment.getId())) {
-            throw new HaventLikedException("You have not liked this show review comment");
-        }
-
-        likedShowReviewCommentsRepository.delete(likedComment);
-        showReviewCommentRepository.decrementNumLikes(commentId);
     }
 
     @Transactional

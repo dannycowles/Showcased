@@ -1,13 +1,11 @@
 package com.example.showcased.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ActivityEpisodeReviewCommentDto extends ActivityEpisodeReviewLikeDto {
     private String commentText;

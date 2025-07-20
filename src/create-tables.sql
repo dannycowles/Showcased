@@ -237,9 +237,12 @@ CREATE TABLE IF NOT EXISTS show_review_comments (
 );
 
 CREATE TABLE IF NOT EXISTS liked_show_review_comments (
-    user_id INT,
-    comment_id INT,
-    PRIMARY KEY (user_id, comment_id),
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    comment_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (user_id, comment_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES show_review_comments(id) ON DELETE CASCADE
 );

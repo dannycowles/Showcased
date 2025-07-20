@@ -43,7 +43,7 @@ public interface ShowReviewCommentRepository extends JpaRepository<ShowReviewCom
                 WHEN :userId IS NULL THEN FALSE
                 WHEN EXISTS (
                     SELECT lr FROM LikedShowReviewComment lr
-                    WHERE lr.id.commentId = c.id AND lr.id.userId = :userId
+                    WHERE lr.commentId = c.id AND lr.userId = :userId
                 ) THEN TRUE
                 ELSE FALSE
            END

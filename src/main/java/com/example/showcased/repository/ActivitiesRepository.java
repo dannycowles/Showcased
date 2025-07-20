@@ -16,9 +16,9 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
             a.activityType,
             d.description,
             new com.example.showcased.dto.ActivityUserDto(
-                CAST(COALESCE(u1.id, u2.id, u3.id, u4.id, u5.id) AS long),
-                COALESCE(u1.username, u2.username, u3.username, u4.username, u5.username),
-                COALESCE(u1.profilePicture, u2.profilePicture, u3.profilePicture, u4.profilePicture, u5.profilePicture)
+                CAST(COALESCE(u1.id, u2.id, u3.id, u4.id, u5.id, u6.id) AS long),
+                COALESCE(u1.username, u2.username, u3.username, u4.username, u5.username, u6.username),
+                COALESCE(u1.profilePicture, u2.profilePicture, u3.profilePicture, u4.profilePicture, u5.profilePicture, u6.profilePicture)
             ),
             new com.example.showcased.dto.ActivityShowReviewLikeDto(
                 CASE WHEN a.activityType = 2 THEN lsr.reviewId ELSE NULL END,
@@ -49,7 +49,18 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
                 CASE WHEN a.activityType = 5 THEN ei2.episodeTitle ELSE NULL END,
                 CASE WHEN a.activityType = 5 THEN erc.commentText ELSE NULL END
             ),
-            COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt)
+            new com.example.showcased.dto.ActivityShowReviewCommentLikeDto(
+                CASE WHEN a.activityType = 6 THEN lsrc.commentId ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN src2.reviewId ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN si3.showId ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN si3.title ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN src2.commentText ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN u6b.id ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN u6b.username ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN u6b.profilePicture ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN (u6b.id = :userId) ELSE NULL END
+            ),
+            COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt)
         )
         FROM Activity a
         JOIN ActivityDescription d ON a.activityType = d.activityType
@@ -77,8 +88,15 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
         LEFT JOIN EpisodeReview er2 ON erc.reviewId = er2.id
         LEFT JOIN EpisodeInfo ei2 ON er2.episodeId = ei2.id
         
+        LEFT JOIN LikedShowReviewComment lsrc ON a.externalId = lsrc.id AND a.activityType = 6
+        LEFT JOIN User u6 ON lsrc.userId = u6.id
+        LEFT JOIN ShowReviewComment src2 ON lsrc.commentId = src2.id
+        LEFT JOIN ShowReview sr3 ON src2.reviewId = sr3.id
+        LEFT JOIN ShowInfo si3 ON sr3.showId = si3.showId
+        LEFT JOIN User u6b ON src2.userId = u6b.id
+        
         WHERE a.userId = :userId
-        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt) DESC
+        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt) DESC
 """)
     List<ActivityDto> findByUserId(@Param("userId") Long userId);
 
