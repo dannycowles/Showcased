@@ -675,9 +675,11 @@ public class ShowService {
     @Transactional
     public ReviewCommentWithUserInfoDto addCommentToEpisodeReview(Long reviewId, ReviewCommentDto reviewComment, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!episodeReviewRepository.existsById(reviewId)) {
+        Optional<EpisodeReview> reviewOpt = episodeReviewRepository.findById(reviewId);
+        if (reviewOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find an episode review with ID: " + reviewId);
         }
+        EpisodeReview review = reviewOpt.get();
 
         EpisodeReviewComment newComment = new EpisodeReviewComment();
         newComment.setUserId(userId);
@@ -685,6 +687,13 @@ public class ShowService {
         newComment.setCommentText(reviewComment.getCommentText());
         episodeReviewCommentRepository.save(newComment);
         episodeReviewRepository.incrementNumComments(reviewId);
+
+        // Add episode review comment event to activities table
+        Activity commentEvent = new Activity();
+        commentEvent.setUserId(review.getUserId());
+        commentEvent.setActivityType(ActivityType.COMMENT_EPISODE_REVIEW.getDbValue());
+        commentEvent.setExternalId(newComment.getId());
+        activitiesRepository.save(commentEvent);
 
         return episodeReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }

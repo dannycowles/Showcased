@@ -7,7 +7,8 @@ public enum ActivityType {
     FOLLOW(1),
     LIKE_SHOW_REVIEW(2),
     COMMENT_SHOW_REVIEW(3),
-    LIKE_EPISODE_REVIEW(4);
+    LIKE_EPISODE_REVIEW(4),
+    COMMENT_EPISODE_REVIEW(5);
 
     private final int dbValue;
 
