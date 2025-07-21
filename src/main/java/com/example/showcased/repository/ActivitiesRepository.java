@@ -16,9 +16,9 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
             a.activityType,
             d.description,
             new com.example.showcased.dto.ActivityUserDto(
-                CAST(COALESCE(u1.id, u2.id, u3.id, u4.id, u5.id, u6.id, u7.id) AS long),
-                COALESCE(u1.username, u2.username, u3.username, u4.username, u5.username, u6.username, u7.username),
-                COALESCE(u1.profilePicture, u2.profilePicture, u3.profilePicture, u4.profilePicture, u5.profilePicture, u6.profilePicture, u7.profilePicture)
+                CAST(COALESCE(u1.id, u2.id, u3.id, u4.id, u5.id, u6.id, u7.id, u8.id) AS long),
+                COALESCE(u1.username, u2.username, u3.username, u4.username, u5.username, u6.username, u7.username, u8.username),
+                COALESCE(u1.profilePicture, u2.profilePicture, u3.profilePicture, u4.profilePicture, u5.profilePicture, u6.profilePicture, u7.profilePicture, u8.profilePicture)
             ),
             new com.example.showcased.dto.ActivityShowReviewLikeDto(
                 CASE WHEN a.activityType = 2 THEN lsr.reviewId ELSE NULL END,
@@ -75,7 +75,11 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
                 CASE WHEN a.activityType = 7 THEN u7b.profilePicture ELSE NULL END,
                 CASE WHEN a.activityType = 7 THEN (u7b.id = :userId) ELSE NULL END
             ),
-            COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt)
+            new com.example.showcased.dto.ActivityCollectionLikeDto(
+                CASE WHEN a.activityType = 8 THEN lc.collectionId ELSE NULL END,
+                CASE WHEN a.activityType = 8 THEN c.collectionName ELSE NULL END
+            ),
+            COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt, lc.createdAt)
         )
         FROM Activity a
         JOIN ActivityDescription d ON a.activityType = d.activityType
@@ -117,8 +121,12 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
         LEFT JOIN EpisodeInfo ei3 ON er3.episodeId = ei3.id
         LEFT JOIN User u7b ON erc2.userId = u7b.id
         
+        LEFT JOIN LikedCollection lc ON a.externalId = lc.id AND a.activityType = 8
+        LEFT JOIN User u8 ON lc.userId = u8.id
+        LEFT JOIN Collection c ON lc.collectionId = c.collectionId
+        
         WHERE a.userId = :userId
-        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt) DESC
+        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt, lc.createdAt) DESC
 """)
     List<ActivityDto> findByUserId(@Param("userId") Long userId);
 

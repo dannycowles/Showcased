@@ -22,6 +22,8 @@ public class Collection {
     @Column(name = "is_ranked")
     private boolean ranked = false;
 
+    private int numLikes;
+
     public Collection(Long userId, String collectionName) {
         this.userId = userId;
         this.collectionName = collectionName;

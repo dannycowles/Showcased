@@ -186,6 +186,7 @@ CREATE TABLE IF NOT EXISTS user_collections (
     description TEXT DEFAULT NULL,
     is_private BOOLEAN NOT NULL DEFAULT FALSE,
     is_ranked BOOLEAN NOT NULL DEFAULT FALSE,
+    num_likes INT DEFAULT 0,
     PRIMARY KEY (collection_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -200,9 +201,12 @@ CREATE TABLE IF NOT EXISTS shows_in_collections (
 );
 
 CREATE TABLE IF NOT EXISTS liked_collections (
-    user_id INT,
-    collection_id INT,
-    PRIMARY KEY (user_id, collection_id),
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    collection_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (user_id, collection_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (collection_id) REFERENCES user_collections(collection_id) ON DELETE CASCADE
 );

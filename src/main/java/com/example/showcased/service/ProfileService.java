@@ -683,8 +683,7 @@ public class ProfileService {
 
         CollectionReturnDto collectionReturn = modelMapper.map(collection, CollectionReturnDto.class);
         collectionReturn.setShows(showsInCollectionRepository.findByIdCollectionId(collectionId));
-        collectionReturn.setNumLikes(likedCollectionsRepository.countByIdCollectionId(collectionId));
-        collectionReturn.setLikedByUser(likedCollectionsRepository.existsById(new LikedCollectionsId(userId, collectionId)));
+        collectionReturn.setLikedByUser(likedCollectionsRepository.existsByUserIdAndCollectionId(userId, collectionId));
         return collectionReturn;
     }
 

@@ -326,35 +326,61 @@ public class UserService {
 
         CollectionReturnDto collectionReturn = modelMapper.map(collection, CollectionReturnDto.class);
         collectionReturn.setShows(showsInCollectionRepository.findByIdCollectionId(collectionId));
-        collectionReturn.setNumLikes(likedCollectionsRepository.countByIdCollectionId(collectionId));
 
         // If the user is logged in, check if they have liked the collection
         if (userId != null) {
-            collectionReturn.setLikedByUser(likedCollectionsRepository.existsById(new LikedCollectionsId(userId, collectionId)));
+            collectionReturn.setLikedByUser(likedCollectionsRepository.existsByUserIdAndCollectionId(userId, collectionId));
         }
         return collectionReturn;
     }
 
+    @Transactional
     public void likeCollection(Long collectionId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        LikedCollections newLike = new LikedCollections(new LikedCollectionsId(userId, collectionId)); ;
+        Optional<Collection> collectionOpt = collectionsRepository.findById(collectionId);
+        if (collectionOpt.isEmpty()) {
+            throw new CollectionNotFoundException("Collection not found with ID: " + collectionId);
+        }
+        Collection collection = collectionOpt.get();
 
         // Check if the user has already liked this collection
-        if (likedCollectionsRepository.existsById(newLike.getId())) {
+        if (likedCollectionsRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
             throw new AlreadyLikedException("You have already liked this collection");
         }
+
+        LikedCollection newLike = new LikedCollection();
+        newLike.setCollectionId(collectionId);
+        newLike.setUserId(userId);
         likedCollectionsRepository.save(newLike);
+        collectionsRepository.incrementLikes(collectionId);
+
+        // Add the like collection event to the activities table
+        Activity collectionEvent  = new Activity();
+        collectionEvent.setUserId(collection.getUserId());
+        collectionEvent.setActivityType(ActivityType.LIKE_COLLECTION.getDbValue());
+        collectionEvent.setExternalId(newLike.getId());
+        activitiesRepository.save(collectionEvent);
     }
 
+    @Transactional
     public void unlikeCollection(Long collectionId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        LikedCollections removeLike = new LikedCollections(new LikedCollectionsId(userId, collectionId));
 
-        // Check to make sure the user has actually liked this collection
-        if (!likedCollectionsRepository.existsById(removeLike.getId())) {
-            throw new HaventLikedException("You have not liked this collection");
+        if (collectionsRepository.existsById(collectionId)) {
+            // Check to ensure the user has liked the collection
+            Optional<LikedCollection> likedCollectionsOpt = likedCollectionsRepository.findByUserIdAndCollectionId(userId, collectionId);
+            if (likedCollectionsOpt.isPresent()) {
+                LikedCollection likedCollection = likedCollectionsOpt.get();
+
+                likedCollectionsRepository.delete(likedCollection);
+                collectionsRepository.decrementLikes(collectionId);
+                activitiesRepository.deleteByExternalIdAndActivityType(likedCollection.getId(), ActivityType.LIKE_COLLECTION.getDbValue());
+            } else {
+                throw new HaventLikedException("You have not liked this collection");
+            }
+        } else {
+            throw new CollectionNotFoundException("Collection not found with ID: " + collectionId);
         }
-        likedCollectionsRepository.delete(removeLike);
     }
 
     public List<DynamicRankingReturnDto> getUserDynamicRankings(Long userId, Integer limit) {
