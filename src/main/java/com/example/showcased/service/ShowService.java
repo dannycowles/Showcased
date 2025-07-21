@@ -721,34 +721,49 @@ public class ShowService {
     @Transactional
     public void likeEpisodeReviewComment(Long commentId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!episodeReviewCommentRepository.existsById(commentId)) {
+        Optional<EpisodeReviewComment> commentOpt = episodeReviewCommentRepository.findById(commentId);
+        if (commentOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find an episode review comment with ID: " + commentId);
         }
+        EpisodeReviewComment comment = commentOpt.get();
 
         // Check if the user has already liked the comment
-//        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment(new LikedEpisodeReviewCommentId(userId, commentId));
-//        if (likedEpisodeReviewCommentsRepository.existsById(likedComment.getId())) {
-//            throw new AlreadyLikedException("You have already liked this episode review comment");
-//        }
-//
-//        likedEpisodeReviewCommentsRepository.save(likedComment);
-//        episodeReviewCommentRepository.incrementNumLikes(commentId);
+        if (likedEpisodeReviewCommentsRepository.existsByUserIdAndCommentId(userId, commentId)) {
+            throw new AlreadyLikedException("You have already liked this episode review comment");
+        }
+
+        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment();
+        likedComment.setUserId(userId);
+        likedComment.setCommentId(commentId);
+        likedEpisodeReviewCommentsRepository.save(likedComment);
+        episodeReviewCommentRepository.incrementNumLikes(commentId);
+
+        // Add the episode review comment like event to the activities table
+        Activity commentEvent = new Activity();
+        commentEvent.setUserId(comment.getUserId());
+        commentEvent.setActivityType(ActivityType.LIKE_EPISODE_REVIEW_COMMENT.getDbValue());
+        commentEvent.setExternalId(likedComment.getId());
+        activitiesRepository.save(commentEvent);
     }
 
     @Transactional
     public void unlikeEpisodeReviewComment(Long commentId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        if (!episodeReviewCommentRepository.existsById(commentId)) {
+
+        if (episodeReviewCommentRepository.existsById(commentId)) {
+            Optional<LikedEpisodeReviewComment> likedCommentOpt = likedEpisodeReviewCommentsRepository.findByUserIdAndCommentId(userId, commentId);
+            // Check to ensure the user has liked the comment
+            if (likedCommentOpt.isPresent()) {
+                LikedEpisodeReviewComment likedComment = likedCommentOpt.get();
+
+                likedEpisodeReviewCommentsRepository.delete(likedComment);
+                episodeReviewCommentRepository.decrementNumLikes(commentId);
+                activitiesRepository.deleteByExternalIdAndActivityType(likedComment.getId(), ActivityType.LIKE_EPISODE_REVIEW_COMMENT.getDbValue());
+            } else {
+                throw new HaventLikedException("You have not liked this episode review comment");
+            }
+        } else {
             throw new ItemNotFoundException("Didn't find an episode review comment with ID: " + commentId);
         }
-
-        // Check to ensure the user has liked the comment
-//        LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment(new LikedEpisodeReviewCommentId(userId, commentId));
-//        if (!likedEpisodeReviewCommentsRepository.existsById(likedComment.getId())) {
-//            throw new HaventLikedException("You have not liked this episode review comment");
-//        }
-//
-//        likedEpisodeReviewCommentsRepository.delete(likedComment);
-//        episodeReviewCommentRepository.decrementNumLikes(commentId);
     }
 }
