@@ -17,5 +17,6 @@ public class ActivityDto {
     private ActivityEpisodeReviewLikeDto episodeReviewLike;
     private ActivityEpisodeReviewCommentDto episodeReviewComment;
     private ActivityShowReviewCommentLikeDto showReviewCommentLike;
+    private ActivityEpisodeReviewCommentLikeDto episodeReviewCommentLike;
     private Date createdAt;
 }
