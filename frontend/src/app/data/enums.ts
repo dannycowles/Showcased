@@ -9,3 +9,14 @@ export enum ReviewType {
   Show,
   Episode,
 }
+
+export enum ActivityType {
+  Follow = 1,
+  LikeShowReview,
+  CommentShowReview,
+  LikeEpisodeReview,
+  CommentEpisodeReview,
+  LikeShowReviewComment,
+  LikeEpisodeReviewComment,
+  LikeCollection
+}

@@ -27,6 +27,7 @@ import {
 } from '../data/dto/update-list-ranks-dto';
 import {CreateCollectionDto} from '../data/dto/create-collection-dto';
 import {UpdateCollectionDetails} from '../data/dto/update-collection-details';
+import {ActivityData} from '../data/activity-data';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +51,18 @@ export class ProfileService {
   async getProfileDetails(): Promise<UserData> {
     const response = await fetch(`${this.baseUrl}/details`, {
       credentials: 'include',
+    });
+
+    this.checkUnauthorizedUser(response);
+    return await response.json();
+  }
+
+  /**
+   * Retrieves profile activity for the logged in user
+   */
+  async getProfileActivity(): Promise<ActivityData[]> {
+    const response = await fetch(`${this.baseUrl}/activity`, {
+      credentials: "include"
     });
 
     this.checkUnauthorizedUser(response);
