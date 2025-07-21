@@ -82,6 +82,7 @@ import {DiscoverTrendingPageComponent} from './pages/discover/discover-trending-
 import {
   DiscoverTopRatedPageComponent
 } from './pages/discover/discover-top-rated-page/discover-top-rated-page.component';
+import {ProfileActivityPageComponent} from './pages/profile/profile-activity-page/profile-activity-page.component';
 
 @NgModule({
   declarations: [
@@ -123,7 +124,8 @@ import {
     UserCollectionDetailsPageComponent,
     UserDynamicRankingPageComponent,
     DiscoverTrendingPageComponent,
-    DiscoverTopRatedPageComponent
+    DiscoverTopRatedPageComponent,
+    ProfileActivityPageComponent
   ],
   imports: [
     BrowserModule,

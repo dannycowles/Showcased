@@ -56,6 +56,7 @@ import {DiscoverTrendingPageComponent} from './pages/discover/discover-trending-
 import {
   DiscoverTopRatedPageComponent
 } from './pages/discover/discover-top-rated-page/discover-top-rated-page.component';
+import {ProfileActivityPageComponent} from './pages/profile/profile-activity-page/profile-activity-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -74,6 +75,7 @@ const routes: Routes = [
     { path: 'profile/dynamic-ranking', component: ProfileDynamicsRankingPageComponent },
     { path: 'profile/collections', component: ProfileCollectionsPageComponent },
     { path: 'profile/collections/:id', component: ProfileCollectionDetailsPageComponent },
+    { path: 'profile/activity', component: ProfileActivityPageComponent },
     { path: 'user/:id', component: UserPageComponent},
     { path: 'user/:id/watchlist', component: UserWatchlistPageComponent},
     { path: 'user/:id/watching', component: UserWatchingPageComponent},

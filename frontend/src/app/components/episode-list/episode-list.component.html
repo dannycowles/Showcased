@@ -1,7 +1,7 @@
 <h3>Favorite Episodes</h3>
 @if (episodes.length != 0) {
   <div class="d-flex gap-5">
-    @for (episode of episodes; track episode.id) {
+    @for (episode of episodes; track episode.episodeId) {
       <h2 class="align-self-center fw-bold">{{episode.rankNum}}</h2>
       <div>
         <h5>{{episode.episodeTitle}}</h5>

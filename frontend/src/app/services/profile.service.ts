@@ -58,7 +58,7 @@ export class ProfileService {
   }
 
   /**
-   * Retrieves profile activity for the logged in user
+   * Retrieves profile activity for the logged-in user
    */
   async getProfileActivity(): Promise<ActivityData[]> {
     const response = await fetch(`${this.baseUrl}/activity`, {
