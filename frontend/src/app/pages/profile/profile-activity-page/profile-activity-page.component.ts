@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ActivityData} from '../../../data/activity-data';
 import {ProfileService} from '../../../services/profile.service';
 import {ActivityType} from '../../../data/enums';
+import {UtilsService} from '../../../services/utils.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-profile-activity-page',
@@ -13,7 +15,9 @@ export class ProfileActivityPageComponent implements OnInit {
   activityData: ActivityData[];
   readonly ActivityType = ActivityType;
 
-  constructor(private profileService: ProfileService) {};
+  constructor(private profileService: ProfileService,
+              public utilsService: UtilsService,
+              private router: Router) {};
 
   async ngOnInit() {
     try {
@@ -79,5 +83,27 @@ export class ProfileActivityPageComponent implements OnInit {
 
   getCollectionLikeDescription(activity: ActivityData): string[] {
     return activity.description.replace('{collectionName}', activity.collectionLike.collectionName).split('{user}');
+  }
+
+  navigateToActivity(activity: ActivityData) {
+    switch (activity.activityType) {
+      case ActivityType.Follow:
+        break;
+      case ActivityType.LikeShowReview:
+        break;
+      case ActivityType.CommentShowReview:
+        break;
+      case ActivityType.LikeEpisodeReview:
+        break;
+      case ActivityType.CommentEpisodeReview:
+        break;
+      case ActivityType.LikeShowReviewComment:
+        break;
+      case ActivityType.LikeEpisodeReviewComment:
+        break;
+      case (ActivityType.LikeCollection):
+        this.router.navigate(['profile/collections', activity.collectionLike.collectionId]);
+        break;
+    }
   }
 }

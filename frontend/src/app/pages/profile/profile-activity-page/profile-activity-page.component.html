@@ -2,35 +2,38 @@
 
 @if (activityData?.length) {
   @for (activity of activityData; track activity.id) {
-    <div class="d-flex align-items-center mb-3">
+    <div class="d-flex align-items-center mb-3 activity-item" (click)="navigateToActivity(activity)">
       <img class="profile-picture me-3" [ngSrc]="activity.user.profilePicture" [routerLink]="['/user', activity.user.userId]" alt="User Profile Picture" width="100" height="100">
-
-      @switch (activity.activityType) {
-        @case (ActivityType.Follow) {
-          <h5><a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>{{getFollowDescription(activity)[1]}}</h5>
-        }
-        @case (ActivityType.LikeShowReview) {
-          <h5><a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>{{getShowReviewLikeDescription(activity)[1]}}</h5>
-        }
-        @case (ActivityType.CommentShowReview) {
-          <h5><a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>{{getShowReviewCommentDescription(activity)[1]}}</h5>
-        }
-        @case (ActivityType.LikeEpisodeReview) {
-          <h5><a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>{{getEpisodeReviewLikeDescription(activity)[1]}}</h5>
-        }
-        @case (ActivityType.CommentEpisodeReview) {
-          <h5><a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>{{getEpisodeReviewCommentDescription(activity)[1]}}</h5>
-        }
-        @case (ActivityType.LikeShowReviewComment) {
-          <h5><a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>{{getShowReviewCommentLikeDescription(activity)[1]}}</h5>
-        }
-        @case (ActivityType.LikeEpisodeReviewComment) {
-          <h5><a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>{{getEpisodeReviewCommentLikeDescription(activity)[1]}}</h5>
-        }
-        @case (ActivityType.LikeCollection) {
-          <h5><a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>{{getCollectionLikeDescription(activity)[1]}}</h5>
-        }
+      <h5>
+        <a class="text-dark" [routerLink]="['/user', activity.user.userId]">{{activity.user.username}}</a>
+        @switch (activity.activityType) {
+          @case (ActivityType.Follow) {
+            {{getFollowDescription(activity)[1]}}
+          }
+          @case (ActivityType.LikeShowReview) {
+            {{getShowReviewLikeDescription(activity)[1]}}
+          }
+          @case (ActivityType.CommentShowReview) {
+            {{getShowReviewCommentDescription(activity)[1]}}
+          }
+          @case (ActivityType.LikeEpisodeReview) {
+            {{getEpisodeReviewLikeDescription(activity)[1]}}
+          }
+          @case (ActivityType.CommentEpisodeReview) {
+            {{getEpisodeReviewCommentDescription(activity)[1]}}
+          }
+          @case (ActivityType.LikeShowReviewComment) {
+            {{getShowReviewCommentLikeDescription(activity)[1]}}
+          }
+          @case (ActivityType.LikeEpisodeReviewComment) {
+            {{getEpisodeReviewCommentLikeDescription(activity)[1]}}
+          }
+          @case (ActivityType.LikeCollection) {
+            {{getCollectionLikeDescription(activity)[1]}}
+          }
       }
+      </h5>
+      <div class="ms-auto">{{utilsService.getRelativeDate(activity.createdAt)}}</div>
     </div>
   }
 } @else {
