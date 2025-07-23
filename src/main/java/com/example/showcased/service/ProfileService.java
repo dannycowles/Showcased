@@ -7,6 +7,7 @@ import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class ProfileService {
     private final ModelMapper modelMapper;
     private final ShowRankingRepository showRankingRepository;
     private final int numTopEntries = 10;
+    private final int numActivities = 10;
     private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist", "tritagonist", "side"};
     private final ShowReviewRepository showReviewRepository;
     private final EpisodeInfoRepository episodeInfoRepository;
@@ -852,8 +854,8 @@ public class ProfileService {
         dynamicRankingRepository.saveAll(dynamics);
     }
 
-    public List<ActivityDto> getProfileActivity(HttpSession session) {
+    public Page<ActivityDto> getProfileActivity(int pageNum, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return activitiesRepository.findByUserId(userId);
+        return activitiesRepository.findByUserId(userId, PageRequest.of(pageNum - 1, numActivities));
     }
 }

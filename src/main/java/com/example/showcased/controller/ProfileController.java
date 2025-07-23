@@ -4,6 +4,7 @@ import com.example.showcased.dto.*;
 import com.example.showcased.service.FileService;
 import com.example.showcased.service.ProfileService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +41,8 @@ public class ProfileController {
     }
 
     @GetMapping("/activity")
-    public ResponseEntity<List<ActivityDto>> getProfileActivity(HttpSession session) {
-        List<ActivityDto> activity = profileService.getProfileActivity(session);
+    public ResponseEntity<Page<ActivityDto>> getProfileActivity(@RequestParam(required = false, defaultValue = "1") int page, HttpSession session) {
+        Page<ActivityDto> activity = profileService.getProfileActivity(page, session);
         return ResponseEntity.ok(activity);
     }
 

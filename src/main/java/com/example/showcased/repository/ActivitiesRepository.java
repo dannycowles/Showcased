@@ -2,11 +2,11 @@ package com.example.showcased.repository;
 
 import com.example.showcased.dto.ActivityDto;
 import com.example.showcased.entity.Activity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
 
@@ -128,7 +128,7 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
         WHERE a.userId = :userId
         ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt, lc.createdAt) DESC
 """)
-    List<ActivityDto> findByUserId(@Param("userId") Long userId);
+    Page<ActivityDto> findByUserId(@Param("userId") Long userId, Pageable page);
 
     void deleteByExternalIdAndActivityType(Long id, int i);
 }
