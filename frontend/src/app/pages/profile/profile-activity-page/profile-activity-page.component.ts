@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivityData} from '../../../data/activity-data';
 import {ProfileService} from '../../../services/profile.service';
+import {ActivityType} from '../../../data/enums';
 
 @Component({
   selector: 'app-profile-activity-page',
@@ -10,6 +11,7 @@ import {ProfileService} from '../../../services/profile.service';
 })
 export class ProfileActivityPageComponent implements OnInit {
   activityData: ActivityData[];
+  readonly ActivityType = ActivityType;
 
   constructor(private profileService: ProfileService) {};
 
@@ -19,5 +21,63 @@ export class ProfileActivityPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  getFollowDescription(activity: ActivityData): string[] {
+    return activity.description.split('{user}');
+  }
+
+  getShowReviewLikeDescription(activity: ActivityData): string[] {
+    const replacedDescription = activity.description
+      .replace('{showTitle}', activity.showReviewLike.showTitle);
+    return replacedDescription.split('{user}');
+  }
+
+  getShowReviewCommentDescription(activity: ActivityData): string[] {
+    const replacedDescription = activity.description
+      .replace('{showTitle}', activity.showReviewComment.showTitle)
+      .replace('{comment}', activity.showReviewComment.commentText);
+    return replacedDescription.split('{user}');
+  }
+
+  getEpisodeReviewLikeDescription(activity: ActivityData): string[] {
+    const replacedDescription = activity.description
+      .replace('{showTitle}', activity.episodeReviewLike.showTitle)
+      .replace('{season}', String(activity.episodeReviewLike.season))
+      .replace('{episode}', String(activity.episodeReviewLike.episode))
+      .replace('{episodeTitle}', activity.episodeReviewLike.episodeTitle);
+    return replacedDescription.split('{user}');
+  }
+
+  getEpisodeReviewCommentDescription(activity: ActivityData): string[] {
+    const replacedDescription = activity.description
+      .replace('{showTitle}', activity.episodeReviewComment.showTitle)
+      .replace('{season}', String(activity.episodeReviewComment.season))
+      .replace('{episode}', String(activity.episodeReviewComment.episode))
+      .replace('{episodeTitle}', activity.episodeReviewComment.episodeTitle)
+      .replace('{comment}', activity.episodeReviewComment.commentText);
+    return replacedDescription.split('{user}');
+  }
+
+  getShowReviewCommentLikeDescription(activity: ActivityData): string[] {
+    const replacedDescription = (activity.showReviewCommentLike.isOwnComment)
+      ? activity.description.replace("{reviewUser}'s", "your")
+      : activity.description.replace('{reviewUser}', activity.showReviewCommentLike.reviewUser.username);
+    return replacedDescription.replace('{showTitle}', activity.showReviewCommentLike.showTitle).split('{user}');
+  }
+
+  getEpisodeReviewCommentLikeDescription(activity: ActivityData): string[] {
+    const replacedDescription = (activity.episodeReviewCommentLike.isOwnComment)
+      ? activity.description.replace("{reviewUser}'s", "your")
+      : activity.description.replace('{reviewUser}', activity.episodeReviewCommentLike.reviewUser.username);
+    return replacedDescription.replace('{showTitle}', activity.episodeReviewCommentLike.showTitle)
+      .replace('{season}', String(activity.episodeReviewCommentLike.season))
+      .replace('{episode}', String(activity.episodeReviewCommentLike.episode))
+      .replace('{episodeTitle}', activity.episodeReviewCommentLike.episodeTitle)
+      .split('{user}');
+  }
+
+  getCollectionLikeDescription(activity: ActivityData): string[] {
+    return activity.description.replace('{collectionName}', activity.collectionLike.collectionName).split('{user}');
   }
 }

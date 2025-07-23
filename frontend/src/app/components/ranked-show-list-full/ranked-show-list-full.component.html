@@ -4,7 +4,7 @@
   @for (show of shows; track show.showId; let rank = $index) {
     <div class="show-box" cdkDrag [attr.cdkDrag]="editable" [style.cursor]="editable ? 'move' : 'default'">
       <h5 class="fs-3 fw-bold">{{rank + 1}}</h5>
-      <h5>{{show.showTitle}}</h5>
+      <h5>{{show.title}}</h5>
 
       <!-- Poster images are sized w185, using 2:3 ratio -->
       <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
