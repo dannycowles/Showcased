@@ -1,7 +1,13 @@
 <h1>Profile Activity</h1>
 
-@if (activityData?.length) {
-  @for (activity of activityData; track activity.id) {
+@if (isLoading) {
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+} @else if (activityData?.content.length) {
+  @for (activity of activityData.content; track activity.id) {
     <div class="d-flex align-items-center mb-3 activity-item" (click)="navigateToActivity(activity)">
       <img class="profile-picture me-3" [ngSrc]="activity.user.profilePicture" [routerLink]="['/user', activity.user.userId]" alt="User Profile Picture" width="100" height="100">
       <h5>
@@ -34,6 +40,18 @@
       }
       </h5>
       <div class="ms-auto">{{utilsService.getRelativeDate(activity.createdAt)}}</div>
+    </div>
+  }
+
+  @if (isLoadingMore) {
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  } @else if (activityData.page.number + 1 < activityData.page.totalPages) {
+    <div class="d-flex justify-content-center mb-5">
+      <button type="button" class="btn btn-primary" (click)="getMoreActivity()">Load More</button>
     </div>
   }
 } @else {

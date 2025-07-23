@@ -28,6 +28,7 @@ import {
 import {CreateCollectionDto} from '../data/dto/create-collection-dto';
 import {UpdateCollectionDetails} from '../data/dto/update-collection-details';
 import {ActivityData} from '../data/activity-data';
+import {PageData} from '../data/page-data';
 
 @Injectable({
   providedIn: 'root',
@@ -60,8 +61,9 @@ export class ProfileService {
   /**
    * Retrieves profile activity for the logged-in user
    */
-  async getProfileActivity(): Promise<ActivityData[]> {
-    const response = await fetch(`${this.baseUrl}/activity`, {
+  async getProfileActivity(page ?: number): Promise<PageData<ActivityData>> {
+    const params = page != null ? `?page=${page}` : '';
+    const response = await fetch(`${this.baseUrl}/activity${params}`, {
       credentials: "include"
     });
 

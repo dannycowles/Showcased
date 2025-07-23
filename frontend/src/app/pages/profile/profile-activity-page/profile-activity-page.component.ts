@@ -4,6 +4,7 @@ import {ProfileService} from '../../../services/profile.service';
 import {ActivityType} from '../../../data/enums';
 import {UtilsService} from '../../../services/utils.service';
 import {Router} from '@angular/router';
+import {PageData} from '../../../data/page-data';
 
 @Component({
   selector: 'app-profile-activity-page',
@@ -12,8 +13,10 @@ import {Router} from '@angular/router';
   standalone: false
 })
 export class ProfileActivityPageComponent implements OnInit {
-  activityData: ActivityData[];
+  activityData: PageData<ActivityData>;
   readonly ActivityType = ActivityType;
+  isLoading: boolean = false;
+  isLoadingMore: boolean = false;
 
   constructor(private profileService: ProfileService,
               public utilsService: UtilsService,
@@ -21,9 +24,26 @@ export class ProfileActivityPageComponent implements OnInit {
 
   async ngOnInit() {
     try {
+      this.isLoading = true;
       this.activityData = await this.profileService.getProfileActivity();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async getMoreActivity() {
+    try {
+      // Retrieves the next page from the backend, adds by 2 because zero indexed on frontend and 1 indexed on backend
+      this.isLoadingMore = true;
+      const result = await this.profileService.getProfileActivity(this.activityData.page.number + 2);
+      this.activityData.content.push(...result.content);
+      this.activityData.page = result.page;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.isLoadingMore = false;
     }
   }
 
