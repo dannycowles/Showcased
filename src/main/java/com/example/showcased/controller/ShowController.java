@@ -3,6 +3,7 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.ShowService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -81,8 +82,8 @@ public class ShowController {
     }
 
     @GetMapping("/{id}/reviews")
-    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getShowReviews(@PathVariable Long id, HttpSession session) {
-        List<ShowReviewWithUserInfoDto> reviews = showService.getShowReviews(id, session);
+    public ResponseEntity<Page<ShowReviewWithUserInfoDto>> getShowReviews(@PathVariable Long id, @RequestParam(required = false, defaultValue = "1") int page, HttpSession session) {
+        Page<ShowReviewWithUserInfoDto> reviews = showService.getShowReviews(id, page, session);
         return ResponseEntity.ok(reviews);
     }
 
@@ -134,8 +135,8 @@ public class ShowController {
     }
 
     @GetMapping("/episodes/{episodeId}/reviews")
-    public ResponseEntity<List<EpisodeReviewWithUserInfoDto>> getEpisodeReviews(@PathVariable Long episodeId, HttpSession session) {
-        List<EpisodeReviewWithUserInfoDto> reviews = showService.getEpisodeReviews(episodeId, session);
+    public ResponseEntity<Page<EpisodeReviewWithUserInfoDto>> getEpisodeReviews(@PathVariable Long episodeId, @RequestParam(required = false, defaultValue = "1") int page, HttpSession session) {
+        Page<EpisodeReviewWithUserInfoDto> reviews = showService.getEpisodeReviews(episodeId, page, session);
         return ResponseEntity.ok(reviews);
     }
 

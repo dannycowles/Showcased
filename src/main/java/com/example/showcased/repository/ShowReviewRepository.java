@@ -2,6 +2,8 @@ package com.example.showcased.repository;
 
 import com.example.showcased.dto.ShowReviewWithUserInfoDto;
 import com.example.showcased.entity.ShowReview;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,7 +42,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
             WHERE r.showId = :showId
             ORDER BY r.reviewDate DESC
         """)
-    List<ShowReviewWithUserInfoDto> findAllByShowId(@Param("showId") Long showId, @Param("userId") Long userId);
+    Page<ShowReviewWithUserInfoDto> findAllByShowId(@Param("showId") Long showId, @Param("userId") Long userId, Pageable page);
 
     @Query("""
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(

@@ -12,6 +12,7 @@ import {ReviewType} from '../../../data/enums';
 import {AuthenticationService} from '../../../services/auth.service';
 import {AddEpisodeReviewDto} from '../../../data/dto/add-review-dto';
 import {AddToEpisodeRankingList} from '../../../data/dto/add-to-list-dto';
+import {PageData} from '../../../data/page-data';
 
 @Component({
   selector: 'app-episode-page',
@@ -24,7 +25,7 @@ export class EpisodePageComponent implements OnInit {
   readonly seasonNumber: number;
   readonly episodeNumber: number;
   episode: EpisodeData;
-  reviews: EpisodeReviewData[];
+  reviews: PageData<EpisodeReviewData>;
   readonly ReviewType = ReviewType;
   isLoggedIn: boolean = false;
 
@@ -47,6 +48,16 @@ export class EpisodePageComponent implements OnInit {
       this.episode = await this.showService.fetchEpisodeDetails(this.showId, this.seasonNumber, this.episodeNumber);
       this.reviews = await this.showService.fetchEpisodeReviews(this.episode.id);
       this.isLoggedIn = await this.authService.loginStatus();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async loadMoreReviews() {
+    try {
+      const result = await this.showService.fetchEpisodeReviews(this.episode.id, this.reviews.page.number + 2);
+      this.reviews.content.push(...result.content);
+      this.reviews.page = result.page;
     } catch (error) {
       console.error(error);
     }
@@ -116,7 +127,7 @@ export class EpisodePageComponent implements OnInit {
 
       if (response.ok) {
         const newReview: EpisodeReviewData = await response.json();
-        this.reviews.unshift(newReview);
+        this.reviews.content.unshift(newReview);
       }
     } catch (error) {
       console.error(error);

@@ -11,6 +11,7 @@ import {Router} from '@angular/router';
 import {ReviewCommentData} from '../data/review-comment-data';
 import {AddCommentDto} from '../data/dto/add-comment-dto';
 import {AddEpisodeReviewDto, AddShowReviewDto} from '../data/dto/add-review-dto';
+import {PageData} from '../data/page-data';
 
 @Injectable({
   providedIn: 'root'
@@ -93,14 +94,14 @@ export class ShowService {
   /**
    * Fetches the reviews for a show by its ID
    * @param showId
+   * @param page
    */
-  async fetchShowReviews(showId: number): Promise<ShowReviewData[]> {
-    const response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
+  async fetchShowReviews(showId: number, page ?: number): Promise<PageData<ShowReviewData>> {
+    const params = page != null ? `?page=${page}` : '';
+    const response = await fetch(`${this.baseUrl}/${showId}/reviews${params}`, {
       credentials: 'include'
     });
-
     return await response.json();
-
   }
 
   /**
@@ -230,9 +231,11 @@ export class ShowService {
   /**
    * Retrieves the reviews for an episode by its ID
    * @param episodeId
+   * @param page
    */
-  async fetchEpisodeReviews(episodeId: number): Promise<EpisodeReviewData[]> {
-    const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews`, {
+  async fetchEpisodeReviews(episodeId: number, page ?: number): Promise<PageData<EpisodeReviewData>> {
+    const params = page != null ? `?page=${page}` : '';
+    const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews${params}`, {
       credentials: 'include'
     });
     return await response.json();

@@ -12,6 +12,8 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +51,7 @@ public class ShowService {
     private final LikedShowReviewCommentsRepository  likedShowReviewCommentsRepository;
     private final EpisodeReviewCommentRepository episodeReviewCommentRepository;
     private final LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository;
+    private final int numReviews = 2;
 
     public ShowService(ShowReviewRepository showReviewRepository,
                        ModelMapper modelMapper,
@@ -445,9 +448,9 @@ public class ShowService {
         return showReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
-    public List<ShowReviewWithUserInfoDto> getShowReviews(Long showId, HttpSession session) {
+    public Page<ShowReviewWithUserInfoDto> getShowReviews(Long showId, int page, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return showReviewRepository.findAllByShowId(showId, userId);
+        return showReviewRepository.findAllByShowId(showId, userId, PageRequest.of(page - 1, numReviews));
     }
 
     @Transactional
@@ -523,9 +526,9 @@ public class ShowService {
         return episodeReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
-    public List<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, HttpSession session) {
+    public Page<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, int page, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return episodeReviewRepository.findAllByEpisodeId(episodeId, userId);
+        return episodeReviewRepository.findAllByEpisodeId(episodeId, userId, PageRequest.of(page - 1, numReviews));
     }
 
     @Transactional

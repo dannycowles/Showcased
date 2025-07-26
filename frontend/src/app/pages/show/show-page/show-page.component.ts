@@ -14,6 +14,7 @@ import {AuthenticationService} from '../../../services/auth.service';
 import {ReviewType} from '../../../data/enums';
 import {AddShowReviewDto} from '../../../data/dto/add-review-dto';
 import {AddToShowRankingList, AddToWatchingListDto, AddToWatchlistDto} from '../../../data/dto/add-to-list-dto';
+import {PageData} from '../../../data/page-data';
 
 @Component({
   selector: 'app-show-page',
@@ -24,7 +25,7 @@ import {AddToShowRankingList, AddToWatchingListDto, AddToWatchlistDto} from '../
 export class ShowPageComponent implements OnInit {
   showId: number;
   show: ShowData;
-  reviews: ShowReviewData[];
+  reviews: PageData<ShowReviewData>;
   isLoggedIn: boolean = false;
 
   constructor(private route: ActivatedRoute,
@@ -101,7 +102,7 @@ export class ShowPageComponent implements OnInit {
 
       if (response.ok) {
         const newReview: ShowReviewData = await response.json();
-        this.reviews.unshift(newReview);
+        this.reviews.content.unshift(newReview);
       }
     } catch(error) {
       console.error(error);
@@ -119,6 +120,16 @@ export class ShowPageComponent implements OnInit {
     // Retrieve reviews for show from backend
     try {
       this.reviews = await this.showService.fetchShowReviews(this.showId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async loadMoreReviews() {
+    try {
+      const result = await this.showService.fetchShowReviews(this.showId, this.reviews.page.number + 2);
+      this.reviews.content.push(...result.content);
+      this.reviews.page = result.page;
     } catch (error) {
       console.error(error);
     }

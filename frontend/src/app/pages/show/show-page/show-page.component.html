@@ -161,9 +161,15 @@
 
 <h2 class="ms-2 mb-4">Reviews</h2>
 <button type="button" class="btn btn-primary ms-2 mb-4" (click)="openAddReviewModal()">Add Review</button>
-@if (reviews?.length) {
-  @for (review of reviews; track review.id) {
+@if (reviews?.content.length) {
+  @for (review of reviews.content; track review.id) {
     <app-review [review]="review" [reviewType]="ReviewType.Show" [isLoggedIn]="isLoggedIn"></app-review>
+  }
+
+  @if (reviews.page.number + 1 < reviews.page.totalPages) {
+    <div class="d-flex justify-content-center mb-5">
+      <button type="button" class="btn btn-primary" (click)="loadMoreReviews()">Load More</button>
+    </div>
   }
 } @else {
   <h4 class="ms-2">No Reviews for this Show</h4>
