@@ -52,6 +52,7 @@ public class ShowService {
     private final EpisodeReviewCommentRepository episodeReviewCommentRepository;
     private final LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository;
     private final int numReviews = 2;
+    private final int numComments = 2;
 
     public ShowService(ShowReviewRepository showReviewRepository,
                        ModelMapper modelMapper,
@@ -636,9 +637,9 @@ public class ShowService {
         return showReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }
 
-    public List<ReviewCommentWithUserInfoDto> getShowReviewComments(Long reviewId, HttpSession session) {
+    public Page<ReviewCommentWithUserInfoDto> getShowReviewComments(Long reviewId, int page, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return showReviewCommentRepository.findAllByReviewId(reviewId, userId);
+        return showReviewCommentRepository.findAllByReviewId(reviewId, userId, PageRequest.of(page - 1, numComments));
     }
 
     @Transactional
@@ -716,9 +717,9 @@ public class ShowService {
         return episodeReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }
 
-    public List<ReviewCommentWithUserInfoDto> getEpisodeReviewComments(Long reviewId, HttpSession session) {
+    public Page<ReviewCommentWithUserInfoDto> getEpisodeReviewComments(Long reviewId, int page, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
-        return episodeReviewCommentRepository.findAllByReviewId(reviewId, userId);
+        return episodeReviewCommentRepository.findAllByReviewId(reviewId, userId, PageRequest.of(page - 1, numComments));
     }
 
     @Transactional

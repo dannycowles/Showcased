@@ -106,8 +106,8 @@ public class ShowController {
     }
 
     @GetMapping("/reviews/{reviewId}/comments")
-    public ResponseEntity<List<ReviewCommentWithUserInfoDto>> getShowReviewComments(@PathVariable Long reviewId, HttpSession session) {
-        List<ReviewCommentWithUserInfoDto> comments = showService.getShowReviewComments(reviewId, session);
+    public ResponseEntity<Page<ReviewCommentWithUserInfoDto>> getShowReviewComments(@PathVariable Long reviewId, @RequestParam(required = false, defaultValue = "1") int page, HttpSession session) {
+        Page<ReviewCommentWithUserInfoDto> comments = showService.getShowReviewComments(reviewId, page, session);
         return ResponseEntity.ok(comments);
     }
 
@@ -159,8 +159,8 @@ public class ShowController {
     }
 
     @GetMapping("/episode-reviews/{reviewId}/comments")
-    public ResponseEntity<List<ReviewCommentWithUserInfoDto>> getEpisodeReviewComments(@PathVariable Long reviewId, HttpSession session) {
-        List<ReviewCommentWithUserInfoDto> comments = showService.getEpisodeReviewComments(reviewId, session);
+    public ResponseEntity<Page<ReviewCommentWithUserInfoDto>> getEpisodeReviewComments(@PathVariable Long reviewId, @RequestParam(required = false, defaultValue = "1") int page, HttpSession session) {
+        Page<ReviewCommentWithUserInfoDto> comments = showService.getEpisodeReviewComments(reviewId, page, session);
         return ResponseEntity.ok(comments);
     }
 

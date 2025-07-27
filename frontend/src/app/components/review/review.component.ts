@@ -120,7 +120,7 @@ export class ReviewComponent{
 
       // If the comments are already loaded from the backend, push the newComment
       if (this.review.comments) {
-        this.review.comments.push(newComment);
+        this.review.comments.content.push(newComment);
       }
 
       this.review.numComments++;
@@ -130,6 +130,16 @@ export class ReviewComponent{
       console.error(error);
     } finally {
       setTimeout(() => this.commentMessage = "", 3000);
+    }
+  }
+
+  async getMoreReviewComments() {
+    try {
+      const result = await this.showService.getShowReviewComments(this.review.id, this.review.comments.page.number + 2);
+      this.review.comments.content.push(...result.content);
+      this.review.comments.page = result.page;
+    } catch (error) {
+      console.error(error);
     }
   }
 }

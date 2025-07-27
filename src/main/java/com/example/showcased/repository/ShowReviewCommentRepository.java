@@ -2,6 +2,8 @@ package com.example.showcased.repository;
 
 import com.example.showcased.dto.ReviewCommentWithUserInfoDto;
 import com.example.showcased.entity.ShowReviewComment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -54,7 +56,7 @@ public interface ShowReviewCommentRepository extends JpaRepository<ShowReviewCom
         WHERE r.id = :reviewId
         ORDER BY c.createdAt ASC
 """)
-    List<ReviewCommentWithUserInfoDto> findAllByReviewId(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+    Page<ReviewCommentWithUserInfoDto> findAllByReviewId(@Param("reviewId") Long reviewId, @Param("userId") Long userId, Pageable page);
 
     @Modifying
     @Query("UPDATE ShowReviewComment r SET r.numLikes = r.numLikes + 1 WHERE r.id = :commentId")

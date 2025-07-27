@@ -39,12 +39,16 @@
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
-  }@else if (review.numComments > 0) {
+  }@else if (review.numComments > 0 && review.comments) {
     <div [hidden]="areCommentsHidden">
-      @for (comment of review.comments; track comment.id) {
+      @for (comment of review.comments.content; track comment.id) {
         <app-comment [comment]="comment" [reviewType]="reviewType"></app-comment>
       }
     </div>
+
+    @if (review.comments.page.number + 1 < review.comments.page.totalPages) {
+      <button type="button" class="btn btn-primary me-3 mb-5" (click)="getMoreReviewComments()">View {{review.comments.page.totalElements - (review.comments.page.number + 1) * review.comments.page.size}} More</button>
+    }
   }
-  <button type="button" [hidden]="areCommentsHidden" (click)="areCommentsHidden = true" class="btn btn-secondary">Hide Repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
+  <button type="button" [hidden]="areCommentsHidden" (click)="areCommentsHidden = true" class="btn btn-secondary mb-5">Hide Repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
 </div>

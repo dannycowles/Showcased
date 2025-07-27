@@ -2,12 +2,12 @@ package com.example.showcased.repository;
 
 import com.example.showcased.dto.ReviewCommentWithUserInfoDto;
 import com.example.showcased.entity.EpisodeReviewComment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface EpisodeReviewCommentRepository extends JpaRepository<EpisodeReviewComment, Long> {
 
@@ -54,7 +54,7 @@ public interface EpisodeReviewCommentRepository extends JpaRepository<EpisodeRev
         WHERE r.id = :reviewId
         ORDER BY c.createdAt ASC
 """)
-    List<ReviewCommentWithUserInfoDto> findAllByReviewId(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+    Page<ReviewCommentWithUserInfoDto> findAllByReviewId(@Param("reviewId") Long reviewId, @Param("userId") Long userId, Pageable page);
 
     @Modifying
     @Query("UPDATE EpisodeReviewComment c SET c.numLikes = c.numLikes + 1 WHERE c.id = :commentId")

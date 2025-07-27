@@ -1,4 +1,5 @@
 import {ReviewCommentData} from './review-comment-data';
+import {PageData} from './page-data';
 
 interface BaseReviewData {
   readonly id: number;
@@ -12,7 +13,7 @@ interface BaseReviewData {
   readonly containsSpoilers: boolean;
   numLikes: number;
   numComments: number;
-  comments?: ReviewCommentData[];
+  comments?: PageData<ReviewCommentData>;
   readonly reviewDate: string;
   isLikedByUser: boolean;
   isLoadingComments?: boolean;

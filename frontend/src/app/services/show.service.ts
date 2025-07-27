@@ -173,9 +173,11 @@ export class ShowService {
   /**
    * Retrieves all comments for a show review by its ID
    * @param reviewId
+   * @param page
    */
-  async getShowReviewComments(reviewId: number): Promise<ReviewCommentData[]> {
-    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/comments`, {
+  async getShowReviewComments(reviewId: number, page ?: number): Promise<PageData<ReviewCommentData>> {
+    const params = page != null ? `?page=${page}` : '';
+    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/comments${params}`, {
       credentials: 'include'
     });
     return response.json();
@@ -291,9 +293,11 @@ export class ShowService {
   /**
    * Retrieves all comments for an episode review by its ID
    * @param reviewId
+   * @param page
    */
-  async getEpisodeReviewComments(reviewId: number): Promise<ReviewCommentData[]> {
-    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/comments`, {
+  async getEpisodeReviewComments(reviewId: number, page ?: number): Promise<PageData<ReviewCommentData>> {
+    const params = page != null ? `?page=${page}` : '';
+    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/comments${params}`, {
       credentials: 'include'
     });
     return response.json();
