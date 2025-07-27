@@ -44,6 +44,36 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
         """)
     Page<ShowReviewWithUserInfoDto> findAllByShowId(@Param("showId") Long showId, @Param("userId") Long userId, Pageable page);
 
+    @Query(""" 
+        SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
+                r.id,
+                u.username,
+                u.profilePicture,
+                r.userId,
+                r.showId,
+                s.title,
+                r.rating,
+                r.commentary,
+                r.containsSpoilers,
+                r.numLikes,
+                r.numComments,
+                r.reviewDate,
+                CASE
+                    WHEN EXISTS (
+                            SELECT lr FROM LikedShowReview lr
+                            WHERE lr.reviewId = :reviewId AND lr.userId = :userId
+                    ) THEN TRUE
+                    ELSE FALSE
+                 END
+            )
+            FROM ShowReview r
+            JOIN User u ON r.userId = u.id
+            JOIN ShowInfo s ON r.showId = s.showId
+            WHERE r.id = :reviewId
+            ORDER BY r.reviewDate DESC
+        """)
+    ShowReviewWithUserInfoDto findById(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+
     @Query("""
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
             r.id,

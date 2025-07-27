@@ -454,6 +454,11 @@ public class ShowService {
         return showReviewRepository.findAllByShowId(showId, userId, PageRequest.of(page - 1, numReviews));
     }
 
+    public ShowReviewWithUserInfoDto getShowReview(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return showReviewRepository.findById(reviewId, userId);
+    }
+
     @Transactional
     public void likeShowReview(Long reviewId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
@@ -530,6 +535,11 @@ public class ShowService {
     public Page<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, int page, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         return episodeReviewRepository.findAllByEpisodeId(episodeId, userId, PageRequest.of(page - 1, numReviews));
+    }
+
+    public EpisodeReviewWithUserInfoDto getEpisodeReview(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        return episodeReviewRepository.findById(reviewId, userId);
     }
 
     @Transactional

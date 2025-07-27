@@ -64,6 +64,39 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                 r.numComments,
                 r.reviewDate,
                 CASE
+                    WHEN EXISTS (
+                            SELECT lr FROM LikedEpisodeReview lr
+                            WHERE lr.reviewId = :reviewId AND lr.userId = :userId
+                    ) THEN TRUE
+                    ELSE FALSE
+                 END
+            )
+            FROM EpisodeReview r
+            JOIN User u ON r.userId = u.id
+            JOIN EpisodeInfo e ON r.episodeId = e.id
+            WHERE r.id = :reviewId
+            ORDER BY r.reviewDate DESC
+        """)
+    EpisodeReviewWithUserInfoDto findById(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+
+    @Query(""" 
+        SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
+                r.id,
+                u.username,
+                u.profilePicture,
+                r.userId,
+                e.showId,
+                e.season,
+                e.episode,
+                e.showTitle,
+                e.episodeTitle,
+                r.rating,
+                r.commentary,
+                r.containsSpoilers,
+                r.numLikes,
+                r.numComments,
+                r.reviewDate,
+                CASE
                     WHEN :userId IS NULL THEN FALSE
                     WHEN EXISTS (
                             SELECT lr FROM LikedEpisodeReview lr
