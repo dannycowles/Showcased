@@ -1,5 +1,5 @@
 export interface PageData<T> {
-  readonly content: T[];
+  content: T[];
   page: PageInfo;
 }
 

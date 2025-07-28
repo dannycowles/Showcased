@@ -105,6 +105,17 @@ export class ShowService {
   }
 
   /**
+   * Fetches a show review by its ID, main usage is for profile notification clicks
+   * @param reviewId
+   */
+  async fetchShowReview(reviewId: number): Promise<ShowReviewData> {
+    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}`, {
+      credentials: 'include'
+    });
+    return await response.json();
+  }
+
+  /**
    * Adds a review to a show
    * @param showId
    * @param data
@@ -238,6 +249,17 @@ export class ShowService {
   async fetchEpisodeReviews(episodeId: number, page ?: number): Promise<PageData<EpisodeReviewData>> {
     const params = page != null ? `?page=${page}` : '';
     const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews${params}`, {
+      credentials: 'include'
+    });
+    return await response.json();
+  }
+
+  /**
+   * Fetches an episode review by its ID, main usage is for profile notification clicks
+   * @param reviewId
+   */
+  async fetchEpisodeReview(reviewId: number): Promise<EpisodeReviewData> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}`, {
       credentials: 'include'
     });
     return await response.json();

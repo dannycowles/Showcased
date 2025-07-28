@@ -5,6 +5,7 @@ import {ActivityType} from '../../../data/enums';
 import {UtilsService} from '../../../services/utils.service';
 import {Router} from '@angular/router';
 import {PageData} from '../../../data/page-data';
+import {query} from '@angular/animations';
 
 @Component({
   selector: 'app-profile-activity-page',
@@ -110,6 +111,9 @@ export class ProfileActivityPageComponent implements OnInit {
       case ActivityType.Follow:
         break;
       case ActivityType.LikeShowReview:
+        this.router.navigate(['/show', activity.showReviewLike.showId], {
+          state: { reviewId: activity.showReviewLike.reviewId }
+        });
         break;
       case ActivityType.CommentShowReview:
         break;

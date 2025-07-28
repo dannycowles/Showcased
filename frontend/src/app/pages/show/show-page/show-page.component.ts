@@ -26,6 +26,7 @@ export class ShowPageComponent implements OnInit {
   showId: number;
   show: ShowData;
   reviews: PageData<ShowReviewData>;
+  notifReviewId: number | null = null;
   isLoggedIn: boolean = false;
 
   constructor(private route: ActivatedRoute,
@@ -40,6 +41,8 @@ export class ShowPageComponent implements OnInit {
       this.showId = params['id'];
       this.loadShowData();
     });
+
+    this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
   }
 
   async ngOnInit() {
@@ -47,6 +50,48 @@ export class ShowPageComponent implements OnInit {
       this.isLoggedIn = await this.authService.loginStatus();
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async loadShowData() {
+    // Retrieve show data from backend
+    try {
+      this.show = await this.showService.fetchShowDetails(this.showId);
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Retrieve reviews for show from backend
+    try {
+      this.reviews = await this.showService.fetchShowReviews(this.showId);
+    } catch (error) {
+      console.error(error);
+    }
+
+    // If there was a notification review in the navigation state, fetch that review and append it to the beginning of the reviews list
+    if (this.notifReviewId !== null) {
+      try {
+        const notifReview = await this.showService.fetchShowReview(this.notifReviewId);
+
+        // Filter out the review if it already exists on the first page of results
+        this.reviews.content = this.reviews.content.filter(review => review.id !== this.notifReviewId);
+
+        // Appends the notification review to the beginning of the first page of results
+        this.reviews.content.unshift(notifReview);
+
+        // Scroll to the review itself
+        setTimeout(() => {
+          const reviewElement = document.getElementById(String(this.notifReviewId));
+          if (reviewElement) {
+            reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            reviewElement.classList.add('highlight');
+            setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
+          }
+        }, 50);
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
@@ -109,25 +154,12 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  async loadShowData() {
-    // Retrieve show data from backend
-    try {
-      this.show = await this.showService.fetchShowDetails(this.showId);
-    } catch (error) {
-      console.error(error);
-    }
-
-    // Retrieve reviews for show from backend
-    try {
-      this.reviews = await this.showService.fetchShowReviews(this.showId);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   async loadMoreReviews() {
     try {
       const result = await this.showService.fetchShowReviews(this.showId, this.reviews.page.number + 2);
+      if (this.notifReviewId !== null) {
+        result.content = result.content.filter(review => review.id !== this.notifReviewId);
+      }
       this.reviews.content.push(...result.content);
       this.reviews.page = result.page;
     } catch (error) {
