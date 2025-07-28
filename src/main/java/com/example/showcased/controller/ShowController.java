@@ -117,6 +117,12 @@ public class ShowController {
         return ResponseEntity.ok(comments);
     }
 
+    @GetMapping("/reviews/comments/{commentId}")
+    public ResponseEntity<ReviewCommentWithUserInfoDto> getShowReviewComment(@PathVariable Long commentId, HttpSession session) {
+        ReviewCommentWithUserInfoDto comment = showService.getShowReviewComment(commentId, session);
+        return ResponseEntity.ok(comment);
+    }
+
     @PostMapping("/reviews/comments/{commentId}/likes")
     public ResponseEntity<Void> likeShowReviewComment(@PathVariable Long commentId, HttpSession session) {
         showService.likeShowReviewComment(commentId, session);
@@ -174,6 +180,12 @@ public class ShowController {
     public ResponseEntity<Page<ReviewCommentWithUserInfoDto>> getEpisodeReviewComments(@PathVariable Long reviewId, @RequestParam(required = false, defaultValue = "1") int page, HttpSession session) {
         Page<ReviewCommentWithUserInfoDto> comments = showService.getEpisodeReviewComments(reviewId, page, session);
         return ResponseEntity.ok(comments);
+    }
+
+    @GetMapping("/episode-reviews/comments/{commentId}")
+    public ResponseEntity<ReviewCommentWithUserInfoDto> getEpisodeReviewComment(@PathVariable Long commentId, HttpSession session) {
+        ReviewCommentWithUserInfoDto comment = showService.getEpisodeReviewComment(commentId, session);
+        return ResponseEntity.ok(comment);
     }
 
     @PostMapping("/episode-reviews/comments/{commentId}/likes")

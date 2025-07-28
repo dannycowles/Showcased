@@ -56,6 +56,32 @@ public interface EpisodeReviewCommentRepository extends JpaRepository<EpisodeRev
 """)
     Page<ReviewCommentWithUserInfoDto> findAllByReviewId(@Param("reviewId") Long reviewId, @Param("userId") Long userId, Pageable page);
 
+    @Query("""
+        SELECT new com.example.showcased.dto.ReviewCommentWithUserInfoDto(
+            c.id,
+            c.reviewId,
+            c.userId,
+            u.username,
+            u.profilePicture,
+            c.commentText,
+            c.numLikes,
+            c.createdAt,
+            CASE
+                WHEN EXISTS (
+                    SELECT lr FROM LikedEpisodeReviewComment lr
+                    WHERE lr.commentId = :commentId AND lr.userId = :userId
+                ) THEN TRUE
+                ELSE FALSE
+            END
+        )
+        FROM EpisodeReview r
+        JOIN EpisodeReviewComment c ON r.id = c.reviewId
+        JOIN User u ON c.userId = u.id
+        WHERE c.id = :commentId
+        ORDER BY c.createdAt ASC
+""")
+    ReviewCommentWithUserInfoDto findById(@Param("commentId") Long commentId, @Param("userId") Long userId);
+
     @Modifying
     @Query("UPDATE EpisodeReviewComment c SET c.numLikes = c.numLikes + 1 WHERE c.id = :commentId")
     void incrementNumLikes(@Param("commentId") Long commentId);
