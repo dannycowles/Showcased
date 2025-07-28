@@ -25,8 +25,8 @@
 </div>
 <div style="margin-left: 7.8rem">
   <div class="mb-5" [hidden]="!showCommentBox">
-    <label for="commentBox" class="form-label">Add Comment</label>
-    <textarea id="commentBox" #commentBox class="form-control w-50" rows="5" [maxLength]="maxCommentLength" [(ngModel)]="commentText" aria-describedby="commentHelpBlock"></textarea>
+    <label [for]="'commentBox-' + review.id" class="form-label">Add Comment</label>
+    <textarea [id]="'commentBox-' + review.id" #commentBox class="form-control w-50" rows="5" [maxLength]="maxCommentLength" [(ngModel)]="commentText" aria-describedby="commentHelpBlock"></textarea>
     <div id="commentHelpBlock" class="form-text">{{maxCommentLength - commentText.length}} characters remaining</div>
     <div class="mt-3">
       <button type="button" class="btn btn-secondary me-3" (click)="resetCommentBox()">Cancel</button>

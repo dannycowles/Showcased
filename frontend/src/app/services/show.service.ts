@@ -195,6 +195,17 @@ export class ShowService {
   }
 
   /**
+   * Retrieves a comment for a show review by its ID, main usage is for profile notification click
+   * @param commentId
+   */
+  async getShowReviewComment(commentId: number): Promise<ReviewCommentData> {
+    const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}`, {
+      credentials: 'include'
+    });
+    return response.json();
+  }
+
+  /**
    * Likes a show review comment by its ID
    * @param commentId
    */
@@ -320,6 +331,17 @@ export class ShowService {
   async getEpisodeReviewComments(reviewId: number, page ?: number): Promise<PageData<ReviewCommentData>> {
     const params = page != null ? `?page=${page}` : '';
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/comments${params}`, {
+      credentials: 'include'
+    });
+    return response.json();
+  }
+
+  /**
+   * Retrieves a comment for an episode review by its ID, main usage is for profile notification clicks
+   * @param commentId
+   */
+  async getEpisodeReviewComment(commentId: number): Promise<ReviewCommentData> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}`, {
       credentials: 'include'
     });
     return response.json();

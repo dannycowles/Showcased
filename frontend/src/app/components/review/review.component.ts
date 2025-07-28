@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {NgOptimizedImage} from '@angular/common';
 import {EpisodeReviewData, ShowReviewData} from '../../data/reviews-data';
@@ -23,7 +23,7 @@ import {AddCommentDto} from '../../data/dto/add-comment-dto';
   styleUrl: './review.component.css',
   standalone: true,
 })
-export class ReviewComponent{
+export class ReviewComponent implements OnInit {
   @ViewChild("commentBox") commentBoxRef: ElementRef<HTMLTextAreaElement>;
   @Input({ required: true }) review: EpisodeReviewData | ShowReviewData;
   @Input({ required: true }) reviewType: ReviewType;
@@ -39,7 +39,13 @@ export class ReviewComponent{
 
   constructor(public utilsService: UtilsService,
               private showService: ShowService,
-              private router: Router) {};
+              private router: Router) { };
+
+  ngOnInit() {
+    if (this.review.notifCommentId != null) {
+      this.areCommentsHidden = false;
+    }
+  }
 
   readonly reviewHandlers = {
     [ReviewType.Show]: {
@@ -136,6 +142,12 @@ export class ReviewComponent{
   async getMoreReviewComments() {
     try {
       const result = await this.showService.getShowReviewComments(this.review.id, this.review.comments.page.number + 2);
+
+      // Filter out comment if we are coming from a comment notification click
+      if (this.review.notifCommentId != null) {
+        result.content = result.content.filter(comment => comment.id != this.review.notifCommentId);
+      }
+
       this.review.comments.content.push(...result.content);
       this.review.comments.page = result.page;
     } catch (error) {

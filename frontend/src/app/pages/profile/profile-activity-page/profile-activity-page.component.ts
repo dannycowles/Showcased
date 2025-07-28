@@ -112,14 +112,24 @@ export class ProfileActivityPageComponent implements OnInit {
         break;
       case ActivityType.LikeShowReview:
         this.router.navigate(['/show', activity.showReviewLike.showId], {
-          state: { reviewId: activity.showReviewLike.reviewId }
+          state: {
+            reviewId: activity.showReviewLike.reviewId
+          }
         });
         break;
       case ActivityType.CommentShowReview:
+        this.router.navigate(['/show', activity.showReviewComment.showId], {
+          state: {
+            reviewId: activity.showReviewComment.reviewId,
+            commentId: activity.showReviewComment.commentId
+          }
+        });
         break;
       case ActivityType.LikeEpisodeReview:
         this.router.navigate(['/show', activity.episodeReviewLike.showId, 'season', activity.episodeReviewLike.season, 'episode', activity.episodeReviewLike.episode], {
-          state: { reviewId: activity.episodeReviewLike.reviewId }
+          state: {
+            reviewId: activity.episodeReviewLike.reviewId
+          }
         });
         break;
       case ActivityType.CommentEpisodeReview:

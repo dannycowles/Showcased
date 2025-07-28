@@ -16,8 +16,7 @@ interface BaseReviewData {
   comments?: PageData<ReviewCommentData>;
   readonly reviewDate: string;
   isLikedByUser: boolean;
-  isLoadingComments?: boolean;
-  areCommentsHidden?: boolean;
+  notifCommentId?: number;
 }
 
 export interface ShowReviewData extends BaseReviewData { }

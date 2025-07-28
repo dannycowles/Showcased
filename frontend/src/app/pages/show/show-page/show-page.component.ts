@@ -27,6 +27,7 @@ export class ShowPageComponent implements OnInit {
   show: ShowData;
   reviews: PageData<ShowReviewData>;
   notifReviewId: number | null = null;
+  notifCommentId: number | null = null;
   isLoggedIn: boolean = false;
 
   constructor(private route: ActivatedRoute,
@@ -40,6 +41,7 @@ export class ShowPageComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.showId = params['id'];
       this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
+      this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
       history.replaceState({}, document.title, window.location.href);
       this.loadShowData();
     });
@@ -79,16 +81,33 @@ export class ShowPageComponent implements OnInit {
         // Appends the notification review to the beginning of the first page of results
         this.reviews.content.unshift(notifReview);
 
-        // Scroll to the review itself
-        setTimeout(() => {
-          const reviewElement = document.getElementById(String(this.notifReviewId));
-          if (reviewElement) {
-            reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (this.notifCommentId == null) {
+          // Scroll to the review itself
+          setTimeout(() => {
+            const reviewElement = document.getElementById(String(this.notifReviewId));
+            if (reviewElement) {
+              reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-            reviewElement.classList.add('highlight');
-            setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
-          }
-        }, 50);
+              reviewElement.classList.add('highlight');
+              setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
+            }
+          }, 50);
+        } else {
+          // Retrieve the first page of comments, and then fetch the notification comment
+          this.reviews.content[0].notifCommentId = this.notifCommentId;
+          this.reviews.content[0].comments = await this.showService.getShowReviewComments(this.notifReviewId)
+          const notifComment = await this.showService.getShowReviewComment(this.notifCommentId);
+          this.reviews.content[0].comments.content.unshift(notifComment);
+
+          setTimeout(() => {
+            const commentElement = document.getElementById(String(this.notifCommentId));
+            if (commentElement) {
+              commentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              commentElement.classList.add('highlight');
+              setTimeout(() => commentElement.classList.remove('highlight'), 2000);
+            }
+          }, 50);
+        }
       } catch (error) {
         console.error(error);
       }
