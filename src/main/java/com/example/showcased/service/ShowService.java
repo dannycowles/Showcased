@@ -479,12 +479,14 @@ public class ShowService {
         likedShowReviewsRepository.save(likedReview);
         showReviewRepository.incrementLikes(reviewId);
 
-        // Add the like show review event to the activity table
-        Activity likeEvent = new Activity();
-        likeEvent.setUserId(review.getUserId());
-        likeEvent.setActivityType(ActivityType.LIKE_SHOW_REVIEW.getDbValue());
-        likeEvent.setExternalId(likedReview.getId());
-        activitiesRepository.save(likeEvent);
+        // Add the like show review event to the activity table, except liking own review
+        if (!review.getUserId().equals(userId)) {
+            Activity likeEvent = new Activity();
+            likeEvent.setUserId(review.getUserId());
+            likeEvent.setActivityType(ActivityType.LIKE_SHOW_REVIEW.getDbValue());
+            likeEvent.setExternalId(likedReview.getId());
+            activitiesRepository.save(likeEvent);
+        }
     }
 
     @Transactional
@@ -562,12 +564,14 @@ public class ShowService {
         likedEpisodeReviewsRepository.save(likedReview);
         episodeReviewRepository.incrementLikes(reviewId);
 
-        // Add the like episode review event to the activities table
-        Activity likeEvent = new Activity();
-        likeEvent.setUserId(review.getUserId());
-        likeEvent.setActivityType(ActivityType.LIKE_EPISODE_REVIEW.getDbValue());
-        likeEvent.setExternalId(likedReview.getId());
-        activitiesRepository.save(likeEvent);
+        // Add the like episode review event to the activities table, except liking own review
+        if (!review.getUserId().equals(userId)) {
+            Activity likeEvent = new Activity();
+            likeEvent.setUserId(review.getUserId());
+            likeEvent.setActivityType(ActivityType.LIKE_EPISODE_REVIEW.getDbValue());
+            likeEvent.setExternalId(likedReview.getId());
+            activitiesRepository.save(likeEvent);
+        }
     }
 
     @Transactional
@@ -637,13 +641,14 @@ public class ShowService {
         showReviewCommentRepository.save(newComment);
         showReviewRepository.incrementNumComments(reviewId);
 
-        // Add the show review comment event to activities table
-        Activity commentEvent = new Activity();
-        commentEvent.setUserId(review.getUserId());
-        commentEvent.setActivityType(ActivityType.COMMENT_SHOW_REVIEW.getDbValue());
-        commentEvent.setExternalId(newComment.getId());
-        activitiesRepository.save(commentEvent);
-
+        // Add the show review comment event to activities table, except commenting on own review
+        if (!review.getUserId().equals(userId)) {
+            Activity commentEvent = new Activity();
+            commentEvent.setUserId(review.getUserId());
+            commentEvent.setActivityType(ActivityType.COMMENT_SHOW_REVIEW.getDbValue());
+            commentEvent.setExternalId(newComment.getId());
+            activitiesRepository.save(commentEvent);
+        }
         return showReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }
 
@@ -672,12 +677,14 @@ public class ShowService {
         likedShowReviewCommentsRepository.save(likedComment);
         showReviewCommentRepository.incrementNumLikes(commentId);
 
-        // Add the like show review comment event to the activities table
-        Activity likeCommentEvent = new Activity();
-        likeCommentEvent.setUserId(comment.getUserId());
-        likeCommentEvent.setActivityType(ActivityType.LIKE_SHOW_REVIEW_COMMENT.getDbValue());
-        likeCommentEvent.setExternalId(likedComment.getId());
-        activitiesRepository.save(likeCommentEvent);
+        // Add the like show review comment event to the activities table, except liking own comment
+        if (!comment.getUserId().equals(userId)) {
+            Activity likeCommentEvent = new Activity();
+            likeCommentEvent.setUserId(comment.getUserId());
+            likeCommentEvent.setActivityType(ActivityType.LIKE_SHOW_REVIEW_COMMENT.getDbValue());
+            likeCommentEvent.setExternalId(likedComment.getId());
+            activitiesRepository.save(likeCommentEvent);
+        }
     }
 
     @Transactional
@@ -717,12 +724,14 @@ public class ShowService {
         episodeReviewCommentRepository.save(newComment);
         episodeReviewRepository.incrementNumComments(reviewId);
 
-        // Add episode review comment event to activities table
-        Activity commentEvent = new Activity();
-        commentEvent.setUserId(review.getUserId());
-        commentEvent.setActivityType(ActivityType.COMMENT_EPISODE_REVIEW.getDbValue());
-        commentEvent.setExternalId(newComment.getId());
-        activitiesRepository.save(commentEvent);
+        // Add episode review comment event to activities table, except commenting on own review
+        if (!review.getUserId().equals(userId)) {
+            Activity commentEvent = new Activity();
+            commentEvent.setUserId(review.getUserId());
+            commentEvent.setActivityType(ActivityType.COMMENT_EPISODE_REVIEW.getDbValue());
+            commentEvent.setExternalId(newComment.getId());
+            activitiesRepository.save(commentEvent);
+        }
 
         return episodeReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }
@@ -752,12 +761,14 @@ public class ShowService {
         likedEpisodeReviewCommentsRepository.save(likedComment);
         episodeReviewCommentRepository.incrementNumLikes(commentId);
 
-        // Add the episode review comment like event to the activities table
-        Activity commentEvent = new Activity();
-        commentEvent.setUserId(comment.getUserId());
-        commentEvent.setActivityType(ActivityType.LIKE_EPISODE_REVIEW_COMMENT.getDbValue());
-        commentEvent.setExternalId(likedComment.getId());
-        activitiesRepository.save(commentEvent);
+        // Add the episode review comment like event to the activities table, except for liking own comment
+        if (!comment.getUserId().equals(userId)) {
+            Activity commentEvent = new Activity();
+            commentEvent.setUserId(comment.getUserId());
+            commentEvent.setActivityType(ActivityType.LIKE_EPISODE_REVIEW_COMMENT.getDbValue());
+            commentEvent.setExternalId(likedComment.getId());
+            activitiesRepository.save(commentEvent);
+        }
     }
 
     @Transactional

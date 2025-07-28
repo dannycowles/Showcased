@@ -112,14 +112,14 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
         LEFT JOIN ShowReviewComment src2 ON lsrc.commentId = src2.id
         LEFT JOIN ShowReview sr3 ON src2.reviewId = sr3.id
         LEFT JOIN ShowInfo si3 ON sr3.showId = si3.showId
-        LEFT JOIN User u6b ON src2.userId = u6b.id
+        LEFT JOIN User u6b ON sr3.userId = u6b.id
         
         LEFT JOIN LikedEpisodeReviewComment lerc ON a.externalId = lerc.id AND a.activityType = 7
         LEFT JOIN User u7 ON lerc.userId = u7.id
         LEFT JOIN EpisodeReviewComment erc2 ON lerc.commentId = erc2.id
         LEFT JOIN EpisodeReview er3 ON erc2.reviewId = er3.id
         LEFT JOIN EpisodeInfo ei3 ON er3.episodeId = ei3.id
-        LEFT JOIN User u7b ON erc2.userId = u7b.id
+        LEFT JOIN User u7b ON er3.userId = u7b.id
         
         LEFT JOIN LikedCollection lc ON a.externalId = lc.id AND a.activityType = 8
         LEFT JOIN User u8 ON lc.userId = u8.id

@@ -354,12 +354,14 @@ public class UserService {
         likedCollectionsRepository.save(newLike);
         collectionsRepository.incrementLikes(collectionId);
 
-        // Add the like collection event to the activities table
-        Activity collectionEvent  = new Activity();
-        collectionEvent.setUserId(collection.getUserId());
-        collectionEvent.setActivityType(ActivityType.LIKE_COLLECTION.getDbValue());
-        collectionEvent.setExternalId(newLike.getId());
-        activitiesRepository.save(collectionEvent);
+        // Add the like collection event to the activities table, except for liking own collection
+        if (!collection.getUserId().equals(userId)) {
+            Activity collectionEvent  = new Activity();
+            collectionEvent.setUserId(collection.getUserId());
+            collectionEvent.setActivityType(ActivityType.LIKE_COLLECTION.getDbValue());
+            collectionEvent.setExternalId(newLike.getId());
+            activitiesRepository.save(collectionEvent);
+        }
     }
 
     @Transactional
