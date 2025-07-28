@@ -28,6 +28,7 @@ export class EpisodePageComponent implements OnInit {
   reviews: PageData<EpisodeReviewData>;
   readonly ReviewType = ReviewType;
   isLoggedIn: boolean = false;
+  notifReviewId: number | null = null;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -40,14 +41,49 @@ export class EpisodePageComponent implements OnInit {
     this.showId = this.route.snapshot.params['id'];
     this.seasonNumber = this.route.snapshot.params['seasonNumber'];
     this.episodeNumber = this.route.snapshot.params['episodeNumber'];
+    this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
+    history.replaceState({}, document.title, window.location.href);
   }
 
   async ngOnInit() {
-    // Fetch episode details from the backend
+    try {
+      this.isLoggedIn = await this.authService.loginStatus();
+      await this.loadData();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async loadData() {
     try {
       this.episode = await this.showService.fetchEpisodeDetails(this.showId, this.seasonNumber, this.episodeNumber);
       this.reviews = await this.showService.fetchEpisodeReviews(this.episode.id);
-      this.isLoggedIn = await this.authService.loginStatus();
+
+      // If there was a notification review in the navigation state, fetch that review and append it to the beginning of the reviews list
+      if (this.notifReviewId != null) {
+        try {
+          const notifReview = await this.showService.fetchEpisodeReview(this.notifReviewId);
+
+          // Filter out the review if it already exists on the first page of results
+          this.reviews.content = this.reviews.content.filter(review => review.id != this.notifReviewId);
+
+          // Appends the notification review to the beginning of the first page of results
+          this.reviews.content.unshift(notifReview);
+
+          // Scroll to the review itself
+          setTimeout(() => {
+            const reviewElement = document.getElementById(String(this.notifReviewId));
+            if (reviewElement) {
+              reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+              reviewElement.classList.add('highlight');
+              setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
+            }
+          }, 50);
+        } catch (error) {
+          console.error(error);
+        }
+      }
     } catch (error) {
       console.error(error);
     }
