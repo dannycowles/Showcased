@@ -83,7 +83,7 @@ export class ShowPageComponent implements OnInit {
 
         if (this.notifCommentId == null) {
           // Scroll to the review itself
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             const reviewElement = document.getElementById(String(this.notifReviewId));
             if (reviewElement) {
               reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -91,22 +91,25 @@ export class ShowPageComponent implements OnInit {
               reviewElement.classList.add('highlight');
               setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
             }
-          }, 50);
+          });
         } else {
           // Retrieve the first page of comments, and then fetch the notification comment
-          this.reviews.content[0].notifCommentId = this.notifCommentId;
           this.reviews.content[0].comments = await this.showService.getShowReviewComments(this.notifReviewId)
           const notifComment = await this.showService.getShowReviewComment(this.notifCommentId);
-          this.reviews.content[0].comments.content.unshift(notifComment);
 
-          setTimeout(() => {
+          // If the comment exists on the first page, filter it out before appending to beginning so no duplicates
+          this.reviews.content[0].comments.content = this.reviews.content[0].comments.content.filter(comment => comment.id != notifComment.id);
+          this.reviews.content[0].comments.content.unshift(notifComment);
+          this.reviews.content[0] = {...this.reviews.content[0], notifCommentId: this.notifCommentId};
+
+          requestAnimationFrame(() => {
             const commentElement = document.getElementById(String(this.notifCommentId));
             if (commentElement) {
               commentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
               commentElement.classList.add('highlight');
               setTimeout(() => commentElement.classList.remove('highlight'), 2000);
             }
-          }, 50);
+          });
         }
       } catch (error) {
         console.error(error);

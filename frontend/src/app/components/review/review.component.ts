@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {NgOptimizedImage} from '@angular/common';
 import {EpisodeReviewData, ShowReviewData} from '../../data/reviews-data';
@@ -23,7 +23,7 @@ import {AddCommentDto} from '../../data/dto/add-comment-dto';
   styleUrl: './review.component.css',
   standalone: true,
 })
-export class ReviewComponent implements OnInit {
+export class ReviewComponent implements OnChanges {
   @ViewChild("commentBox") commentBoxRef: ElementRef<HTMLTextAreaElement>;
   @Input({ required: true }) review: EpisodeReviewData | ShowReviewData;
   @Input({ required: true }) reviewType: ReviewType;
@@ -41,7 +41,7 @@ export class ReviewComponent implements OnInit {
               private showService: ShowService,
               private router: Router) { };
 
-  ngOnInit() {
+  ngOnChanges() {
     if (this.review.notifCommentId != null) {
       this.areCommentsHidden = false;
     }

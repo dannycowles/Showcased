@@ -141,8 +141,20 @@ export class ProfileActivityPageComponent implements OnInit {
         });
         break;
       case ActivityType.LikeShowReviewComment:
+        this.router.navigate(['/show', activity.showReviewCommentLike.showId], {
+          state: {
+            reviewId: activity.showReviewCommentLike.reviewId,
+            commentId: activity.showReviewCommentLike.commentId
+          }
+        });
         break;
       case ActivityType.LikeEpisodeReviewComment:
+        this.router.navigate(['/show', activity.episodeReviewCommentLike.showId, 'season', activity.episodeReviewCommentLike.season, 'episode', activity.episodeReviewCommentLike.episode], {
+          state: {
+            reviewId: activity.episodeReviewCommentLike.reviewId,
+            commentId: activity.episodeReviewCommentLike.commentId
+          }
+        });
         break;
       case (ActivityType.LikeCollection):
         this.router.navigate(['profile/collections', activity.collectionLike.collectionId]);
