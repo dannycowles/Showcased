@@ -3,11 +3,14 @@
   <div class="ms-3 w-100">
     <div>
       <h4><a [routerLink]="['/user', review.userId]" class="text-dark">{{review.username}}</a></h4>
-      <p>{{utilsService.getRelativeDate(review.reviewDate)}}</p>
+      <span>{{utilsService.getRelativeDate(review.reviewDate)}}</span>
     </div>
     <div>
-      <p>{{review.rating}}/10</p>
-      <p>{{review.commentary}}</p>
+      <div class="d-flex align-items-center mb-2">
+        <span>{{review.rating}}</span>
+        <i class="bi bi-star-fill ms-1 fs-5" style="color: #f2cb22;"></i>
+      </div>
+      <span>{{review.commentary}}</span>
       <p>Contains Spoilers: {{review.containsSpoilers}}</p>
     </div>
 
