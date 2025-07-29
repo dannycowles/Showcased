@@ -29,6 +29,7 @@
     "jquery": "^3.7.1",
     "jquery-serializejson": "^3.2.1",
     "ng-otp-input": "^2.0.7",
+    "ngx-infinite-scroll": "^19.0.0",
     "prettier": "^3.6.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

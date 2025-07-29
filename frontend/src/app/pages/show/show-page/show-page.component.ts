@@ -177,6 +177,11 @@ export class ShowPageComponent implements OnInit {
   }
 
   async loadMoreReviews() {
+    // If all reviews have been loaded, return
+    if (this.reviews.page.number + 1 >= this.reviews.page.totalPages) {
+      return;
+    }
+
     try {
       const result = await this.showService.fetchShowReviews(this.showId, this.reviews.page.number + 2);
       if (this.notifReviewId !== null) {

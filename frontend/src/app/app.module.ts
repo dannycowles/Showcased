@@ -83,6 +83,7 @@ import {
   DiscoverTopRatedPageComponent
 } from './pages/discover/discover-top-rated-page/discover-top-rated-page.component';
 import {ProfileActivityPageComponent} from './pages/profile/profile-activity-page/profile-activity-page.component';
+import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -155,6 +156,7 @@ import {ProfileActivityPageComponent} from './pages/profile/profile-activity-pag
     DynamicListComponent,
     RankedDynamicListFullComponent,
     ReviewComponent,
+    InfiniteScrollDirective,
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],
