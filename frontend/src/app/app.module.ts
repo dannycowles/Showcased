@@ -125,7 +125,7 @@ import {ProfileActivityPageComponent} from './pages/profile/profile-activity-pag
     UserDynamicRankingPageComponent,
     DiscoverTrendingPageComponent,
     DiscoverTopRatedPageComponent,
-    ProfileActivityPageComponent
+    ProfileActivityPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -154,6 +154,7 @@ import {ProfileActivityPageComponent} from './pages/profile/profile-activity-pag
     ReviewComponent,
     DynamicListComponent,
     RankedDynamicListFullComponent,
+    ReviewComponent,
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],

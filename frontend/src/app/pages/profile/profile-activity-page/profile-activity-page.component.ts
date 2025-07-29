@@ -133,6 +133,12 @@ export class ProfileActivityPageComponent implements OnInit {
         });
         break;
       case ActivityType.CommentEpisodeReview:
+        this.router.navigate(['/show', activity.episodeReviewComment.showId, 'season', activity.episodeReviewComment.season, 'episode', activity.episodeReviewComment.episode], {
+          state: {
+            reviewId: activity.episodeReviewComment.reviewId,
+            commentId: activity.episodeReviewComment.commentId
+          }
+        });
         break;
       case ActivityType.LikeShowReviewComment:
         break;

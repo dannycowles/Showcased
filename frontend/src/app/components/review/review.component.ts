@@ -51,13 +51,13 @@ export class ReviewComponent implements OnInit {
     [ReviewType.Show]: {
       like: () => this.showService.likeShowReview(this.review.id),
       unlike: () => this.showService.unlikeShowReview(this.review.id),
-      getComments: () => this.showService.getShowReviewComments(this.review.id),
+      getComments: (page: number) => this.showService.getShowReviewComments(this.review.id, page),
       addComment: (comment: AddCommentDto) => this.showService.addCommentToShowReview(this.review.id, comment)
     },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReview(this.review.id),
       unlike: () => this.showService.unlikeEpisodeReview(this.review.id),
-      getComments: () => this.showService.getEpisodeReviewComments(this.review.id),
+      getComments: (page: number) => this.showService.getEpisodeReviewComments(this.review.id, page),
       addComment: (comment: AddCommentDto) => this.showService.addCommentToEpisodeReview(this.review.id, comment)
     },
   };
@@ -90,7 +90,7 @@ export class ReviewComponent implements OnInit {
     try {
       this.isLoadingComments = true;
       const handler = this.reviewHandlers[this.reviewType];
-      this.review.comments = await handler.getComments();
+      this.review.comments = await handler.getComments(1);
     } catch (error) {
       console.error(error);
     } finally {
@@ -141,7 +141,8 @@ export class ReviewComponent implements OnInit {
 
   async getMoreReviewComments() {
     try {
-      const result = await this.showService.getShowReviewComments(this.review.id, this.review.comments.page.number + 2);
+      const handler = this.reviewHandlers[this.reviewType];
+      const result = await handler.getComments(this.review.comments.page.number + 2);
 
       // Filter out comment if we are coming from a comment notification click
       if (this.review.notifCommentId != null) {

@@ -29,6 +29,7 @@ export class EpisodePageComponent implements OnInit {
   readonly ReviewType = ReviewType;
   isLoggedIn: boolean = false;
   notifReviewId: number | null = null;
+  notifCommentId: number | null = null;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -42,6 +43,7 @@ export class EpisodePageComponent implements OnInit {
     this.seasonNumber = this.route.snapshot.params['seasonNumber'];
     this.episodeNumber = this.route.snapshot.params['episodeNumber'];
     this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
+    this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
     history.replaceState({}, document.title, window.location.href);
   }
 
@@ -70,16 +72,33 @@ export class EpisodePageComponent implements OnInit {
           // Appends the notification review to the beginning of the first page of results
           this.reviews.content.unshift(notifReview);
 
-          // Scroll to the review itself
-          setTimeout(() => {
-            const reviewElement = document.getElementById(String(this.notifReviewId));
-            if (reviewElement) {
-              reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (this.notifCommentId == null) {
+            // Scroll to the review itself
+            setTimeout(() => {
+              const reviewElement = document.getElementById(String(this.notifReviewId));
+              if (reviewElement) {
+                reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-              reviewElement.classList.add('highlight');
-              setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
-            }
-          }, 50);
+                reviewElement.classList.add('highlight');
+                setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
+              }
+            }, 50);
+          } else {
+            // Retrieve the first page of comments, and then fetch the notification comment
+            this.reviews.content[0].notifCommentId = this.notifCommentId;
+            this.reviews.content[0].comments = await this.showService.getEpisodeReviewComments(this.notifReviewId)
+            const notifComment = await this.showService.getEpisodeReviewComment(this.notifCommentId);
+            this.reviews.content[0].comments.content.unshift(notifComment);
+
+            setTimeout(() => {
+              const commentElement = document.getElementById(String(this.notifCommentId));
+              if (commentElement) {
+                commentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                commentElement.classList.add('highlight');
+                setTimeout(() => commentElement.classList.remove('highlight'), 2000);
+              }
+            }, 50);
+          }
         } catch (error) {
           console.error(error);
         }
@@ -92,6 +111,9 @@ export class EpisodePageComponent implements OnInit {
   async loadMoreReviews() {
     try {
       const result = await this.showService.fetchEpisodeReviews(this.episode.id, this.reviews.page.number + 2);
+      if (this.notifReviewId !== null) {
+        result.content = result.content.filter(review => review.id !== this.notifReviewId);
+      }
       this.reviews.content.push(...result.content);
       this.reviews.page = result.page;
     } catch (error) {
