@@ -2,6 +2,8 @@ package com.example.showcased.repository;
 
 import com.example.showcased.dto.UserSearchDto;
 import com.example.showcased.entity.Follower;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,12 +16,12 @@ public interface FollowersRepository extends JpaRepository<Follower, Long> {
     @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
             "FROM Follower f JOIN User u ON f.followerId = u.id " +
             "WHERE f.followingId = :followingId")
-    List<UserSearchDto> getFollowersByIdFollowingId(@Param("followingId") Long followingId);
+    Page<UserSearchDto> getFollowersByIdFollowingId(@Param("followingId") Long followingId, Pageable page);
 
     @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
             "FROM Follower f JOIN User u ON f.followingId = u.id " +
             "WHERE f.followerId = :followerId")
-    List<UserSearchDto> getFollowingByIdFollowerId(@Param("followerId") Long followerId);
+    Page<UserSearchDto> getFollowingByIdFollowerId(@Param("followerId") Long followerId, Pageable page);
 
     @Query("SELECT f.followingId " +
             "FROM Follower f " +
@@ -29,12 +31,12 @@ public interface FollowersRepository extends JpaRepository<Follower, Long> {
     @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
             "FROM Follower f JOIN User u ON f.followerId = u.id " +
             "WHERE f.followingId = :userId AND u.username like %:name%")
-    List<UserSearchDto> getFollowersByIdFollowingIdFiltered(Long userId, String name);
+    Page<UserSearchDto> getFollowersByIdFollowingIdFiltered(Long userId, String name, Pageable page);
 
     @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
             "FROM Follower f JOIN User u ON f.followingId = u.id " +
             "WHERE f.followerId = :userId AND u.username like %:name%")
-    List<UserSearchDto> getFollowingByIdFollowerIdFiltered(Long userId, String name);
+    Page<UserSearchDto> getFollowingByIdFollowerIdFiltered(Long userId, String name, Pageable page);
 
     boolean existsByFollowerIdAndFollowingId(Long followerId, Long followingId);
 

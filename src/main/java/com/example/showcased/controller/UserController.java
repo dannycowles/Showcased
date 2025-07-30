@@ -3,6 +3,9 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    private static final int DEFAULT_PAGE_SIZE = 2;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -46,14 +51,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}/following")
-    public ResponseEntity<List<UserSearchDto>> getFollowing(@PathVariable("id") Long id, @RequestParam(value = "name", required = false) String name, HttpSession session) {
-        List<UserSearchDto> following = userService.getFollowing(id, name, session);
+    public ResponseEntity<Page<UserSearchDto>> getFollowing(@PathVariable("id") Long id,
+                                                            @RequestParam(required = false) String name,
+                                                            HttpSession session,
+                                                            @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
+        Page<UserSearchDto> following = userService.getFollowing(id, name, session, pageable);
         return ResponseEntity.ok(following);
     }
 
     @GetMapping("/{id}/followers")
-    public ResponseEntity<List<UserSearchDto>> getFollowers(@PathVariable("id") Long id, @RequestParam(value = "name", required = false) String name, HttpSession session) {
-        List<UserSearchDto> followers = userService.getFollowers(id, name, session);
+    public ResponseEntity<Page<UserSearchDto>> getFollowers(@PathVariable("id") Long id,
+                                                            @RequestParam(required = false) String name,
+                                                            HttpSession session,
+                                                            @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
+        Page<UserSearchDto> followers = userService.getFollowers(id, name, session, pageable);
         return ResponseEntity.ok(followers);
     }
 

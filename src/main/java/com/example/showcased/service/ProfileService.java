@@ -552,21 +552,35 @@ public class ProfileService {
         return episodeReviewRepository.findByUserId((Long) session.getAttribute("user"));
     }
 
-    public List<UserSearchDto> getFollowers(String name, HttpSession session) {
+    public Page<UserSearchDto> getFollowers(String name, HttpSession session, Pageable pageable) {
         Long userId = (Long) session.getAttribute("user");
+
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize()
+        );
+
         if (name != null) {
-            return followersRepository.getFollowersByIdFollowingIdFiltered(userId, name);
+            return followersRepository.getFollowersByIdFollowingIdFiltered(userId, name, modifiedPage);
         } else {
-            return followersRepository.getFollowersByIdFollowingId(userId);
+            return followersRepository.getFollowersByIdFollowingId(userId, modifiedPage);
         }
     }
 
-    public List<UserSearchDto> getFollowing(String name, HttpSession session) {
+    public Page<UserSearchDto> getFollowing(String name, HttpSession session, Pageable pageable) {
         Long userId = (Long) session.getAttribute("user");
+
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize()
+        );
+
         if (name != null) {
-            return followersRepository.getFollowingByIdFollowerIdFiltered(userId, name);
+            return followersRepository.getFollowingByIdFollowerIdFiltered(userId, name, modifiedPage);
         } else {
-            return followersRepository.getFollowingByIdFollowerId(userId);
+            return followersRepository.getFollowingByIdFollowerId(userId, modifiedPage);
         }
     }
 

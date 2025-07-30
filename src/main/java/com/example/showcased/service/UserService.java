@@ -7,6 +7,7 @@ import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -267,23 +268,37 @@ public class UserService {
         userRepository.decrementFollowingCount(userId);
     }
 
-    public List<UserSearchDto> getFollowers(Long userId, String name, HttpSession session) {
+    public Page<UserSearchDto> getFollowers(Long userId, String name, HttpSession session, Pageable pageable) {
         ensureUserExists(userId);
-        List<UserSearchDto> followers = (name != null)
-                ? followersRepository.getFollowersByIdFollowingIdFiltered(userId, name)
-                : followersRepository.getFollowersByIdFollowingId(userId);
 
-        setFollowingFlags(followers, session);
+        // Subtract 1 from page to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize()
+        );
+
+        Page<UserSearchDto> followers = (name != null)
+                ? followersRepository.getFollowersByIdFollowingIdFiltered(userId, name, modifiedPage)
+                : followersRepository.getFollowersByIdFollowingId(userId,  modifiedPage);
+
+        setFollowingFlags(followers.getContent(), session);
         return followers;
     }
 
-    public List<UserSearchDto> getFollowing(Long userId, String name, HttpSession session) {
+    public Page<UserSearchDto> getFollowing(Long userId, String name, HttpSession session, Pageable pageable) {
         ensureUserExists(userId);
-        List<UserSearchDto> following = (name != null)
-                ? followersRepository.getFollowingByIdFollowerIdFiltered(userId, name)
-                : followersRepository.getFollowingByIdFollowerId(userId);
 
-        setFollowingFlags(following, session);
+        // Subtract 1 from page to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize()
+        );
+
+        Page<UserSearchDto> following = (name != null)
+                ? followersRepository.getFollowingByIdFollowerIdFiltered(userId, name, modifiedPage)
+                : followersRepository.getFollowingByIdFollowerId(userId, modifiedPage);
+
+        setFollowingFlags(following.getContent(), session);
         return following;
     }
 

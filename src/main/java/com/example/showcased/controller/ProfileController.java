@@ -5,6 +5,8 @@ import com.example.showcased.service.FileService;
 import com.example.showcased.service.ProfileService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,8 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final FileService fileService;
+
+    private static final int DEFAULT_PAGE_SIZE = 2;
 
     public ProfileController(ProfileService profileService,
                              FileService fileService) {
@@ -65,14 +69,18 @@ public class ProfileController {
     }
 
     @GetMapping("/followers")
-    public ResponseEntity<List<UserSearchDto>> getFollowers(@RequestParam(required = false) String name, HttpSession session) {
-        List<UserSearchDto> followers = profileService.getFollowers(name, session);
+    public ResponseEntity<Page<UserSearchDto>> getFollowers(@RequestParam(required = false) String name,
+                                                            HttpSession session,
+                                                            @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
+        Page<UserSearchDto> followers = profileService.getFollowers(name, session, pageable);
         return ResponseEntity.ok(followers);
     }
 
     @GetMapping("/following")
-    public ResponseEntity<List<UserSearchDto>> getFollowing(@RequestParam(required = false) String name, HttpSession session) {
-        List<UserSearchDto> following = profileService.getFollowing(name, session);
+    public ResponseEntity<Page<UserSearchDto>> getFollowing(@RequestParam(required = false) String name,
+                                                            HttpSession session,
+                                                            @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
+        Page<UserSearchDto> following = profileService.getFollowing(name, session, pageable);
         return ResponseEntity.ok(following);
     }
 
