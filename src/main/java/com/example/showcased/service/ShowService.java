@@ -8,12 +8,14 @@ import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.exception.ItemNotFoundException;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ShowService {
 
@@ -449,9 +452,16 @@ public class ShowService {
         return showReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
-    public Page<ShowReviewWithUserInfoDto> getShowReviews(Long showId, int page, HttpSession session) {
+    public Page<ShowReviewWithUserInfoDto> getShowReviews(Long showId, HttpSession session, Pageable page) {
         Long userId = (Long) session.getAttribute("user");
-        return showReviewRepository.findAllByShowId(showId, userId, PageRequest.of(page - 1, numReviews));
+
+        // Subtract 1 from provided page to align with 0-indexed pages, and ensure non-negative pages are requested
+        Pageable modifiedPage = PageRequest.of(
+                Math.max(0, page.getPageNumber() - 1),
+                page.getPageSize(),
+                page.getSort()
+        );
+        return showReviewRepository.findAllByShowId(showId, userId, modifiedPage);
     }
 
     public ShowReviewWithUserInfoDto getShowReview(Long reviewId, HttpSession session) {
