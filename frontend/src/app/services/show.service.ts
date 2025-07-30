@@ -95,10 +95,14 @@ export class ShowService {
    * Fetches the reviews for a show by its ID
    * @param showId
    * @param page
+   * @param sortOption
    */
-  async fetchShowReviews(showId: number, page ?: number): Promise<PageData<ShowReviewData>> {
-    const params = page != null ? `?page=${page}` : '';
-    const response = await fetch(`${this.baseUrl}/${showId}/reviews${params}`, {
+  async fetchShowReviews(showId: number, page ?: number, sortOption ?: string): Promise<PageData<ShowReviewData>> {
+    const url = new URL(`${this.baseUrl}/${showId}/reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sortOption != null) url.searchParams.set('sort', sortOption);
+
+    const response = await fetch(url, {
       credentials: 'include'
     });
     return await response.json();

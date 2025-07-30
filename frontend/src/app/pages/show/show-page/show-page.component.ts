@@ -30,6 +30,14 @@ export class ShowPageComponent implements OnInit {
   notifCommentId: number | null = null;
   isLoggedIn: boolean = false;
 
+  readonly sortReviewOptions = [
+      { value: 'reviewDate,desc', label: 'Most Recent' },
+      { value: 'numLikes,desc', label: 'Most Likes' },
+      { value: 'rating,desc', label: 'Positive Reviews' },
+      { value: 'rating,asc', label: 'Negative Reviews' },
+  ] as const;
+  selectedSort: { value: string; label: string } = this.sortReviewOptions[0];
+
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
               private profileService: ProfileService,
@@ -50,6 +58,17 @@ export class ShowPageComponent implements OnInit {
   async ngOnInit() {
     try {
       this.isLoggedIn = await this.authService.loginStatus();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async setSort(option: {value: string, label: string}) {
+    if (this.selectedSort === option) return;
+    this.selectedSort = option;
+
+    try {
+      this.reviews = await this.showService.fetchShowReviews(this.showId, 1, this.selectedSort.value);
     } catch (error) {
       console.error(error);
     }
@@ -183,7 +202,7 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      const result = await this.showService.fetchShowReviews(this.showId, this.reviews.page.number + 2);
+      const result = await this.showService.fetchShowReviews(this.showId, this.reviews.page.number + 2, this.selectedSort.value);
       if (this.notifReviewId !== null) {
         result.content = result.content.filter(review => review.id !== this.notifReviewId);
       }
