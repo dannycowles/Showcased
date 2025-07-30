@@ -70,22 +70,10 @@ public class ProfileController {
         return ResponseEntity.ok(followers);
     }
 
-    @GetMapping("/followers/count")
-    public ResponseEntity<Long> getFollowersCount(HttpSession session) {
-        Long followersCount = profileService.getFollowersCount(session);
-        return ResponseEntity.ok(followersCount);
-    }
-
     @GetMapping("/following")
     public ResponseEntity<List<UserSearchDto>> getFollowing(@RequestParam(required = false) String name, HttpSession session) {
         List<UserSearchDto> following = profileService.getFollowing(name, session);
         return ResponseEntity.ok(following);
-    }
-
-    @GetMapping("/following/count")
-    public ResponseEntity<Long> getFollowingCount(HttpSession session) {
-        Long followingCount = profileService.getFollowingCount(session);
-        return ResponseEntity.ok(followingCount);
     }
 
     @DeleteMapping("/followers/{id}")

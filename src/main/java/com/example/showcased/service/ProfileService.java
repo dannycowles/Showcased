@@ -108,10 +108,14 @@ public class ProfileService {
         User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
+        // Special profile details model mapper that skips the set following column
+        ModelMapper profileMapper = new ModelMapper();
+        profileMapper.typeMap(User.class, UserHeaderDataDto.class).addMappings(mapper -> {
+            mapper.skip(UserHeaderDataDto::setFollowing);
+        });
+
         ProfileDetailsDto profileDetails = new ProfileDetailsDto();
-        UserHeaderDataDto headerData = modelMapper.map(user, UserHeaderDataDto.class);
-        headerData.setNumFollowers(getFollowersCount(session));
-        headerData.setNumFollowing(getFollowingCount(session));
+        UserHeaderDataDto headerData = profileMapper.map(user, UserHeaderDataDto.class);
         headerData.setSocialAccounts(getSocialAccounts(session));
         headerData.setOwnProfile(true);
         profileDetails.setHeaderData(headerData);
@@ -557,10 +561,6 @@ public class ProfileService {
         }
     }
 
-    public Long getFollowersCount(HttpSession session) {
-        return followersRepository.countByFollowingId((Long) session.getAttribute("user"));
-    }
-
     public List<UserSearchDto> getFollowing(String name, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         if (name != null) {
@@ -570,16 +570,17 @@ public class ProfileService {
         }
     }
 
-    public Long getFollowingCount(HttpSession session) {
-        return followersRepository.countByFollowerId((Long) session.getAttribute("user"));
-    }
-
+    @Transactional
     public void removeFollower(Long removeId, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         Follower removeFollower = new Follower();
         removeFollower.setFollowerId(removeId);
         removeFollower.setFollowingId(userId);
         followersRepository.delete(removeFollower);
+
+        // Decrement the number of followers for the person completing the action, and the number of people following for the user being removed
+        userRepository.decrementFollowersCount(userId);
+        userRepository.decrementFollowingCount(removeId);
     }
 
 

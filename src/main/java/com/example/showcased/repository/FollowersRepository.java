@@ -11,9 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface FollowersRepository extends JpaRepository<Follower, Long> {
-    Long countByFollowingId(Long followingId);
-    Long countByFollowerId(Long followerId);
-
     @Query("SELECT new com.example.showcased.dto.UserSearchDto(u.id, u.username, u.profilePicture, false, false) " +
             "FROM Follower f JOIN User u ON f.followerId = u.id " +
             "WHERE f.followingId = :followingId")

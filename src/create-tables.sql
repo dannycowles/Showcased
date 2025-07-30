@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(20) NOT NULL UNIQUE,
     password VARCHAR(60) NOT NULL,
     bio VARCHAR(255) DEFAULT NULL,
+    num_followers INT DEFAULT 0,
+    num_following INT DEFAULT 0,
     PRIMARY KEY (id)
 );
 

@@ -1,11 +1,9 @@
 package com.example.showcased.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -17,6 +15,8 @@ public class User {
     private String password;
     private String profilePicture;
     private String bio;
+    private int numFollowers;
+    private int numFollowing;
 
     public User(String email, String username, String password) {
         this.email = email;

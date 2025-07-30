@@ -95,10 +95,14 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
+        // Special user details model mapper that skips the set following column
+        ModelMapper userMapper = new ModelMapper();
+        userMapper.typeMap(User.class, UserHeaderDataDto.class).addMappings(mapper -> {
+            mapper.skip(UserHeaderDataDto::setFollowing);
+        });
+
         ProfileDetailsDto userDetails = new ProfileDetailsDto();
-        UserHeaderDataDto headerData = modelMapper.map(user, UserHeaderDataDto.class);
-        headerData.setNumFollowers(getFollowersCount(userId));
-        headerData.setNumFollowing(getFollowingCount(userId));
+        UserHeaderDataDto headerData = userMapper.map(user, UserHeaderDataDto.class);
         headerData.setSocialAccounts(getSocialAccounts(userId));
 
         // Check if the user is logged in, if so we check they are following this user
@@ -219,6 +223,7 @@ public class UserService {
         return episodeReviewRepository.findByUserId(userId);
     }
 
+    @Transactional
     public void followUser(Long followId, HttpSession session) {
         ensureUserExists(followId);
         Long userId = (Long) session.getAttribute("user");
@@ -239,6 +244,10 @@ public class UserService {
         followEvent.setActivityType(ActivityType.FOLLOW.getDbValue());
         followEvent.setExternalId(newFollower.getId());
         activitiesRepository.save(followEvent);
+
+        // Increment the number of followers for the user being followed, and number of people following for the person completing the action
+        userRepository.incrementFollowersCount(followId);
+        userRepository.incrementFollowingCount(userId);
     }
 
     @Transactional
@@ -252,6 +261,10 @@ public class UserService {
             activitiesRepository.deleteByExternalIdAndActivityType(removeFollower.getId(), ActivityType.FOLLOW.getDbValue());
             followersRepository.delete(removeFollower);
         }
+
+        // Decrement the number of followers for the user being unfollowed, and number of people following for the person completing the action
+        userRepository.decrementFollowersCount(unfollowId);
+        userRepository.decrementFollowingCount(userId);
     }
 
     public List<UserSearchDto> getFollowers(Long userId, String name, HttpSession session) {
@@ -264,11 +277,6 @@ public class UserService {
         return followers;
     }
 
-    private Long getFollowersCount(Long userId) {
-        ensureUserExists(userId);
-        return followersRepository.countByFollowingId(userId);
-    }
-
     public List<UserSearchDto> getFollowing(Long userId, String name, HttpSession session) {
         ensureUserExists(userId);
         List<UserSearchDto> following = (name != null)
@@ -277,11 +285,6 @@ public class UserService {
 
         setFollowingFlags(following, session);
         return following;
-    }
-
-    private Long getFollowingCount(Long userId) {
-        ensureUserExists(userId);
-        return followersRepository.countByFollowerId(userId);
     }
 
     private void setFollowingFlags(List<UserSearchDto> following, HttpSession session) {
