@@ -15,6 +15,7 @@ import {ReviewType} from '../../../data/enums';
 import {AddShowReviewDto} from '../../../data/dto/add-review-dto';
 import {AddToShowRankingList, AddToWatchingListDto, AddToWatchlistDto} from '../../../data/dto/add-to-list-dto';
 import {PageData} from '../../../data/page-data';
+import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
 
 @Component({
   selector: 'app-show-page',
@@ -29,14 +30,7 @@ export class ShowPageComponent implements OnInit {
   notifReviewId: number | null = null;
   notifCommentId: number | null = null;
   isLoggedIn: boolean = false;
-
-  readonly sortReviewOptions = [
-      { value: 'reviewDate,desc', label: 'Most Recent' },
-      { value: 'numLikes,desc', label: 'Most Likes' },
-      { value: 'rating,desc', label: 'Positive Reviews' },
-      { value: 'rating,asc', label: 'Negative Reviews' },
-  ] as const;
-  selectedSort: { value: string; label: string } = this.sortReviewOptions[0];
+  selectedSort: SortReviewOption = sortReviewOptions[0];
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
@@ -63,7 +57,7 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  async setSort(option: {value: string, label: string}) {
+  async setSort(option: SortReviewOption) {
     if (this.selectedSort === option) return;
     this.selectedSort = option;
 
@@ -324,4 +318,5 @@ export class ShowPageComponent implements OnInit {
   }
 
   protected readonly ReviewType = ReviewType;
+  protected readonly sortReviewOptions = sortReviewOptions;
 }

@@ -260,10 +260,14 @@ export class ShowService {
    * Retrieves the reviews for an episode by its ID
    * @param episodeId
    * @param page
+   * @param sortOption
    */
-  async fetchEpisodeReviews(episodeId: number, page ?: number): Promise<PageData<EpisodeReviewData>> {
-    const params = page != null ? `?page=${page}` : '';
-    const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews${params}`, {
+  async fetchEpisodeReviews(episodeId: number, page ?: number, sortOption ?: string): Promise<PageData<EpisodeReviewData>> {
+    const url = new URL(`${this.baseUrl}/episodes/${episodeId}/reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sortOption != null) url.searchParams.set('sort', sortOption);
+
+    const response = await fetch(url, {
       credentials: 'include'
     });
     return await response.json();

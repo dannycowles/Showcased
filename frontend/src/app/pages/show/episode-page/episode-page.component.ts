@@ -13,6 +13,7 @@ import {AuthenticationService} from '../../../services/auth.service';
 import {AddEpisodeReviewDto} from '../../../data/dto/add-review-dto';
 import {AddToEpisodeRankingList} from '../../../data/dto/add-to-list-dto';
 import {PageData} from '../../../data/page-data';
+import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
 
 @Component({
   selector: 'app-episode-page',
@@ -30,6 +31,7 @@ export class EpisodePageComponent implements OnInit {
   isLoggedIn: boolean = false;
   notifReviewId: number | null = null;
   notifCommentId: number | null = null;
+  selectedSort: SortReviewOption = sortReviewOptions[0];
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -51,6 +53,17 @@ export class EpisodePageComponent implements OnInit {
     try {
       this.isLoggedIn = await this.authService.loginStatus();
       await this.loadData();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async setSort(option: SortReviewOption) {
+    if (this.selectedSort === option) return;
+    this.selectedSort = option;
+
+    try {
+      this.reviews = await this.showService.fetchEpisodeReviews(this.episode.id, 1, this.selectedSort.value);
     } catch (error) {
       console.error(error);
     }
@@ -118,7 +131,7 @@ export class EpisodePageComponent implements OnInit {
     }
 
     try {
-      const result = await this.showService.fetchEpisodeReviews(this.episode.id, this.reviews.page.number + 2);
+      const result = await this.showService.fetchEpisodeReviews(this.episode.id, this.reviews.page.number + 2, this.selectedSort.value);
       if (this.notifReviewId != null) {
         result.content = result.content.filter(review => review.id != this.notifReviewId);
       }
@@ -199,4 +212,6 @@ export class EpisodePageComponent implements OnInit {
       console.error(error);
     }
   }
+
+  protected readonly sortReviewOptions = sortReviewOptions;
 }
