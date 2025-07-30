@@ -54,7 +54,6 @@ public class ShowService {
     private final LikedShowReviewCommentsRepository  likedShowReviewCommentsRepository;
     private final EpisodeReviewCommentRepository episodeReviewCommentRepository;
     private final LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository;
-    private final int numReviews = 2;
     private final int numComments = 2;
 
     public ShowService(ShowReviewRepository showReviewRepository,
@@ -544,9 +543,16 @@ public class ShowService {
         return episodeReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
-    public Page<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, int page, HttpSession session) {
+    public Page<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, HttpSession session, Pageable page) {
         Long userId = (Long) session.getAttribute("user");
-        return episodeReviewRepository.findAllByEpisodeId(episodeId, userId, PageRequest.of(page - 1, numReviews));
+
+        // Subtract 1 from provided page to align with 0-indexed pages, and ensure non-negative pages are requested
+        Pageable modifiedPage = PageRequest.of(
+                Math.max(0, page.getPageNumber() - 1),
+                page.getPageSize(),
+                page.getSort()
+        );
+        return episodeReviewRepository.findAllByEpisodeId(episodeId, userId, modifiedPage);
     }
 
     public EpisodeReviewWithUserInfoDto getEpisodeReview(Long reviewId, HttpSession session) {

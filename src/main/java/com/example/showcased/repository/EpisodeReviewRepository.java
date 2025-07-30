@@ -42,7 +42,6 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
             JOIN User u ON r.userId = u.id
             JOIN EpisodeInfo e ON r.episodeId = e.id
             WHERE r.episodeId = :episodeId
-            ORDER BY r.reviewDate DESC
         """)
     Page<EpisodeReviewWithUserInfoDto> findAllByEpisodeId(@Param("episodeId") Long episodeId, @Param("userId") Long userId, Pageable page);
 

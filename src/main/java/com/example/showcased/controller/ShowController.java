@@ -19,7 +19,7 @@ public class ShowController {
 
     private final ShowService showService;
 
-    private final int DEFAULT_PAGE_SIZE = 2;
+    private static final int DEFAULT_PAGE_SIZE = 2;
 
     public ShowController(ShowService showService) {
         this.showService = showService;
@@ -89,7 +89,7 @@ public class ShowController {
     @GetMapping("/{id}/reviews")
     public ResponseEntity<Page<ShowReviewWithUserInfoDto>> getShowReviews(@PathVariable Long id,
                                                                           HttpSession session,
-                                                                          @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = {"reviewDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
+                                                                          @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<ShowReviewWithUserInfoDto> reviews = showService.getShowReviews(id, session, pageable);
         return ResponseEntity.ok(reviews);
     }
@@ -154,8 +154,10 @@ public class ShowController {
     }
 
     @GetMapping("/episodes/{episodeId}/reviews")
-    public ResponseEntity<Page<EpisodeReviewWithUserInfoDto>> getEpisodeReviews(@PathVariable Long episodeId, @RequestParam(required = false, defaultValue = "1") int page, HttpSession session) {
-        Page<EpisodeReviewWithUserInfoDto> reviews = showService.getEpisodeReviews(episodeId, page, session);
+    public ResponseEntity<Page<EpisodeReviewWithUserInfoDto>> getEpisodeReviews(@PathVariable Long episodeId,
+                                                                                HttpSession session,
+                                                                                @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<EpisodeReviewWithUserInfoDto> reviews = showService.getEpisodeReviews(episodeId, session, pageable);
         return ResponseEntity.ok(reviews);
     }
 
