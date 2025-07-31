@@ -18,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    private static final int DEFAULT_PAGE_SIZE = 2;
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     public UserController(UserService userService) {
         this.userService = userService;

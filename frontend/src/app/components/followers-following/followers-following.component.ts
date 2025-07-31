@@ -6,30 +6,47 @@ import {NgOptimizedImage} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {UserService} from '../../services/user.service';
+import {PageData} from '../../data/page-data';
+import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 
 @Component({
   selector: 'app-followers-following',
-  imports: [
-    NgOptimizedImage,
-    RouterLink,
-    FormsModule
-  ],
+  imports: [NgOptimizedImage, RouterLink, FormsModule, InfiniteScrollDirective],
   templateUrl: './followers-following.component.html',
   styleUrl: './followers-following.component.css',
-  standalone: true
+  standalone: true,
 })
 export class FollowersFollowingComponent implements OnInit {
-  @Input({required: true}) listType: "followers" | "following";
+  @Input({ required: true }) listType: 'followers' | 'following';
   @Input() editable: boolean = true; // true for profile page, false for user page
   @Input() userId: number;
 
-  searchString: string = "";
+  searchString: string = '';
   debouncedSearch: () => void;
-  searchResults: UserSearchData[];
+  searchResults: PageData<UserSearchData>;
 
-  constructor(private profileService: ProfileService,
-              private userService: UserService,
-              private utils: UtilsService) { };
+  readonly followHandlers = {
+    getFollowers: (page: number) => {
+      if (this.editable) {
+        return this.profileService.getFollowersList(this.searchString, page);
+      } else {
+        return this.userService.getFollowersList(this.userId, this.searchString, page);
+      }
+    },
+    getFollowing: (page: number) => {
+      if (this.editable) {
+        return this.profileService.getFollowingList(this.searchString, page);
+      } else {
+        return this.userService.getFollowingList(this.userId, this.searchString, page);
+      }
+    }
+  }
+
+  constructor(
+    private profileService: ProfileService,
+    private userService: UserService,
+    private utils: UtilsService,
+  ) {}
 
   ngOnInit() {
     this.debouncedSearch = this.utils.debounce(() => {
@@ -40,18 +57,32 @@ export class FollowersFollowingComponent implements OnInit {
 
   async search() {
     try {
-      let action;
-      if (this.editable) {
-        action = (this.listType === "followers")
-          ? () => this.profileService.getFollowersList(this.searchString)
-          : () => this.profileService.getFollowingList(this.searchString);
+      if (this.listType === "followers") {
+        this.searchResults = await this.followHandlers.getFollowers(1);
       } else {
-        action = (this.listType === "followers")
-          ? () => this.userService.getFollowersList(this.userId, this.searchString)
-          : () => this.userService.getFollowingList(this.userId, this.searchString);
+        this.searchResults = await this.followHandlers.getFollowing(1);
       }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-      this.searchResults = await action();
+  async loadMoreUsers() {
+    console.log(this.searchResults.page.number);
+    // If all users have been loaded, return
+    if (this.searchResults.page.number + 1 >= this.searchResults.page.totalPages) {
+      return;
+    }
+
+    try {
+      let result;
+      if (this.listType === "followers") {
+        result = await this.followHandlers.getFollowers(this.searchResults.page.number + 2);
+      } else {
+        result = await this.followHandlers.getFollowing(this.searchResults.page.number + 2);
+      }
+      this.searchResults.content.push(...result.content);
+      this.searchResults.page = result.page;
     } catch (error) {
       console.error(error);
     }
@@ -61,7 +92,9 @@ export class FollowersFollowingComponent implements OnInit {
     try {
       const response = await this.userService.followUser(userId);
       if (response.ok) {
-        const updateUser = this.searchResults.find(user => user.id === userId);
+        const updateUser = this.searchResults.content.find(
+          (user) => user.id === userId,
+        );
         updateUser.isFollowing = true;
       }
     } catch (error) {
@@ -73,7 +106,9 @@ export class FollowersFollowingComponent implements OnInit {
     try {
       const response = await this.userService.unfollowUser(userId);
       if (response.ok) {
-        const updateUser = this.searchResults.find(user => user.id === userId);
+        const updateUser = this.searchResults.content.find(
+          (user) => user.id === userId,
+        );
         updateUser.isFollowing = false;
       }
     } catch (error) {
@@ -85,9 +120,11 @@ export class FollowersFollowingComponent implements OnInit {
     try {
       const response = await this.profileService.removeFollower(userId);
       if (response.ok) {
-        this.searchResults = this.searchResults.filter(user => user.id != userId);
+        this.searchResults.content = this.searchResults.content.filter(
+          (user) => user.id != userId,
+        );
       }
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }

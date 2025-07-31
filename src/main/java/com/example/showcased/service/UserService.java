@@ -86,8 +86,12 @@ public class UserService {
     }
 
     public List<UserSearchDto> searchUsers(String query) {
+        ModelMapper searchMapper = new ModelMapper();
+        searchMapper.typeMap(User.class, UserSearchDto.class).addMappings(mapper -> {
+            mapper.skip(UserSearchDto::setFollowing);
+        });
         return userRepository.findByUsernameContainingIgnoreCase(query).stream()
-                .map(user -> modelMapper.map(user, UserSearchDto.class))
+                .map(user -> searchMapper.map(user, UserSearchDto.class))
                 .collect(Collectors.toList());
     }
 

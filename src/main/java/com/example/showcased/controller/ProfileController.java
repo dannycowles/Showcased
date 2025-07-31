@@ -22,7 +22,7 @@ public class ProfileController {
     private final ProfileService profileService;
     private final FileService fileService;
 
-    private static final int DEFAULT_PAGE_SIZE = 2;
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     public ProfileController(ProfileService profileService,
                              FileService fileService) {

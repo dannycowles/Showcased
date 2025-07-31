@@ -29,6 +29,7 @@ import {CreateCollectionDto} from '../data/dto/create-collection-dto';
 import {UpdateCollectionDetails} from '../data/dto/update-collection-details';
 import {ActivityData} from '../data/activity-data';
 import {PageData} from '../data/page-data';
+import {UserService} from './user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -424,17 +425,37 @@ export class ProfileService {
   /**
    * Retrieves a list of all the users currently following the logged-in user
    * @param name
+   * @param page
    */
-  async getFollowersList(name?: string): Promise<UserSearchData[]> {
-    const params = name?.length > 0 ? `?name=${encodeURIComponent(name)}` : '';
-    const url = `${this.baseUrl}/followers${params}`;
+  async getFollowersList(name?: string, page ?: number): Promise<PageData<UserSearchData>> {
+    const url = new URL(`${this.baseUrl}/followers`);
+    if (name?.length > 0) url.searchParams.set('name', name);
+    if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url, {
       credentials: 'include',
     });
 
     this.checkUnauthorizedUser(response);
-    return await response.json();
+    return response.json();
+  }
+
+  /**
+   * Retrieves a list of all the users the logged-in user is following
+   * @param name
+   * @param page
+   */
+  async getFollowingList(name?: string, page ?: number): Promise<PageData<UserSearchData>> {
+    const url = new URL(`${this.baseUrl}/following`);
+    if (name?.length > 0) url.searchParams.set('name', name);
+    if (page != null) url.searchParams.set('page', String(page));
+
+    const response = await fetch(url, {
+      credentials: 'include',
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
   }
 
   /**
@@ -453,22 +474,6 @@ export class ProfileService {
 
     this.checkUnauthorizedUser(response);
     return response;
-  }
-
-  /**
-   * Retrieves a list of all the users the logged-in user is following
-   * @param name
-   */
-  async getFollowingList(name?: string): Promise<UserSearchData[]> {
-    const params = name?.length > 0 ? `?name=${encodeURIComponent(name)}` : '';
-    const url = `${this.baseUrl}/following${params}`;
-
-    const response = await fetch(url, {
-      credentials: 'include',
-    });
-
-    this.checkUnauthorizedUser(response);
-    return await response.json();
   }
 
   /**

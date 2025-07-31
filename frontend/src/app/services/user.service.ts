@@ -10,6 +10,7 @@ import {SingleCollectionData} from '../data/single-collection-data';
 import {ShowListData} from '../data/lists/show-list-data';
 import {Router} from '@angular/router';
 import {DynamicRankingData} from '../data/lists/dynamic-ranking-data';
+import {PageData} from '../data/page-data';
 
 @Injectable({
   providedIn: 'root'
@@ -133,32 +134,36 @@ export class UserService {
    * Retrieves the followers list for user with the specified id
    * @param id
    * @param name
+   * @param page
    */
-  async getFollowersList(id: number, name ?: string): Promise<UserSearchData[]> {
-    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
-    const url = `${this.baseUrl}/${id}/followers${params}`;
+  async getFollowersList(id: number, name ?: string, page ?: number): Promise<PageData<UserSearchData>> {
+    const url = new URL(`${this.baseUrl}/${id}/followers`);
+    if (name?.length > 0) url.searchParams.set('name', name);
+    if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url, {
       credentials: 'include'
     });
 
-    return await response.json();
+    return response.json();
   }
 
   /**
    * Retrieves the following list for user with the specified id
    * @param id
    * @param name
+   * @param page
    */
-  async getFollowingList(id: number, name ?: string): Promise<UserSearchData[]> {
-    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
-    const url = `${this.baseUrl}/${id}/following${params}`;
+  async getFollowingList(id: number, name ?: string, page ?: number): Promise<PageData<UserSearchData>> {
+    const url = new URL(`${this.baseUrl}/${id}/following`);
+    if (name?.length > 0) url.searchParams.set('name', name);
+    if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url, {
       credentials: 'include'
     });
 
-    return await response.json();
+    return response.json();
   }
 
   /**
