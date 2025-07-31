@@ -7,6 +7,7 @@ import com.example.showcased.exception.AlreadyLikedException;
 import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.exception.ItemNotFoundException;
 import com.example.showcased.repository.*;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -414,6 +415,17 @@ public class ShowService {
                 .toUriString();
         jsonResponse = new JSONObject(tmdbClient.getRaw(url));
         episode.setShowTitle(jsonResponse.optString("name"));
+
+        // Fetch the number of seasons in the show and number of episodes in the current season for next/previous episode buttons on frontend
+        episode.setNumSeasons(jsonResponse.optInt("number_of_seasons"));
+        JSONArray seasons = jsonResponse.optJSONArray("seasons");
+        for (int i = 0; i < seasons.length(); i++) {
+            JSONObject seasonNode = seasons.getJSONObject(i);
+            if (seasonNode.optInt("season_number") == Integer.parseInt(seasonNumber)) {
+                episode.setNumEpisodesInSeason(seasonNode.optInt("episode_count"));
+                break;
+            }
+        }
 
         if (!jsonResponse.optString("Plot").equals("N/A") && jsonResponse.optBoolean("Plot")) {
             episode.setPlot(jsonResponse.optString("Plot"));

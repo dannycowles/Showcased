@@ -28,6 +28,8 @@ public class EpisodeDto {
     private String imdbRating;
     private String imdbVotes;
     private int runtime;
+    private int numSeasons;
+    private int numEpisodesInSeason;
 
     @JsonProperty("isOnRankingList")
     private boolean isOnRankingList = false;
