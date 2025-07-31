@@ -421,7 +421,9 @@ public class ShowService {
         JSONArray seasons = jsonResponse.optJSONArray("seasons");
         for (int i = 0; i < seasons.length(); i++) {
             JSONObject seasonNode = seasons.getJSONObject(i);
-            if (seasonNode.optInt("season_number") == Integer.parseInt(seasonNumber)) {
+            if (seasonNode.optInt("season_number") == Integer.parseInt(seasonNumber) - 1) {
+                episode.setNumEpisodesInPreviousSeason(seasonNode.optInt("episode_count"));
+            } else if (seasonNode.optInt("season_number") == Integer.parseInt(seasonNumber)) {
                 episode.setNumEpisodesInSeason(seasonNode.optInt("episode_count"));
                 break;
             }

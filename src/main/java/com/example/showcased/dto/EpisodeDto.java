@@ -30,6 +30,7 @@ public class EpisodeDto {
     private int runtime;
     private int numSeasons;
     private int numEpisodesInSeason;
+    private int numEpisodesInPreviousSeason;
 
     @JsonProperty("isOnRankingList")
     private boolean isOnRankingList = false;

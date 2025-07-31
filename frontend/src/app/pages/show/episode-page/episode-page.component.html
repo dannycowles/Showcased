@@ -1,6 +1,12 @@
 @if (episode) {
   <button class="btn btn-primary" [routerLink]="['/show', showId, 'season', seasonNumber]">Return to Season Details</button>
 
+  <div class="my-3">
+    <button class="btn btn-secondary me-3" [disabled]="!hasPreviousEpisode()" (click)="goPreviousEpisode()">Previous Episode</button>
+    <span class="fs-3 me-3">Season {{seasonNumber}} Episode {{episodeNumber}}</span>
+    <button class="btn btn-secondary" [disabled]="!hasNextEpisode()" (click)="goNextEpisode()">Next Episode</button>
+  </div>
+
   <h2>Name: {{episode.episodeTitle}}</h2>
 
   <h3>IMDb Rating: {{episode.imdbRating}} with {{episode.imdbVotes}} votes</h3>

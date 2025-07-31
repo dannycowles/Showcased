@@ -23,8 +23,8 @@ import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
 })
 export class EpisodePageComponent implements OnInit {
   readonly showId: number;
-  readonly seasonNumber: number;
-  readonly episodeNumber: number;
+  seasonNumber: number;
+  episodeNumber: number;
   episode: EpisodeData;
   reviews: PageData<EpisodeReviewData>;
   readonly ReviewType = ReviewType;
@@ -41,9 +41,7 @@ export class EpisodePageComponent implements OnInit {
               public utilsService: UtilsService,
               private modalService: NgbModal,
               private authService: AuthenticationService) {
-    this.showId = this.route.snapshot.params['id'];
-    this.seasonNumber = this.route.snapshot.params['seasonNumber'];
-    this.episodeNumber = this.route.snapshot.params['episodeNumber'];
+    this.showId = +this.route.snapshot.params['id'];
     this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
     this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
     history.replaceState({}, document.title, window.location.href);
@@ -52,7 +50,11 @@ export class EpisodePageComponent implements OnInit {
   async ngOnInit() {
     try {
       this.isLoggedIn = await this.authService.loginStatus();
-      await this.loadData();
+      this.route.params.subscribe(params => {
+        this.seasonNumber = +params['seasonNumber'];
+        this.episodeNumber = +params['episodeNumber'];
+        this.loadData();
+      });
     } catch (error) {
       console.error(error);
     }
@@ -214,4 +216,29 @@ export class EpisodePageComponent implements OnInit {
   }
 
   protected readonly sortReviewOptions = sortReviewOptions;
+
+  hasPreviousEpisode() {
+    return !(this.seasonNumber == 1 && this.episodeNumber == 1);
+  }
+
+  hasNextEpisode() {
+    return (this.episodeNumber < this.episode.numEpisodesInSeason ||
+      (this.episodeNumber == this.episode.numEpisodesInSeason && this.seasonNumber < this.episode.numSeasons));
+  }
+
+  goPreviousEpisode() {
+    if (this.episodeNumber != 1) {
+      this.router.navigate(['/show', this.showId, 'season', this.seasonNumber, 'episode', this.episodeNumber - 1]);
+    } else {
+      this.router.navigate(['/show', this.showId, 'season', this.seasonNumber - 1, 'episode', this.episode.numEpisodesInPreviousSeason]);
+    }
+  }
+
+  goNextEpisode() {
+    if (this.episodeNumber < this.episode.numEpisodesInSeason) {
+      this.router.navigate(['/show', this.showId, 'season', this.seasonNumber, 'episode', this.episodeNumber + 1]);
+    } else {
+      this.router.navigate(['/show', this.showId, 'season', this.seasonNumber + 1, 'episode', 1]);
+    }
+  }
 }
