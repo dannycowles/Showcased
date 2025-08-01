@@ -68,6 +68,8 @@ public class ShowDto {
     @JsonProperty("isOnRankingList")
     private boolean isOnRankingList = false;
 
+    private String trailerPath;
+
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {
             this.backdropPath = "https://image.tmdb.org/t/p/w1280" + backdropPath;

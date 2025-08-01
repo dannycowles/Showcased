@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -244,6 +245,37 @@ public class ShowService {
 
         show.setStreamingOptions(streamingOptions);
         show.setBuyOptions(buyOptions);
+
+        // Set show YouTube trailer if one exists
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/tv")
+                .pathSegment(id, "videos")
+                .toUriString();
+        jsonResponse = new JSONObject(tmdbClient.getRaw(url));
+        JSONArray videoResults = jsonResponse.optJSONArray("results");
+
+        String trailerKey = null;
+        Instant oldestTrailer = Instant.MAX;
+        for (int i = 0; i < videoResults.length(); i++) {
+            JSONObject video = videoResults.getJSONObject(i);
+            String videoType =  video.optString("type");
+            String videoSite = video.optString("site");
+
+            if ("Trailer".equalsIgnoreCase(videoType) && "YouTube".equalsIgnoreCase(videoSite)) {
+                String publishedAt = video.optString("published_at");
+                Instant publishedInstant = Instant.parse(publishedAt);
+
+                if (publishedInstant.isBefore(oldestTrailer)) {
+                    oldestTrailer = publishedInstant;
+                    trailerKey = video.optString("key");
+                }
+            }
+        }
+
+        if (trailerKey != null) {
+            String trailerUrl = "https://www.youtube.com/watch?v=" + trailerKey;
+            show.setTrailerPath(trailerUrl);
+        }
 
         return show;
     }
