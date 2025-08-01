@@ -273,7 +273,7 @@ public class ShowService {
         }
 
         if (trailerKey != null) {
-            String trailerUrl = "https://www.youtube.com/watch?v=" + trailerKey;
+            String trailerUrl = "https://www.youtube.com/embed/" + trailerKey;
             show.setTrailerPath(trailerUrl);
         }
 

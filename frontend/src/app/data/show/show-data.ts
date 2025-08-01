@@ -27,6 +27,7 @@ export interface ShowData {
   readonly streamingOptions: WatchOptionData[];
   readonly buyOptions: WatchOptionData[];
   readonly recommendations: SearchResultData[];
+  readonly trailerPath: string;
   isOnWatchlist: boolean;
   isOnWatchingList: boolean;
   isOnRankingList: boolean;

@@ -16,6 +16,7 @@ import {AddShowReviewDto} from '../../../data/dto/add-review-dto';
 import {AddToShowRankingList, AddToWatchingListDto, AddToWatchlistDto} from '../../../data/dto/add-to-list-dto';
 import {PageData} from '../../../data/page-data';
 import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
+import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-show-page',
@@ -31,6 +32,7 @@ export class ShowPageComponent implements OnInit {
   notifCommentId: number | null = null;
   isLoggedIn: boolean = false;
   selectedSort: SortReviewOption = sortReviewOptions[0];
+  safeTrailerUrl: SafeResourceUrl | null = null;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
@@ -39,7 +41,8 @@ export class ShowPageComponent implements OnInit {
               public utilsService: UtilsService,
               private modalService: NgbModal,
               private authService: AuthenticationService,
-              private router: Router) {
+              private router: Router,
+              private sanitizer: DomSanitizer) {
     this.route.params.subscribe(params => {
       this.showId = params['id'];
       this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
@@ -72,6 +75,9 @@ export class ShowPageComponent implements OnInit {
     // Retrieve show data from backend
     try {
       this.show = await this.showService.fetchShowDetails(this.showId);
+      if (this.show.trailerPath != null) {
+        this.safeTrailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.show.trailerPath);
+      }
     } catch (error) {
       console.error(error);
     }

@@ -72,6 +72,13 @@
   <br>
   <br>
 
+  @if (safeTrailerUrl) {
+    <iframe class="ms-2" [src]="safeTrailerUrl" width="560" height="315" allowfullscreen></iframe>
+  }
+
+  <br>
+  <br>
+
   @if (show.isOnWatchlist) {
     <button class="btn btn-danger ms-2" (click)="removeShowFromWatchlist()">Remove from Watchlist</button>
   } @else {
