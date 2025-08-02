@@ -8,6 +8,7 @@ import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -124,8 +125,7 @@ public class ProfileService {
         profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
         profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
-        profileDetails.setShowReviews(getShowReviews(session));
-        profileDetails.setEpisodeReviews(getEpisodeReviews(session));
+        profileDetails.setReviews(getReviews(session, PageRequest.of(1, numTopEntries)));
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
         profileDetails.setDynamicRankingTop(getDynamicsRankingList(numTopEntries, session));
@@ -544,12 +544,26 @@ public class ProfileService {
 
 
 
-    public List<ShowReviewWithUserInfoDto> getShowReviews(HttpSession session) {
-        return showReviewRepository.findByUserId((Long) session.getAttribute("user"));
-    }
+    public Page<ShowReviewDto> getReviews(HttpSession session, Pageable pageable) {
+        Long userId = (Long) session.getAttribute("user");
 
-    public List<EpisodeReviewWithUserInfoDto> getEpisodeReviews(HttpSession session) {
-        return episodeReviewRepository.findByUserId((Long) session.getAttribute("user"));
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+
+        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(userId);
+        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(userId);
+
+        List<ShowReviewDto> combined = Stream.concat(topShowReviews.stream(), topEpisodeReviews.stream())
+                .sorted(Comparator.comparing(ShowReviewDto::getReviewDate).reversed())
+                .skip((long) modifiedPage.getPageNumber() * modifiedPage.getPageSize())
+                .limit(modifiedPage.getPageSize())
+                .toList();
+
+        return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
     }
 
     public Page<UserSearchDto> getFollowers(String name, HttpSession session, Pageable pageable) {

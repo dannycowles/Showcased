@@ -6,6 +6,7 @@ import com.example.showcased.service.ProfileService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class ProfileController {
     private final FileService fileService;
 
     private static final int DEFAULT_PAGE_SIZE = 10;
+    private static final int DEFAULT_REVIEWS_PAGE_SIZE = 5;
 
     public ProfileController(ProfileService profileService,
                              FileService fileService) {
@@ -57,14 +59,9 @@ public class ProfileController {
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getShowReviews(HttpSession session) {
-        List<ShowReviewWithUserInfoDto> reviews = profileService.getShowReviews(session);
-        return ResponseEntity.ok(reviews);
-    }
-
-    @GetMapping("/episode-reviews")
-    public ResponseEntity<List<EpisodeReviewWithUserInfoDto>> getEpisodeReviews(HttpSession session) {
-        List<EpisodeReviewWithUserInfoDto> reviews = profileService.getEpisodeReviews(session);
+    public ResponseEntity<Page<ShowReviewDto>> getReviews(HttpSession session,
+                                                          @PageableDefault(page = 1, size = DEFAULT_REVIEWS_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ShowReviewDto> reviews = profileService.getReviews(session, pageable);
         return ResponseEntity.ok(reviews);
     }
 

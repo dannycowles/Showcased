@@ -1,16 +1,33 @@
 package com.example.showcased.dto;
 
+import com.example.showcased.enums.ReviewType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.util.Date;
+
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class EpisodeReviewDto {
-    private double rating;
-    private Long showId;
-    private String showTitle;
+public class EpisodeReviewDto extends ShowReviewDto {
     private String episodeTitle;
     private int season;
     private int episode;
-    private String commentary;
-    private boolean containsSpoilers;
-    private String posterPath;
+
+    public EpisodeReviewDto(
+            Long showId,
+            double rating,
+            String showTitle,
+            String commentary,
+            boolean containsSpoilers,
+            String posterPath,
+            Date reviewDate,
+            String episodeTitle,
+            int season,
+            int episode
+    ) {
+        super(ReviewType.EPISODE, showId, rating, showTitle, commentary, containsSpoilers, posterPath, reviewDate);
+        this.episodeTitle = episodeTitle;
+        this.season = season;
+        this.episode = episode;
+    }
 }

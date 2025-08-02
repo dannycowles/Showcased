@@ -1,5 +1,6 @@
 package com.example.showcased.repository;
 
+import com.example.showcased.dto.EpisodeReviewDto;
 import com.example.showcased.dto.EpisodeReviewWithUserInfoDto;
 import com.example.showcased.entity.EpisodeReview;
 import org.springframework.data.domain.Page;
@@ -79,38 +80,24 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
     EpisodeReviewWithUserInfoDto findById(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
 
     @Query(""" 
-        SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
-                r.id,
-                u.username,
-                u.profilePicture,
-                r.userId,
+        SELECT new com.example.showcased.dto.EpisodeReviewDto (
                 e.showId,
-                e.season,
-                e.episode,
-                e.showTitle,
-                e.episodeTitle,
                 r.rating,
+                e.showTitle,
                 r.commentary,
                 r.containsSpoilers,
-                r.numLikes,
-                r.numComments,
+                e.posterPath,
                 r.reviewDate,
-                CASE
-                    WHEN :userId IS NULL THEN FALSE
-                    WHEN EXISTS (
-                            SELECT lr FROM LikedEpisodeReview lr
-                            WHERE lr.reviewId = r.id AND lr.userId = :userId
-                    ) THEN TRUE
-                    ELSE FALSE
-                 END
+                e.episodeTitle,
+                e.season,
+                e.episode
             )
             FROM EpisodeReview r
             JOIN EpisodeInfo e ON e.id = r.episodeId
             JOIN User u ON u.id = r.userId
             WHERE r.userId = :userId
-            ORDER BY r.reviewDate DESC
         """)
-    List<EpisodeReviewWithUserInfoDto> findByUserId(@Param("userId") Long userId);
+    List<EpisodeReviewDto> findByUserId(@Param("userId") Long userId);
 
     void deleteByUserIdAndEpisodeId(Long userId, Long episodeId);
 

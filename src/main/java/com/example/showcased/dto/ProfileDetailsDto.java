@@ -1,6 +1,7 @@
 package com.example.showcased.dto;
 
 import lombok.Data;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -22,6 +23,5 @@ public class ProfileDetailsDto {
     private boolean hasMoreSeasonRanking = false;
     private boolean hasMoreEpisodeRanking = false;
 
-    private List<ShowReviewWithUserInfoDto> showReviews;
-    private List<EpisodeReviewWithUserInfoDto> episodeReviews;
+    private Page<ShowReviewDto> reviews;
 }

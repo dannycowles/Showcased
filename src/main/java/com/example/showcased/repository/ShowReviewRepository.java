@@ -1,5 +1,6 @@
 package com.example.showcased.repository;
 
+import com.example.showcased.dto.ShowReviewDto;
 import com.example.showcased.dto.ShowReviewWithUserInfoDto;
 import com.example.showcased.entity.ShowReview;
 import org.springframework.data.domain.Page;
@@ -73,33 +74,21 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
     ShowReviewWithUserInfoDto findById(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
 
     @Query("""
-        SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
-            r.id,
-            u.username,
-            u.profilePicture,
-            r.userId,
-            r.showId,
-            s.title,
+        SELECT new com.example.showcased.dto.ShowReviewDto (
+            s.showId,
             r.rating,
+            s.title,
             r.commentary,
             r.containsSpoilers,
-            r.numLikes,
-            r.numComments,
-            r.reviewDate,
-            CASE
-                WHEN EXISTS (
-                    SELECT lr FROM LikedShowReview lr
-                    WHERE lr.reviewId = r.id AND lr.userId = :id
-                ) THEN TRUE ELSE FALSE
-            END
+            s.posterPath,
+            r.reviewDate
         )
         FROM ShowReview r
         JOIN User u ON r.userId = u.id
         JOIN ShowInfo s ON r.showId = s.showId
-        WHERE r.userId = :id
-        ORDER BY r.reviewDate DESC
+        WHERE r.userId = :userId
     """)
-    List<ShowReviewWithUserInfoDto> findByUserId(@Param("id") Long id);
+    List<ShowReviewDto> findByUserId(@Param("userId") Long userId);
 
     void deleteByUserIdAndShowId(Long userId, Long showId);
 

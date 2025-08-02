@@ -143,8 +143,8 @@ public class UserService {
             userDetails.setHasMoreSeasonRanking(true);
         }
 
-        userDetails.setShowReviews(getUserShowReviews(userId));
-        userDetails.setEpisodeReviews(getUserEpisodeReviews(userId));
+//        userDetails.setShowReviews(getUserShowReviews(userId));
+//        userDetails.setEpisodeReviews(getUserEpisodeReviews(userId));
         userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
         userDetails.setDynamicRankingTop(getUserDynamicRankings(userId, numTopEntries));
         return userDetails;
@@ -220,12 +220,14 @@ public class UserService {
 
     public List<ShowReviewWithUserInfoDto> getUserShowReviews(Long userId) {
         ensureUserExists(userId);
-        return showReviewRepository.findByUserId(userId);
+        //return showReviewRepository.findByUserId(userId);
+        return null;
     }
 
     public List<EpisodeReviewWithUserInfoDto> getUserEpisodeReviews(Long userId) {
         ensureUserExists(userId);
-        return episodeReviewRepository.findByUserId(userId);
+        //return episodeReviewRepository.findByUserId(userId);
+        return null;
     }
 
     @Transactional
