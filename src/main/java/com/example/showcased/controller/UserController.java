@@ -39,14 +39,23 @@ public class UserController {
     }
 
     @GetMapping("/{id}/reviews")
-    public ResponseEntity<List<ShowReviewWithUserInfoDto>> getUserShowReviews(@PathVariable Long id) {
-        List<ShowReviewWithUserInfoDto> reviews = userService.getUserShowReviews(id);
+    public ResponseEntity<Page<ShowReviewDto>> getUserReviews(@PathVariable Long id,
+                                                              @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
+        Page<ShowReviewDto> reviews = userService.getUserReviews(id, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/{id}/show-reviews")
+    public ResponseEntity<Page<ShowReviewDto>> getUserShowReviews(@PathVariable Long id,
+                                                                  @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE)  Pageable pageable) {
+        Page<ShowReviewDto> reviews = userService.getUserShowReviews(id, pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/{id}/episode-reviews")
-    public ResponseEntity<List<EpisodeReviewWithUserInfoDto>> getUserEpisodeReviews(@PathVariable Long id) {
-        List<EpisodeReviewWithUserInfoDto> reviews = userService.getUserEpisodeReviews(id);
+    public ResponseEntity<Page<EpisodeReviewDto>> getUserEpisodeReviews(@PathVariable Long id,
+                                                                        @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE)  Pageable pageable) {
+        Page<EpisodeReviewDto> reviews = userService.getUserEpisodeReviews(id, pageable);
         return ResponseEntity.ok(reviews);
     }
 

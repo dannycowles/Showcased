@@ -122,7 +122,7 @@ public class ProfileService {
         profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
         profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
         profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
-        profileDetails.setReviews(getReviews(session, PageRequest.of(1, numTopEntries)));
+        profileDetails.setReviews(getReviews(session, PageRequest.of(1, numTopEntries)).getContent());
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
         profileDetails.setDynamicRankingTop(getDynamicsRankingList(numTopEntries, session));

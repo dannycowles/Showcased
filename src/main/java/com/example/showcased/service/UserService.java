@@ -2,22 +2,19 @@ package com.example.showcased.service;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.entity.*;
+import com.example.showcased.entity.Collection;
 import com.example.showcased.enums.ActivityType;
 import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -143,8 +140,7 @@ public class UserService {
             userDetails.setHasMoreSeasonRanking(true);
         }
 
-//        userDetails.setShowReviews(getUserShowReviews(userId));
-//        userDetails.setEpisodeReviews(getUserEpisodeReviews(userId));
+        userDetails.setReviews(getUserReviews(userId, PageRequest.of(1, numTopEntries)).getContent());
         userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
         userDetails.setDynamicRankingTop(getUserDynamicRankings(userId, numTopEntries));
         return userDetails;
@@ -217,17 +213,68 @@ public class UserService {
 
 
 
+    public Page<ShowReviewDto> getUserReviews(Long id, Pageable pageable) {
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
 
-    public List<ShowReviewWithUserInfoDto> getUserShowReviews(Long userId) {
-        ensureUserExists(userId);
-        //return showReviewRepository.findByUserId(userId);
-        return null;
+        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(id, Pageable.unpaged()).getContent();
+        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(id, Pageable.unpaged()).getContent();
+
+        Sort sort = modifiedPage.getSort();
+        Comparator<ShowReviewDto> comparator;
+
+        // If no sort is provided, default to newest reviews first
+        if (sort.isUnsorted()) {
+            comparator = Comparator.comparing(ShowReviewDto::getReviewDate).reversed();
+        } else {
+            Sort.Order sortOrder = modifiedPage.getSort().iterator().next();
+            String sortOrderRequest = sortOrder.getProperty() + "," + sortOrder.getDirection();
+
+            comparator = switch(sortOrderRequest) {
+                case "reviewDate,DESC" -> Comparator.comparing(ShowReviewDto::getReviewDate).reversed();
+                case "rating,DESC" -> Comparator.comparing(ShowReviewDto::getRating).reversed();
+                case "rating,ASC"  -> Comparator.comparing(ShowReviewDto::getRating);
+                case "numLikes,DESC" -> Comparator.comparing(ShowReviewDto::getNumLikes).reversed();
+                case "numLikes,ASC"  -> Comparator.comparing(ShowReviewDto::getNumLikes);
+                default -> throw new IllegalStateException("Unexpected sort value: " + sortOrderRequest);
+            };
+        }
+
+        List<ShowReviewDto> combined = Stream.concat(topShowReviews.stream(), topEpisodeReviews.stream())
+                .sorted(comparator)
+                .skip((long) modifiedPage.getPageNumber() * modifiedPage.getPageSize())
+                .limit(modifiedPage.getPageSize())
+                .toList();
+
+        return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
     }
 
-    public List<EpisodeReviewWithUserInfoDto> getUserEpisodeReviews(Long userId) {
+    public Page<ShowReviewDto> getUserShowReviews(Long userId, Pageable pageable) {
         ensureUserExists(userId);
-        //return episodeReviewRepository.findByUserId(userId);
-        return null;
+
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+        return showReviewRepository.findByUserId(userId, modifiedPage);
+    }
+
+    public Page<EpisodeReviewDto> getUserEpisodeReviews(Long userId, Pageable pageable) {
+        ensureUserExists(userId);
+
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+        return episodeReviewRepository.findByUserId(userId, modifiedPage);
     }
 
     @Transactional

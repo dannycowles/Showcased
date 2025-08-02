@@ -23,5 +23,5 @@ public class ProfileDetailsDto {
     private boolean hasMoreSeasonRanking = false;
     private boolean hasMoreEpisodeRanking = false;
 
-    private Page<ShowReviewDto> reviews;
+    private List<ShowReviewDto> reviews;
 }
