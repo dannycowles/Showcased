@@ -14,6 +14,7 @@ public class EpisodeReviewDto extends ShowReviewDto {
     private int episode;
 
     public EpisodeReviewDto(
+            Long reviewId,
             Long showId,
             double rating,
             String showTitle,
@@ -24,9 +25,10 @@ public class EpisodeReviewDto extends ShowReviewDto {
             Long numLikes,
             String episodeTitle,
             int season,
-            int episode
+            int episode,
+            boolean isLikedByUser
     ) {
-        super(ReviewType.EPISODE, showId, rating, showTitle, commentary, containsSpoilers, posterPath, reviewDate, numLikes);
+        super(ReviewType.EPISODE, reviewId, showId, rating, showTitle, commentary, containsSpoilers, posterPath, reviewDate, numLikes, isLikedByUser);
         this.episodeTitle = episodeTitle;
         this.season = season;
         this.episode = episode;

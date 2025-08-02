@@ -73,6 +73,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
 
     @Query("""
         SELECT new com.example.showcased.dto.ShowReviewDto (
+            r.id,
             s.showId,
             r.rating,
             s.title,
@@ -80,14 +81,22 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
             r.containsSpoilers,
             s.posterPath,
             r.reviewDate,
-            r.numLikes
+            r.numLikes,
+            CASE
+               WHEN :loggedInUserId IS NULL THEN FALSE
+               WHEN EXISTS (
+                    SELECT lr FROM LikedShowReview lr
+                    WHERE lr.userId = :loggedInUserId AND lr.reviewId = r.id
+               ) THEN TRUE
+               ELSE FALSE
+            END
         )
         FROM ShowReview r
         JOIN User u ON r.userId = u.id
         JOIN ShowInfo s ON r.showId = s.showId
         WHERE r.userId = :userId
     """)
-    Page<ShowReviewDto> findByUserId(@Param("userId") Long userId, Pageable pageable);
+    Page<ShowReviewDto> findByUserId(@Param("userId") Long userId, @Param("loggedInUserId") Long loggedInUserId, Pageable pageable);
 
     void deleteByUserIdAndShowId(Long userId, Long showId);
 

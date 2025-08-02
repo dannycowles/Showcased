@@ -79,6 +79,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
 
     @Query(""" 
         SELECT new com.example.showcased.dto.EpisodeReviewDto (
+                r.id,
                 e.showId,
                 r.rating,
                 e.showTitle,
@@ -89,14 +90,22 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                 r.numLikes,
                 e.episodeTitle,
                 e.season,
-                e.episode
+                e.episode,
+                CASE
+                    WHEN :userId IS NULL THEN FALSE
+                    WHEN EXISTS (
+                            SELECT lr FROM LikedEpisodeReview lr
+                            WHERE lr.userId = :loggedInUserId AND lr.reviewId = r.id
+                    ) THEN TRUE
+                    ELSE FALSE
+                 END
             )
             FROM EpisodeReview r
             JOIN EpisodeInfo e ON e.id = r.episodeId
             JOIN User u ON u.id = r.userId
             WHERE r.userId = :userId
         """)
-    Page<EpisodeReviewDto> findByUserId(@Param("userId") Long userId, Pageable pageable);
+    Page<EpisodeReviewDto> findByUserId(@Param("userId") Long userId, @Param("loggedInUserId") Long loggedInUser, Pageable pageable);
 
     void deleteByUserIdAndEpisodeId(Long userId, Long episodeId);
 

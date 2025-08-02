@@ -551,8 +551,8 @@ public class ProfileService {
                 pageable.getSort()
         );
 
-        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(userId, Pageable.unpaged()).getContent();
-        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(userId, Pageable.unpaged()).getContent();
+        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(userId, userId, Pageable.unpaged()).getContent();
+        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(userId, userId, Pageable.unpaged()).getContent();
 
         Sort sort = modifiedPage.getSort();
         Comparator<ShowReviewDto> comparator;
@@ -592,7 +592,7 @@ public class ProfileService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return showReviewRepository.findByUserId(userId, modifiedPage);
+        return showReviewRepository.findByUserId(userId, userId, modifiedPage);
     }
 
     public Page<EpisodeReviewDto> getEpisodeReviews(HttpSession session, Pageable pageable) {
@@ -604,7 +604,7 @@ public class ProfileService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return episodeReviewRepository.findByUserId(userId, modifiedPage);
+        return episodeReviewRepository.findByUserId(userId, userId, modifiedPage);
     }
 
     public Page<UserSearchDto> getFollowers(String name, HttpSession session, Pageable pageable) {

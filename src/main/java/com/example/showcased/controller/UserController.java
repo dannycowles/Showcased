@@ -40,22 +40,25 @@ public class UserController {
 
     @GetMapping("/{id}/reviews")
     public ResponseEntity<Page<ShowReviewDto>> getUserReviews(@PathVariable Long id,
+                                                              HttpSession session,
                                                               @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        Page<ShowReviewDto> reviews = userService.getUserReviews(id, pageable);
+        Page<ShowReviewDto> reviews = userService.getUserReviews(id, session, pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/{id}/show-reviews")
     public ResponseEntity<Page<ShowReviewDto>> getUserShowReviews(@PathVariable Long id,
+                                                                  HttpSession session,
                                                                   @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE)  Pageable pageable) {
-        Page<ShowReviewDto> reviews = userService.getUserShowReviews(id, pageable);
+        Page<ShowReviewDto> reviews = userService.getUserShowReviews(id, session, pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/{id}/episode-reviews")
     public ResponseEntity<Page<EpisodeReviewDto>> getUserEpisodeReviews(@PathVariable Long id,
+                                                                        HttpSession session,
                                                                         @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE)  Pageable pageable) {
-        Page<EpisodeReviewDto> reviews = userService.getUserEpisodeReviews(id, pageable);
+        Page<EpisodeReviewDto> reviews = userService.getUserEpisodeReviews(id, session, pageable);
         return ResponseEntity.ok(reviews);
     }
 

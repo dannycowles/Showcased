@@ -140,7 +140,7 @@ public class UserService {
             userDetails.setHasMoreSeasonRanking(true);
         }
 
-        userDetails.setReviews(getUserReviews(userId, PageRequest.of(1, numTopEntries)).getContent());
+        userDetails.setReviews(getUserReviews(userId, session, PageRequest.of(1, numTopEntries)).getContent());
         userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
         userDetails.setDynamicRankingTop(getUserDynamicRankings(userId, numTopEntries));
         return userDetails;
@@ -213,7 +213,9 @@ public class UserService {
 
 
 
-    public Page<ShowReviewDto> getUserReviews(Long id, Pageable pageable) {
+    public Page<ShowReviewDto> getUserReviews(Long userId, HttpSession session, Pageable pageable) {
+        Long loggedInUserId = (Long) session.getAttribute("user");
+
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
                 pageable.getPageNumber() - 1,
@@ -221,8 +223,8 @@ public class UserService {
                 pageable.getSort()
         );
 
-        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(id, Pageable.unpaged()).getContent();
-        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(id, Pageable.unpaged()).getContent();
+        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(userId, loggedInUserId, Pageable.unpaged()).getContent();
+        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(userId, loggedInUserId, Pageable.unpaged()).getContent();
 
         Sort sort = modifiedPage.getSort();
         Comparator<ShowReviewDto> comparator;
@@ -253,8 +255,9 @@ public class UserService {
         return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
     }
 
-    public Page<ShowReviewDto> getUserShowReviews(Long userId, Pageable pageable) {
+    public Page<ShowReviewDto> getUserShowReviews(Long userId, HttpSession session, Pageable pageable) {
         ensureUserExists(userId);
+        Long loggedInUserId = (Long) session.getAttribute("user");
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -262,11 +265,12 @@ public class UserService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return showReviewRepository.findByUserId(userId, modifiedPage);
+        return showReviewRepository.findByUserId(userId, loggedInUserId, modifiedPage);
     }
 
-    public Page<EpisodeReviewDto> getUserEpisodeReviews(Long userId, Pageable pageable) {
+    public Page<EpisodeReviewDto> getUserEpisodeReviews(Long userId, HttpSession session, Pageable pageable) {
         ensureUserExists(userId);
+        Long loggedInUserId = (Long) session.getAttribute("user");
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -274,7 +278,7 @@ public class UserService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return episodeReviewRepository.findByUserId(userId, modifiedPage);
+        return episodeReviewRepository.findByUserId(userId, loggedInUserId, modifiedPage);
     }
 
     @Transactional
