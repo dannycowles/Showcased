@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Long> {
     @Query(""" 
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
@@ -88,6 +86,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                 r.containsSpoilers,
                 e.posterPath,
                 r.reviewDate,
+                r.numLikes,
                 e.episodeTitle,
                 e.season,
                 e.episode
@@ -97,7 +96,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
             JOIN User u ON u.id = r.userId
             WHERE r.userId = :userId
         """)
-    List<EpisodeReviewDto> findByUserId(@Param("userId") Long userId);
+    Page<EpisodeReviewDto> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
     void deleteByUserIdAndEpisodeId(Long userId, Long episodeId);
 

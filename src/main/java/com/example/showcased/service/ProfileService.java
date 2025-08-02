@@ -7,10 +7,7 @@ import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -554,16 +551,60 @@ public class ProfileService {
                 pageable.getSort()
         );
 
-        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(userId);
-        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(userId);
+        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(userId, Pageable.unpaged()).getContent();
+        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(userId, Pageable.unpaged()).getContent();
+
+        Sort sort = modifiedPage.getSort();
+        Comparator<ShowReviewDto> comparator;
+
+        // If no sort is provided, default to newest reviews first
+        if (sort.isUnsorted()) {
+            comparator = Comparator.comparing(ShowReviewDto::getReviewDate).reversed();
+        } else {
+            Sort.Order sortOrder = modifiedPage.getSort().iterator().next();
+            String sortOrderRequest = sortOrder.getProperty() + "," + sortOrder.getDirection();
+
+            comparator = switch(sortOrderRequest) {
+                case "reviewDate,DESC" -> Comparator.comparing(ShowReviewDto::getReviewDate).reversed();
+                case "rating,DESC" -> Comparator.comparing(ShowReviewDto::getRating).reversed();
+                case "rating,ASC"  -> Comparator.comparing(ShowReviewDto::getRating);
+                case "numLikes,DESC" -> Comparator.comparing(ShowReviewDto::getNumLikes).reversed();
+                case "numLikes,ASC"  -> Comparator.comparing(ShowReviewDto::getNumLikes);
+                default -> throw new IllegalStateException("Unexpected sort value: " + sortOrderRequest);
+            };
+        }
 
         List<ShowReviewDto> combined = Stream.concat(topShowReviews.stream(), topEpisodeReviews.stream())
-                .sorted(Comparator.comparing(ShowReviewDto::getReviewDate).reversed())
+                .sorted(comparator)
                 .skip((long) modifiedPage.getPageNumber() * modifiedPage.getPageSize())
                 .limit(modifiedPage.getPageSize())
                 .toList();
 
         return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
+    }
+
+    public Page<ShowReviewDto> getShowReviews(HttpSession session, Pageable pageable) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+        return showReviewRepository.findByUserId(userId, modifiedPage);
+    }
+
+    public Page<EpisodeReviewDto> getEpisodeReviews(HttpSession session, Pageable pageable) {
+        Long userId = (Long) session.getAttribute("user");
+
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                pageable.getPageNumber() - 1,
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+        return episodeReviewRepository.findByUserId(userId, modifiedPage);
     }
 
     public Page<UserSearchDto> getFollowers(String name, HttpSession session, Pageable pageable) {

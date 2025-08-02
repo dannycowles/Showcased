@@ -65,6 +65,20 @@ public class ProfileController {
         return ResponseEntity.ok(reviews);
     }
 
+    @GetMapping("/show-reviews")
+    public ResponseEntity<Page<ShowReviewDto>> getShowReviews(HttpSession session,
+                                                              @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort ="reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ShowReviewDto> reviews = profileService.getShowReviews(session, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/episode-reviews")
+    public ResponseEntity<Page<EpisodeReviewDto>> getEpisodeReviews(HttpSession session,
+                                                                    @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort ="reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<EpisodeReviewDto> reviews = profileService.getEpisodeReviews(session, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
     @GetMapping("/followers")
     public ResponseEntity<Page<UserSearchDto>> getFollowers(@RequestParam(required = false) String name,
                                                             HttpSession session,

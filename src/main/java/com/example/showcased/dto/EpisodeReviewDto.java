@@ -21,11 +21,12 @@ public class EpisodeReviewDto extends ShowReviewDto {
             boolean containsSpoilers,
             String posterPath,
             Date reviewDate,
+            Long numLikes,
             String episodeTitle,
             int season,
             int episode
     ) {
-        super(ReviewType.EPISODE, showId, rating, showTitle, commentary, containsSpoilers, posterPath, reviewDate);
+        super(ReviewType.EPISODE, showId, rating, showTitle, commentary, containsSpoilers, posterPath, reviewDate, numLikes);
         this.episodeTitle = episodeTitle;
         this.season = season;
         this.episode = episode;
