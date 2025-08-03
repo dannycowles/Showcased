@@ -5,4 +5,11 @@ export const sortReviewOptions = [
   { value: 'rating,asc', label: 'Negative Reviews' },
 ] as const;
 
+export const reviewTypeOptions = [
+  { value: 'all', label: 'All' },
+  { value: 'show', label: 'Show' },
+  { value: 'episode', label: 'Episode'}
+] as const;
+
+export type ReviewTypeOption = typeof reviewTypeOptions[number];
 export type SortReviewOption = typeof sortReviewOptions[number];

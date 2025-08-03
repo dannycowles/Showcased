@@ -57,6 +57,7 @@ import {
   DiscoverTopRatedPageComponent
 } from './pages/discover/discover-top-rated-page/discover-top-rated-page.component';
 import {ProfileActivityPageComponent} from './pages/profile/profile-activity-page/profile-activity-page.component';
+import {ProfileReviewsPageComponent} from './pages/profile/profile-reviews-page/profile-reviews-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -76,6 +77,7 @@ const routes: Routes = [
     { path: 'profile/collections', component: ProfileCollectionsPageComponent },
     { path: 'profile/collections/:id', component: ProfileCollectionDetailsPageComponent },
     { path: 'profile/activity', component: ProfileActivityPageComponent },
+    { path: 'profile/reviews', component: ProfileReviewsPageComponent },
     { path: 'user/:id', component: UserPageComponent},
     { path: 'user/:id/watchlist', component: UserWatchlistPageComponent},
     { path: 'user/:id/watching', component: UserWatchingPageComponent},

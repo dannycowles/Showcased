@@ -84,6 +84,7 @@ import {
 } from './pages/discover/discover-top-rated-page/discover-top-rated-page.component';
 import {ProfileActivityPageComponent} from './pages/profile/profile-activity-page/profile-activity-page.component';
 import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
+import {ProfileReviewsPageComponent} from './pages/profile/profile-reviews-page/profile-reviews-page.component';
 
 @NgModule({
   declarations: [
@@ -127,6 +128,7 @@ import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
     DiscoverTrendingPageComponent,
     DiscoverTopRatedPageComponent,
     ProfileActivityPageComponent,
+    ProfileReviewsPageComponent
   ],
   imports: [
     BrowserModule,
