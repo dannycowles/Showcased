@@ -5,14 +5,13 @@
     <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
   </div>
   <div>
-    @switch (reviewType) {
-      @case (ReviewType.Show) {
-        <h4>{{review.showTitle}}</h4>
-      }
-      @case (ReviewType.Episode) {
-        <h4>{{review.showTitle}} {{episodeTitle}}</h4>
-      }
+    @if (isShowReview(review)) {
+      <h4>{{review.showTitle}}</h4>
     }
+    @if (isEpisodeReview(review)) {
+      <h4>{{review.showTitle}} {{review.episodeTitle}}</h4>
+    }
+
     <div class="d-flex align-items-center mb-2">
       <span class="fs-4">{{review.rating}}</span>
       <i class="bi bi-star-fill ms-1 fs-5" style="color: #f2cb22;"></i>

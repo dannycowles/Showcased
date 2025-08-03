@@ -6,8 +6,8 @@ export enum AddShowType {
 }
 
 export enum ReviewType {
-  Show,
-  Episode,
+  Show = "Show",
+  Episode = "Episode",
 }
 
 export enum ActivityType {

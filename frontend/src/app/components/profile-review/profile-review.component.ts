@@ -2,8 +2,9 @@ import { Component, Input } from '@angular/core';
 import { UtilsService } from '../../services/utils.service';
 import { ButtonHeartComponent } from '../button-heart.component';
 import { ShowService } from '../../services/show.service';
-import { EpisodeReviewData, ShowReviewData } from '../../data/reviews-data';
 import { ReviewType } from '../../data/enums';
+import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../../data/profile-reviews-data';
+import {ProfileReviewData} from '../../data/types';
 
 @Component({
   selector: 'app-profile-review',
@@ -13,8 +14,7 @@ import { ReviewType } from '../../data/enums';
   standalone: true,
 })
 export class ProfileReviewComponent {
-  @Input({ required: true }) review: ShowReviewData | EpisodeReviewData;
-  @Input({ required: true }) reviewType: ReviewType;
+  @Input({ required: true }) review: ProfileReviewData;
 
   constructor(
     public utilsService: UtilsService,
@@ -31,18 +31,17 @@ export class ProfileReviewComponent {
       unlike: (id: number) => this.showService.unlikeEpisodeReview(id),
     },
   };
-  readonly ReviewType = ReviewType;
 
   async toggleLikeState() {
     try {
-      const handler = this.likeHandlers[this.reviewType];
+      const handler = this.likeHandlers[this.review.type];
 
       if (!this.review.isLikedByUser) {
-        await handler.like(this.review.id);
+        await handler.like(this.review.reviewId);
         this.review.isLikedByUser = true;
         this.review.numLikes++;
       } else {
-        await handler.unlike(this.review.id);
+        await handler.unlike(this.review.reviewId);
         this.review.isLikedByUser = false;
         this.review.numLikes--;
       }
@@ -51,8 +50,11 @@ export class ProfileReviewComponent {
     }
   }
 
-  get episodeTitle(): string {
-    const episodeReview = this.review as EpisodeReviewData
-    return `S${episodeReview.season} E${episodeReview.episode}: ${episodeReview.episodeTitle}`;
+  isShowReview(review: ProfileReviewData): review is ProfileShowReviewData {
+    return review.type === ReviewType.Show;
+  }
+
+  isEpisodeReview(review: ProfileReviewData): review is ProfileEpisodeReviewData {
+    return review.type === ReviewType.Episode;
   }
 }

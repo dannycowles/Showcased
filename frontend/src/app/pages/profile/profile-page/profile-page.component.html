@@ -36,19 +36,10 @@
   <br>
   <button class="btn btn-primary my-3" routerLink="collections">Manage Collections</button>
 
-  <h3>Show Reviews</h3>
-  @if (profileData.showReviews.length != 0) {
-    @for (review of profileData.showReviews; track review.id) {
-      <app-profile-review [review]="review" [reviewType]="ReviewType.Show"></app-profile-review>
-    }
-  } @else {
-    <div>No reviews yet!</div>
-  }
-
-  <h3>Episode Reviews</h3>
-  @if (profileData.episodeReviews.length) {
-    @for (review of profileData.episodeReviews; track review.id) {
-        <app-profile-review [review]="review" [reviewType]="ReviewType.Episode"></app-profile-review>
+  <h3>Recent Reviews</h3>
+  @if (profileData?.reviews?.length != 0) {
+    @for (review of profileData.reviews; track review.reviewId + '-' + review.type) {
+      <app-profile-review [review]="review"></app-profile-review>
     }
   } @else {
     <div>No reviews yet!</div>

@@ -2,10 +2,10 @@ import {ShowRankingData} from './lists/show-ranking-data';
 import {EpisodeRankingData} from './lists/episode-ranking-data';
 import {SeasonRankingData} from './lists/season-ranking-data';
 import {ShowListData} from './lists/show-list-data';
-import {EpisodeReviewData, ShowReviewData} from './reviews-data';
 import {UserHeaderData} from './user-header-data';
 import {CharacterRankingsData} from './character-rankings-data';
 import {DynamicRankingData} from './lists/dynamic-ranking-data';
+import {ProfileReviewData} from './types';
 
 export interface UserData {
   readonly headerData: UserHeaderData
@@ -20,6 +20,5 @@ export interface UserData {
   readonly hasMoreWatching: boolean;
   readonly hasMoreShowRanking: boolean;
   readonly hasMoreEpisodeRanking: boolean;
-  readonly showReviews: ShowReviewData[];
-  readonly episodeReviews: EpisodeReviewData[];
+  readonly reviews: ProfileReviewData[];
 }
