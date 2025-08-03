@@ -58,6 +58,7 @@ import {
 } from './pages/discover/discover-top-rated-page/discover-top-rated-page.component';
 import {ProfileActivityPageComponent} from './pages/profile/profile-activity-page/profile-activity-page.component';
 import {ProfileReviewsPageComponent} from './pages/profile/profile-reviews-page/profile-reviews-page.component';
+import {UserReviewsPageComponent} from './pages/user/user-reviews-page/user-reviews-page.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
@@ -90,6 +91,7 @@ const routes: Routes = [
     { path: 'user/:id/collections', component: UserCollectionsPageComponent},
     { path: 'user/:id/collections/:collectionId', component: UserCollectionDetailsPageComponent},
     { path: 'user/:id/dynamic-ranking', component: UserDynamicRankingPageComponent},
+    { path: 'user/:id/reviews', component: UserReviewsPageComponent },
     { path: 'search', component: SearchPageComponent},
     { path: 'search-users', component: UserSearchPageComponent},
     { path: 'show/:id', component: ShowPageComponent},

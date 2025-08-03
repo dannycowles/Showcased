@@ -1,0 +1,50 @@
+<button class="btn btn-primary mb-2" type="button" [routerLink]="['../']">Return to Profile</button>
+
+<div class="d-flex align-items-center me-3 mb-5">
+  <h1>Reviews</h1>
+  <div class="d-flex ms-auto gap-5">
+    <div class="dropdown">
+      <span class="fs-5 me-2">Filter</span>
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ selectedReviewType.label }}
+      </button>
+      <ul class="dropdown-menu">
+        @for (reviewType of reviewTypeOptions; track reviewType.value) {
+          <li><a class="dropdown-item" (click)="setReviewType(reviewType)">{{reviewType.label}}</a></li>
+        }
+      </ul>
+    </div>
+
+    <div class="dropdown">
+      <span class="fs-5 me-2">Sort</span>
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ selectedSortOption.label }}
+      </button>
+      <ul class="dropdown-menu">
+        @for (sortOption of sortReviewOptions; track sortOption.value) {
+          <li><a class="dropdown-item" (click)="setSortOption(sortOption)">{{sortOption.label}}</a></li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>
+
+@if (isLoadingReviews) {
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+} @else if (reviews?.content?.length != 0) {
+  <div class="reviews"
+       infiniteScroll
+       [infiniteScrollDistance]="1"
+       (scrolled)="loadMoreReviews()">
+    @for (review of reviews.content; track review.reviewId + '-' + review.type) {
+      <app-profile-review [review]="review"></app-profile-review>
+    }
+  </div>
+} @else {
+  <h3>No reviews yet!</h3>
+}
+
