@@ -9,7 +9,7 @@
       <h4>{{review.showTitle}}</h4>
     }
     @if (isEpisodeReview(review)) {
-      <h4>{{review.showTitle}} {{review.episodeTitle}}</h4>
+      <h4>{{review.showTitle}} S{{review.season}} E{{review.episode}}: {{review.episodeTitle}}</h4>
     }
 
     <div class="d-flex align-items-center mb-2">

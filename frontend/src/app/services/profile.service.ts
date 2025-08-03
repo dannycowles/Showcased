@@ -30,6 +30,8 @@ import {UpdateCollectionDetails} from '../data/dto/update-collection-details';
 import {ActivityData} from '../data/activity-data';
 import {PageData} from '../data/page-data';
 import {UserService} from './user.service';
+import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
+import {ProfileReviewData} from '../data/types';
 
 @Injectable({
   providedIn: 'root',
@@ -136,6 +138,60 @@ export class ProfileService {
 
     this.checkUnauthorizedUser(response);
     return await response.text();
+  }
+
+  /**
+   * Retrieves the combined list of all review types for the logged-in user, paged & sorted as requested
+   * @param page
+   * @param sort
+   */
+  async getCombinedReviews(page ?: number, sort ?: string): Promise<PageData<ProfileReviewData>>  {
+    const url = new URL(`${this.baseUrl}/reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sort != null) url.searchParams.set('sort', sort);
+
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Retrieves show reviews for the logged-in user, paged & sorted as requested
+   * @param page
+   * @param sort
+   */
+  async getShowReviews(page ?: number, sort ?: string): Promise<PageData<ProfileShowReviewData>> {
+    const url = new URL(`${this.baseUrl}/show-reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sort != null) url.searchParams.set('sort', sort);
+
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Retrieves episode reviews for the logged-in user, paged & sorted as requested
+   * @param page
+   * @param sort
+   */
+  async getEpisodeReviews(page ?: number, sort ?: string): Promise<PageData<ProfileEpisodeReviewData>> {
+    const url = new URL(`${this.baseUrl}/episode-reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sort != null) url.searchParams.set('sort', sort);
+
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
   }
 
   /**

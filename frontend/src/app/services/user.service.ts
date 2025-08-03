@@ -11,6 +11,8 @@ import {ShowListData} from '../data/lists/show-list-data';
 import {Router} from '@angular/router';
 import {DynamicRankingData} from '../data/lists/dynamic-ranking-data';
 import {PageData} from '../data/page-data';
+import {ProfileReviewData} from '../data/types';
+import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
 
 @Injectable({
   providedIn: 'root'
@@ -225,5 +227,62 @@ export class UserService {
   async getFullDynamicRankingList(id: number): Promise<DynamicRankingData[]> {
     const response = await fetch(`${this.baseUrl}/${id}/character-dynamics`);
     return await response.json();
+  }
+
+  /**
+   * Retrieves the combined list of all review types for the user with the specified id, paged & sorted as requested
+   * @param id
+   * @param page
+   * @param sort
+   */
+  async getCombinedReviews(id: number, page ?: number, sort ?: string): Promise<PageData<ProfileReviewData>>  {
+    const url = new URL(`${this.baseUrl}/${id}/reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sort != null) url.searchParams.set('sort', sort);
+
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Retrieves show reviews for the user with the specified id, paged & sorted as requested
+   * @param id
+   * @param page
+   * @param sort
+   */
+  async getShowReviews(id: number, page ?: number, sort ?: string): Promise<PageData<ProfileShowReviewData>>  {
+    const url = new URL(`${this.baseUrl}/${id}/show-reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sort != null) url.searchParams.set('sort', sort);
+
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Retrieves episode reviews for the user with the specified id, paged & sorted as requested
+   * @param id
+   * @param page
+   * @param sort
+   */
+  async getEpisodeReviews(id: number, page ?: number, sort ?: string): Promise<PageData<ProfileEpisodeReviewData>>  {
+    const url = new URL(`${this.baseUrl}/${id}/episode-reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sort != null) url.searchParams.set('sort', sort);
+
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
   }
 }

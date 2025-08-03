@@ -37,6 +37,7 @@
   <button class="btn btn-primary my-3" routerLink="collections">Manage Collections</button>
 
   <h3>Recent Reviews</h3>
+  <button type="button" class="btn btn-secondary mb-3">View All</button>
   @if (profileData?.reviews?.length != 0) {
     @for (review of profileData.reviews; track review.reviewId + '-' + review.type) {
       <app-profile-review [review]="review"></app-profile-review>
