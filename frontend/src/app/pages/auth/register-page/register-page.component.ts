@@ -1,8 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {AuthenticationService} from '../../../services/auth.service';
 import {RegisterDto} from '../../../data/dto/register-dto';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import {UtilsService} from '../../../services/utils.service';
+import {map, Observable, of, switchMap, timer} from 'rxjs';
 
 @Component({
   selector: 'app-register-page',
@@ -10,70 +19,100 @@ import {UtilsService} from '../../../services/utils.service';
   styleUrl: './register-page.component.css',
   standalone: false
 })
-export class RegisterPageComponent implements OnInit {
+export class RegisterPageComponent{
   usernameMessage: string = '';
   usernameMessageColor: string = '';
-  debouncedCheckUsername: () => void;
+  registerMessage: string = '';
+  registerMessageColor: string = '';
+  readonly usernameMinLength: number = 3;
+  readonly passwordMinLength: number = 8;
 
   registerForm = new FormGroup({
-    email: new FormControl('', Validators.required),
-    username: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required),
+    email: new FormControl('', [
+      Validators.required,
+      Validators.email,
+    ]),
+    username: new FormControl('', [
+      Validators.required,
+      Validators.minLength(this.usernameMinLength)
+    ],
+    [
+      this.usernameAvailableValidator()
+    ]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(this.passwordMinLength)
+    ]),
+    confirmPassword: new FormControl('', Validators.required),
     recaptcha: new FormControl(null, Validators.required)
-  });
+  }, { validators: this.passwordsMatchingValidator() });
 
   constructor(private authService: AuthenticationService,
-              public utilsService: UtilsService) {
-    this.debouncedCheckUsername = this.utilsService.debounce(() => this.checkUsernameAvailability());
-  };
+              public utilsService: UtilsService) {};
 
-  ngOnInit() {
-    // (() => {
-    //   'use strict'
-    //
-    //   const registerForm = document.getElementById('register-form') as HTMLFormElement;
-    //
-    //   registerForm.addEventListener('submit', async event => {
-    //     if (!registerForm.checkValidity()) {
-    //       event.preventDefault()
-    //       event.stopPropagation()
-    //     } else {
-    //       await this.registerValidationSuccess();
-    //     }
-    //     registerForm.classList.add('was-validated')
-    //   }, false)
-    // })();
+  get email(): AbstractControl<string, string> {
+    return this.registerForm.get('email');
   }
 
-  resolved(captchaResponse: string) {
-    console.log(`Resolved captcha with response: ${captchaResponse}`);
+  get username(): AbstractControl<string, string> {
+    return this.registerForm.get('username');
   }
 
-  async onSubmit() {
-    console.log(this.registerForm.value);
-    try {
-      const data: RegisterDto = this.registerForm.value as RegisterDto;
-      const response = await this.authService.registerUser(data);
-    } catch (error) {
-      console.error()
+  get password(): AbstractControl<string, string> {
+    return this.registerForm.get('password');
+  }
+
+  get confirmPassword(): AbstractControl<string, string> {
+    return this.registerForm.get('confirmPassword');
+  }
+
+  passwordsMatchingValidator(): ValidatorFn {
+    return (control: AbstractControl<string, string>): ValidationErrors | null => {
+      const password: string = control.get('password').value;
+      const confirmPassword: string = control.get('confirmPassword').value;
+
+      return (password !== confirmPassword) ? { passwordsDontMatch: true } : null;
     }
   }
 
-  async checkUsernameAvailability() {
-    if (this.registerForm.value.username) {
+  usernameAvailableValidator(): AsyncValidatorFn {
+    return (control: AbstractControl<string, string>): Observable<ValidationErrors | null> => {
+      const username = control.value.trim();
 
-      try {
-        const response = await this.authService.checkUsernameAvailability(this.registerForm.value.username);
-        if (response) {
-          this.usernameMessage = "Taken";
-          this.usernameMessageColor = "red";
-        } else {
-          this.usernameMessage = "Available";
-          this.usernameMessageColor = "green";
-        }
-      } catch (error) {
-        console.error(error);
+      if (username.length < this.usernameMinLength) {
+        return of(null);
       }
+
+      return timer(300).pipe(
+        switchMap(() => this.authService.checkUsernameAvailability(username)),
+        map(taken => {
+          if (taken) {
+            this.usernameMessage = 'Username is taken';
+            this.usernameMessageColor = 'red';
+            return { usernameTaken: true };
+          } else {
+            this.usernameMessage = 'Username is available';
+            this.usernameMessageColor = 'green';
+            return null;
+          }
+        })
+      )
+    }
+  }
+
+  async onSubmit() {
+    try {
+      const data: RegisterDto = this.registerForm.value as RegisterDto;
+      const response = await this.authService.registerUser(data);
+      console.log(response);
+      if (!response.ok) {
+        this.registerMessage = (await response.json()).error;
+        this.registerMessageColor = 'red';
+      }
+    } catch (error) {
+      console.error()
+    } finally {
+      setTimeout(() => this.registerMessage = '', 5000);
     }
   }
 }

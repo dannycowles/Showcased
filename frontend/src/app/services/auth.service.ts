@@ -51,20 +51,14 @@ export class AuthenticationService {
    * will provide feedback if username or email is taken
    * @param data
    */
-  async registerUser(data: RegisterDto) {
-    const response = await fetch(`${this.baseUrl}/register`, {
+  async registerUser(data: RegisterDto): Promise<Response> {
+    return await fetch(`${this.baseUrl}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     });
-
-    // If there is an email/username conflict return the error
-    if (response.status === 409) {
-      const text = await response.json();
-      throw new Error(text['error']);
-    }
   }
 
   /**

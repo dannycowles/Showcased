@@ -1,22 +1,69 @@
 <form [formGroup]="registerForm" class="row g-3" (ngSubmit)="onSubmit()">
   <div class="form-floating mb-3">
-    <input id="email" type="email" class="form-control" formControlName="email" placeholder="Enter email" autocomplete="email">
+    <input id="email" type="email" class="form-control" formControlName="email" placeholder="Enter email" autocomplete="email"
+           [class.is-invalid]="email.invalid && (email.dirty || email.touched)">
     <label for="email" class="form-label">Email</label>
+
+    @if (email.invalid && (email.dirty || email.touched)) {
+      @if (email.hasError('required')) {
+        <div class="validation-error">Email is required</div>
+      } @else if (email.hasError('email')) {
+        <div class="validation-error">Please enter a valid email</div>
+      }
+    }
   </div>
 
   <div class="form-floating col-10 mb-3">
     <input id="username" type="text" class="form-control" formControlName="username" placeholder="Enter username" autocomplete="username"
-    (input)="debouncedCheckUsername()">
+    [class.is-invalid]="username.invalid && (username.dirty || username.touched)">
     <label for="username" class="form-label">Username</label>
+    <div id="usernameHelpBlock" class="form-text">
+      Your username must be at least {{usernameMinLength}} characters long
+    </div>
+
+    @if (username.invalid && (username.dirty || username.touched)) {
+      @if (username.hasError('required')) {
+        <div class="validation-error">Username is required</div>
+      } @else if (username.hasError('minlength')) {
+        <div class="validation-error">Username is too short</div>
+      }
+    }
   </div>
 
-  <p class="col-2" [style.color]="usernameMessageColor">{{usernameMessage}}</p>
+  <div class="col-2" [style.color]="usernameMessageColor">{{usernameMessage}}</div>
 
   <div class="form-floating mb-3">
-    <input id="password" type="password" class="form-control" formControlName="password" placeholder="Enter password" autocomplete="new-password">
+    <input id="password" type="password" class="form-control" formControlName="password" placeholder="Enter password" autocomplete="new-password"
+    [class.is-invalid]="password.invalid && (password.dirty || password.touched)" aria-describedby="passwordHelpBlock">
     <label for="password" class="form-label">Password</label>
+    <div id="passwordHelpBlock" class="form-text">
+      Your password must be at least {{passwordMinLength}} characters long
+    </div>
+
+    @if (password.invalid && (password.dirty || password.touched)) {
+      @if (password.hasError('required')) {
+        <div class="validation-error">Password is required</div>
+      } @else if (password.hasError('minlength')) {
+        <div class="validation-error">Password is too short</div>
+      }
+    }
   </div>
 
-  <re-captcha (resolved)="resolved($event)" siteKey="6LdJnpkrAAAAABQtNCfpedd6bWR_wLQEojeVtofM" formControlName="recaptcha" ></re-captcha>
-  <button type="submit" class="btn btn-primary col-2" [disabled]="registerForm.invalid">Create Account</button>
+  <div class="form-floating mb-3">
+    <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword" placeholder="Re-enter your password" autocomplete="new-password"
+           [class.is-invalid]="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)">
+    <label for="confirmPassword" class="form-label">Confirm password</label>
+
+    @if (confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)) {
+      @if (confirmPassword.hasError('required')) {
+        <div class="validation-error">Password is required</div>
+      }
+    } @else if (registerForm.hasError('passwordsDontMatch') && (confirmPassword.dirty || confirmPassword.touched)) {
+      <div class="validation-error">Passwords must match</div>
+    }
+  </div>
+
+  <re-captcha siteKey="6LdJnpkrAAAAABQtNCfpedd6bWR_wLQEojeVtofM" formControlName="recaptcha" ></re-captcha>
+  <div [style.color]="registerMessageColor">{{registerMessage}}</div>
+  <button type="submit" class="btn btn-primary col-2" [disabled]="registerForm.invalid || registerForm.pending">Create Account</button>
 </form>
