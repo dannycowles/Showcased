@@ -22,15 +22,18 @@ public class AuthService {
     private final OtpRequestRepository otpRequestRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final RecaptchaService recaptchaService;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        OtpRequestRepository otpRequestRepository,
-                       EmailService emailService) {
+                       EmailService emailService,
+                       RecaptchaService recaptchaService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.otpRequestRepository = otpRequestRepository;
         this.emailService = emailService;
+        this.recaptchaService = recaptchaService;
     }
 
     // Function that verifies that the login credentials are valid
@@ -141,6 +144,10 @@ public class AuthService {
         // If the email is already associated with an account, throw an exception
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new EmailTakenException("Email is already associated with an account");
+        }
+
+        if (!recaptchaService.verifyRecaptcha(registerDto.getRecaptcha())) {
+            throw new RecaptchaInvalidException("Recaptcha is invalid, please try again.");
         }
 
         // Create and save new user to repository

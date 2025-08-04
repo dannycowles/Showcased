@@ -194,4 +194,12 @@ public class GlobalExceptionHandler {
     ResponseEntity<ErrorResponse> invalidDynamicHandler(InvalidDynamicException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
     }
+
+    /**
+     * Exception handler for when the recaptcha form is invalid
+     */
+    @ExceptionHandler(RecaptchaInvalidException.class)
+    ResponseEntity<ErrorResponse> recaptchaInvalidHandler(RecaptchaInvalidException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
 }
