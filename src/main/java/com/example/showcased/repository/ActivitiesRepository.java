@@ -5,8 +5,11 @@ import com.example.showcased.entity.Activity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
 
@@ -131,4 +134,36 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
     Page<ActivityDto> findByUserId(@Param("userId") Long userId, Pageable page);
 
     void deleteByExternalIdAndActivityType(Long id, int i);
+
+    @Modifying
+    @Query("""
+        DELETE FROM Activity a
+        WHERE (
+            a.externalId IN (
+                SELECT lr.id FROM LikedShowReview lr WHERE lr.reviewId = :reviewId
+            )
+            OR
+            a.externalId IN (
+                SELECT src.id FROM ShowReviewComment src WHERE src.reviewId = :reviewId
+            )
+        )
+        AND a.activityType IN :activityTypes
+""")
+    void deleteShowReviewActivities(@Param("reviewId") Long reviewId, @Param("activityTypes") List<Integer> activityTypes);
+
+    @Modifying
+    @Query("""
+        DELETE FROM Activity a
+        WHERE (
+            a.externalId IN (
+                SELECT lr.id FROM LikedEpisodeReview lr WHERE lr.reviewId = :reviewId
+            )
+            OR
+            a.externalId IN (
+                SELECT erc.id FROM EpisodeReviewComment erc WHERE erc.reviewId = :reviewId
+            )
+        )
+        AND a.activityType IN :activityTypes
+""")
+    void deleteEpisodeReviewActivities(@Param("reviewId") Long reviewId, @Param("activityTypes") List<Integer> activityTypes);
 }

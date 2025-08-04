@@ -6,6 +6,7 @@ import com.example.showcased.enums.ActivityType;
 import com.example.showcased.exception.AlreadyLikedException;
 import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.exception.ItemNotFoundException;
+import com.example.showcased.exception.UnauthorizedAccessException;
 import com.example.showcased.repository.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpSession;
@@ -24,9 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -567,6 +566,29 @@ public class ShowService {
     }
 
     @Transactional
+    public void deleteShowReview(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        Optional<ShowReview> reviewOpt = showReviewRepository.findById(reviewId);
+        if (reviewOpt.isPresent()) {
+            ShowReview review = reviewOpt.get();
+
+            // Ensure that the review belongs to the requesting user
+            if (!review.getUserId().equals(userId)) {
+                throw new UnauthorizedAccessException("You are not allowed to delete this show review");
+            }
+            showReviewRepository.delete(review);
+
+            // Delete all occurrences of this from the activities table
+            // In this instance it needs to delete the following
+            // - Show Review Like Notifications
+            // - Show Review Comment Notifications
+            List<Integer> activityTypes = Arrays.asList(ActivityType.LIKE_SHOW_REVIEW.getDbValue(), ActivityType.COMMENT_SHOW_REVIEW.getDbValue());
+            activitiesRepository.deleteShowReviewActivities(review.getId(), activityTypes);
+        }
+    }
+
+    @Transactional
     public EpisodeReviewWithUserInfoDto addReviewToEpisode(Long episodeId, EpisodeReviewDto reviewDto, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
@@ -585,6 +607,8 @@ public class ShowService {
         review.setId(null);
         review.setEpisodeId(episodeId);
         review.setUserId(userId);
+        review.setNumLikes(0L);
+        review.setReviewDate(new Date());
         episodeReviewRepository.save(review);
         return episodeReviewRepository.findByIdWithUserInfo(review.getId());
     }
@@ -654,6 +678,29 @@ public class ShowService {
             }
         } else {
             throw new ItemNotFoundException("Didn't find an episode review with ID: " + reviewId);
+        }
+    }
+
+    @Transactional
+    public void deleteEpisodeReview(Long reviewId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        Optional<EpisodeReview> reviewOpt = episodeReviewRepository.findById(reviewId);
+        if (reviewOpt.isPresent()) {
+            EpisodeReview review = reviewOpt.get();
+
+            // Ensure that the review belongs to the requesting user
+            if (!review.getUserId().equals(userId)) {
+                throw new UnauthorizedAccessException("You are not allowed to delete this show review");
+            }
+            episodeReviewRepository.delete(review);
+
+            // Delete all occurrences of this from the activities table
+            // In this instance it needs to delete the following
+            // - Episode Review Like Notifications
+            // - Episode Review Comment Notifications
+            List<Integer> activityTypes = Arrays.asList(ActivityType.LIKE_EPISODE_REVIEW.getDbValue(), ActivityType.COMMENT_EPISODE_REVIEW.getDbValue());
+            activitiesRepository.deleteEpisodeReviewActivities(review.getId(), activityTypes);
         }
     }
 

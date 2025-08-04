@@ -688,7 +688,7 @@ public class ProfileService {
 
         // Check to ensure the collection being deleted is actually owned by the logged-in user
         if (!collectionsRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
-            throw new UnauthorizedCollectionAccessException("You do not have permission to delete this collection");
+            throw new UnauthorizedAccessException("You do not have permission to delete this collection");
         }
         collectionsRepository.deleteById(collectionId);
     }
@@ -701,7 +701,7 @@ public class ProfileService {
 
         // Check to ensure the collection being modified is actually owned by the logged-in user
         if (!updateCollection.getUserId().equals(userId)) {
-            throw new UnauthorizedCollectionAccessException("You do not have permission to modify this collection");
+            throw new UnauthorizedAccessException("You do not have permission to modify this collection");
         }
 
         // Update columns as needed
@@ -750,7 +750,7 @@ public class ProfileService {
 
         // Check to ensure the collection being retrieved is actually owned by the logged-in user
         if (!collection.getUserId().equals(userId)) {
-            throw new UnauthorizedCollectionAccessException("You do not have permission to view this collection");
+            throw new UnauthorizedAccessException("You do not have permission to view this collection");
         }
 
         CollectionReturnDto collectionReturn = modelMapper.map(collection, CollectionReturnDto.class);
@@ -766,7 +766,7 @@ public class ProfileService {
 
         // Check to ensure the collection being added to is actually owned by the logged-in user
         if (!updateCollection.getUserId().equals(userId)) {
-            throw new UnauthorizedCollectionAccessException("You do not have permission to add to this collection");
+            throw new UnauthorizedAccessException("You do not have permission to add to this collection");
         }
 
         addToShowInfoRepository(show);
@@ -796,7 +796,7 @@ public class ProfileService {
 
         // Check to ensure the collection being modified is actually owned by the logged-in user
         if (!collection.getUserId().equals(userId)) {
-            throw new UnauthorizedCollectionAccessException("You do not have permission to modify this collection");
+            throw new UnauthorizedAccessException("You do not have permission to modify this collection");
         }
 
         showsInCollectionRepository.deleteById(new ShowsInCollectionId(collectionId, showId));
@@ -884,7 +884,7 @@ public class ProfileService {
 
         // Check to make sure the user id's match aka this is the users dynamic ranking
         if (!Objects.equals(userId, dynamic.getUserId())) {
-            throw new UnauthorizedCollectionAccessException("You do not have permission to modify this dynamic");
+            throw new UnauthorizedAccessException("You do not have permission to modify this dynamic");
         }
         dynamicRankingRepository.delete(dynamic);
 
@@ -917,7 +917,7 @@ public class ProfileService {
         for (DynamicRanking dynamic : dynamics) {
             // Validate that the dynamic being updated belongs to the user
             if (!Objects.equals(userId, dynamic.getUserId())) {
-                throw new UnauthorizedCollectionAccessException("You do not have permission to modify this dynamic");
+                throw new UnauthorizedAccessException("You do not have permission to modify this dynamic");
             }
             dynamic.setRankNum(newRanks.get(dynamic.getId()));
         }

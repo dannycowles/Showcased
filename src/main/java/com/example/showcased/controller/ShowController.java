@@ -112,6 +112,12 @@ public class ShowController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<Void> deleteShowReview(@PathVariable Long reviewId, HttpSession session) {
+        showService.deleteShowReview(reviewId, session);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/reviews/{reviewId}/comments")
     public ResponseEntity<ReviewCommentWithUserInfoDto> addCommentToShowReview(@PathVariable Long reviewId, @RequestBody ReviewCommentDto reviewComment, HttpSession session) {
         ReviewCommentWithUserInfoDto newComment = showService.addCommentToShowReview(reviewId, reviewComment, session);
@@ -177,6 +183,12 @@ public class ShowController {
     public ResponseEntity<Void> unlikeEpisodeReview(@PathVariable Long reviewId, HttpSession session) {
         showService.unlikeEpisodeReview(reviewId, session);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/episode-reviews/{reviewId}")
+    public ResponseEntity<Void> deleteEpisodeReview(@PathVariable Long reviewId, HttpSession session) {
+        showService.deleteEpisodeReview(reviewId, session);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/episode-reviews/{reviewId}/comments")

@@ -37,11 +37,11 @@ export class ProfileReviewComponent {
       const handler = this.likeHandlers[this.review.type];
 
       if (!this.review.isLikedByUser) {
-        await handler.like(this.review.reviewId);
+        await handler.like(this.review.id);
         this.review.isLikedByUser = true;
         this.review.numLikes++;
       } else {
-        await handler.unlike(this.review.reviewId);
+        await handler.unlike(this.review.id);
         this.review.isLikedByUser = false;
         this.review.numLikes--;
       }

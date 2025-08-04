@@ -396,7 +396,7 @@ public class UserService {
                 .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
 
         if (collection.isPrivateCollection()) {
-            throw new UnauthorizedCollectionAccessException("Collection is private");
+            throw new UnauthorizedAccessException("Collection is private");
         }
 
         CollectionReturnDto collectionReturn = modelMapper.map(collection, CollectionReturnDto.class);

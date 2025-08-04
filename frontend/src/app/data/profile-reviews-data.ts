@@ -2,7 +2,7 @@ import {ReviewType} from './enums';
 
 export interface ProfileShowReviewData {
   readonly type: ReviewType;
-  readonly reviewId: number;
+  readonly id: number;
   readonly showId: number;
   readonly rating: number;
   readonly showTitle: string;

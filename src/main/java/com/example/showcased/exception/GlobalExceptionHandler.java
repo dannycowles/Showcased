@@ -156,10 +156,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Exception handler for trying to edit unowned collection
+     * Exception handler for trying to modify or delete an item that doesn't belong to them
      */
-    @ExceptionHandler(UnauthorizedCollectionAccessException.class)
-    ResponseEntity<ErrorResponse> unauthorizedCollectionAccessHandler(UnauthorizedCollectionAccessException ex) {
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    ResponseEntity<ErrorResponse> unauthorizedAccessHandler(UnauthorizedAccessException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
     }
 
