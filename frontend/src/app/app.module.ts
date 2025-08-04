@@ -86,6 +86,7 @@ import {ProfileActivityPageComponent} from './pages/profile/profile-activity-pag
 import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 import {ProfileReviewsPageComponent} from './pages/profile/profile-reviews-page/profile-reviews-page.component';
 import {UserReviewsPageComponent} from './pages/user/user-reviews-page/user-reviews-page.component';
+import {RecaptchaFormsModule, RecaptchaModule} from 'ng-recaptcha';
 
 @NgModule({
   declarations: [
@@ -161,6 +162,8 @@ import {UserReviewsPageComponent} from './pages/user/user-reviews-page/user-revi
     RankedDynamicListFullComponent,
     ReviewComponent,
     InfiniteScrollDirective,
+    RecaptchaModule,
+    RecaptchaFormsModule
   ],
   providers: [ToastService],
   bootstrap: [AppComponent],
