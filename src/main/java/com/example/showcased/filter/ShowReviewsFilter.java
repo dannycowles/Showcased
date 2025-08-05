@@ -32,7 +32,7 @@ public class ShowReviewsFilter implements Filter {
         }
 
         // If the user is not logged in and attempts to delete items we send an error
-        if (request.getMethod().equals("DELETE") && session.getAttribute("user") == null) {
+        if ((request.getMethod().equals("DELETE") || request.getMethod().equals("PATCH")) && session.getAttribute("user") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

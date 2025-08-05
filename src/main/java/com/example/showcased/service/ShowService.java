@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
+import org.eclipse.angus.mail.imap.protocol.Item;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
@@ -589,6 +590,22 @@ public class ShowService {
     }
 
     @Transactional
+    public void updateShowReview(Long reviewId, UpdateReviewDto updates, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        ShowReview review = showReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a show review with ID: " + reviewId));
+
+        // Ensure that the review belongs to the requesting user
+        if (!review.getUserId().equals(userId)) {
+            throw new UnauthorizedAccessException("You are not allowed to update this show review");
+        }
+
+        modelMapper.map(updates, review);
+        showReviewRepository.save(review);
+    }
+
+    @Transactional
     public EpisodeReviewWithUserInfoDto addReviewToEpisode(Long episodeId, EpisodeReviewDto reviewDto, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
 
@@ -702,6 +719,22 @@ public class ShowService {
             List<Integer> activityTypes = Arrays.asList(ActivityType.LIKE_EPISODE_REVIEW.getDbValue(), ActivityType.COMMENT_EPISODE_REVIEW.getDbValue());
             activitiesRepository.deleteEpisodeReviewActivities(review.getId(), activityTypes);
         }
+    }
+
+    @Transactional
+    public void updateEpisodeReview(Long reviewId, UpdateReviewDto updates, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        EpisodeReview review = episodeReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a episode review with ID: " + reviewId));
+
+        // Ensure that the review belongs to the requesting user
+        if (!review.getUserId().equals(userId)) {
+            throw new UnauthorizedAccessException("You are not allowed to update this episode review");
+        }
+
+        modelMapper.map(updates, review);
+        episodeReviewRepository.save(review);
     }
 
 

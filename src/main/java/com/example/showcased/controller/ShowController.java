@@ -3,6 +3,7 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.ShowService;
 import jakarta.servlet.http.HttpSession;
+import org.hibernate.sql.Update;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -118,6 +119,12 @@ public class ShowController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/reviews/{reviewId}")
+    public ResponseEntity<Void> updateShowReview(@PathVariable Long reviewId, @RequestBody UpdateReviewDto updates, HttpSession session) {
+        showService.updateShowReview(reviewId, updates, session);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/reviews/{reviewId}/comments")
     public ResponseEntity<ReviewCommentWithUserInfoDto> addCommentToShowReview(@PathVariable Long reviewId, @RequestBody ReviewCommentDto reviewComment, HttpSession session) {
         ReviewCommentWithUserInfoDto newComment = showService.addCommentToShowReview(reviewId, reviewComment, session);
@@ -188,6 +195,12 @@ public class ShowController {
     @DeleteMapping("/episode-reviews/{reviewId}")
     public ResponseEntity<Void> deleteEpisodeReview(@PathVariable Long reviewId, HttpSession session) {
         showService.deleteEpisodeReview(reviewId, session);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/episode-reviews/{reviewId}")
+    public ResponseEntity<Void> updateEpisodeReview(@PathVariable Long reviewId, @RequestBody UpdateReviewDto updates, HttpSession session) {
+        showService.updateEpisodeReview(reviewId, updates, session);
         return ResponseEntity.noContent().build();
     }
 
