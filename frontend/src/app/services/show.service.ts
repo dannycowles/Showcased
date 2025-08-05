@@ -12,6 +12,7 @@ import {ReviewCommentData} from '../data/review-comment-data';
 import {AddCommentDto} from '../data/dto/add-comment-dto';
 import {AddEpisodeReviewDto, AddShowReviewDto} from '../data/dto/add-review-dto';
 import {PageData} from '../data/page-data';
+import {UpdateReviewDto} from '../data/dto/update-review-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -167,6 +168,39 @@ export class ShowService {
   }
 
   /**
+   * Deletes the show review by its ID
+   * @param reviewId
+   */
+  async deleteShowReview(reviewId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Updates the show review by its ID
+   * @param reviewId
+   * @param updates
+   */
+  async updateShowReview(reviewId: number, updates: UpdateReviewDto): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/reviews/${reviewId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updates),
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
    * Adds a comment to a show review by its ID
    * @param reviewId
    * @param data
@@ -305,6 +339,39 @@ export class ShowService {
   async unlikeEpisodeReview(reviewId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/likes`, {
       method: 'DELETE',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Deletes an episode review by its ID
+   * @param reviewId
+   */
+  async deleteEpisodeReview(reviewId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Updates an episode review by its ID
+   * @param reviewId
+   * @param updates
+   */
+  async updateEpisodeReview(reviewId: number, updates: UpdateReviewDto): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updates),
       credentials: 'include'
     });
 
