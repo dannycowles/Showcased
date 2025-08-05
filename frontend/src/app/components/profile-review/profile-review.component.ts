@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {booleanAttribute, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { UtilsService } from '../../services/utils.service';
 import { ButtonHeartComponent } from '../button-heart.component';
 import { ShowService } from '../../services/show.service';
@@ -13,37 +13,55 @@ import {ProfileReviewData} from '../../data/types';
   styleUrl: './profile-review.component.css',
   standalone: true,
 })
-export class ProfileReviewComponent {
+export class ProfileReviewComponent implements OnInit {
   @Input({ required: true }) review: ProfileReviewData;
+  @Input({ transform: booleanAttribute }) editable: boolean = false;
+  @Output() delete = new EventEmitter<ProfileReviewData>;
+  reviewHandler: any = null;
 
-  constructor(
-    public utilsService: UtilsService,
-    private showService: ShowService,
-  ) {}
+  constructor(public utilsService: UtilsService,
+              private showService: ShowService) {};
 
-  readonly likeHandlers = {
+  ngOnInit() {
+    this.reviewHandler = this.reviewMethods[this.review.type];
+  }
+
+  readonly reviewMethods = {
     [ReviewType.Show]: {
-      like: (id: number) => this.showService.likeShowReview(id),
-      unlike: (id: number) => this.showService.unlikeShowReview(id),
+      like: () => this.showService.likeShowReview(this.review.id),
+      unlike: () => this.showService.unlikeShowReview(this.review.id),
+      delete: () => this.showService.deleteShowReview(this.review.id)
     },
     [ReviewType.Episode]: {
-      like: (id: number) => this.showService.likeEpisodeReview(id),
-      unlike: (id: number) => this.showService.unlikeEpisodeReview(id),
+      like: () => this.showService.likeEpisodeReview(this.review.id),
+      unlike: () => this.showService.unlikeEpisodeReview(this.review.id),
+      delete: () => this.showService.deleteEpisodeReview(this.review.id)
     },
   };
 
   async toggleLikeState() {
     try {
-      const handler = this.likeHandlers[this.review.type];
-
       if (!this.review.isLikedByUser) {
-        await handler.like(this.review.id);
+        await this.reviewHandler.like();
         this.review.isLikedByUser = true;
         this.review.numLikes++;
       } else {
-        await handler.unlike(this.review.id);
+        await this.reviewHandler.unlike();
         this.review.isLikedByUser = false;
         this.review.numLikes--;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async deleteReview() {
+    try {
+      const response = await this.reviewHandler.delete();
+
+      if (response.ok) {
+        // Raise event to parent component so it can remove the review from the shown entries
+        this.delete.emit(this.review);
       }
     } catch (error) {
       console.error(error);

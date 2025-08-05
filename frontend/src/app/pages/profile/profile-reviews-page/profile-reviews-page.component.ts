@@ -75,6 +75,10 @@ export class ProfileReviewsPageComponent implements OnInit {
     }
   }
 
+  deleteReview(deleteItem: ProfileReviewData) {
+    this.reviews.content = this.reviews.content.filter(review => review !== deleteItem);
+  }
+
   protected readonly sortReviewOptions = sortReviewOptions;
   protected readonly reviewTypeOptions = reviewTypeOptions;
 }

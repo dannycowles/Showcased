@@ -40,8 +40,8 @@
        infiniteScroll
        [infiniteScrollDistance]="1"
        (scrolled)="loadMoreReviews()">
-    @for (review of reviews.content; track review.reviewId + '-' + review.type) {
-      <app-profile-review [review]="review"></app-profile-review>
+    @for (review of reviews.content; track review.id + '-' + review.type) {
+      <app-profile-review [review]="review" editable (delete)="deleteReview($event)"></app-profile-review>
     }
   </div>
 } @else {
