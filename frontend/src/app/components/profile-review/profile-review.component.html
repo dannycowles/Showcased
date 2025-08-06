@@ -1,29 +1,35 @@
-<div class="mb-3 d-flex align-items-start justify-content-between">
-  <div>
-    <h4>{{utilsService.getRelativeDate(review.reviewDate)}}</h4>
-    <h4>Commentary: {{review.commentary}}</h4>
-    <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
-  </div>
-  <div>
-    @if (isShowReview(review)) {
-      <h4>{{review.showTitle}}</h4>
-    }
-    @if (isEpisodeReview(review)) {
-      <h4>{{review.showTitle}} S{{review.season}} E{{review.episode}}: {{review.episodeTitle}}</h4>
-    }
-
-    <div class="d-flex align-items-center mb-2">
-      <span class="fs-4">{{review.rating}}</span>
-      <i class="bi bi-star-fill ms-1 fs-5" style="color: #f2cb22;"></i>
+<div class="py-3 ps-2 row review" (click)="navigateToReview()">
+    <div class="col-4">
+      @switch (review.type) {
+        @case (ReviewType.Show) {
+          <h4>{{review.showTitle}}</h4>
+        }
+        @case (ReviewType.Episode) {
+          <h4>{{review.showTitle}} S{{review.season}} E{{review.episode}}: {{review.episodeTitle}}</h4>
+        }
+      }
+      <h5>{{utilsService.getRelativeDate(review.reviewDate)}}</h5>
+      <div class="d-flex align-items-center mb-2">
+        <span class="fs-4">{{review.rating}}</span>
+        <i class="bi bi-star-fill ms-1 fs-5" style="color: #f2cb22;"></i>
+      </div>
     </div>
-  </div>
-  <div class="d-flex align-items-center">
-    <yt-button-heart [isLiked]="review.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
-    <div class="fs-4" id="like-count">{{review.numLikes}}</div>
+    <div class="col-5">
+      <h4>Commentary: {{review.commentary}}</h4>
+      <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
+    </div>
 
-    @if (editable) {
-      <button type="button" class="btn btn-secondary ms-5 me-3" (click)="openEditModal()">Edit</button>
-      <button type="button" class="btn btn-danger me-1" (click)="deleteReview()">Delete</button>
-    }
-  </div>
+    <div class="d-flex flex-wrap align-items-center justify-content-center col-3">
+      <div class="d-flex align-items-center">
+        <yt-button-heart [isLiked]="review.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
+        <div class="fs-4" id="like-count">{{review.numLikes}}</div>
+      </div>
+
+      @if (editable) {
+        <div>
+          <button type="button" class="btn btn-secondary ms-4 me-3" (click)="openEditModal()">Edit</button>
+          <button type="button" class="btn btn-danger me-1" (click)="deleteReview()">Delete</button>
+        </div>
+      }
+    </div>
 </div>

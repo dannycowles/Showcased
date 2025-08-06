@@ -1,7 +1,6 @@
 import {ReviewType} from './enums';
 
-export interface ProfileShowReviewData {
-  readonly type: ReviewType;
+export interface BaseProfileReviewData {
   readonly id: number;
   readonly showId: number;
   rating: number;
@@ -14,7 +13,12 @@ export interface ProfileShowReviewData {
   isLikedByUser: boolean;
 }
 
-export interface ProfileEpisodeReviewData extends ProfileShowReviewData {
+export interface ProfileShowReviewData extends BaseProfileReviewData {
+  readonly type: ReviewType.Show;
+}
+
+export interface ProfileEpisodeReviewData extends BaseProfileReviewData {
+  readonly type: ReviewType.Episode;
   readonly episodeTitle: string;
   readonly season: number;
   readonly episode: number;

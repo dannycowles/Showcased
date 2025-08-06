@@ -3,11 +3,11 @@ import { UtilsService } from '../../services/utils.service';
 import { ButtonHeartComponent } from '../button-heart.component';
 import { ShowService } from '../../services/show.service';
 import { ReviewType } from '../../data/enums';
-import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../../data/profile-reviews-data';
 import {ProfileReviewData} from '../../data/types';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {EditReviewModalComponent} from '../edit-review-modal/edit-review-modal.component';
 import {UpdateReviewDto} from '../../data/dto/update-review-dto';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-profile-review',
@@ -24,7 +24,8 @@ export class ProfileReviewComponent implements OnInit {
 
   constructor(public utilsService: UtilsService,
               private showService: ShowService,
-              private modalService: NgbModal) {};
+              private modalService: NgbModal,
+              private router: Router) {};
 
   ngOnInit() {
     this.reviewHandler = this.reviewMethods[this.review.type];
@@ -96,11 +97,24 @@ export class ProfileReviewComponent implements OnInit {
     }
   }
 
-  isShowReview(review: ProfileReviewData): review is ProfileShowReviewData {
-    return review.type === ReviewType.Show;
+  navigateToReview() {
+    switch(this.review.type) {
+      case ReviewType.Show:
+        this.router.navigate(['/show', this.review.showId], {
+          state: {
+            reviewId: this.review.id
+          }
+        });
+        break;
+      case ReviewType.Episode:
+        this.router.navigate(['/show', this.review.showId, 'season', this.review.season, 'episode', this.review.episode], {
+          state: {
+            reviewId: this.review.id
+          }
+        });
+        break;
+    }
   }
 
-  isEpisodeReview(review: ProfileReviewData): review is ProfileEpisodeReviewData {
-    return review.type === ReviewType.Episode;
-  }
+  protected readonly ReviewType = ReviewType;
 }

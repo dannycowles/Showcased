@@ -1,0 +1,8 @@
+.review {
+  transition: background-color 0.75s;
+}
+
+.review:hover {
+  background-color: #e7e7e7;
+  cursor: pointer;
+}
