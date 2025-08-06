@@ -10,6 +10,12 @@
         <span>{{review.rating}}</span>
         <i class="bi bi-star-fill ms-1 fs-5" style="color: #f2cb22;"></i>
       </div>
+      @if (review.isOwnReview) {
+        <div class="mb-2">
+          <button type="button" class="btn btn-secondary btn-sm me-1" (click)="openEditReviewModal()">Edit</button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="deleteReviewEvent()">Delete</button>
+        </div>
+      }
       <span>{{review.commentary}}</span>
       <p>Contains Spoilers: {{review.containsSpoilers}}</p>
     </div>

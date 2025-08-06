@@ -166,21 +166,24 @@
   </div>
 }
 
-<h2 class="ms-2 mb-4">Reviews</h2>
-
-<div class="d-flex mb-3">
-  <button type="button" class="btn btn-primary ms-2 mb-4" (click)="openAddReviewModal()">Add Review</button>
-  <div class="dropdown ms-auto">
-    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      {{ selectedSort.label }}
-    </button>
-    <ul class="dropdown-menu">
-      @for (sortOption of sortReviewOptions; track sortOption.value) {
-        <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
-      }
-    </ul>
+<div class="d-flex mt-3 align-items-center">
+  <h2>Reviews</h2>
+  <div class="ms-auto">
+    <div class="dropdown ms-auto">
+      <span class="fs-5 me-2">Sort</span>
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ selectedSort.label }}
+      </button>
+      <ul class="dropdown-menu">
+        @for (sortOption of sortReviewOptions; track sortOption.value) {
+          <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
+        }
+      </ul>
+    </div>
   </div>
 </div>
+
+<button type="button" class="btn btn-primary my-4" (click)="openAddReviewModal()">Add Review</button>
 
 @if (reviews?.content.length) {
   <div class="reviews"
@@ -189,7 +192,7 @@
        (scrolled)="loadMoreReviews()"
   >
     @for (review of reviews.content; track review.id) {
-      <app-review [review]="review" [reviewType]="ReviewType.Show" [isLoggedIn]="isLoggedIn"></app-review>
+      <app-review [review]="review" [reviewType]="ReviewType.Show" [isLoggedIn]="isLoggedIn" (deleteReview)="handleDeleteReview($event)"></app-review>
     }
   </div>
 } @else {

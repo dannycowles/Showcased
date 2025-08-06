@@ -1,7 +1,6 @@
-import {Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {NgOptimizedImage} from '@angular/common';
-import {EpisodeReviewData, ShowReviewData} from '../../data/reviews-data';
 import {UtilsService} from '../../services/utils.service';
 import {ButtonHeartComponent} from '../button-heart.component';
 import {ShowService} from '../../services/show.service';
@@ -9,6 +8,10 @@ import {ReviewType} from '../../data/enums';
 import {Router, RouterLink} from '@angular/router';
 import {CommentComponent} from '../comment/comment.component';
 import {AddCommentDto} from '../../data/dto/add-comment-dto';
+import {EditReviewModalComponent} from '../edit-review-modal/edit-review-modal.component';
+import {ProfileReviewData, ReviewData} from '../../data/types';
+import {UpdateReviewDto} from '../../data/dto/update-review-dto';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-review',
@@ -25,7 +28,7 @@ import {AddCommentDto} from '../../data/dto/add-comment-dto';
 })
 export class ReviewComponent implements OnChanges {
   @ViewChild("commentBox") commentBoxRef: ElementRef<HTMLTextAreaElement>;
-  @Input({ required: true }) review: EpisodeReviewData | ShowReviewData;
+  @Input({ required: true }) review: ReviewData;
   @Input({ required: true }) reviewType: ReviewType;
   readonly heartSize = 100;
   commentText: string = "";
@@ -33,13 +36,15 @@ export class ReviewComponent implements OnChanges {
   isLoadingComments: boolean = false;
   areCommentsHidden: boolean = true;
   @Input({ required: true }) isLoggedIn: boolean = false;
+  @Output() deleteReview = new EventEmitter<number>();
 
   readonly maxCommentLength = 1000;
   commentMessage: string = "";
 
   constructor(public utilsService: UtilsService,
               private showService: ShowService,
-              private router: Router) { };
+              private router: Router,
+              private modalService: NgbModal) { };
 
   ngOnChanges() {
     if (this.review.notifCommentId != null) {
@@ -52,13 +57,15 @@ export class ReviewComponent implements OnChanges {
       like: () => this.showService.likeShowReview(this.review.id),
       unlike: () => this.showService.unlikeShowReview(this.review.id),
       getComments: (page: number) => this.showService.getShowReviewComments(this.review.id, page),
-      addComment: (comment: AddCommentDto) => this.showService.addCommentToShowReview(this.review.id, comment)
+      addComment: (comment: AddCommentDto) => this.showService.addCommentToShowReview(this.review.id, comment),
+      updateReview: (updates: UpdateReviewDto) => this.showService.updateShowReview(this.review.id, updates)
     },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReview(this.review.id),
       unlike: () => this.showService.unlikeEpisodeReview(this.review.id),
       getComments: (page: number) => this.showService.getEpisodeReviewComments(this.review.id, page),
-      addComment: (comment: AddCommentDto) => this.showService.addCommentToEpisodeReview(this.review.id, comment)
+      addComment: (comment: AddCommentDto) => this.showService.addCommentToEpisodeReview(this.review.id, comment),
+      updateReview: (updates: UpdateReviewDto) => this.showService.updateEpisodeReview(this.review.id, updates)
     },
   };
 
@@ -153,6 +160,33 @@ export class ReviewComponent implements OnChanges {
       this.review.comments.page = result.page;
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  deleteReviewEvent() {
+    this.deleteReview.emit(this.review.id);
+  }
+
+  async openEditReviewModal() {
+    const editModalRef = this.modalService.open(EditReviewModalComponent, {
+      ariaLabelledBy: "editReviewModal",
+      centered: true
+    });
+    editModalRef.componentInstance.review = this.review;
+
+    try {
+      const modifiedReview: ProfileReviewData = await editModalRef.result;
+      Object.assign(this.review, modifiedReview);
+
+      const updateDto: UpdateReviewDto = {
+        rating: modifiedReview.rating,
+        commentary: modifiedReview.commentary,
+        containsSpoilers: modifiedReview.containsSpoilers
+      }
+      const handler = this.reviewHandlers[this.reviewType];
+      await handler.updateReview(updateDto);
+    } catch {
+
     }
   }
 }

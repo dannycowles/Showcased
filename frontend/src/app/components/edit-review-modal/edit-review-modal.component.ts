@@ -1,9 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {ProfileReviewData} from '../../data/types';
-import {ReviewType} from '../../data/enums';
+import {ProfileReviewData, ReviewData} from '../../data/types';
+import {ReviewPageType, ReviewType} from '../../data/enums';
 import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../../data/profile-reviews-data';
+import {EpisodeReviewData, ShowReviewData} from '../../data/reviews-data';
 
 @Component({
   selector: 'app-edit-review-modal',
@@ -13,22 +14,22 @@ import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../../data/profil
   standalone: true,
 })
 export class EditReviewModalComponent implements OnInit {
-  @Input({ required: true }) review: ProfileReviewData;
-  modifiedReview: ProfileReviewData;
+  @Input({ required: true }) review: ProfileReviewData | ReviewData;
+  modifiedReview: ProfileReviewData | ReviewData;
   readonly maxCommentaryLength = 5000;
 
   constructor(public activeModal: NgbActiveModal) {}
 
   ngOnInit() {
-    this.modifiedReview = JSON.parse(JSON.stringify(this.review));
+    this.modifiedReview = structuredClone(this.review);
   }
 
-  isShowReview(review: ProfileReviewData): review is ProfileShowReviewData {
-    return review.type === ReviewType.Show;
+  isShowReview(review: ProfileReviewData | ReviewData): review is ProfileShowReviewData | ShowReviewData {
+    return review.type === ReviewType.Show || review.type === ReviewPageType.ShowPage;
   }
 
-  isEpisodeReview(review: ProfileReviewData): review is ProfileEpisodeReviewData {
-    return review.type === ReviewType.Episode;
+  isEpisodeReview(review: ProfileReviewData | ReviewData): review is ProfileEpisodeReviewData | EpisodeReviewData {
+    return review.type === ReviewType.Episode || review.type === ReviewPageType.EpisodePage;
   }
 
   changesMade() {

@@ -241,4 +241,15 @@ export class EpisodePageComponent implements OnInit {
       this.router.navigate(['/show', this.showId, 'season', this.seasonNumber + 1, 'episode', 1]);
     }
   }
+
+  async handleDeleteReview(deleteId: number) {
+    try {
+      const response = await this.showService.deleteEpisodeReview(deleteId);
+      if (response.ok) {
+        this.reviews.content = this.reviews.content.filter(review => review.id !== deleteId);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

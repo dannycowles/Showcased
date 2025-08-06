@@ -323,6 +323,17 @@ export class ShowPageComponent implements OnInit {
     return (this.show.isOnWatchingList || this.show.isOnWatchlist || this.show.isOnRankingList);
   }
 
+  async handleDeleteReview(deleteId: number) {
+    try {
+      const response = await this.showService.deleteShowReview(deleteId);
+      if (response.ok) {
+        this.reviews.content = this.reviews.content.filter(review => review.id !== deleteId);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   protected readonly ReviewType = ReviewType;
   protected readonly sortReviewOptions = sortReviewOptions;
 }

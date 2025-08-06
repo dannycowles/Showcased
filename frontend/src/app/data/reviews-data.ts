@@ -1,5 +1,6 @@
 import {ReviewCommentData} from './review-comment-data';
 import {PageData} from './page-data';
+import {ReviewPageType} from './enums';
 
 interface BaseReviewData {
   readonly id: number;
@@ -16,12 +17,16 @@ interface BaseReviewData {
   comments?: PageData<ReviewCommentData>;
   readonly reviewDate: string;
   isLikedByUser: boolean;
+  isOwnReview: boolean;
   notifCommentId?: number;
 }
 
-export interface ShowReviewData extends BaseReviewData { }
+export interface ShowReviewData extends BaseReviewData {
+  readonly type: ReviewPageType.ShowPage;
+}
 
 export interface EpisodeReviewData extends BaseReviewData {
+  readonly type: ReviewPageType.EpisodePage;
   readonly season: number;
   readonly episode: number;
   readonly episodeTitle: string;

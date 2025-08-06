@@ -7,7 +7,12 @@ export enum AddShowType {
 
 export enum ReviewType {
   Show = "Show",
-  Episode = "Episode",
+  Episode = "Episode"
+}
+
+export enum ReviewPageType {
+  ShowPage = "ShowPage",
+  EpisodePage = "EpisodePage"
 }
 
 export enum ActivityType {

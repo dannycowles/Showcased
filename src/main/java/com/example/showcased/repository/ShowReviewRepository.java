@@ -14,6 +14,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
 
     @Query(""" 
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
+                "ShowPage",
                 r.id,
                 u.username,
                 u.profilePicture,
@@ -33,7 +34,8 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
                             WHERE lr.reviewId = r.id AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
-                 END
+                 END,
+                CASE WHEN r.userId = :userId THEN TRUE ELSE FALSE END
             )
             FROM ShowReview r
             JOIN User u ON r.userId = u.id
@@ -44,6 +46,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
 
     @Query(""" 
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
+                "ShowPage",
                 r.id,
                 u.username,
                 u.profilePicture,
@@ -62,7 +65,8 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
                             WHERE lr.reviewId = :reviewId AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
-                 END
+                 END,
+                CASE WHEN r.userId = :userId THEN TRUE ELSE FALSE END
             )
             FROM ShowReview r
             JOIN User u ON r.userId = u.id
@@ -110,6 +114,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
 
     @Query("""
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
+            "ShowPage",
             r.id,
             u.username,
             u.profilePicture,
@@ -122,7 +127,8 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
             r.numLikes,
             r.numComments,
             r.reviewDate,
-            FALSE
+            FALSE,
+            TRUE
         )
         FROM ShowReview r
         JOIN User u ON r.userId = u.id

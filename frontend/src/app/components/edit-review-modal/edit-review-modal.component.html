@@ -2,8 +2,7 @@
   <h5 class="modal-title" id="editReviewModal">Edit Review for
     @if (isShowReview(review)) {
       {{review.showTitle}}
-    }
-    @if (isEpisodeReview(review)) {
+    } @else if (isEpisodeReview(review)) {
       {{review.showTitle}} S{{review.season}} E{{review.episode}}: {{review.episodeTitle}}
     }
   </h5>

@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Long> {
     @Query(""" 
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
+                "EpisodePage",
                 r.id,
                 u.username,
                 u.profilePicture,
@@ -35,7 +36,8 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                             WHERE lr.reviewId = r.id AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
-                 END
+                 END,
+                 CASE WHEN r.userId = :userId THEN TRUE ELSE FALSE END
             )
             FROM EpisodeReview r
             JOIN User u ON r.userId = u.id
@@ -46,6 +48,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
 
     @Query(""" 
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
+                "EpisodePage",
                 r.id,
                 u.username,
                 u.profilePicture,
@@ -67,7 +70,8 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                             WHERE lr.reviewId = :reviewId AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
-                 END
+                END,
+                CASE WHEN r.userId = :userId THEN TRUE ELSE FALSE END
             )
             FROM EpisodeReview r
             JOIN User u ON r.userId = u.id
@@ -119,6 +123,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
 
     @Query("""
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
+            "EpisodePage",
             r.id,
             u.username,
             u.profilePicture,
@@ -134,7 +139,8 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
             r.numLikes,
             r.numComments,
             r.reviewDate,
-            FALSE
+            FALSE,
+            TRUE
         )
         FROM EpisodeReview r
         JOIN EpisodeInfo e ON e.id = r.episodeId

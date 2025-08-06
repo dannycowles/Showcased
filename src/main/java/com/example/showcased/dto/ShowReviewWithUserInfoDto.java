@@ -11,6 +11,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 public class ShowReviewWithUserInfoDto {
+    private String type = "ShowPage";
     private Long id;
     private String username;
     private String profilePicture;
@@ -25,4 +26,6 @@ public class ShowReviewWithUserInfoDto {
     private Date reviewDate;
     @JsonProperty("isLikedByUser")
     private boolean isLikedByUser;
+    @JsonProperty("isOwnReview")
+    private boolean isOwnReview;
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class EpisodeReviewWithUserInfoDto {
+    private String type;
     private Long id;
     private String username;
     private String profilePicture;
@@ -26,4 +27,6 @@ public class EpisodeReviewWithUserInfoDto {
     private Date reviewDate;
     @JsonProperty("isLikedByUser")
     private boolean isLikedByUser;
+    @JsonProperty("isOwnReview")
+    private boolean isOwnReview;
 }
