@@ -5,6 +5,9 @@ import { ShowService } from '../../services/show.service';
 import { ReviewType } from '../../data/enums';
 import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../../data/profile-reviews-data';
 import {ProfileReviewData} from '../../data/types';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {EditReviewModalComponent} from '../edit-review-modal/edit-review-modal.component';
+import {UpdateReviewDto} from '../../data/dto/update-review-dto';
 
 @Component({
   selector: 'app-profile-review',
@@ -20,7 +23,8 @@ export class ProfileReviewComponent implements OnInit {
   reviewHandler: any = null;
 
   constructor(public utilsService: UtilsService,
-              private showService: ShowService) {};
+              private showService: ShowService,
+              private modalService: NgbModal) {};
 
   ngOnInit() {
     this.reviewHandler = this.reviewMethods[this.review.type];
@@ -30,12 +34,14 @@ export class ProfileReviewComponent implements OnInit {
     [ReviewType.Show]: {
       like: () => this.showService.likeShowReview(this.review.id),
       unlike: () => this.showService.unlikeShowReview(this.review.id),
-      delete: () => this.showService.deleteShowReview(this.review.id)
+      delete: () => this.showService.deleteShowReview(this.review.id),
+      update: (updates: UpdateReviewDto) => this.showService.updateShowReview(this.review.id, updates)
     },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReview(this.review.id),
       unlike: () => this.showService.unlikeEpisodeReview(this.review.id),
-      delete: () => this.showService.deleteEpisodeReview(this.review.id)
+      delete: () => this.showService.deleteEpisodeReview(this.review.id),
+      update: (updates: UpdateReviewDto) => this.showService.updateEpisodeReview(this.review.id, updates)
     },
   };
 
@@ -65,6 +71,28 @@ export class ProfileReviewComponent implements OnInit {
       }
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async openEditModal() {
+    const editModalRef = this.modalService.open(EditReviewModalComponent, {
+      ariaLabelledBy: "editReviewModal",
+      centered: true
+    });
+    editModalRef.componentInstance.review = this.review;
+
+    try {
+      const modifiedReview: ProfileReviewData = await editModalRef.result;
+      Object.assign(this.review, modifiedReview);
+
+      const updateDto: UpdateReviewDto = {
+        rating: modifiedReview.rating,
+        commentary: modifiedReview.commentary,
+        containsSpoilers: modifiedReview.containsSpoilers
+      }
+      this.reviewHandler.update(updateDto);
+    } catch {
+
     }
   }
 

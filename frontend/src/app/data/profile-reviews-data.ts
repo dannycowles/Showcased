@@ -4,10 +4,10 @@ export interface ProfileShowReviewData {
   readonly type: ReviewType;
   readonly id: number;
   readonly showId: number;
-  readonly rating: number;
+  rating: number;
   readonly showTitle: string;
-  readonly commentary: string;
-  readonly containsSpoilers: boolean;
+  commentary: string;
+  containsSpoilers: boolean;
   readonly posterPath: string;
   readonly reviewDate: string;
   numLikes: number;
