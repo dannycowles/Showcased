@@ -155,6 +155,11 @@ public class ShowController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/reviews/comments/{commentId}")
+    public ResponseEntity<Void> deleteShowReviewComment(@PathVariable Long commentId, HttpSession session) {
+        showService.deleteShowReviewComment(commentId, session);
+        return ResponseEntity.noContent().build();
+    }
 
 
 

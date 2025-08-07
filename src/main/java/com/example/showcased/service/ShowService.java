@@ -856,6 +856,32 @@ public class ShowService {
     }
 
     @Transactional
+    public void deleteShowReviewComment(Long commentId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        Optional<ShowReviewComment> commentOpt = showReviewCommentRepository.findById(commentId);
+        if (commentOpt.isPresent()) {
+            ShowReviewComment comment = commentOpt.get();
+
+            // Ensure that the comment belongs to the requesting user
+            if (!comment.getUserId().equals(userId)) {
+                throw new UnauthorizedAccessException("You are not allowed to delete this show review comment");
+            }
+
+            // Delete all occurrences of this from the activities table
+            // In this instance it needs to delete the following
+            // - Show Review Comment Like Notifications
+            // - Show Review Comment Notification
+            List<Integer> activityTypes = Arrays.asList(ActivityType.LIKE_SHOW_REVIEW_COMMENT.getDbValue(), ActivityType.COMMENT_SHOW_REVIEW.getDbValue());
+            activitiesRepository.deleteShowReviewCommentActivities(commentId, activityTypes);
+
+            showReviewCommentRepository.delete(comment);
+            showReviewRepository.decrementNumComments(comment.getReviewId());
+        }
+    }
+
+
+    @Transactional
     public ReviewCommentWithUserInfoDto addCommentToEpisodeReview(Long reviewId, ReviewCommentDto reviewComment, HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         Optional<EpisodeReview> reviewOpt = episodeReviewRepository.findById(reviewId);

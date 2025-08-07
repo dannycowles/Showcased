@@ -166,4 +166,20 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
         AND a.activityType IN :activityTypes
 """)
     void deleteEpisodeReviewActivities(@Param("reviewId") Long reviewId, @Param("activityTypes") List<Integer> activityTypes);
+
+    @Modifying
+    @Query("""
+        DELETE FROM Activity a
+        WHERE (
+            a.externalId IN (
+                SELECT lrc.id FROM LikedShowReviewComment lrc WHERE lrc.commentId = :commentId
+            )
+            OR
+            a.externalId IN (
+                SELECT rc.id FROM ShowReviewComment rc WHERE rc.id = :commentId
+            )
+        )
+        AND a.activityType IN :activityTypes
+""")
+    void deleteShowReviewCommentActivities(@Param("commentId") Long commentId, @Param("activityTypes") List<Integer> activityTypes);
 }
