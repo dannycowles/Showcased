@@ -152,4 +152,8 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
     @Modifying
     @Query("UPDATE EpisodeReview r SET r.numComments = r.numComments + 1 WHERE r.id = :reviewId")
     void incrementNumComments(@Param("reviewId") Long reviewId);
+
+    @Modifying
+    @Query("UPDATE EpisodeReview r SET r.numComments = r.numComments - 1 WHERE r.id = :reviewId")
+    void decrementNumComments(@Param("reviewId") Long reviewId);
 }

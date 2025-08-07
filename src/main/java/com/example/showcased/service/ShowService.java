@@ -969,4 +969,29 @@ public class ShowService {
             throw new ItemNotFoundException("Didn't find an episode review comment with ID: " + commentId);
         }
     }
+
+    @Transactional
+    public void deleteEpisodeReviewComment(Long commentId, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        Optional<EpisodeReviewComment> commentOpt = episodeReviewCommentRepository.findById(commentId);
+        if (commentOpt.isPresent()) {
+            EpisodeReviewComment comment = commentOpt.get();
+
+            // Ensure that the comment belongs to the requesting user
+            if (!comment.getUserId().equals(userId)) {
+                throw new UnauthorizedAccessException("You are not allowed to delete this show review comment");
+            }
+
+            // Delete all occurrences of this from the activities table
+            // In this instance it needs to delete the following
+            // - Episode Review Comment Like Notifications
+            // - Episode Review Comment Notification
+            List<Integer> activityTypes = Arrays.asList(ActivityType.LIKE_EPISODE_REVIEW_COMMENT.getDbValue(), ActivityType.COMMENT_EPISODE_REVIEW.getDbValue());
+            activitiesRepository.deleteEpisodeReviewCommentActivities(commentId, activityTypes);
+
+            episodeReviewCommentRepository.delete(comment);
+            episodeReviewRepository.decrementNumComments(comment.getReviewId());
+        }
+    }
 }
