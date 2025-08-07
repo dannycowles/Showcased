@@ -161,6 +161,12 @@ public class ShowController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/reviews/comments/{commentId}")
+    public ResponseEntity<Void> updateShowReviewComment(@PathVariable Long commentId, @RequestBody UpdateCommentDto updates, HttpSession session) {
+        showService.updateShowReviewComment(commentId, updates, session);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
     // ========== EPISODE REVIEWS ==========
@@ -242,6 +248,12 @@ public class ShowController {
     @DeleteMapping("/episode-reviews/comments/{commentId}")
     public ResponseEntity<Void> deleteEpisodeReviewComment(@PathVariable Long commentId, HttpSession session) {
         showService.deleteEpisodeReviewComment(commentId, session);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/episode-reviews/comments/{commentId}")
+    public ResponseEntity<Void> updateEpisodeReviewComment(@PathVariable Long commentId, @RequestBody UpdateCommentDto updates, HttpSession session) {
+        showService.updateEpisodeReviewComment(commentId, updates, session);
         return ResponseEntity.noContent().build();
     }
 

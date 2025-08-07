@@ -8,12 +8,10 @@ import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.exception.ItemNotFoundException;
 import com.example.showcased.exception.UnauthorizedAccessException;
 import com.example.showcased.repository.*;
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
-import org.eclipse.angus.mail.imap.protocol.Item;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
@@ -880,6 +878,22 @@ public class ShowService {
         }
     }
 
+    @Transactional
+    public void updateShowReviewComment(Long commentId, UpdateCommentDto updates, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        ShowReviewComment comment = showReviewCommentRepository.findById(commentId)
+                .orElseThrow(() -> new ItemNotFoundException("Couldn't find a show review comment with ID: " + commentId));
+
+        // Ensure that the comment being edited belongs to the requesting user
+        if (!comment.getUserId().equals(userId)) {
+            throw new UnauthorizedAccessException("You are not allowed to update this show review comment");
+        }
+
+        modelMapper.map(updates, comment);
+        showReviewCommentRepository.save(comment);
+    }
+
 
     @Transactional
     public ReviewCommentWithUserInfoDto addCommentToEpisodeReview(Long reviewId, ReviewCommentDto reviewComment, HttpSession session) {
@@ -993,5 +1007,21 @@ public class ShowService {
             episodeReviewCommentRepository.delete(comment);
             episodeReviewRepository.decrementNumComments(comment.getReviewId());
         }
+    }
+
+    @Transactional
+    public void updateEpisodeReviewComment(Long commentId, UpdateCommentDto updates, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        EpisodeReviewComment comment = episodeReviewCommentRepository.findById(commentId)
+                .orElseThrow(() -> new ItemNotFoundException("Couldn't find an episode review comment with ID: " + commentId));
+
+        // Ensure that the comment being edited belongs to the requesting user
+        if (!comment.getUserId().equals(userId)) {
+            throw new UnauthorizedAccessException("You are not allowed to update this show review comment");
+        }
+
+        modelMapper.map(updates, comment);
+        episodeReviewCommentRepository.save(comment);
     }
 }
