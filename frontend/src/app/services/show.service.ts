@@ -272,6 +272,39 @@ export class ShowService {
   }
 
   /**
+   * Deletes a show review comment by its ID
+   * @param commentId
+   */
+  async deleteShowReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Updates a show review comment by its ID
+   * @param commentId
+   * @param updates
+   */
+  async updateShowReviewComment(commentId: number, updates: AddCommentDto): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updates)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
    * Adds a review to an episode by ID
    * @param episodeId
    * @param data
@@ -444,6 +477,39 @@ export class ShowService {
     const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}/likes`, {
       method: 'DELETE',
       credentials: 'include',
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Deletes an episode review comment by its ID
+   * @param commentId
+   */
+  async deleteEpisodeReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Updates an episode review comment by its ID
+   * @param commentId
+   * @param updates
+   */
+  async updateEpisodeReviewComment(commentId: number, updates: AddCommentDto): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updates)
     });
 
     this.checkUnauthorizedUser(response);
