@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {ButtonHeartComponent} from '../button-heart.component';
@@ -23,6 +23,7 @@ export class CommentComponent {
   isEditing: boolean = false;
   editText: string = '';
   readonly maxCommentLength = 1000;
+  @Output() delete = new EventEmitter<number>();
 
   constructor(
     public utilsService: UtilsService,
@@ -89,5 +90,9 @@ export class CommentComponent {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  deleteComment() {
+    this.delete.emit(this.comment.id);
   }
 }

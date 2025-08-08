@@ -51,7 +51,7 @@
   }@else if (review.numComments > 0 && review.comments) {
     <div [hidden]="areCommentsHidden">
       @for (comment of review.comments.content; track comment.id) {
-        <app-comment [comment]="comment" [reviewType]="reviewType"></app-comment>
+        <app-comment [comment]="comment" [reviewType]="reviewType" (delete)="handleDeleteComment($event)"></app-comment>
       }
     </div>
 

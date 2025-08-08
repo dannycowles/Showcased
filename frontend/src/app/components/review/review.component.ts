@@ -58,14 +58,16 @@ export class ReviewComponent implements OnChanges {
       unlike: () => this.showService.unlikeShowReview(this.review.id),
       getComments: (page: number) => this.showService.getShowReviewComments(this.review.id, page),
       addComment: (comment: AddCommentDto) => this.showService.addCommentToShowReview(this.review.id, comment),
-      updateReview: (updates: UpdateReviewDto) => this.showService.updateShowReview(this.review.id, updates)
+      updateReview: (updates: UpdateReviewDto) => this.showService.updateShowReview(this.review.id, updates),
+      deleteComment: (commentId: number) => this.showService.deleteShowReviewComment(commentId)
     },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReview(this.review.id),
       unlike: () => this.showService.unlikeEpisodeReview(this.review.id),
       getComments: (page: number) => this.showService.getEpisodeReviewComments(this.review.id, page),
       addComment: (comment: AddCommentDto) => this.showService.addCommentToEpisodeReview(this.review.id, comment),
-      updateReview: (updates: UpdateReviewDto) => this.showService.updateEpisodeReview(this.review.id, updates)
+      updateReview: (updates: UpdateReviewDto) => this.showService.updateEpisodeReview(this.review.id, updates),
+      deleteComment: (commentId: number) => this.showService.deleteEpisodeReviewComment(commentId)
     },
   };
 
@@ -187,6 +189,19 @@ export class ReviewComponent implements OnChanges {
       await handler.updateReview(updateDto);
     } catch {
 
+    }
+  }
+
+  async handleDeleteComment(deleteId: number) {
+    try {
+      const handler = this.reviewHandlers[this.reviewType];
+      const response = await handler.deleteComment(deleteId);
+
+      if (response.ok) {
+        this.review.comments.content = this.review.comments.content.filter(comment => comment.id !== deleteId);
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 }
