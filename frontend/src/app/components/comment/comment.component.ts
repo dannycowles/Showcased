@@ -60,6 +60,13 @@ export class CommentComponent {
     }
   }
 
+  isCommentEditable() {
+    // Comments are only editable within 5 minutes of being written to avoid abuse
+    const commentDate = new Date(this.comment.createdAt);
+    const editableUntil = new Date(commentDate.getTime() + (5 * 60 * 1000));
+    return new Date() <= editableUntil;
+  }
+
   openEditBox() {
     this.editText = this.comment.commentText;
     this.isEditing = true;

@@ -5,7 +5,7 @@
     <p>{{utilsService.getRelativeDate(comment.createdAt)}}</p>
     @if (comment.isOwnComment) {
       <div class="mb-4">
-        <button type="button" class="btn btn-secondary btn-sm me-1" [hidden]="isEditing" (click)="openEditBox()">Edit</button>
+        <button type="button" class="btn btn-secondary btn-sm me-1" [hidden]="!isCommentEditable() || isEditing" (click)="openEditBox()">Edit</button>
         <button type="button" class="btn btn-danger btn-sm">Delete</button>
       </div>
     }
