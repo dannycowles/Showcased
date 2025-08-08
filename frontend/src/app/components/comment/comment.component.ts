@@ -6,10 +6,12 @@ import {UtilsService} from '../../services/utils.service';
 import {ShowService} from '../../services/show.service';
 import {ReviewCommentData} from '../../data/review-comment-data';
 import {ReviewType} from '../../data/enums';
+import {FormsModule} from '@angular/forms';
+import {AddCommentDto} from '../../data/dto/add-comment-dto';
 
 @Component({
   selector: 'app-comment',
-  imports: [NgOptimizedImage, RouterLink, ButtonHeartComponent],
+  imports: [NgOptimizedImage, RouterLink, ButtonHeartComponent, FormsModule],
   templateUrl: './comment.component.html',
   styleUrl: './comment.component.css',
   standalone: true,
@@ -18,19 +20,26 @@ export class CommentComponent {
   @Input({ required: true }) comment: ReviewCommentData;
   @Input({ required: true }) reviewType: ReviewType;
   readonly heartSize = 100;
+  isEditing: boolean = false;
+  editText: string = '';
+  readonly maxCommentLength = 1000;
 
-  constructor(public utilsService: UtilsService,
-              private showService: ShowService) {};
+  constructor(
+    public utilsService: UtilsService,
+    private showService: ShowService,
+  ) {}
 
   readonly likeHandlers = {
     [ReviewType.Show]: {
       like: () => this.showService.likeShowReviewComment(this.comment.id),
-      unlike: () => this.showService.unlikeShowReviewComment(this.comment.id)
+      unlike: () => this.showService.unlikeShowReviewComment(this.comment.id),
+      update: (updates: AddCommentDto) => this.showService.updateShowReviewComment(this.comment.id, updates)
     },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReviewComment(this.comment.id),
-      unlike: () => this.showService.unlikeEpisodeReviewComment(this.comment.id)
-    }
+      unlike: () => this.showService.unlikeEpisodeReviewComment(this.comment.id),
+      update: (updates: AddCommentDto) => this.showService.updateEpisodeReviewComment(this.comment.id, updates)
+    },
   };
 
   async toggleCommentLikeState() {
@@ -45,6 +54,30 @@ export class CommentComponent {
         await handler.unlike();
         this.comment.isLikedByUser = false;
         this.comment.numLikes--;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  openEditBox() {
+    this.editText = this.comment.commentText;
+    this.isEditing = true;
+  }
+
+  async saveEdit() {
+    this.comment.commentText = this.editText;
+    const handler = this.likeHandlers[this.reviewType];
+
+    const updates: AddCommentDto = {
+      commentText: this.editText
+    }
+
+    try {
+      const response = await handler.update(updates);
+
+      if (response.ok) {
+        this.isEditing = false;
       }
     } catch (error) {
       console.error(error);

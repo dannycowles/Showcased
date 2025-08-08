@@ -21,7 +21,8 @@ public interface EpisodeReviewCommentRepository extends JpaRepository<EpisodeRev
             c.commentText,
             c.numLikes,
             c.createdAt,
-            FALSE
+            FALSE,
+            TRUE
         )
         FROM EpisodeReviewComment c
         JOIN User u ON c.userId = u.id
@@ -46,7 +47,8 @@ public interface EpisodeReviewCommentRepository extends JpaRepository<EpisodeRev
                     WHERE lr.commentId = c.id AND lr.userId = :userId
                 ) THEN TRUE
                 ELSE FALSE
-            END
+            END,
+            CASE WHEN c.userId = :userId THEN TRUE ELSE FALSE END
         )
         FROM EpisodeReview r
         JOIN EpisodeReviewComment c ON r.id = c.reviewId
@@ -72,7 +74,8 @@ public interface EpisodeReviewCommentRepository extends JpaRepository<EpisodeRev
                     WHERE lr.commentId = :commentId AND lr.userId = :userId
                 ) THEN TRUE
                 ELSE FALSE
-            END
+            END,
+            CASE WHEN c.userId = :userId THEN TRUE ELSE FALSE END
         )
         FROM EpisodeReview r
         JOIN EpisodeReviewComment c ON r.id = c.reviewId

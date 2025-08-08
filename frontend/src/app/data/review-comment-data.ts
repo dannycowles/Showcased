@@ -4,8 +4,9 @@ export interface ReviewCommentData {
   readonly userId: number,
   readonly username: string,
   readonly profilePicture: string,
-  readonly commentText: string,
+  commentText: string,
   numLikes: number,
   readonly createdAt: string,
   isLikedByUser: boolean;
+  readonly isOwnComment: boolean;
 }

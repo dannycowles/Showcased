@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface ShowReviewCommentRepository extends JpaRepository<ShowReviewComment, Long> {
 
     @Query("""
@@ -23,7 +21,8 @@ public interface ShowReviewCommentRepository extends JpaRepository<ShowReviewCom
             c.commentText,
             c.numLikes,
             c.createdAt,
-            FALSE
+            FALSE,
+            TRUE
         )
         FROM ShowReviewComment c
         JOIN User u ON c.userId = u.id
@@ -48,7 +47,8 @@ public interface ShowReviewCommentRepository extends JpaRepository<ShowReviewCom
                     WHERE lr.commentId = c.id AND lr.userId = :userId
                 ) THEN TRUE
                 ELSE FALSE
-           END
+           END,
+           CASE WHEN c.userId = :userId THEN TRUE ELSE FALSE END
         )
         FROM ShowReview r
         JOIN ShowReviewComment c ON r.id = c.reviewId
@@ -74,7 +74,8 @@ public interface ShowReviewCommentRepository extends JpaRepository<ShowReviewCom
                     WHERE lr.commentId = :commentId AND lr.userId = :userId
                 ) THEN TRUE
                 ELSE FALSE
-           END
+           END,
+           CASE WHEN c.userId = :userId THEN TRUE ELSE FALSE END
         )
         FROM ShowReview r
         JOIN ShowReviewComment c ON r.id = c.reviewId

@@ -19,4 +19,6 @@ public class ReviewCommentWithUserInfoDto {
     private Date createdAt;
     @JsonProperty("isLikedByUser")
     private boolean isLikedByUser;
+    @JsonProperty("isOwnComment")
+    private boolean isOwnComment;
 }
