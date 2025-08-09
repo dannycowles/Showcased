@@ -35,6 +35,7 @@ public class UserController {
     @GetMapping("/{id}/details")
     public ResponseEntity<ProfileDetailsDto> getUserDetails(@PathVariable("id") Long id, HttpSession session) {
         ProfileDetailsDto userDetails = userService.getUserDetails(id, session);
+        System.out.println("details: " + userDetails);
         return ResponseEntity.ok(userDetails);
     }
 

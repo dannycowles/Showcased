@@ -7,6 +7,8 @@ import com.example.showcased.exception.*;
 import com.example.showcased.repository.OtpRequestRepository;
 import com.example.showcased.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,31 +25,58 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final RecaptchaService recaptchaService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        OtpRequestRepository otpRequestRepository,
                        EmailService emailService,
-                       RecaptchaService recaptchaService) {
+                       RecaptchaService recaptchaService,
+                       AuthenticationManager authenticationManager,
+                       JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.otpRequestRepository = otpRequestRepository;
         this.emailService = emailService;
         this.recaptchaService = recaptchaService;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     // Function that verifies that the login credentials are valid
-    public void loginUser(LoginDto loginDto, HttpSession session) {
-        User user = userRepository.findByEmail(loginDto.getEmail())
-                .orElseThrow(() -> new InvalidLoginException());
+    public LoginResponse loginUser(LoginDto loginDto) {
+        User authenticatedUser = authenticate(loginDto);
+        String jwtToken = jwtService.generateToken(authenticatedUser);
+        return new LoginResponse(jwtToken, jwtService.getExpirationTime());
+    }
 
-        // Check if the provided password matches the stored encrypted password
-        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            throw new InvalidLoginException();
+    public User registerUser(RegisterDto registerDto) {
+        // If the username already exists, throw an exception since we cannot have duplicates
+        if (userRepository.existsByUsername(registerDto.getUsername())) {
+            throw new UsernameTakenException("Username is already taken");
         }
 
-        // "Log" the user in by setting the session attribute
-        session.setAttribute("user", user.getId());
+        // If the email is already associated with an account, throw an exception
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new EmailTakenException("Email is already associated with an account");
+        }
+
+        if (!recaptchaService.verifyRecaptcha(registerDto.getRecaptcha())) {
+            throw new RecaptchaInvalidException("Recaptcha is invalid, please try again.");
+        }
+
+        // Create and save new user to repository
+        // Use the encryptor to encrypt the password before storing
+        String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
+        User user = new User(registerDto.getEmail(), registerDto.getUsername(), encodedPassword);
+        return userRepository.save(user);
+    }
+
+    public User authenticate(LoginDto input) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword()));
+        return userRepository.findByEmail(input.getEmail())
+                .orElseThrow();
     }
 
     public LoginStatusDto loginStatus(HttpSession session) {
@@ -133,28 +162,6 @@ public class AuthService {
 
         // Remove the session attribute
         session.removeAttribute("otpVerifiedEmail");
-    }
-
-    public void registerUser(RegisterDto registerDto) {
-        // If the username already exists, throw an exception since we cannot have duplicates
-        if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new UsernameTakenException("Username is already taken");
-        }
-
-        // If the email is already associated with an account, throw an exception
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new EmailTakenException("Email is already associated with an account");
-        }
-
-        if (!recaptchaService.verifyRecaptcha(registerDto.getRecaptcha())) {
-            throw new RecaptchaInvalidException("Recaptcha is invalid, please try again.");
-        }
-
-        // Create and save new user to repository
-        // Use the encryptor to encrypt the password before storing
-        String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
-        User user = new User(registerDto.getEmail(), registerDto.getUsername(), encodedPassword);
-        userRepository.save(user);
     }
 
     public UsernameCheckDto checkUsernameAvailability(String username) {

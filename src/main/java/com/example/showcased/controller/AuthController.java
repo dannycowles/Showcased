@@ -1,6 +1,7 @@
 package com.example.showcased.controller;
 
 import com.example.showcased.dto.*;
+import com.example.showcased.entity.User;
 import com.example.showcased.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -17,10 +18,16 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @PostMapping("/register")
+    ResponseEntity<User> registerUser(@Valid @RequestBody RegisterDto registerDto) {
+        User registeredUser = authService.registerUser(registerDto);
+        return ResponseEntity.ok(registeredUser);
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<Void> loginUser(@RequestBody LoginDto loginDto, HttpSession session) {
-        authService.loginUser(loginDto, session);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginDto loginDto) {
+        LoginResponse loginResponse = authService.loginUser(loginDto);
+        return ResponseEntity.ok(loginResponse);
     }
 
     @GetMapping("/login-status")
@@ -43,12 +50,6 @@ public class AuthController {
     @PostMapping("/change-password")
     public ResponseEntity<Void> changePassword(@RequestBody NewPasswordDto newPasswordDto, HttpSession session) {
         authService.changePassword(newPasswordDto, session);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/register")
-    ResponseEntity<Void> registerUser(@Valid @RequestBody RegisterDto registerDto) {
-        authService.registerUser(registerDto);
         return ResponseEntity.ok().build();
     }
 

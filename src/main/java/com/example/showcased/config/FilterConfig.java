@@ -14,27 +14,27 @@ import org.springframework.core.Ordered;
 @Configuration
 public class FilterConfig {
 
-    @Bean
-    public FilterRegistrationBean<Filter> corsFilter() {
-        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter((req, res, chain) -> {
-            HttpServletRequest request = (HttpServletRequest) req;
-            HttpServletResponse response = (HttpServletResponse) res;
-            response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
-            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-            response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-            response.setHeader("Access-Control-Allow-Credentials", "true");
-
-            if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-                response.setStatus(HttpServletResponse.SC_OK);
-            } else {
-                chain.doFilter(req, res);
-            }
-        });
-        registrationBean.addUrlPatterns("/*");
-        registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return registrationBean;
-    }
+//    @Bean
+//    public FilterRegistrationBean<Filter> corsFilter() {
+//        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
+//        registrationBean.setFilter((req, res, chain) -> {
+//            HttpServletRequest request = (HttpServletRequest) req;
+//            HttpServletResponse response = (HttpServletResponse) res;
+//            response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+//            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+//            response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//            response.setHeader("Access-Control-Allow-Credentials", "true");
+//
+//            if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+//                response.setStatus(HttpServletResponse.SC_OK);
+//            } else {
+//                chain.doFilter(req, res);
+//            }
+//        });
+//        registrationBean.addUrlPatterns("/*");
+//        registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+//        return registrationBean;
+//    }
 
     @Bean
     public FilterRegistrationBean<ProfileFilter> profileFilter() {
