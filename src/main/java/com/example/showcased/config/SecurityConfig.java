@@ -3,7 +3,9 @@ package com.example.showcased.config;
 import com.example.showcased.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,17 +31,35 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request ->
                     request
-                            // Public access to auth endpoints
+                            // Require auth on logout and change password endpoint but the others are allowed
+                            .requestMatchers(
+                                    "/auth/logout",
+                                    "/auth/change-password"
+                            ).authenticated()
                             .requestMatchers("/auth/**").permitAll()
 
-                            // Auth required for anything else
-                            .anyRequest().authenticated()
+                            // Auth required for all profile endpoints
+                            .requestMatchers("/profile/**").authenticated()
+
+                            // Any POST, DELETE, or PATCH methods on show endpoints require auth
+                            .requestMatchers(HttpMethod.DELETE, "/shows/**").authenticated()
+                            .requestMatchers(HttpMethod.POST, "/shows/**").authenticated()
+                            .requestMatchers(HttpMethod.PATCH, "/shows/**").authenticated()
+
+                            // Any POST or DELETE methods on user endpoints require auth
+                            .requestMatchers(HttpMethod.POST, "/users/**").authenticated()
+                            .requestMatchers(HttpMethod.DELETE, "/users/**").authenticated()
+
+                            // All other GET endpoints are allowed without auth
+                            .anyRequest().permitAll()
                 );
         return http.build();
     }

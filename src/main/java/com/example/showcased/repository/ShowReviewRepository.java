@@ -16,7 +16,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
                 "ShowPage",
                 r.id,
-                u.username,
+                u.displayName,
                 u.profilePicture,
                 r.userId,
                 r.showId,
@@ -48,7 +48,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
                 "ShowPage",
                 r.id,
-                u.username,
+                u.displayName,
                 u.profilePicture,
                 r.userId,
                 r.showId,
@@ -116,7 +116,7 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
         SELECT new com.example.showcased.dto.ShowReviewWithUserInfoDto(
             "ShowPage",
             r.id,
-            u.username,
+            u.displayName,
             u.profilePicture,
             r.userId,
             r.showId,

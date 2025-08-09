@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginResponse {
+public class JwtResponse {
     private String token;
     private long expiresIn;
 }

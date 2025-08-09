@@ -16,7 +16,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
-    private String username;
+    private String displayName;
     private String password;
     private String profilePicture;
     private String bio;
@@ -25,7 +25,7 @@ public class User implements UserDetails {
 
     public User(String email, String username, String password) {
         this.email = email;
-        this.username = username;
+        this.displayName = username;
         this.password = password;
         this.profilePicture = "https://showcased-9bbb23e3-216f-4384-b375-4e567ba0d530.s3.us-west-2.amazonaws.com/users/default-pfp";
     }

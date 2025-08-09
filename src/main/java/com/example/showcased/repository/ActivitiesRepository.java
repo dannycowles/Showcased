@@ -20,7 +20,7 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
             d.description,
             new com.example.showcased.dto.ActivityUserDto(
                 CAST(COALESCE(u1.id, u2.id, u3.id, u4.id, u5.id, u6.id, u7.id, u8.id) AS long),
-                COALESCE(u1.username, u2.username, u3.username, u4.username, u5.username, u6.username, u7.username, u8.username),
+                COALESCE(u1.displayName, u2.displayName, u3.displayName, u4.displayName, u5.displayName, u6.displayName, u7.displayName, u8.displayName),
                 COALESCE(u1.profilePicture, u2.profilePicture, u3.profilePicture, u4.profilePicture, u5.profilePicture, u6.profilePicture, u7.profilePicture, u8.profilePicture)
             ),
             new com.example.showcased.dto.ActivityShowReviewLikeDto(
@@ -60,7 +60,7 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
                 CASE WHEN a.activityType = 6 THEN si3.title ELSE NULL END,
                 CASE WHEN a.activityType = 6 THEN src2.commentText ELSE NULL END,
                 CASE WHEN a.activityType = 6 THEN u6b.id ELSE NULL END,
-                CASE WHEN a.activityType = 6 THEN u6b.username ELSE NULL END,
+                CASE WHEN a.activityType = 6 THEN u6b.displayName ELSE NULL END,
                 CASE WHEN a.activityType = 6 THEN u6b.profilePicture ELSE NULL END,
                 CASE WHEN a.activityType = 6 THEN (u6b.id = :userId) ELSE NULL END
             ),
@@ -74,7 +74,7 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
                 CASE WHEN a.activityType = 7 THEN lerc.commentId ELSE NULL END,
                 CASE WHEN a.activityType = 7 THEN erc2.commentText ELSE NULL END,
                 CASE WHEN a.activityType = 7 THEN u7b.id ELSE NULL END,
-                CASE WHEN a.activityType = 7 THEN u7b.username ELSE NULL END,
+                CASE WHEN a.activityType = 7 THEN u7b.displayName ELSE NULL END,
                 CASE WHEN a.activityType = 7 THEN u7b.profilePicture ELSE NULL END,
                 CASE WHEN a.activityType = 7 THEN (u7b.id = :userId) ELSE NULL END
             ),

@@ -87,7 +87,7 @@ public class UserService {
         searchMapper.typeMap(User.class, UserSearchDto.class).addMappings(mapper -> {
             mapper.skip(UserSearchDto::setFollowing);
         });
-        return userRepository.findByUsernameContainingIgnoreCase(query).stream()
+        return userRepository.findByDisplayNameContainingIgnoreCase(query).stream()
                 .map(user -> searchMapper.map(user, UserSearchDto.class))
                 .collect(Collectors.toList());
     }

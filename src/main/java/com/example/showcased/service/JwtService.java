@@ -23,6 +23,9 @@ public class JwtService {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
+    @Value("${security.jwt.password-expiration-time}")
+    private long jwtPasswordExpiration;
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -40,14 +43,33 @@ public class JwtService {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
+    public String generatePasswordResetToken(UserDetails userDetails) {
+        return buildPasswordResetToken(userDetails, jwtPasswordExpiration);
+    }
+
     public long getExpirationTime() {
         return jwtExpiration;
+    }
+
+    public long getPasswordExpirationTime() {
+        return jwtPasswordExpiration;
     }
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private String buildPasswordResetToken(UserDetails userDetails, long expiration) {
+        return Jwts
+                .builder()
+                .claim("type", "password-reset")
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))

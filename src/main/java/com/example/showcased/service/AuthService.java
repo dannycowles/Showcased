@@ -9,6 +9,8 @@ import com.example.showcased.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,15 +47,15 @@ public class AuthService {
     }
 
     // Function that verifies that the login credentials are valid
-    public LoginResponse loginUser(LoginDto loginDto) {
+    public JwtResponse loginUser(LoginDto loginDto) {
         User authenticatedUser = authenticate(loginDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
-        return new LoginResponse(jwtToken, jwtService.getExpirationTime());
+        return new JwtResponse(jwtToken, jwtService.getExpirationTime());
     }
 
     public User registerUser(RegisterDto registerDto) {
         // If the username already exists, throw an exception since we cannot have duplicates
-        if (userRepository.existsByUsername(registerDto.getUsername())) {
+        if (userRepository.existsByDisplayName(registerDto.getUsername())) {
             throw new UsernameTakenException("Username is already taken");
         }
 
@@ -79,10 +81,13 @@ public class AuthService {
                 .orElseThrow();
     }
 
-    public LoginStatusDto loginStatus(HttpSession session) {
-        Long id = (Long) session.getAttribute("user");
+    public LoginStatusDto loginStatus() {
+        // Extract user details if JWT token is present
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean loggedIn = authentication != null && authentication.isAuthenticated();
+
         LoginStatusDto loginStatusDto = new LoginStatusDto();
-        loginStatusDto.setLoggedIn(id != null);
+        loginStatusDto.setLoggedIn(loggedIn);
         return loginStatusDto;
     }
 
@@ -117,7 +122,7 @@ public class AuthService {
         otpRequestRepository.save(newOtpRequest);
     }
 
-    public void validateOTP(ValidateOTPDto validateOTPDto, HttpSession session) {
+    public JwtResponse validateOTP(ValidateOTPDto validateOTPDto) {
         // Find the user associated with the specified email
         // If there isn't one, still return error message for security purposes
         User user = userRepository.findByEmail(validateOTPDto.getEmail())
@@ -138,35 +143,31 @@ public class AuthService {
             throw new OTPValidationException("The code you have entered is expired. Please request a new one.");
         }
 
-        // Add session attribute for password reset security
-        session.setAttribute("otpVerifiedEmail", validateOTPDto.getEmail());
-
         // At this point, we know the codes match so we can clean up OTP from DB
         otpRequestRepository.delete(otpRequest);
+
+        // Generate change password JWT
+        String jwtToken = jwtService.generatePasswordResetToken(user);
+        return new JwtResponse(jwtToken, jwtService.getPasswordExpirationTime());
     }
 
-    public void changePassword(NewPasswordDto newPasswordDto, HttpSession session) {
-        // Retrieve and verify that the session attribute emails match
-        String verifiedEmail = (String) session.getAttribute("otpVerifiedEmail");
-        if (verifiedEmail == null || !verifiedEmail.equals(newPasswordDto.getEmail())) {
-            throw new NotVerifiedException("You are not verified");
-        }
+    public void changePassword(NewPasswordDto newPasswordDto) {
+        // Retrieve change password JWT
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User userDetails = (User) authentication.getPrincipal();
 
-        User user = userRepository.findByEmail(newPasswordDto.getEmail())
+        User user = userRepository.findByEmail(userDetails.getEmail())
                 .orElseThrow(() -> new NotVerifiedException("You are not verified"));
 
         // Update and save new encoded password
         String encodedPassword = passwordEncoder.encode(newPasswordDto.getNewPassword());
         user.setPassword(encodedPassword);
         userRepository.save(user);
-
-        // Remove the session attribute
-        session.removeAttribute("otpVerifiedEmail");
     }
 
     public UsernameCheckDto checkUsernameAvailability(String username) {
         UsernameCheckDto usernameCheckDto = new UsernameCheckDto();
-        usernameCheckDto.setTaken(userRepository.existsByUsername(username));
+        usernameCheckDto.setTaken(userRepository.existsByDisplayName(username));
         return usernameCheckDto;
     }
 }

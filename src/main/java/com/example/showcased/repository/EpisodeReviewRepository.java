@@ -15,7 +15,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
                 "EpisodePage",
                 r.id,
-                u.username,
+                u.displayName,
                 u.profilePicture,
                 r.userId,
                 e.showId,
@@ -50,7 +50,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
                 "EpisodePage",
                 r.id,
-                u.username,
+                u.displayName,
                 u.profilePicture,
                 r.userId,
                 e.showId,
@@ -125,7 +125,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
             "EpisodePage",
             r.id,
-            u.username,
+            u.displayName,
             u.profilePicture,
             r.userId,
             e.showId,

@@ -25,14 +25,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginDto loginDto) {
-        LoginResponse loginResponse = authService.loginUser(loginDto);
+    public ResponseEntity<JwtResponse> loginUser(@RequestBody LoginDto loginDto) {
+        JwtResponse loginResponse = authService.loginUser(loginDto);
         return ResponseEntity.ok(loginResponse);
     }
 
     @GetMapping("/login-status")
-    public ResponseEntity<LoginStatusDto> loginStatus(HttpSession session) {
-        return ResponseEntity.ok(authService.loginStatus(session));
+    public ResponseEntity<LoginStatusDto> loginStatus() {
+        LoginStatusDto loginStatus = authService.loginStatus();
+        return ResponseEntity.ok(loginStatus);
     }
 
     @PostMapping("/request-otp")
@@ -42,22 +43,22 @@ public class AuthController {
     }
 
     @PostMapping("/validate-otp")
-    public ResponseEntity<Void> validateOTP(@RequestBody ValidateOTPDto validateOTPDto, HttpSession session) {
-        authService.validateOTP(validateOTPDto, session);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<JwtResponse> validateOTP(@RequestBody ValidateOTPDto validateOTPDto) {
+        JwtResponse validateResponse = authService.validateOTP(validateOTPDto);
+        return ResponseEntity.ok(validateResponse);
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<Void> changePassword(@RequestBody NewPasswordDto newPasswordDto, HttpSession session) {
-        authService.changePassword(newPasswordDto, session);
+    public ResponseEntity<Void> changePassword(@RequestBody NewPasswordDto newPasswordDto) {
+        authService.changePassword(newPasswordDto);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/logout")
-    ResponseEntity<Void> logoutUser(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.noContent().build();
-    }
+//    @PostMapping("/logout")
+//    ResponseEntity<Void> logoutUser(HttpSession session) {
+//        session.invalidate();
+//        return ResponseEntity.noContent().build();
+//    }
 
     @GetMapping("/check-username/{username}")
     ResponseEntity<UsernameCheckDto> checkUsernameAvailability(@PathVariable String username) {
