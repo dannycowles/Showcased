@@ -3,7 +3,6 @@ package com.example.showcased.controller;
 import com.example.showcased.dto.*;
 import com.example.showcased.service.FileService;
 import com.example.showcased.service.ProfileService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -35,69 +33,64 @@ public class ProfileController {
     // ========== PROFILE DETAILS ==========
 
     @GetMapping("/details")
-    public ResponseEntity<ProfileDetailsDto> getProfileDetails(HttpSession session) {
-        ProfileDetailsDto profileDetails = profileService.getProfileDetails(session);
+    public ResponseEntity<ProfileDetailsDto> getProfileDetails() {
+        ProfileDetailsDto profileDetails = profileService.getProfileDetails();
         return ResponseEntity.ok(profileDetails);
     }
 
     @PatchMapping("/details")
-    public ResponseEntity<Void> updateProfileDetails(@RequestBody UpdateBioDto update, HttpSession session) {
-        profileService.updateProfileDetails(update, session);
+    public ResponseEntity<Void> updateProfileDetails(@RequestBody UpdateBioDto update) {
+        profileService.updateProfileDetails(update);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/activity")
-    public ResponseEntity<Page<ActivityDto>> getProfileActivity(@RequestParam(required = false, defaultValue = "1") int page, HttpSession session) {
-        Page<ActivityDto> activity = profileService.getProfileActivity(page, session);
+    public ResponseEntity<Page<ActivityDto>> getProfileActivity(@RequestParam(required = false, defaultValue = "1") int page) {
+        Page<ActivityDto> activity = profileService.getProfileActivity(page);
         return ResponseEntity.ok(activity);
     }
 
     @PostMapping("/profile-picture")
-    public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, HttpSession session) {
-        String fileUrl = fileService.uploadProfilePicture(file, session);
-        return ResponseEntity.ok(fileUrl);
+    public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
+        String fileUrl = fileService.uploadProfilePicture(file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(fileUrl);
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<Page<ShowReviewDto>> getReviews(HttpSession session,
-                                                          @PageableDefault(page = 1, size = DEFAULT_REVIEWS_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<ShowReviewDto> reviews = profileService.getReviews(session, pageable);
+    public ResponseEntity<Page<ShowReviewDto>> getReviews(@PageableDefault(page = 1, size = DEFAULT_REVIEWS_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ShowReviewDto> reviews = profileService.getReviews(pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/show-reviews")
-    public ResponseEntity<Page<ShowReviewDto>> getShowReviews(HttpSession session,
-                                                              @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort ="reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<ShowReviewDto> reviews = profileService.getShowReviews(session, pageable);
+    public ResponseEntity<Page<ShowReviewDto>> getShowReviews(@PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort ="reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ShowReviewDto> reviews = profileService.getShowReviews(pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/episode-reviews")
-    public ResponseEntity<Page<EpisodeReviewDto>> getEpisodeReviews(HttpSession session,
-                                                                    @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort ="reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<EpisodeReviewDto> reviews = profileService.getEpisodeReviews(session, pageable);
+    public ResponseEntity<Page<EpisodeReviewDto>> getEpisodeReviews(@PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort ="reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<EpisodeReviewDto> reviews = profileService.getEpisodeReviews(pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/followers")
     public ResponseEntity<Page<UserSearchDto>> getFollowers(@RequestParam(required = false) String name,
-                                                            HttpSession session,
                                                             @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        Page<UserSearchDto> followers = profileService.getFollowers(name, session, pageable);
+        Page<UserSearchDto> followers = profileService.getFollowers(name, pageable);
         return ResponseEntity.ok(followers);
     }
 
     @GetMapping("/following")
     public ResponseEntity<Page<UserSearchDto>> getFollowing(@RequestParam(required = false) String name,
-                                                            HttpSession session,
                                                             @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        Page<UserSearchDto> following = profileService.getFollowing(name, session, pageable);
+        Page<UserSearchDto> following = profileService.getFollowing(name, pageable);
         return ResponseEntity.ok(following);
     }
 
     @DeleteMapping("/followers/{id}")
-    public ResponseEntity<Void> removeFollower(@PathVariable("id") Long id, HttpSession session) {
-        profileService.removeFollower(id, session);
+    public ResponseEntity<Void> removeFollower(@PathVariable("id") Long id) {
+        profileService.removeFollower(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -107,14 +100,14 @@ public class ProfileController {
     // ========== SOCIALS =========
 
     @PostMapping("/socials")
-    public ResponseEntity<Void> addSocialAccount(@RequestBody SocialAccountDto account, HttpSession session) {
-        profileService.addSocialAccount(account, session);
+    public ResponseEntity<Void> addSocialAccount(@RequestBody SocialAccountDto account) {
+        profileService.addSocialAccount(account);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/socials/{socialId}")
-    public ResponseEntity<Void> removeSocialAccount(@PathVariable Long socialId, HttpSession session) {
-        profileService.removeSocialAccount(socialId, session);
+    public ResponseEntity<Void> removeSocialAccount(@PathVariable Long socialId) {
+        profileService.removeSocialAccount(socialId);
         return ResponseEntity.noContent().build();
     }
 
@@ -124,26 +117,26 @@ public class ProfileController {
     // ========= WATCHLIST ==========
 
     @PostMapping("/watchlist")
-    public ResponseEntity<Void> addShowToWatchlist(@RequestBody WatchSendDto show, HttpSession session) {
-        profileService.addShowToWatchlist(show, session);
+    public ResponseEntity<Void> addShowToWatchlist(@RequestBody WatchSendDto show) {
+        profileService.addShowToWatchlist(show);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/watchlist")
-    public ResponseEntity<List<WatchReturnDto>> getWatchlist(@RequestParam(value = "limit", required = false) Integer limit, HttpSession session) {
-        List<WatchReturnDto> watchlist = profileService.getWatchlist(limit, session);
+    public ResponseEntity<List<WatchReturnDto>> getWatchlist(@RequestParam(value = "limit", required = false) Integer limit) {
+        List<WatchReturnDto> watchlist = profileService.getWatchlist(limit);
         return ResponseEntity.ok(watchlist);
     }
 
     @DeleteMapping("/watchlist/{id}")
-    public ResponseEntity<Void> removeFromWatchlist(@PathVariable("id") String id, HttpSession session) {
-        profileService.removeFromWatchlist(id, session);
+    public ResponseEntity<Void> removeFromWatchlist(@PathVariable("id") String id) {
+        profileService.removeFromWatchlist(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/watchlist/{id}")
-    public ResponseEntity<Void> moveToWatchingList(@PathVariable("id") String id, HttpSession session) {
-        profileService.moveToWatchingList(id, session);
+    public ResponseEntity<Void> moveToWatchingList(@PathVariable("id") String id) {
+        profileService.moveToWatchingList(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -151,26 +144,26 @@ public class ProfileController {
     // ========== CURRENTLY WATCHING ==========
 
     @PostMapping("/currently-watching")
-    public ResponseEntity<Void> addShowToWatchingList(@RequestBody WatchSendDto show, HttpSession session) {
-        profileService.addShowToWatchingList(show, session);
+    public ResponseEntity<Void> addShowToWatchingList(@RequestBody WatchSendDto show) {
+        profileService.addShowToWatchingList(show);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/currently-watching")
-    public ResponseEntity<List<WatchReturnDto>> getWatchingList(@RequestParam(value = "limit", required = false) Integer limit, HttpSession session) {
-        List<WatchReturnDto> watchlist = profileService.getWatchingList(limit, session);
+    public ResponseEntity<List<WatchReturnDto>> getWatchingList(@RequestParam(value = "limit", required = false) Integer limit) {
+        List<WatchReturnDto> watchlist = profileService.getWatchingList(limit);
         return ResponseEntity.ok(watchlist);
     }
 
     @DeleteMapping("/currently-watching/{id}")
-    public ResponseEntity<Void> removeFromWatchingList(@PathVariable("id") String id, HttpSession session) {
-        profileService.removeFromWatchingList(id, session);
+    public ResponseEntity<Void> removeFromWatchingList(@PathVariable("id") String id) {
+        profileService.removeFromWatchingList(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/currently-watching/{id}")
-    public ResponseEntity<Void> moveToRankingList(@PathVariable("id") String id, HttpSession session) {
-        profileService.moveToRankingList(id, session);
+    public ResponseEntity<Void> moveToRankingList(@PathVariable("id") String id) {
+        profileService.moveToRankingList(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -178,26 +171,26 @@ public class ProfileController {
     // ========== SHOW RANKINGS ==========
 
     @PostMapping("/show-rankings")
-    public ResponseEntity<Void> addShowToRankingList(@RequestBody WatchSendDto show, HttpSession session) {
-        profileService.addShowToRankingList(show, session);
+    public ResponseEntity<Void> addShowToRankingList(@RequestBody WatchSendDto show) {
+        profileService.addShowToRankingList(show);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/show-rankings")
-    public ResponseEntity<List<RankingReturnDto>> getShowRankingList(@RequestParam(value = "limit", required = false) Integer limit, HttpSession session) {
-        List<RankingReturnDto> ranking = profileService.getShowRankingList(limit, session);
+    public ResponseEntity<List<RankingReturnDto>> getShowRankingList(@RequestParam(value = "limit", required = false) Integer limit) {
+        List<RankingReturnDto> ranking = profileService.getShowRankingList(limit);
         return ResponseEntity.ok(ranking);
     }
 
     @DeleteMapping("/show-rankings/{id}")
-    public ResponseEntity<Void> removeFromShowRankingList(@PathVariable("id") String id, HttpSession session) {
-        profileService.removeFromShowRankingList(id, session);
+    public ResponseEntity<Void> removeFromShowRankingList(@PathVariable("id") String id) {
+        profileService.removeFromShowRankingList(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/show-rankings")
-    public ResponseEntity<Void> updateShowRankingList(@RequestBody List<UpdateShowRankingDto> shows, HttpSession session) {
-        profileService.updateShowRankingList(shows, session);
+    public ResponseEntity<Void> updateShowRankingList(@RequestBody List<UpdateShowRankingDto> shows) {
+        profileService.updateShowRankingList(shows);
         return ResponseEntity.noContent().build();
     }
 
@@ -205,26 +198,26 @@ public class ProfileController {
     // ========== EPISODE RANKINGS ==========
 
     @PostMapping("/episode-rankings")
-    public ResponseEntity<Void> addEpisodeToRankingList(@RequestBody EpisodeRankingDto episode, HttpSession session) {
-        profileService.addEpisodeToRankingList(episode, session);
+    public ResponseEntity<Void> addEpisodeToRankingList(@RequestBody EpisodeRankingDto episode) {
+        profileService.addEpisodeToRankingList(episode);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/episode-rankings")
-    public ResponseEntity<List<EpisodeRankingReturnDto>> getEpisodeRankingList(@RequestParam(value = "limit", required = false) Integer limit, HttpSession session) {
-        List<EpisodeRankingReturnDto> ranking = profileService.getEpisodeRankingList(limit, session);
+    public ResponseEntity<List<EpisodeRankingReturnDto>> getEpisodeRankingList(@RequestParam(value = "limit", required = false) Integer limit) {
+        List<EpisodeRankingReturnDto> ranking = profileService.getEpisodeRankingList(limit);
         return ResponseEntity.ok(ranking);
     }
 
     @DeleteMapping("/episode-rankings/{id}")
-    public ResponseEntity<Void> removeFromEpisodeRankingList(@PathVariable("id") Long id, HttpSession session) {
-        profileService.removeFromEpisodeRankingList(id, session);
+    public ResponseEntity<Void> removeFromEpisodeRankingList(@PathVariable("id") Long id) {
+        profileService.removeFromEpisodeRankingList(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/episode-rankings")
-    public ResponseEntity<Void> updateEpisodeRankingList(@RequestBody List<UpdateEpisodeRankingDto> episodes, HttpSession session) {
-        profileService.updateEpisodeRankingList(episodes, session);
+    public ResponseEntity<Void> updateEpisodeRankingList(@RequestBody List<UpdateEpisodeRankingDto> episodes) {
+        profileService.updateEpisodeRankingList(episodes);
         return ResponseEntity.noContent().build();
     }
 
@@ -232,26 +225,26 @@ public class ProfileController {
     // ========== SEASON RANKINGS ==========
 
     @PostMapping("/season-rankings")
-    public ResponseEntity<SeasonRankingReturnDto> addSeasonToRankingList(@RequestBody SeasonRankingDto season, HttpSession session) {
-        SeasonRankingReturnDto seasonReturnDto = profileService.addSeasonToRankingList(season, session);
+    public ResponseEntity<SeasonRankingReturnDto> addSeasonToRankingList(@RequestBody SeasonRankingDto season) {
+        SeasonRankingReturnDto seasonReturnDto = profileService.addSeasonToRankingList(season);
         return ResponseEntity.status(HttpStatus.CREATED).body(seasonReturnDto);
     }
 
     @GetMapping("/season-rankings")
-    public ResponseEntity<List<SeasonRankingReturnDto>> getSeasonRankingList(@RequestParam(value = "limit", required = false) Integer limit, HttpSession session) {
-        List<SeasonRankingReturnDto> ranking = profileService.getSeasonRankingList(limit, session);
+    public ResponseEntity<List<SeasonRankingReturnDto>> getSeasonRankingList(@RequestParam(value = "limit", required = false) Integer limit) {
+        List<SeasonRankingReturnDto> ranking = profileService.getSeasonRankingList(limit);
         return ResponseEntity.ok(ranking);
     }
 
     @DeleteMapping("/season-rankings/{id}")
-    public ResponseEntity<Void> removeFromSeasonRankingList(@PathVariable("id") Long seasonId, HttpSession session) {
-        profileService.removeFromSeasonRankingList(seasonId, session);
+    public ResponseEntity<Void> removeFromSeasonRankingList(@PathVariable("id") Long seasonId) {
+        profileService.removeFromSeasonRankingList(seasonId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/season-rankings")
-    public ResponseEntity<Void> updateSeasonRankingList(@RequestBody List<UpdateSeasonRankingDto> seasons, HttpSession session) {
-        profileService.updateSeasonRankingList(seasons, session);
+    public ResponseEntity<Void> updateSeasonRankingList(@RequestBody List<UpdateSeasonRankingDto> seasons) {
+        profileService.updateSeasonRankingList(seasons);
         return ResponseEntity.noContent().build();
     }
 
@@ -259,29 +252,29 @@ public class ProfileController {
     // ========== CHARACTER RANKINGS ==========
 
     @PostMapping("/character-rankings")
-    public ResponseEntity<Void> addCharacterToRankingList(@RequestBody CharacterRankingDto character, HttpSession session) {
-        profileService.addCharacterToRankingList(character, session);
+    public ResponseEntity<Void> addCharacterToRankingList(@RequestBody CharacterRankingDto character) {
+        profileService.addCharacterToRankingList(character);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/character-rankings")
-    public ResponseEntity<?> getCharacterRankingList(@RequestParam(value = "limit", required = false) Integer limit, @RequestParam(value = "type", required = false) String characterType, HttpSession session) {
+    public ResponseEntity<?> getCharacterRankingList(@RequestParam(value = "limit", required = false) Integer limit, @RequestParam(value = "type", required = false) String characterType) {
         if (characterType == null) {
-            return ResponseEntity.ok(profileService.getAllCharacterRankings(limit, session));
+            return ResponseEntity.ok(profileService.getAllCharacterRankings(limit));
         } else {
-            return ResponseEntity.ok(profileService.getCharacterRankingList(limit, characterType, session));
+            return ResponseEntity.ok(profileService.getCharacterRankingList(limit, characterType));
         }
     }
 
     @DeleteMapping("/character-rankings/{id}")
-    public ResponseEntity<Void> removeFromCharacterRankingList(@PathVariable("id") String characterId, HttpSession session) {
-        profileService.removeFromCharacterRankingList(characterId, session);
+    public ResponseEntity<Void> removeFromCharacterRankingList(@PathVariable("id") String characterId) {
+        profileService.removeFromCharacterRankingList(characterId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/character-rankings")
-    public ResponseEntity<Void> updateCharacterRankingList(@RequestBody UpdateCharacterRankingsDto updates, HttpSession session) {
-        profileService.updateCharacterRankingList(updates, session);
+    public ResponseEntity<Void> updateCharacterRankingList(@RequestBody UpdateCharacterRankingsDto updates) {
+        profileService.updateCharacterRankingList(updates);
         return ResponseEntity.noContent().build();
     }
 
@@ -290,26 +283,26 @@ public class ProfileController {
 
     // ========== CHARACTER DYNAMICS RANKING ==========
     @GetMapping("character-dynamics")
-    public ResponseEntity<List<DynamicRankingReturnDto>> getDynamicsRankingList(@RequestParam(required = false) Integer limit, HttpSession session) {
-        List<DynamicRankingReturnDto> dynamics = profileService.getDynamicsRankingList(limit, session);
+    public ResponseEntity<List<DynamicRankingReturnDto>> getDynamicsRankingList(@RequestParam(required = false) Integer limit) {
+        List<DynamicRankingReturnDto> dynamics = profileService.getDynamicsRankingList(limit);
         return ResponseEntity.ok(dynamics);
     }
 
     @PostMapping("character-dynamics")
-    public ResponseEntity<DynamicRankingReturnDto> addDynamicToRankingList(@RequestBody DynamicRankingDto dynamic, HttpSession session) {
-        DynamicRankingReturnDto newDynamic = profileService.addDynamicToRankingList(dynamic, session);
+    public ResponseEntity<DynamicRankingReturnDto> addDynamicToRankingList(@RequestBody DynamicRankingDto dynamic) {
+        DynamicRankingReturnDto newDynamic = profileService.addDynamicToRankingList(dynamic);
         return ResponseEntity.status(HttpStatus.CREATED).body(newDynamic);
     }
 
     @DeleteMapping("character-dynamics/{id}")
-    public ResponseEntity<Void> removeDynamicFromRankingList(@PathVariable Long id, HttpSession session) {
-        profileService.removeDynamicFromRankingList(id, session);
+    public ResponseEntity<Void> removeDynamicFromRankingList(@PathVariable Long id) {
+        profileService.removeDynamicFromRankingList(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("character-dynamics")
-    public ResponseEntity<Void> updateDynamicRankingList(@RequestBody List<UpdateCharacterDynamicDto> updates, HttpSession session) {
-        profileService.updateDynamicRankingList(updates, session);
+    public ResponseEntity<Void> updateDynamicRankingList(@RequestBody List<UpdateCharacterDynamicDto> updates) {
+        profileService.updateDynamicRankingList(updates);
         return ResponseEntity.noContent().build();
     }
 
@@ -319,44 +312,44 @@ public class ProfileController {
     // ========== COLLECTIONS ==========
 
     @GetMapping("/collections")
-    public ResponseEntity<List<CollectionDto>> getCollectionList(@RequestParam(required = false) String name, HttpSession session) {
-        List<CollectionDto> collections = profileService.getCollectionList(name, session);
+    public ResponseEntity<List<CollectionDto>> getCollectionList(@RequestParam(required = false) String name) {
+        List<CollectionDto> collections = profileService.getCollectionList(name);
         return ResponseEntity.ok(collections);
     }
 
     @PostMapping("/collections")
-    public ResponseEntity<CollectionDto> createCollection(@RequestBody CreateCollectionDto collection, HttpSession session) {
-        CollectionDto newCollection = profileService.createCollection(collection, session);
+    public ResponseEntity<CollectionDto> createCollection(@RequestBody CreateCollectionDto collection) {
+        CollectionDto newCollection = profileService.createCollection(collection);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCollection);
     }
 
     @DeleteMapping("/collections/{id}")
-    public ResponseEntity<Void> deleteCollection(@PathVariable Long id, HttpSession session) {
-        profileService.deleteCollection(id, session);
+    public ResponseEntity<Void> deleteCollection(@PathVariable Long id) {
+        profileService.deleteCollection(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/collections/{id}")
-    public ResponseEntity<Void> updateCollection(@PathVariable Long id, @RequestBody UpdateCollectionDto collection, HttpSession session) {
-        profileService.updateCollection(id, collection, session);
+    public ResponseEntity<Void> updateCollection(@PathVariable Long id, @RequestBody UpdateCollectionDto collection) {
+        profileService.updateCollection(id, collection);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/collections/{id}")
-    public ResponseEntity<CollectionReturnDto> getCollectionDetails(@PathVariable Long id, HttpSession session) {
-        CollectionReturnDto collection = profileService.getCollection(id, session);
+    public ResponseEntity<CollectionReturnDto> getCollectionDetails(@PathVariable Long id) {
+        CollectionReturnDto collection = profileService.getCollection(id);
         return ResponseEntity.ok(collection);
     }
 
     @PostMapping("/collections/{id}/shows")
-    public ResponseEntity<Void> addShowToCollection(@PathVariable Long id, @RequestBody WatchSendDto show, HttpSession session) {
-        profileService.addShowToCollection(id, show, session);
+    public ResponseEntity<Void> addShowToCollection(@PathVariable Long id, @RequestBody WatchSendDto show) {
+        profileService.addShowToCollection(id, show);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/collections/{collectionId}/shows/{showId}")
-    public ResponseEntity<Void> removeShowFromCollection(@PathVariable Long collectionId, @PathVariable Long showId, HttpSession session) {
-        profileService.removeShowFromCollection(collectionId, showId, session);
+    public ResponseEntity<Void> removeShowFromCollection(@PathVariable Long collectionId, @PathVariable Long showId) {
+        profileService.removeShowFromCollection(collectionId, showId);
         return ResponseEntity.noContent().build();
     }
 }

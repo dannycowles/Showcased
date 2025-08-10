@@ -5,7 +5,6 @@ import com.example.showcased.entity.*;
 import com.example.showcased.entity.Collection;
 import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
-import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -43,6 +42,7 @@ public class ProfileService {
     private final DynamicRankingRepository dynamicRankingRepository;
     private final ShowService showService;
     private final ActivitiesRepository activitiesRepository;
+    private final AuthService authService;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -64,7 +64,9 @@ public class ProfileService {
                           CharacterInfoRepository characterInfoRepository,
                           EpisodeReviewRepository episodeReviewRepository,
                           DynamicRankingRepository dynamicRankingRepository,
-                          ShowService showService, ActivitiesRepository activitiesRepository) {
+                          ShowService showService,
+                          ActivitiesRepository activitiesRepository,
+                          AuthService authService) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -87,6 +89,7 @@ public class ProfileService {
         this.dynamicRankingRepository = dynamicRankingRepository;
         this.showService = showService;
         this.activitiesRepository = activitiesRepository;
+        this.authService = authService;
     }
 
     /**
@@ -101,10 +104,10 @@ public class ProfileService {
         }
     }
 
-    public ProfileDetailsDto getProfileDetails(HttpSession session) {
-        Long id = (Long) session.getAttribute("user");
-        User user = this.userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+
+
+    public ProfileDetailsDto getProfileDetails() {
+        User user = authService.retrieveUserFromJwt();
 
         // Special profile details model mapper that skips the set following column
         ModelMapper profileMapper = new ModelMapper();
@@ -114,36 +117,33 @@ public class ProfileService {
 
         ProfileDetailsDto profileDetails = new ProfileDetailsDto();
         UserHeaderDataDto headerData = profileMapper.map(user, UserHeaderDataDto.class);
-        headerData.setSocialAccounts(getSocialAccounts(session));
+        headerData.setSocialAccounts(getSocialAccounts());
         headerData.setOwnProfile(true);
         profileDetails.setHeaderData(headerData);
 
-        profileDetails.setWatchlistTop(getWatchlist(numTopEntries, session));
-        profileDetails.setWatchingTop(getWatchingList(numTopEntries, session));
-        profileDetails.setShowRankingTop(getShowRankingList(numTopEntries, session));
-        profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries, session));
-        profileDetails.setReviews(getReviews(session, PageRequest.of(1, numTopEntries)).getContent());
-        profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries, session));
-        profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries, session));
-        profileDetails.setDynamicRankingTop(getDynamicsRankingList(numTopEntries, session));
+        profileDetails.setWatchlistTop(getWatchlist(numTopEntries));
+        profileDetails.setWatchingTop(getWatchingList(numTopEntries));
+        profileDetails.setShowRankingTop(getShowRankingList(numTopEntries));
+        profileDetails.setEpisodeRankingTop(getEpisodeRankingList(numTopEntries));
+        profileDetails.setReviews(getReviews(PageRequest.of(1, numTopEntries)).getContent());
+        profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries));
+        profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries));
+        profileDetails.setDynamicRankingTop(getDynamicsRankingList(numTopEntries));
         return profileDetails;
     }
 
-    public void updateProfileDetails(UpdateBioDto update, HttpSession session) {
-        Long id = (Long) session.getAttribute("user");
-        User user = this.userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-
+    public void updateProfileDetails(UpdateBioDto update) {
+        User user = authService.retrieveUserFromJwt();
         user.setBio(update.getBio());
         userRepository.save(user);
     }
 
-    public void addShowToWatchlist(WatchSendDto show, HttpSession session) {
-        show.setUserId((Long) session.getAttribute("user"));
+    public void addShowToWatchlist(WatchSendDto show) {
+        User user = authService.retrieveUserFromJwt();
         addToShowInfoRepository(show);
 
         // Check if the show is already in the user's watchlist, if so we throw an exception
-        if (watchlistRepository.existsById(new WatchId(show.getUserId(), show.getShowId()))) {
+        if (watchlistRepository.existsById(new WatchId(user.getId(), show.getShowId()))) {
             throw new AlreadyOnListException("Show is already on watchlist");
         }
         watchlistRepository.save(modelMapper.map(show, Watchlist.class));
@@ -158,45 +158,46 @@ public class ProfileService {
         }
     }
 
-    public List<WatchReturnDto> getWatchlist(Integer limit, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        return watchlistRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<WatchReturnDto> getWatchlist(Integer limit) {
+        User user = authService.retrieveUserFromJwt();
+        return watchlistRepository.findByIdUserId(user.getId(), getPageRequest(limit));
     }
 
-    public void removeFromWatchlist(String id, HttpSession session) {
-        watchlistRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+    public void removeFromWatchlist(String id) {
+        User user = authService.retrieveUserFromJwt();
+        watchlistRepository.deleteById(new WatchId(user.getId(), Long.valueOf(id)));
     }
 
-    public void moveToWatchingList(String id, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void moveToWatchingList(String id) {
+        User user = authService.retrieveUserFromJwt();
         // First we need to delete the show from the user's watchlist
-        watchlistRepository.deleteById(new WatchId(userId, Long.valueOf(id)));
+        watchlistRepository.deleteById(new WatchId(user.getId(), Long.valueOf(id)));
 
         // Then, we add the show to the currently watching list
         Watching watching = new Watching();
-        watching.setId(new WatchId(userId, Long.valueOf(id)));
+        watching.setId(new WatchId(user.getId(), Long.valueOf(id)));
         watchingRepository.save(watching);
     }
 
 
 
 
-    public void addSocialAccount(SocialAccountDto account, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void addSocialAccount(SocialAccountDto account) {
+        User user =  authService.retrieveUserFromJwt();
         UserSocial socialAccount = new UserSocial();
-        socialAccount.setId(new UserSocialId(userId, account.getSocialId()));
+        socialAccount.setId(new UserSocialId(user.getId(), account.getSocialId()));
         socialAccount.setHandle(account.getHandle());
         userSocialRepository.save(socialAccount);
     }
 
-    public void removeSocialAccount(Long socialId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        userSocialRepository.deleteById(new UserSocialId(userId, socialId));
+    public void removeSocialAccount(Long socialId) {
+        User user =  authService.retrieveUserFromJwt();
+        userSocialRepository.deleteById(new UserSocialId(user.getId(), socialId));
     }
 
-    private List<SocialAccountReturnDto> getSocialAccounts(HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        return userSocialRepository.findByIdUserId(userId);
+    private List<SocialAccountReturnDto> getSocialAccounts() {
+        User user = authService.retrieveUserFromJwt();
+        return userSocialRepository.findByIdUserId(user.getId());
     }
 
 
@@ -204,37 +205,38 @@ public class ProfileService {
 
 
 
-    public void addShowToWatchingList(WatchSendDto show, HttpSession session) {
-        show.setUserId((Long) session.getAttribute("user"));
+    public void addShowToWatchingList(WatchSendDto show) {
+        User user = authService.retrieveUserFromJwt();
         addToShowInfoRepository(show);
 
         // Check if the show is already in the user's currently watching list, if so we throw an exception
-        if (watchingRepository.existsById(new WatchId(show.getUserId(), show.getShowId()))) {
+        if (watchingRepository.existsById(new WatchId(user.getId(), show.getShowId()))) {
             throw new AlreadyOnListException("Show is already on watching list");
         }
         watchingRepository.save(modelMapper.map(show, Watching.class));
     }
 
-    public List<WatchReturnDto> getWatchingList(Integer limit, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        return watchingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<WatchReturnDto> getWatchingList(Integer limit) {
+        User user = authService.retrieveUserFromJwt();
+        return watchingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
     }
 
-    public void removeFromWatchingList(String id, HttpSession session) {
-        watchingRepository.deleteById(new WatchId((Long) session.getAttribute("user"), Long.valueOf(id)));
+    public void removeFromWatchingList(String id) {
+        User user = authService.retrieveUserFromJwt();
+        watchingRepository.deleteById(new WatchId(user.getId(), Long.valueOf(id)));
     }
 
-    public void moveToRankingList(String id, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void moveToRankingList(String id) {
+        User user = authService.retrieveUserFromJwt();
         // First we need to delete the show from the user's currently watching list
-        watchingRepository.deleteById(new WatchId(userId, Long.valueOf(id)));
+        watchingRepository.deleteById(new WatchId(user.getId(), Long.valueOf(id)));
 
         // Then, we add the show to the user's ranking list
         // Check if the user's ranking list is empty, if so it's rank number will be 1,
         // else it wil be added to the end of the list
-        Integer maxRank = showRankingRepository.findMaxRankNumByUserId(userId);
+        Integer maxRank = showRankingRepository.findMaxRankNumByUserId(user.getId());
         ShowRanking ranking = new ShowRanking();
-        ranking.setId(new WatchId(userId, Long.valueOf(id)));
+        ranking.setId(new WatchId(user.getId(), Long.valueOf(id)));
         if (maxRank == null) {
             ranking.setRankNum(1L);
         } else {
@@ -246,20 +248,20 @@ public class ProfileService {
 
 
 
-    public void addShowToRankingList(WatchSendDto show, HttpSession session) {
-        show.setUserId((Long) session.getAttribute("user"));
+    public void addShowToRankingList(WatchSendDto show) {
+        User user = authService.retrieveUserFromJwt();
         addToShowInfoRepository(show);
 
         // Check if the show is already in the user's show ranking list, if so we throw an exception
-        if (showRankingRepository.existsById(new WatchId(show.getUserId(), show.getShowId()))) {
+        if (showRankingRepository.existsById(new WatchId(user.getId(), show.getShowId()))) {
             throw new AlreadyOnListException("Show is already on ranking list");
         }
 
         // Check if the user's show ranking list is empty, if so it's rank number will be 1,
         // else it wil be added to the end of the list
-        Integer maxRank = showRankingRepository.findMaxRankNumByUserId(show.getUserId());
+        Integer maxRank = showRankingRepository.findMaxRankNumByUserId(user.getId());
         ShowRanking ranking = new ShowRanking();
-        ranking.setId(new WatchId(show.getUserId(), show.getShowId()));
+        ranking.setId(new WatchId(user.getId(), show.getShowId()));
         if (maxRank == null) {
             ranking.setRankNum(1L);
         } else {
@@ -268,29 +270,30 @@ public class ProfileService {
         showRankingRepository.save(ranking);
     }
 
-    public List<RankingReturnDto> getShowRankingList(Integer limit, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        return showRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<RankingReturnDto> getShowRankingList(Integer limit) {
+        User user = authService.retrieveUserFromJwt();
+        return showRankingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
     }
 
-    public void removeFromShowRankingList(String id, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        showRankingRepository.deleteById(new WatchId(userId, Long.valueOf(id)));
+    public void removeFromShowRankingList(String id) {
+        User user = authService.retrieveUserFromJwt();
+        showRankingRepository.deleteById(new WatchId(user.getId(), Long.valueOf(id)));
 
         // After deleting from the show ranking list we will need to adjust the ranking numbers to account for it
-        List<RankingReturnDto> rankings = showRankingRepository.findByIdUserId(userId, Pageable.unpaged());
+        List<RankingReturnDto> rankings = showRankingRepository.findByIdUserId(user.getId(), Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             ShowRanking ranking = new ShowRanking();
-            ranking.setId(new WatchId(userId, rankings.get(i).getShowId()));
+            ranking.setId(new WatchId(user.getId(), rankings.get(i).getShowId()));
             ranking.setRankNum(i + 1L);
             showRankingRepository.save(ranking);
         }
     }
 
-    public void updateShowRankingList(List<UpdateShowRankingDto> shows, HttpSession session) {
+    public void updateShowRankingList(List<UpdateShowRankingDto> shows) {
+        User user = authService.retrieveUserFromJwt();
         for (UpdateShowRankingDto show : shows) {
             ShowRanking newRanking = modelMapper.map(show, ShowRanking.class);
-            newRanking.getId().setUserId((Long) session.getAttribute("user"));
+            newRanking.getId().setUserId(user.getId());
             showRankingRepository.save(newRanking);
         }
     }
@@ -298,10 +301,10 @@ public class ProfileService {
 
 
 
-    public void addEpisodeToRankingList(EpisodeRankingDto episode, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void addEpisodeToRankingList(EpisodeRankingDto episode) {
+        User user = authService.retrieveUserFromJwt();
         EpisodeRanking ranking = new EpisodeRanking();
-        EpisodeRankingId rankingId = new EpisodeRankingId(userId, episode.getEpisodeId());
+        EpisodeRankingId rankingId = new EpisodeRankingId(user.getId(), episode.getEpisodeId());
         ranking.setId(rankingId);
 
         // If the episode doesn't exist in the episode info table already we add it for easy access
@@ -325,7 +328,7 @@ public class ProfileService {
 
         // Check if the user's episode ranking list is empty, if so it's rank number will be 1,
         // else it wil be added to the end of the list
-        Integer maxRank = episodeRankingRepository.findMaxRankNumByUserId(userId);
+        Integer maxRank = episodeRankingRepository.findMaxRankNumByUserId(user.getId());
         if (maxRank == null) {
             ranking.setRankNum(1L);
         } else {
@@ -334,30 +337,30 @@ public class ProfileService {
         episodeRankingRepository.save(ranking);
     }
 
-    public List<EpisodeRankingReturnDto> getEpisodeRankingList(Integer limit, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        return episodeRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<EpisodeRankingReturnDto> getEpisodeRankingList(Integer limit) {
+        User user = authService.retrieveUserFromJwt();
+        return episodeRankingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
     }
 
-    public void removeFromEpisodeRankingList(Long episodeId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        episodeRankingRepository.deleteById(new EpisodeRankingId(userId, episodeId));
+    public void removeFromEpisodeRankingList(Long episodeId) {
+        User user = authService.retrieveUserFromJwt();
+        episodeRankingRepository.deleteById(new EpisodeRankingId(user.getId(), episodeId));
 
         // After deleting from the show ranking list we will need to adjust the ranking numbers to account for it
-        List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByIdUserId(userId, Pageable.unpaged());
+        List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByIdUserId(user.getId(), Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             EpisodeRanking ranking = new EpisodeRanking();
-            ranking.setId(new EpisodeRankingId(userId, rankings.get(i).getEpisodeId()));
+            ranking.setId(new EpisodeRankingId(user.getId(), rankings.get(i).getEpisodeId()));
             ranking.setRankNum(i + 1L);
             episodeRankingRepository.save(ranking);
         }
     }
 
-    public void updateEpisodeRankingList(List<UpdateEpisodeRankingDto> episodes, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateEpisodeRankingList(List<UpdateEpisodeRankingDto> episodes) {
+        User user = authService.retrieveUserFromJwt();
         for (UpdateEpisodeRankingDto episode : episodes) {
             EpisodeRanking newRanking = new EpisodeRanking();
-            newRanking.setId(new EpisodeRankingId(userId, episode.getId()));
+            newRanking.setId(new EpisodeRankingId(user.getId(), episode.getId()));
             newRanking.setRankNum(episode.getRankNum());
             episodeRankingRepository.save(newRanking);
         }
@@ -366,8 +369,8 @@ public class ProfileService {
 
 
 
-    public SeasonRankingReturnDto addSeasonToRankingList(SeasonRankingDto season, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public SeasonRankingReturnDto addSeasonToRankingList(SeasonRankingDto season) {
+        User user = authService.retrieveUserFromJwt();
 
         // Retrieve additional needed season information
         SeasonPartialDto seasonDetails = showService.getSeasonPartialDetails(season.getShowId(), season.getSeason());
@@ -375,7 +378,7 @@ public class ProfileService {
         seasonDetails.setShowTitle(season.getShowTitle());
 
         SeasonRanking ranking = new SeasonRanking();
-        SeasonRankingId rankingId = new SeasonRankingId(userId, seasonDetails.getId());
+        SeasonRankingId rankingId = new SeasonRankingId(user.getId(), seasonDetails.getId());
         ranking.setId(rankingId);
 
         // If season doesn't exist in season info table add it
@@ -390,7 +393,7 @@ public class ProfileService {
         }
 
         // If user's ranking list is empty, rank will start at 1 else append to end
-        Integer maxRank = seasonRankingRepository.findMaxRankNumByUserId(userId);
+        Integer maxRank = seasonRankingRepository.findMaxRankNumByUserId(user.getId());
         if (maxRank == null) {
             ranking.setRankNum(1L);
         } else {
@@ -403,30 +406,30 @@ public class ProfileService {
         return seasonReturnDto;
     }
 
-    public List<SeasonRankingReturnDto> getSeasonRankingList(Integer limit, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        return seasonRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<SeasonRankingReturnDto> getSeasonRankingList(Integer limit) {
+        User user = authService.retrieveUserFromJwt();
+        return seasonRankingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
     }
 
-    public void removeFromSeasonRankingList(Long seasonId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        seasonRankingRepository.deleteById(new SeasonRankingId(userId, seasonId));
+    public void removeFromSeasonRankingList(Long seasonId) {
+        User user = authService.retrieveUserFromJwt();
+        seasonRankingRepository.deleteById(new SeasonRankingId(user.getId(), seasonId));
 
         // After deleting the season we need to adjust all the rank numbers to account for it
-        List<SeasonRankingReturnDto> rankings = seasonRankingRepository.findByIdUserId(userId, Pageable.unpaged());
+        List<SeasonRankingReturnDto> rankings = seasonRankingRepository.findByIdUserId(user.getId(), Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             SeasonRanking newRanking = new SeasonRanking();
-            newRanking.setId(new SeasonRankingId(userId, rankings.get(i).getId()));
+            newRanking.setId(new SeasonRankingId(user.getId(), rankings.get(i).getId()));
             newRanking.setRankNum(i + 1L);
             seasonRankingRepository.save(newRanking);
         }
     }
 
-    public void updateSeasonRankingList(List<UpdateSeasonRankingDto> seasons, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateSeasonRankingList(List<UpdateSeasonRankingDto> seasons) {
+        User user = authService.retrieveUserFromJwt();
         seasons.forEach(season -> {
             SeasonRanking newRanking = modelMapper.map(season, SeasonRanking.class);
-            newRanking.setId(new SeasonRankingId(userId, season.getId()));
+            newRanking.setId(new SeasonRankingId(user.getId(), season.getId()));
             newRanking.setRankNum(season.getRankNum());
             seasonRankingRepository.save(newRanking);
         });
@@ -436,8 +439,8 @@ public class ProfileService {
 
 
 
-    public void addCharacterToRankingList(CharacterRankingDto character, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void addCharacterToRankingList(CharacterRankingDto character) {
+        User user = authService.retrieveUserFromJwt();
 
         // Check to ensure the character type is valid
         if (!Arrays.asList(validCharacterTypes).contains(character.getCharacterType())) {
@@ -459,7 +462,7 @@ public class ProfileService {
         }
 
         CharacterRanking ranking = new CharacterRanking();
-        ranking.setId(new CharacterRankingId(userId, character.getCharacterId()));
+        ranking.setId(new CharacterRankingId(user.getId(), character.getCharacterId()));
         ranking.setCharacterType(character.getCharacterType());
 
         // Check if the character is already on the user's list
@@ -468,7 +471,7 @@ public class ProfileService {
         }
 
         // If user's ranking list for that type is empty, start at 1 else append to end
-        Integer maxRank = characterRankingRepository.findMaxRankNumByCharacterType(userId, character.getCharacterType());
+        Integer maxRank = characterRankingRepository.findMaxRankNumByCharacterType(user.getId(), character.getCharacterType());
         if (maxRank != null) {
             ranking.setRankNum(maxRank + 1);
         } else {
@@ -477,42 +480,42 @@ public class ProfileService {
         characterRankingRepository.save(ranking);
     }
 
-    public List<CharacterRankingReturnDto> getCharacterRankingList(Integer limit, String characterType, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public List<CharacterRankingReturnDto> getCharacterRankingList(Integer limit, String characterType) {
+        User user = authService.retrieveUserFromJwt();
 
         // Check to ensure requested character type is valid
         if (!Arrays.asList(validCharacterTypes).contains(characterType)) {
             throw new InvalidCharacterType("Invalid character type: " + characterType);
         }
 
-        return characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, getPageRequest(limit));
+        return characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), characterType, getPageRequest(limit));
     }
 
-    public AllCharacterRankingDto getAllCharacterRankings(Integer limit, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public AllCharacterRankingDto getAllCharacterRankings(Integer limit) {
+        User user = authService.retrieveUserFromJwt();
         AllCharacterRankingDto rankings = new AllCharacterRankingDto();
 
-        rankings.setProtagonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[0], getPageRequest(limit)));
-        rankings.setDeuteragonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[1], getPageRequest(limit)));
-        rankings.setAntagonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[2], getPageRequest(limit)));
-        rankings.setTritagonists(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[3], getPageRequest(limit)));
-        rankings.setSide(characterRankingRepository.findByIdUserIdAndCharacterType(userId, validCharacterTypes[4], getPageRequest(limit)));
+        rankings.setProtagonists(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[0], getPageRequest(limit)));
+        rankings.setDeuteragonists(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[1], getPageRequest(limit)));
+        rankings.setAntagonists(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[2], getPageRequest(limit)));
+        rankings.setTritagonists(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[3], getPageRequest(limit)));
+        rankings.setSide(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[4], getPageRequest(limit)));
         return rankings;
     }
 
-    public void removeFromCharacterRankingList(String characterId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void removeFromCharacterRankingList(String characterId) {
+        User user = authService.retrieveUserFromJwt();
 
-        Optional<CharacterRanking> characterDelete = characterRankingRepository.findById(new CharacterRankingId(userId, characterId));
+        Optional<CharacterRanking> characterDelete = characterRankingRepository.findById(new CharacterRankingId(user.getId(), characterId));
         if (characterDelete.isPresent()) {
             String characterType = characterDelete.get().getCharacterType();
             characterRankingRepository.delete(characterDelete.get());
 
             // After deleting the character, we need to update the ranks of the other characters on list
-            List<CharacterRankingReturnDto> rankings = characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, Pageable.unpaged());
+            List<CharacterRankingReturnDto> rankings = characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), characterType, Pageable.unpaged());
             for (int i = 0; i < rankings.size(); i++) {
                 CharacterRanking newRanking = new CharacterRanking();
-                newRanking.setId(new CharacterRankingId(userId, rankings.get(i).getId()));
+                newRanking.setId(new CharacterRankingId(user.getId(), rankings.get(i).getId()));
                 newRanking.setRankNum(i + 1);
                 newRanking.setCharacterType(characterType);
                 characterRankingRepository.save(newRanking);
@@ -520,8 +523,8 @@ public class ProfileService {
         }
     }
 
-    public void updateCharacterRankingList(UpdateCharacterRankingsDto updates, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateCharacterRankingList(UpdateCharacterRankingsDto updates) {
+        User user = authService.retrieveUserFromJwt();
 
         // Check to ensure character type is valid
         if (!Arrays.asList(validCharacterTypes).contains(updates.getCharacterType())) {
@@ -531,7 +534,7 @@ public class ProfileService {
         // Update rankings
         updates.getUpdates().forEach( update -> {
             CharacterRanking newRanking = new CharacterRanking();
-            newRanking.setId(new CharacterRankingId(userId, update.getId()));
+            newRanking.setId(new CharacterRankingId(user.getId(), update.getId()));
             newRanking.setRankNum(update.getRankNum());
             newRanking.setCharacterType(updates.getCharacterType());
             characterRankingRepository.save(newRanking);
@@ -541,8 +544,8 @@ public class ProfileService {
 
 
 
-    public Page<ShowReviewDto> getReviews(HttpSession session, Pageable pageable) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<ShowReviewDto> getReviews(Pageable pageable) {
+        User user = authService.retrieveUserFromJwt();
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -551,8 +554,8 @@ public class ProfileService {
                 pageable.getSort()
         );
 
-        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(userId, userId, Pageable.unpaged()).getContent();
-        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(userId, userId, Pageable.unpaged()).getContent();
+        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(user.getId(), user.getId(), Pageable.unpaged()).getContent();
+        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(user.getId(), user.getId(), Pageable.unpaged()).getContent();
 
         Sort sort = modifiedPage.getSort();
         Comparator<ShowReviewDto> comparator;
@@ -583,8 +586,8 @@ public class ProfileService {
         return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
     }
 
-    public Page<ShowReviewDto> getShowReviews(HttpSession session, Pageable pageable) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<ShowReviewDto> getShowReviews(Pageable pageable) {
+        User user =  authService.retrieveUserFromJwt();
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -592,11 +595,11 @@ public class ProfileService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return showReviewRepository.findByUserId(userId, userId, modifiedPage);
+        return showReviewRepository.findByUserId(user.getId(), user.getId(), modifiedPage);
     }
 
-    public Page<EpisodeReviewDto> getEpisodeReviews(HttpSession session, Pageable pageable) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<EpisodeReviewDto> getEpisodeReviews(Pageable pageable) {
+        User user =  authService.retrieveUserFromJwt();
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -604,11 +607,11 @@ public class ProfileService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return episodeReviewRepository.findByUserId(userId, userId, modifiedPage);
+        return episodeReviewRepository.findByUserId(user.getId(), user.getId(), modifiedPage);
     }
 
-    public Page<UserSearchDto> getFollowers(String name, HttpSession session, Pageable pageable) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<UserSearchDto> getFollowers(String name, Pageable pageable) {
+        User user =  authService.retrieveUserFromJwt();
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -617,14 +620,14 @@ public class ProfileService {
         );
 
         if (name != null) {
-            return followersRepository.getFollowersByIdFollowingIdFiltered(userId, name, modifiedPage);
+            return followersRepository.getFollowersByIdFollowingIdFiltered(user.getId(), name, modifiedPage);
         } else {
-            return followersRepository.getFollowersByIdFollowingId(userId, modifiedPage);
+            return followersRepository.getFollowersByIdFollowingId(user.getId(), modifiedPage);
         }
     }
 
-    public Page<UserSearchDto> getFollowing(String name, HttpSession session, Pageable pageable) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<UserSearchDto> getFollowing(String name, Pageable pageable) {
+        User user =  authService.retrieveUserFromJwt();
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -633,74 +636,74 @@ public class ProfileService {
         );
 
         if (name != null) {
-            return followersRepository.getFollowingByIdFollowerIdFiltered(userId, name, modifiedPage);
+            return followersRepository.getFollowingByIdFollowerIdFiltered(user.getId(), name, modifiedPage);
         } else {
-            return followersRepository.getFollowingByIdFollowerId(userId, modifiedPage);
+            return followersRepository.getFollowingByIdFollowerId(user.getId(), modifiedPage);
         }
     }
 
     @Transactional
-    public void removeFollower(Long removeId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void removeFollower(Long removeId) {
+        User user =  authService.retrieveUserFromJwt();
         Follower removeFollower = new Follower();
         removeFollower.setFollowerId(removeId);
-        removeFollower.setFollowingId(userId);
+        removeFollower.setFollowingId(user.getId());
         followersRepository.delete(removeFollower);
 
         // Decrement the number of followers for the person completing the action, and the number of people following for the user being removed
-        userRepository.decrementFollowersCount(userId);
+        userRepository.decrementFollowersCount(user.getId());
         userRepository.decrementFollowingCount(removeId);
     }
 
 
 
-    public List<CollectionDto> getCollectionList(String name, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public List<CollectionDto> getCollectionList(String name) {
+        User user = authService.retrieveUserFromJwt();
 
         // If a name is specified filter by that, else retrieve all collections
         if (name != null) {
-            return collectionsRepository.findByUserIdAndCollectionNameContainingIgnoreCase(userId, name).stream()
+            return collectionsRepository.findByUserIdAndCollectionNameContainingIgnoreCase(user.getId(), name).stream()
                     .map(collection -> modelMapper.map(collection, CollectionDto.class))
                     .collect(Collectors.toList());
         } else {
-            return collectionsRepository.findByUserId(userId).stream()
+            return collectionsRepository.findByUserId(user.getId()).stream()
                     .map(collection -> modelMapper.map(collection, CollectionDto.class))
                     .collect(Collectors.toList());
         }
     }
 
-    public CollectionDto createCollection(CreateCollectionDto collection, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public CollectionDto createCollection(CreateCollectionDto collection) {
+        User user = authService.retrieveUserFromJwt();
 
         // Check to make sure user doesn't have a collection with the provided name already
-        if (collectionsRepository.existsByUserIdAndCollectionName(userId, collection.getCollectionName())) {
+        if (collectionsRepository.existsByUserIdAndCollectionName(user.getId(), collection.getCollectionName())) {
             throw new DuplicateCollectionNameException("You already have a collection named " + collection.getCollectionName());
         }
 
         // Save new collection to database
-        Collection newCollection = new Collection(userId, collection.getCollectionName());
+        Collection newCollection = new Collection(user.getId(), collection.getCollectionName());
         collectionsRepository.save(newCollection);
         return modelMapper.map(newCollection, CollectionDto.class);
     }
 
-    public void deleteCollection(Long collectionId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void deleteCollection(Long collectionId) {
+        User user = authService.retrieveUserFromJwt();
 
         // Check to ensure the collection being deleted is actually owned by the logged-in user
-        if (!collectionsRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
+        if (!collectionsRepository.existsByUserIdAndCollectionId(user.getId(), collectionId)) {
             throw new UnauthorizedAccessException("You do not have permission to delete this collection");
         }
         collectionsRepository.deleteById(collectionId);
     }
 
     @Transactional
-    public void updateCollection(Long collectionId, UpdateCollectionDto collection, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateCollection(Long collectionId, UpdateCollectionDto collection) {
+        User user = authService.retrieveUserFromJwt();
         Collection updateCollection = collectionsRepository.findById(collectionId)
                 .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
 
         // Check to ensure the collection being modified is actually owned by the logged-in user
-        if (!updateCollection.getUserId().equals(userId)) {
+        if (!updateCollection.getUserId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You do not have permission to modify this collection");
         }
 
@@ -709,7 +712,7 @@ public class ProfileService {
             updateCollection.setPrivateCollection(collection.getIsPrivate());
         }
         if (collection.getCollectionName() != null) {
-            if (collectionsRepository.existsByUserIdAndCollectionName(userId, collection.getCollectionName())) {
+            if (collectionsRepository.existsByUserIdAndCollectionName(user.getId(), collection.getCollectionName())) {
                 throw new DuplicateCollectionNameException("You already have a collection named " + collection.getCollectionName());
             }
             updateCollection.setCollectionName(collection.getCollectionName());
@@ -743,29 +746,29 @@ public class ProfileService {
         collectionsRepository.save(updateCollection);
     }
 
-    public CollectionReturnDto getCollection(Long collectionId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public CollectionReturnDto getCollection(Long collectionId) {
+        User user = authService.retrieveUserFromJwt();
         Collection collection = collectionsRepository.findById(collectionId)
                 .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
 
         // Check to ensure the collection being retrieved is actually owned by the logged-in user
-        if (!collection.getUserId().equals(userId)) {
+        if (!collection.getUserId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You do not have permission to view this collection");
         }
 
         CollectionReturnDto collectionReturn = modelMapper.map(collection, CollectionReturnDto.class);
         collectionReturn.setShows(showsInCollectionRepository.findByIdCollectionId(collectionId));
-        collectionReturn.setLikedByUser(likedCollectionsRepository.existsByUserIdAndCollectionId(userId, collectionId));
+        collectionReturn.setLikedByUser(likedCollectionsRepository.existsByUserIdAndCollectionId(user.getId(), collectionId));
         return collectionReturn;
     }
 
-    public void addShowToCollection(Long collectionId, WatchSendDto show, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void addShowToCollection(Long collectionId, WatchSendDto show) {
+        User user = authService.retrieveUserFromJwt();
         Collection updateCollection = collectionsRepository.findById(collectionId)
                 .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
 
         // Check to ensure the collection being added to is actually owned by the logged-in user
-        if (!updateCollection.getUserId().equals(userId)) {
+        if (!updateCollection.getUserId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You do not have permission to add to this collection");
         }
 
@@ -789,13 +792,13 @@ public class ProfileService {
         showsInCollectionRepository.save(newShow);
     }
 
-    public void removeShowFromCollection(Long collectionId, Long showId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void removeShowFromCollection(Long collectionId, Long showId) {
+        User user = authService.retrieveUserFromJwt();
         Collection collection = collectionsRepository.findById(collectionId)
                 .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
 
         // Check to ensure the collection being modified is actually owned by the logged-in user
-        if (!collection.getUserId().equals(userId)) {
+        if (!collection.getUserId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You do not have permission to modify this collection");
         }
 
@@ -813,13 +816,13 @@ public class ProfileService {
 
 
 
-    public List<DynamicRankingReturnDto> getDynamicsRankingList(Integer limit, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        return dynamicRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<DynamicRankingReturnDto> getDynamicsRankingList(Integer limit) {
+        User user = authService.retrieveUserFromJwt();
+        return dynamicRankingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
     }
 
-    public DynamicRankingReturnDto addDynamicToRankingList(DynamicRankingDto dynamic, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public DynamicRankingReturnDto addDynamicToRankingList(DynamicRankingDto dynamic) {
+        User user = authService.retrieveUserFromJwt();
 
         // Sort by character ID when checking existing of dynamic... (12, 31) is the same as (31, 12)
         record CharacterData(String id, String name) {}
@@ -835,7 +838,7 @@ public class ProfileService {
         }
 
         // Check if the dynamic is already on the user's ranking list
-        if (dynamicRankingRepository.existsByUserIdAndCharacter1IdAndCharacter2Id(userId, character1.id(),  character2.id())) {
+        if (dynamicRankingRepository.existsByUserIdAndCharacter1IdAndCharacter2Id(user.getId(), character1.id(),  character2.id())) {
             throw new AlreadyOnListException("Dynamic is already on your ranking list");
         }
 
@@ -868,8 +871,8 @@ public class ProfileService {
         DynamicRanking dynamicRanking = new DynamicRanking();
         dynamicRanking.setCharacter1Id(character1.id());
         dynamicRanking.setCharacter2Id(character2.id());
-        dynamicRanking.setUserId(userId);
-        Integer maxRank = dynamicRankingRepository.findMaxRankNumByUserId(userId);
+        dynamicRanking.setUserId(user.getId());
+        Integer maxRank = dynamicRankingRepository.findMaxRankNumByUserId(user.getId());
         dynamicRanking.setRankNum(maxRank == null ?  1 : maxRank + 1);
         dynamicRankingRepository.save(dynamicRanking);
 
@@ -877,19 +880,19 @@ public class ProfileService {
     }
 
     @Transactional
-    public void removeDynamicFromRankingList(Long dynamicId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void removeDynamicFromRankingList(Long dynamicId) {
+        User user = authService.retrieveUserFromJwt();
         DynamicRanking dynamic = dynamicRankingRepository.findById(dynamicId)
                 .orElseThrow(() -> new ItemNotFoundException("Could not find a dynamic with id: " + dynamicId));
 
         // Check to make sure the user id's match aka this is the users dynamic ranking
-        if (!Objects.equals(userId, dynamic.getUserId())) {
+        if (!Objects.equals(user.getId(), dynamic.getUserId())) {
             throw new UnauthorizedAccessException("You do not have permission to modify this dynamic");
         }
         dynamicRankingRepository.delete(dynamic);
 
         // Retrieve the ranking entries and update the rank number using index
-        List<DynamicRanking> rankings = dynamicRankingRepository.findByUserIdOrderByRankNumAsc(userId);
+        List<DynamicRanking> rankings = dynamicRankingRepository.findByUserIdOrderByRankNumAsc(user.getId());
         for (int i = 0; i < rankings.size(); i++) {
             rankings.get(i).setRankNum(i + 1);
         }
@@ -897,8 +900,8 @@ public class ProfileService {
     }
 
     @Transactional
-    public void updateDynamicRankingList(List<UpdateCharacterDynamicDto> updates, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateDynamicRankingList(List<UpdateCharacterDynamicDto> updates) {
+        User user = authService.retrieveUserFromJwt();
 
         // Create a set of all provided dynamic ids
         Set<Long> dynamicIds = updates.stream()
@@ -916,7 +919,7 @@ public class ProfileService {
                 .collect(Collectors.toMap(UpdateCharacterDynamicDto::getId, UpdateCharacterDynamicDto::getRankNum));
         for (DynamicRanking dynamic : dynamics) {
             // Validate that the dynamic being updated belongs to the user
-            if (!Objects.equals(userId, dynamic.getUserId())) {
+            if (!Objects.equals(user.getId(), dynamic.getUserId())) {
                 throw new UnauthorizedAccessException("You do not have permission to modify this dynamic");
             }
             dynamic.setRankNum(newRanks.get(dynamic.getId()));
@@ -924,8 +927,8 @@ public class ProfileService {
         dynamicRankingRepository.saveAll(dynamics);
     }
 
-    public Page<ActivityDto> getProfileActivity(int pageNum, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
-        return activitiesRepository.findByUserId(userId, PageRequest.of(pageNum - 1, numActivities));
+    public Page<ActivityDto> getProfileActivity(int pageNum) {
+        User user = authService.retrieveUserFromJwt();
+        return activitiesRepository.findByUserId(user.getId(), PageRequest.of(pageNum - 1, numActivities));
     }
 }

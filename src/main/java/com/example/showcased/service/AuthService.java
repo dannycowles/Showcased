@@ -170,4 +170,13 @@ public class AuthService {
         usernameCheckDto.setTaken(userRepository.existsByDisplayName(username));
         return usernameCheckDto;
     }
+
+    public User retrieveUserFromJwt() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        return (User) authentication.getPrincipal();
+    }
 }

@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 public class FileService {
+    private final AuthService authService;
     @Value("${aws.s3.bucketName}")
     private String bucketName;
 
@@ -32,8 +34,9 @@ public class FileService {
     private AmazonS3 s3Client;
     private final UserRepository userRepository;
 
-    public FileService(UserRepository userRepository) {
+    public FileService(UserRepository userRepository, AuthService authService) {
         this.userRepository = userRepository;
+        this.authService = authService;
     }
 
     @PostConstruct
@@ -45,13 +48,13 @@ public class FileService {
                 .build();
     }
 
-    public String uploadProfilePicture(MultipartFile file, HttpSession session) {
+    public String uploadProfilePicture(MultipartFile file) {
         // Retrieve user's ID and format file name/location in S3 bucket
-        String id = session.getAttribute("user").toString();
-        String fileName = "users/" + id;
+        User user = authService.retrieveUserFromJwt();
+        String fileName = "users/" + user.getId();
 
         // Ensure that the provided file is an image
-        if (!file.getContentType().startsWith("image/")) {
+        if (!Objects.requireNonNull(file.getContentType()).startsWith("image/")) {
             throw new InvalidFileType("Only image files are allowed");
         }
 
@@ -68,8 +71,6 @@ public class FileService {
 
             // Retrieve the generated url and store it in the user table
             String profilePictureUrl = s3Client.getUrl(bucketName, fileName).toString();
-            User user = userRepository.findById(Long.parseLong(id)).
-                    orElseThrow(() -> new UserNotFoundException(Long.parseLong(id)));
             user.setProfilePicture(profilePictureUrl);
             userRepository.save(user);
 
