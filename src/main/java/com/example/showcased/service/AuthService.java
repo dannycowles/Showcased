@@ -174,7 +174,7 @@ public class AuthService {
     public User retrieveUserFromJwt() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof User)) {
             return null;
         }
         return (User) authentication.getPrincipal();

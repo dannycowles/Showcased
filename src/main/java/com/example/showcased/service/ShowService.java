@@ -8,8 +8,6 @@ import com.example.showcased.exception.HaventLikedException;
 import com.example.showcased.exception.ItemNotFoundException;
 import com.example.showcased.exception.UnauthorizedAccessException;
 import com.example.showcased.repository.*;
-import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import org.json.JSONArray;
@@ -28,7 +26,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class ShowService {
 
@@ -54,6 +51,7 @@ public class ShowService {
     private final LikedShowReviewCommentsRepository  likedShowReviewCommentsRepository;
     private final EpisodeReviewCommentRepository episodeReviewCommentRepository;
     private final LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository;
+    private final AuthService authService;
     private final int numComments = 2;
 
     public ShowService(ShowReviewRepository showReviewRepository,
@@ -73,7 +71,9 @@ public class ShowService {
                        ShowReviewCommentRepository showReviewCommentRepository,
                        LikedShowReviewCommentsRepository likedShowReviewCommentsRepository,
                        EpisodeReviewCommentRepository episodeReviewCommentRepository,
-                       LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository, ActivitiesRepository activitiesRepository) {
+                       LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository,
+                       ActivitiesRepository activitiesRepository,
+                       AuthService authService) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -93,6 +93,7 @@ public class ShowService {
         this.episodeReviewCommentRepository = episodeReviewCommentRepository;
         this.likedEpisodeReviewCommentsRepository = likedEpisodeReviewCommentsRepository;
         this.activitiesRepository = activitiesRepository;
+        this.authService = authService;
     }
 
     // For each of the shows, retrieve the end year
@@ -147,7 +148,7 @@ public class ShowService {
         return shows;
     }
 
-    public ShowDto getShowDetails(String id, HttpSession session) {
+    public ShowDto getShowDetails(String id) {
         // Make request to TMDB show details endpoint
         String url = UriComponentsBuilder
                 .fromUriString("https://api.themoviedb.org/3/tv/")
@@ -191,11 +192,11 @@ public class ShowService {
         show.setAwards(jsonResponse.optString("Awards"));
 
         // Check if the user is logged in, if so, check if the show is on watchlist/watching/ranking
-        Long userId = (Long) session.getAttribute("user");
-        if (userId != null) {
-            show.setOnWatchlist(watchlistRepository.existsById(new WatchId(userId, Long.parseLong(id))));
-            show.setOnWatchingList(watchingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
-            show.setOnRankingList(showRankingRepository.existsById(new WatchId(userId, Long.parseLong(id))));
+        User user = authService.retrieveUserFromJwt();
+        if (user != null) {
+            show.setOnWatchlist(watchlistRepository.existsById(new WatchId(user.getId(), Long.parseLong(id))));
+            show.setOnWatchingList(watchingRepository.existsById(new WatchId(user.getId(), Long.parseLong(id))));
+            show.setOnRankingList(showRankingRepository.existsById(new WatchId(user.getId(), Long.parseLong(id))));
         }
 
         // Make request to TMDB TV recommendations endpoint
@@ -294,7 +295,7 @@ public class ShowService {
         // If a name/query is provided fuzzy search on that
         if (name != null && !name.isEmpty()) {
             List<String> names = roles.stream()
-                    .map(role -> role.getName())
+                    .map(RoleDto::getName)
                     .distinct()
                     .toList();
             List<ExtractedResult> results = FuzzySearch.extractAll(name, names, 70);
@@ -315,7 +316,7 @@ public class ShowService {
         return tmdbClient.get(url, NumSeasonsDto.class);
     }
 
-    public SeasonDto getSeasonDetails(String seasonNumber, String showId, HttpSession session) {
+    public SeasonDto getSeasonDetails(String seasonNumber, String showId) {
         // Make a request to TMDB season details endpoint
         String url = UriComponentsBuilder
                 .fromUriString("https://api.themoviedb.org/3/tv")
@@ -385,9 +386,9 @@ public class ShowService {
         season.setEpisodes(seasonEpisodes);
 
         // If the user is logged in, check whether season is on their ranking list
-        Long userId = (Long) session.getAttribute("user");
-        if (userId != null) {
-            season.setOnRankingList(seasonRankingRepository.existsById(new SeasonRankingId(userId, season.getId())));;
+        User user = authService.retrieveUserFromJwt();
+        if (user != null) {
+            season.setOnRankingList(seasonRankingRepository.existsById(new SeasonRankingId(user.getId(), season.getId())));;
         }
         return season;
     }
@@ -410,7 +411,7 @@ public class ShowService {
         return tmdbClient.get(url, SeasonPartialDto.class);
     }
 
-    public EpisodeDto getEpisodeDetails(String episodeNumber, String seasonNumber, String showId, HttpSession session) {
+    public EpisodeDto getEpisodeDetails(String episodeNumber, String seasonNumber, String showId) {
         // Make a request to TMDB episode endpoint
         String url = UriComponentsBuilder
                 .fromUriString("https://api.themoviedb.org/3/tv")
@@ -464,19 +465,19 @@ public class ShowService {
         }
 
         // If the user is logged in check if it's on their ranking list
-        Long userId = (Long) session.getAttribute("user");
-        if (userId != null) {
-            episode.setOnRankingList(episodeRankingRepository.existsById(new  EpisodeRankingId(userId, episode.getId())));
+        User user = authService.retrieveUserFromJwt();
+        if (user != null) {
+            episode.setOnRankingList(episodeRankingRepository.existsById(new  EpisodeRankingId(user.getId(), episode.getId())));
         }
         return episode;
     }
 
     @Transactional
-    public ShowReviewWithUserInfoDto addReviewToShow(Long showId, ShowReviewDto reviewDto, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public ShowReviewWithUserInfoDto addReviewToShow(Long showId, ShowReviewDto reviewDto) {
+        User user = authService.retrieveUserFromJwt();
 
         // Delete existing review if it exists
-        showReviewRepository.deleteByUserIdAndShowId(userId, showId);
+        showReviewRepository.deleteByUserIdAndShowId(user.getId(), showId);
         showReviewRepository.flush();
 
         // Check if the show exists in the show info table
@@ -489,14 +490,15 @@ public class ShowService {
         }
 
         ShowReview review = modelMapper.map(reviewDto, ShowReview.class);
-        review.setUserId(userId);
+        review.setUserId(user.getId());
         review.setShowId(showId);
         showReviewRepository.save(review);
         return showReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
-    public Page<ShowReviewWithUserInfoDto> getShowReviews(Long showId, HttpSession session, Pageable page) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<ShowReviewWithUserInfoDto> getShowReviews(Long showId, Pageable page) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
 
         // Subtract 1 from provided page to align with 0-indexed pages, and ensure non-negative pages are requested
         Pageable modifiedPage = PageRequest.of(
@@ -507,14 +509,15 @@ public class ShowService {
         return showReviewRepository.findAllByShowId(showId, userId, modifiedPage);
     }
 
-    public ShowReviewWithUserInfoDto getShowReview(Long reviewId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public ShowReviewWithUserInfoDto getShowReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
         return showReviewRepository.findById(reviewId, userId);
     }
 
     @Transactional
-    public void likeShowReview(Long reviewId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void likeShowReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
         Optional<ShowReview> reviewOpt = showReviewRepository.findById(reviewId);
         if (reviewOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find a show review with ID: " + reviewId);
@@ -522,18 +525,18 @@ public class ShowService {
         ShowReview review = reviewOpt.get();
 
         // Check if the user has already liked the review, if so we throw an exception
-        if (likedShowReviewsRepository.existsByUserIdAndReviewId(userId, reviewId)) {
+        if (likedShowReviewsRepository.existsByUserIdAndReviewId(user.getId(), reviewId)) {
             throw new AlreadyLikedException("You have already liked this show review");
         }
 
         LikedShowReview likedReview = new LikedShowReview();
-        likedReview.setUserId(userId);
+        likedReview.setUserId(user.getId());
         likedReview.setReviewId(reviewId);
         likedShowReviewsRepository.save(likedReview);
         showReviewRepository.incrementLikes(reviewId);
 
         // Add the like show review event to the activity table, except liking own review
-        if (!review.getUserId().equals(userId)) {
+        if (!review.getUserId().equals(user.getId())) {
             Activity likeEvent = new Activity();
             likeEvent.setUserId(review.getUserId());
             likeEvent.setActivityType(ActivityType.LIKE_SHOW_REVIEW.getDbValue());
@@ -543,13 +546,13 @@ public class ShowService {
     }
 
     @Transactional
-    public void unlikeShowReview(Long reviewId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void unlikeShowReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
 
         // Check if the review exists, and if so has the user liked it
         if (showReviewRepository.existsById(reviewId)) {
 
-            Optional<LikedShowReview> likedReviewOpt = likedShowReviewsRepository.findByUserIdAndReviewId(userId, reviewId);
+            Optional<LikedShowReview> likedReviewOpt = likedShowReviewsRepository.findByUserIdAndReviewId(user.getId(), reviewId);
             if (likedReviewOpt.isPresent()) {
                 LikedShowReview likedReview = likedReviewOpt.get();
 
@@ -565,15 +568,15 @@ public class ShowService {
     }
 
     @Transactional
-    public void deleteShowReview(Long reviewId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void deleteShowReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
 
         Optional<ShowReview> reviewOpt = showReviewRepository.findById(reviewId);
         if (reviewOpt.isPresent()) {
             ShowReview review = reviewOpt.get();
 
             // Ensure that the review belongs to the requesting user
-            if (!review.getUserId().equals(userId)) {
+            if (!review.getUserId().equals(user.getId())) {
                 throw new UnauthorizedAccessException("You are not allowed to delete this show review");
             }
             showReviewRepository.delete(review);
@@ -588,14 +591,14 @@ public class ShowService {
     }
 
     @Transactional
-    public void updateShowReview(Long reviewId, UpdateReviewDto updates, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateShowReview(Long reviewId, UpdateReviewDto updates) {
+        User user = authService.retrieveUserFromJwt();
 
         ShowReview review = showReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ItemNotFoundException("Didn't find a show review with ID: " + reviewId));
 
         // Ensure that the review belongs to the requesting user
-        if (!review.getUserId().equals(userId)) {
+        if (!review.getUserId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You are not allowed to update this show review");
         }
 
@@ -604,11 +607,11 @@ public class ShowService {
     }
 
     @Transactional
-    public EpisodeReviewWithUserInfoDto addReviewToEpisode(Long episodeId, EpisodeReviewDto reviewDto, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public EpisodeReviewWithUserInfoDto addReviewToEpisode(Long episodeId, EpisodeReviewDto reviewDto) {
+        User user = authService.retrieveUserFromJwt();
 
         // Delete existing review if it exists
-        episodeReviewRepository.deleteByUserIdAndEpisodeId(userId, episodeId);
+        episodeReviewRepository.deleteByUserIdAndEpisodeId(user.getId(), episodeId);
         episodeReviewRepository.flush();
 
         // Check if the episode exists in the episode info table
@@ -621,15 +624,16 @@ public class ShowService {
         EpisodeReview review = modelMapper.map(reviewDto, EpisodeReview.class);
         review.setId(null);
         review.setEpisodeId(episodeId);
-        review.setUserId(userId);
+        review.setUserId(user.getId());
         review.setNumLikes(0L);
         review.setReviewDate(new Date());
         episodeReviewRepository.save(review);
         return episodeReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
-    public Page<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, HttpSession session, Pageable page) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<EpisodeReviewWithUserInfoDto> getEpisodeReviews(Long episodeId, Pageable page) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
 
         // Subtract 1 from provided page to align with 0-indexed pages, and ensure non-negative pages are requested
         Pageable modifiedPage = PageRequest.of(
@@ -640,14 +644,15 @@ public class ShowService {
         return episodeReviewRepository.findAllByEpisodeId(episodeId, userId, modifiedPage);
     }
 
-    public EpisodeReviewWithUserInfoDto getEpisodeReview(Long reviewId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public EpisodeReviewWithUserInfoDto getEpisodeReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
         return episodeReviewRepository.findById(reviewId, userId);
     }
 
     @Transactional
-    public void likeEpisodeReview(Long reviewId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void likeEpisodeReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
         Optional<EpisodeReview> reviewOpt = episodeReviewRepository.findById(reviewId);
         if (reviewOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find a episode review with ID: " + reviewId);
@@ -655,18 +660,18 @@ public class ShowService {
         EpisodeReview review = reviewOpt.get();
 
         // Check if the user has already liked the review, if so we throw an exception
-        if (likedEpisodeReviewsRepository.existsByUserIdAndReviewId(userId, reviewId)) {
+        if (likedEpisodeReviewsRepository.existsByUserIdAndReviewId(user.getId(), reviewId)) {
             throw new AlreadyLikedException("You have already liked this episode review");
         }
 
         LikedEpisodeReview likedReview =  new LikedEpisodeReview();
-        likedReview.setUserId(userId);
+        likedReview.setUserId(user.getId());
         likedReview.setReviewId(reviewId);
         likedEpisodeReviewsRepository.save(likedReview);
         episodeReviewRepository.incrementLikes(reviewId);
 
         // Add the like episode review event to the activities table, except liking own review
-        if (!review.getUserId().equals(userId)) {
+        if (!review.getUserId().equals(user.getId())) {
             Activity likeEvent = new Activity();
             likeEvent.setUserId(review.getUserId());
             likeEvent.setActivityType(ActivityType.LIKE_EPISODE_REVIEW.getDbValue());
@@ -676,12 +681,12 @@ public class ShowService {
     }
 
     @Transactional
-    public void unlikeEpisodeReview(Long reviewId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void unlikeEpisodeReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
 
         // Check if the review exists, and if so, ensure the user has liked it already
         if (episodeReviewRepository.existsById(reviewId)) {
-            Optional<LikedEpisodeReview> likedReviewOpt = likedEpisodeReviewsRepository.findByUserIdAndReviewId(userId, reviewId);
+            Optional<LikedEpisodeReview> likedReviewOpt = likedEpisodeReviewsRepository.findByUserIdAndReviewId(user.getId(), reviewId);
             if (likedReviewOpt.isPresent()) {
                 LikedEpisodeReview likedReview = likedReviewOpt.get();
 
@@ -697,15 +702,15 @@ public class ShowService {
     }
 
     @Transactional
-    public void deleteEpisodeReview(Long reviewId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void deleteEpisodeReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
 
         Optional<EpisodeReview> reviewOpt = episodeReviewRepository.findById(reviewId);
         if (reviewOpt.isPresent()) {
             EpisodeReview review = reviewOpt.get();
 
             // Ensure that the review belongs to the requesting user
-            if (!review.getUserId().equals(userId)) {
+            if (!review.getUserId().equals(user.getId())) {
                 throw new UnauthorizedAccessException("You are not allowed to delete this show review");
             }
             episodeReviewRepository.delete(review);
@@ -720,14 +725,14 @@ public class ShowService {
     }
 
     @Transactional
-    public void updateEpisodeReview(Long reviewId, UpdateReviewDto updates, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateEpisodeReview(Long reviewId, UpdateReviewDto updates) {
+        User user = authService.retrieveUserFromJwt();
 
         EpisodeReview review = episodeReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ItemNotFoundException("Didn't find a episode review with ID: " + reviewId));
 
         // Ensure that the review belongs to the requesting user
-        if (!review.getUserId().equals(userId)) {
+        if (!review.getUserId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You are not allowed to update this episode review");
         }
 
@@ -766,8 +771,8 @@ public class ShowService {
     }
 
     @Transactional
-    public ReviewCommentWithUserInfoDto addCommentToShowReview(Long reviewId, ReviewCommentDto reviewComment, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public ReviewCommentWithUserInfoDto addCommentToShowReview(Long reviewId, ReviewCommentDto reviewComment) {
+        User user = authService.retrieveUserFromJwt();
         Optional<ShowReview> reviewOpt = showReviewRepository.findById(reviewId);
         if (reviewOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find an review with ID: " + reviewId);
@@ -775,14 +780,14 @@ public class ShowService {
         ShowReview review = reviewOpt.get();
 
         ShowReviewComment newComment = new ShowReviewComment();
-        newComment.setUserId(userId);
+        newComment.setUserId(user.getId());
         newComment.setReviewId(reviewId);
         newComment.setCommentText(reviewComment.getCommentText());
         showReviewCommentRepository.save(newComment);
         showReviewRepository.incrementNumComments(reviewId);
 
         // Add the show review comment event to activities table, except commenting on own review
-        if (!review.getUserId().equals(userId)) {
+        if (!review.getUserId().equals(user.getId())) {
             Activity commentEvent = new Activity();
             commentEvent.setUserId(review.getUserId());
             commentEvent.setActivityType(ActivityType.COMMENT_SHOW_REVIEW.getDbValue());
@@ -792,19 +797,21 @@ public class ShowService {
         return showReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }
 
-    public Page<ReviewCommentWithUserInfoDto> getShowReviewComments(Long reviewId, int page, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<ReviewCommentWithUserInfoDto> getShowReviewComments(Long reviewId, int page) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
         return showReviewCommentRepository.findAllByReviewId(reviewId, userId, PageRequest.of(page - 1, numComments));
     }
 
-    public ReviewCommentWithUserInfoDto getShowReviewComment(Long commentId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public ReviewCommentWithUserInfoDto getShowReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
         return showReviewCommentRepository.findById(commentId, userId);
     }
 
     @Transactional
-    public void likeShowReviewComment(Long commentId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void likeShowReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
         Optional<ShowReviewComment> commentOpt = showReviewCommentRepository.findById(commentId);
         if (commentOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find an show review comment with ID: " + commentId);
@@ -812,18 +819,18 @@ public class ShowService {
         ShowReviewComment comment = commentOpt.get();
 
         // Check if the user has already liked the comment
-        if (likedShowReviewCommentsRepository.existsByUserIdAndCommentId(userId, commentId)) {
+        if (likedShowReviewCommentsRepository.existsByUserIdAndCommentId(user.getId(), commentId)) {
             throw new AlreadyLikedException("You have already liked this show review comment");
         }
 
         LikedShowReviewComment likedComment = new LikedShowReviewComment();
-        likedComment.setUserId(userId);
+        likedComment.setUserId(user.getId());
         likedComment.setCommentId(commentId);
         likedShowReviewCommentsRepository.save(likedComment);
         showReviewCommentRepository.incrementNumLikes(commentId);
 
         // Add the like show review comment event to the activities table, except liking own comment
-        if (!comment.getUserId().equals(userId)) {
+        if (!comment.getUserId().equals(user.getId())) {
             Activity likeCommentEvent = new Activity();
             likeCommentEvent.setUserId(comment.getUserId());
             likeCommentEvent.setActivityType(ActivityType.LIKE_SHOW_REVIEW_COMMENT.getDbValue());
@@ -833,12 +840,12 @@ public class ShowService {
     }
 
     @Transactional
-    public void unlikeShowReviewComment(Long commentId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void unlikeShowReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
 
         if (showReviewCommentRepository.existsById(commentId)) {
             // Check to ensure the user has liked the comment
-            Optional<LikedShowReviewComment> likedCommentOpt = likedShowReviewCommentsRepository.findByUserIdAndCommentId(userId, commentId);
+            Optional<LikedShowReviewComment> likedCommentOpt = likedShowReviewCommentsRepository.findByUserIdAndCommentId(user.getId(), commentId);
             if (likedCommentOpt.isPresent()) {
                 LikedShowReviewComment likedComment = likedCommentOpt.get();
 
@@ -854,15 +861,15 @@ public class ShowService {
     }
 
     @Transactional
-    public void deleteShowReviewComment(Long commentId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void deleteShowReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
 
         Optional<ShowReviewComment> commentOpt = showReviewCommentRepository.findById(commentId);
         if (commentOpt.isPresent()) {
             ShowReviewComment comment = commentOpt.get();
 
             // Ensure that the comment belongs to the requesting user
-            if (!comment.getUserId().equals(userId)) {
+            if (!comment.getUserId().equals(user.getId())) {
                 throw new UnauthorizedAccessException("You are not allowed to delete this show review comment");
             }
 
@@ -879,14 +886,14 @@ public class ShowService {
     }
 
     @Transactional
-    public void updateShowReviewComment(Long commentId, UpdateCommentDto updates, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateShowReviewComment(Long commentId, UpdateCommentDto updates) {
+        User user = authService.retrieveUserFromJwt();
 
         ShowReviewComment comment = showReviewCommentRepository.findById(commentId)
                 .orElseThrow(() -> new ItemNotFoundException("Couldn't find a show review comment with ID: " + commentId));
 
         // Ensure that the comment being edited belongs to the requesting user
-        if (!comment.getUserId().equals(userId)) {
+        if (!comment.getUserId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You are not allowed to update this show review comment");
         }
 
@@ -896,8 +903,8 @@ public class ShowService {
 
 
     @Transactional
-    public ReviewCommentWithUserInfoDto addCommentToEpisodeReview(Long reviewId, ReviewCommentDto reviewComment, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public ReviewCommentWithUserInfoDto addCommentToEpisodeReview(Long reviewId, ReviewCommentDto reviewComment) {
+        User user = authService.retrieveUserFromJwt();
         Optional<EpisodeReview> reviewOpt = episodeReviewRepository.findById(reviewId);
         if (reviewOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find an episode review with ID: " + reviewId);
@@ -905,14 +912,14 @@ public class ShowService {
         EpisodeReview review = reviewOpt.get();
 
         EpisodeReviewComment newComment = new EpisodeReviewComment();
-        newComment.setUserId(userId);
+        newComment.setUserId(user.getId());
         newComment.setReviewId(reviewId);
         newComment.setCommentText(reviewComment.getCommentText());
         episodeReviewCommentRepository.save(newComment);
         episodeReviewRepository.incrementNumComments(reviewId);
 
         // Add episode review comment event to activities table, except commenting on own review
-        if (!review.getUserId().equals(userId)) {
+        if (!review.getUserId().equals(user.getId())) {
             Activity commentEvent = new Activity();
             commentEvent.setUserId(review.getUserId());
             commentEvent.setActivityType(ActivityType.COMMENT_EPISODE_REVIEW.getDbValue());
@@ -923,19 +930,21 @@ public class ShowService {
         return episodeReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }
 
-    public Page<ReviewCommentWithUserInfoDto> getEpisodeReviewComments(Long reviewId, int page, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public Page<ReviewCommentWithUserInfoDto> getEpisodeReviewComments(Long reviewId, int page) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
         return episodeReviewCommentRepository.findAllByReviewId(reviewId, userId, PageRequest.of(page - 1, numComments));
     }
 
-    public ReviewCommentWithUserInfoDto getEpisodeReviewComment(Long commentId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public ReviewCommentWithUserInfoDto getEpisodeReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
         return episodeReviewCommentRepository.findById(commentId, userId);
     }
 
     @Transactional
-    public void likeEpisodeReviewComment(Long commentId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void likeEpisodeReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
         Optional<EpisodeReviewComment> commentOpt = episodeReviewCommentRepository.findById(commentId);
         if (commentOpt.isEmpty()) {
             throw new ItemNotFoundException("Didn't find an episode review comment with ID: " + commentId);
@@ -943,18 +952,18 @@ public class ShowService {
         EpisodeReviewComment comment = commentOpt.get();
 
         // Check if the user has already liked the comment
-        if (likedEpisodeReviewCommentsRepository.existsByUserIdAndCommentId(userId, commentId)) {
+        if (likedEpisodeReviewCommentsRepository.existsByUserIdAndCommentId(user.getId(), commentId)) {
             throw new AlreadyLikedException("You have already liked this episode review comment");
         }
 
         LikedEpisodeReviewComment likedComment = new LikedEpisodeReviewComment();
-        likedComment.setUserId(userId);
+        likedComment.setUserId(user.getId());
         likedComment.setCommentId(commentId);
         likedEpisodeReviewCommentsRepository.save(likedComment);
         episodeReviewCommentRepository.incrementNumLikes(commentId);
 
         // Add the episode review comment like event to the activities table, except for liking own comment
-        if (!comment.getUserId().equals(userId)) {
+        if (!comment.getUserId().equals(user.getId())) {
             Activity commentEvent = new Activity();
             commentEvent.setUserId(comment.getUserId());
             commentEvent.setActivityType(ActivityType.LIKE_EPISODE_REVIEW_COMMENT.getDbValue());
@@ -964,11 +973,11 @@ public class ShowService {
     }
 
     @Transactional
-    public void unlikeEpisodeReviewComment(Long commentId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void unlikeEpisodeReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
 
         if (episodeReviewCommentRepository.existsById(commentId)) {
-            Optional<LikedEpisodeReviewComment> likedCommentOpt = likedEpisodeReviewCommentsRepository.findByUserIdAndCommentId(userId, commentId);
+            Optional<LikedEpisodeReviewComment> likedCommentOpt = likedEpisodeReviewCommentsRepository.findByUserIdAndCommentId(user.getId(), commentId);
             // Check to ensure the user has liked the comment
             if (likedCommentOpt.isPresent()) {
                 LikedEpisodeReviewComment likedComment = likedCommentOpt.get();
@@ -985,15 +994,15 @@ public class ShowService {
     }
 
     @Transactional
-    public void deleteEpisodeReviewComment(Long commentId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void deleteEpisodeReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
 
         Optional<EpisodeReviewComment> commentOpt = episodeReviewCommentRepository.findById(commentId);
         if (commentOpt.isPresent()) {
             EpisodeReviewComment comment = commentOpt.get();
 
             // Ensure that the comment belongs to the requesting user
-            if (!comment.getUserId().equals(userId)) {
+            if (!comment.getUserId().equals(user.getId())) {
                 throw new UnauthorizedAccessException("You are not allowed to delete this show review comment");
             }
 
@@ -1010,14 +1019,14 @@ public class ShowService {
     }
 
     @Transactional
-    public void updateEpisodeReviewComment(Long commentId, UpdateCommentDto updates, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void updateEpisodeReviewComment(Long commentId, UpdateCommentDto updates) {
+        User user = authService.retrieveUserFromJwt();
 
         EpisodeReviewComment comment = episodeReviewCommentRepository.findById(commentId)
                 .orElseThrow(() -> new ItemNotFoundException("Couldn't find an episode review comment with ID: " + commentId));
 
         // Ensure that the comment being edited belongs to the requesting user
-        if (!comment.getUserId().equals(userId)) {
+        if (!comment.getUserId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You are not allowed to update this show review comment");
         }
 
