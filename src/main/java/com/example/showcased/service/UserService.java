@@ -6,7 +6,6 @@ import com.example.showcased.entity.Collection;
 import com.example.showcased.enums.ActivityType;
 import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
-import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,7 @@ public class UserService {
     private final EpisodeReviewRepository episodeReviewRepository;
     private final DynamicRankingRepository dynamicRankingRepository;
     private final ActivitiesRepository activitiesRepository;
+    private final AuthService authService;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -55,7 +55,8 @@ public class UserService {
                        UserSocialRepository userSocialRepository,
                        EpisodeReviewRepository episodeReviewRepository,
                        DynamicRankingRepository dynamicRankingRepository,
-                       ActivitiesRepository activitiesRepository) {
+                       ActivitiesRepository activitiesRepository,
+                       AuthService authService) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -73,6 +74,7 @@ public class UserService {
         this.episodeReviewRepository = episodeReviewRepository;
         this.dynamicRankingRepository = dynamicRankingRepository;
         this.activitiesRepository = activitiesRepository;
+        this.authService = authService;
     }
 
     private void ensureUserExists(Long userId) {
@@ -92,10 +94,9 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public ProfileDetailsDto getUserDetails(Long userId, HttpSession session) {
-        // Throw exception if the user was not found by ID
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+    public ProfileDetailsDto getUserDetails(Long userId) {
+        ensureUserExists(userId);
+        User user = userRepository.findById(userId).get();
 
         // Special user details model mapper that skips the set following column
         ModelMapper userMapper = new ModelMapper();
@@ -108,10 +109,10 @@ public class UserService {
         headerData.setSocialAccounts(getSocialAccounts(userId));
 
         // Check if the user is logged in, if so we check they are following this user
-        Long loggedInUserId = (Long) session.getAttribute("user");
-        if (loggedInUserId != null) {
-            headerData.setFollowing(followersRepository.existsByFollowerIdAndFollowingId(loggedInUserId, userId));
-            headerData.setOwnProfile(loggedInUserId.equals(userId));
+        User loggedInUser = authService.retrieveUserFromJwt();
+        if (loggedInUser != null) {
+            headerData.setFollowing(followersRepository.existsByFollowerIdAndFollowingId(loggedInUser.getId(), userId));
+            headerData.setOwnProfile(loggedInUser.getId().equals(userId));
         }
         userDetails.setHeaderData(headerData);
 
@@ -140,7 +141,7 @@ public class UserService {
             userDetails.setHasMoreSeasonRanking(true);
         }
 
-        userDetails.setReviews(getUserReviews(userId, session, PageRequest.of(1, numTopEntries)).getContent());
+        userDetails.setReviews(getUserReviews(userId, PageRequest.of(1, numTopEntries)).getContent());
         userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
         userDetails.setDynamicRankingTop(getUserDynamicRankings(userId, numTopEntries));
         return userDetails;
@@ -213,8 +214,9 @@ public class UserService {
 
 
 
-    public Page<ShowReviewDto> getUserReviews(Long userId, HttpSession session, Pageable pageable) {
-        Long loggedInUserId = (Long) session.getAttribute("user");
+    public Page<ShowReviewDto> getUserReviews(Long userId, Pageable pageable) {
+        User loggedInUser = authService.retrieveUserFromJwt();
+        Long loggedInUserId = (loggedInUser != null) ? loggedInUser.getId() : null;
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -255,9 +257,10 @@ public class UserService {
         return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
     }
 
-    public Page<ShowReviewDto> getUserShowReviews(Long userId, HttpSession session, Pageable pageable) {
+    public Page<ShowReviewDto> getUserShowReviews(Long userId, Pageable pageable) {
         ensureUserExists(userId);
-        Long loggedInUserId = (Long) session.getAttribute("user");
+        User loggedInUser = authService.retrieveUserFromJwt();
+        Long loggedInUserId = (loggedInUser != null) ? loggedInUser.getId() : null;
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -268,9 +271,10 @@ public class UserService {
         return showReviewRepository.findByUserId(userId, loggedInUserId, modifiedPage);
     }
 
-    public Page<EpisodeReviewDto> getUserEpisodeReviews(Long userId, HttpSession session, Pageable pageable) {
+    public Page<EpisodeReviewDto> getUserEpisodeReviews(Long userId, Pageable pageable) {
         ensureUserExists(userId);
-        Long loggedInUserId = (Long) session.getAttribute("user");
+        User loggedInUser = authService.retrieveUserFromJwt();
+        Long loggedInUserId = (loggedInUser != null) ? loggedInUser.getId() : null;
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -282,17 +286,17 @@ public class UserService {
     }
 
     @Transactional
-    public void followUser(Long followId, HttpSession session) {
+    public void followUser(Long followId) {
         ensureUserExists(followId);
-        Long userId = (Long) session.getAttribute("user");
+        User loggedInUser = authService.retrieveUserFromJwt();
 
         // Preventive code for if user tries to follow themselves
-        if (userId.equals(followId)) {
+        if (loggedInUser.getId().equals(followId)) {
             throw new FollowSelfException("A user cannot follow themselves.");
         }
 
         Follower newFollower = new Follower();
-        newFollower.setFollowerId(userId);
+        newFollower.setFollowerId(loggedInUser.getId());
         newFollower.setFollowingId(followId);
         followersRepository.save(newFollower);
 
@@ -305,15 +309,15 @@ public class UserService {
 
         // Increment the number of followers for the user being followed, and number of people following for the person completing the action
         userRepository.incrementFollowersCount(followId);
-        userRepository.incrementFollowingCount(userId);
+        userRepository.incrementFollowingCount(loggedInUser.getId());
     }
 
     @Transactional
-    public void unfollowUser(Long unfollowId, HttpSession session) {
+    public void unfollowUser(Long unfollowId) {
         ensureUserExists(unfollowId);
-        Long userId = (Long) session.getAttribute("user");
+        User loggedInUser = authService.retrieveUserFromJwt();
 
-        Optional<Follower> followerOpt = followersRepository.findByFollowerIdAndFollowingId(userId, unfollowId);
+        Optional<Follower> followerOpt = followersRepository.findByFollowerIdAndFollowingId(loggedInUser.getId(), unfollowId);
         if (followerOpt.isPresent()) {
             Follower removeFollower = followerOpt.get();
             activitiesRepository.deleteByExternalIdAndActivityType(removeFollower.getId(), ActivityType.FOLLOW.getDbValue());
@@ -322,10 +326,10 @@ public class UserService {
 
         // Decrement the number of followers for the user being unfollowed, and number of people following for the person completing the action
         userRepository.decrementFollowersCount(unfollowId);
-        userRepository.decrementFollowingCount(userId);
+        userRepository.decrementFollowingCount(loggedInUser.getId());
     }
 
-    public Page<UserSearchDto> getFollowers(Long userId, String name, HttpSession session, Pageable pageable) {
+    public Page<UserSearchDto> getFollowers(Long userId, String name, Pageable pageable) {
         ensureUserExists(userId);
 
         // Subtract 1 from page to align with 0-index
@@ -338,11 +342,11 @@ public class UserService {
                 ? followersRepository.getFollowersByIdFollowingIdFiltered(userId, name, modifiedPage)
                 : followersRepository.getFollowersByIdFollowingId(userId,  modifiedPage);
 
-        setFollowingFlags(followers.getContent(), session);
+        setFollowingFlags(followers.getContent());
         return followers;
     }
 
-    public Page<UserSearchDto> getFollowing(Long userId, String name, HttpSession session, Pageable pageable) {
+    public Page<UserSearchDto> getFollowing(Long userId, String name, Pageable pageable) {
         ensureUserExists(userId);
 
         // Subtract 1 from page to align with 0-index
@@ -355,12 +359,13 @@ public class UserService {
                 ? followersRepository.getFollowingByIdFollowerIdFiltered(userId, name, modifiedPage)
                 : followersRepository.getFollowingByIdFollowerId(userId, modifiedPage);
 
-        setFollowingFlags(following.getContent(), session);
+        setFollowingFlags(following.getContent());
         return following;
     }
 
-    private void setFollowingFlags(List<UserSearchDto> following, HttpSession session) {
-        Long loggedInUserId = (Long) session.getAttribute("user");
+    private void setFollowingFlags(List<UserSearchDto> following) {
+        User loggedInUser = authService.retrieveUserFromJwt();
+        Long loggedInUserId = (loggedInUser != null) ? loggedInUser.getId() : null;
         if (loggedInUserId != null) {
             Set<Long> followedUsers = followersRepository.getFollowingIds(loggedInUserId);
 
@@ -390,8 +395,9 @@ public class UserService {
         }
     }
 
-    public CollectionReturnDto getShowsInCollection(Long collectionId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public CollectionReturnDto getShowsInCollection(Long collectionId) {
+        User loggedInUser = authService.retrieveUserFromJwt();
+
         Collection collection = collectionsRepository.findById(collectionId)
                 .orElseThrow(() -> new CollectionNotFoundException("Collection not found with ID: " + collectionId));
 
@@ -403,15 +409,16 @@ public class UserService {
         collectionReturn.setShows(showsInCollectionRepository.findByIdCollectionId(collectionId));
 
         // If the user is logged in, check if they have liked the collection
-        if (userId != null) {
-            collectionReturn.setLikedByUser(likedCollectionsRepository.existsByUserIdAndCollectionId(userId, collectionId));
+        if (loggedInUser != null) {
+            collectionReturn.setLikedByUser(likedCollectionsRepository.existsByUserIdAndCollectionId(loggedInUser.getId(), collectionId));
         }
         return collectionReturn;
     }
 
     @Transactional
-    public void likeCollection(Long collectionId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void likeCollection(Long collectionId) {
+        User loggedInUser = authService.retrieveUserFromJwt();
+
         Optional<Collection> collectionOpt = collectionsRepository.findById(collectionId);
         if (collectionOpt.isEmpty()) {
             throw new CollectionNotFoundException("Collection not found with ID: " + collectionId);
@@ -419,18 +426,18 @@ public class UserService {
         Collection collection = collectionOpt.get();
 
         // Check if the user has already liked this collection
-        if (likedCollectionsRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
+        if (likedCollectionsRepository.existsByUserIdAndCollectionId(loggedInUser.getId(), collectionId)) {
             throw new AlreadyLikedException("You have already liked this collection");
         }
 
         LikedCollection newLike = new LikedCollection();
         newLike.setCollectionId(collectionId);
-        newLike.setUserId(userId);
+        newLike.setUserId(loggedInUser.getId());
         likedCollectionsRepository.save(newLike);
         collectionsRepository.incrementLikes(collectionId);
 
         // Add the like collection event to the activities table, except for liking own collection
-        if (!collection.getUserId().equals(userId)) {
+        if (!collection.getUserId().equals(loggedInUser.getId())) {
             Activity collectionEvent  = new Activity();
             collectionEvent.setUserId(collection.getUserId());
             collectionEvent.setActivityType(ActivityType.LIKE_COLLECTION.getDbValue());
@@ -440,12 +447,12 @@ public class UserService {
     }
 
     @Transactional
-    public void unlikeCollection(Long collectionId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+    public void unlikeCollection(Long collectionId) {
+        User loggedInUser = authService.retrieveUserFromJwt();
 
         if (collectionsRepository.existsById(collectionId)) {
             // Check to ensure the user has liked the collection
-            Optional<LikedCollection> likedCollectionsOpt = likedCollectionsRepository.findByUserIdAndCollectionId(userId, collectionId);
+            Optional<LikedCollection> likedCollectionsOpt = likedCollectionsRepository.findByUserIdAndCollectionId(loggedInUser.getId(), collectionId);
             if (likedCollectionsOpt.isPresent()) {
                 LikedCollection likedCollection = likedCollectionsOpt.get();
 

@@ -2,7 +2,6 @@ package com.example.showcased.controller;
 
 import com.example.showcased.dto.*;
 import com.example.showcased.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -33,51 +32,45 @@ public class UserController {
     }
 
     @GetMapping("/{id}/details")
-    public ResponseEntity<ProfileDetailsDto> getUserDetails(@PathVariable("id") Long id, HttpSession session) {
-        ProfileDetailsDto userDetails = userService.getUserDetails(id, session);
-        System.out.println("details: " + userDetails);
+    public ResponseEntity<ProfileDetailsDto> getUserDetails(@PathVariable("id") Long id) {
+        ProfileDetailsDto userDetails = userService.getUserDetails(id);
         return ResponseEntity.ok(userDetails);
     }
 
     @GetMapping("/{id}/reviews")
     public ResponseEntity<Page<ShowReviewDto>> getUserReviews(@PathVariable Long id,
-                                                              HttpSession session,
                                                               @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        Page<ShowReviewDto> reviews = userService.getUserReviews(id, session, pageable);
+        Page<ShowReviewDto> reviews = userService.getUserReviews(id, pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/{id}/show-reviews")
     public ResponseEntity<Page<ShowReviewDto>> getUserShowReviews(@PathVariable Long id,
-                                                                  HttpSession session,
                                                                   @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE)  Pageable pageable) {
-        Page<ShowReviewDto> reviews = userService.getUserShowReviews(id, session, pageable);
+        Page<ShowReviewDto> reviews = userService.getUserShowReviews(id, pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/{id}/episode-reviews")
     public ResponseEntity<Page<EpisodeReviewDto>> getUserEpisodeReviews(@PathVariable Long id,
-                                                                        HttpSession session,
                                                                         @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE)  Pageable pageable) {
-        Page<EpisodeReviewDto> reviews = userService.getUserEpisodeReviews(id, session, pageable);
+        Page<EpisodeReviewDto> reviews = userService.getUserEpisodeReviews(id, pageable);
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/{id}/following")
     public ResponseEntity<Page<UserSearchDto>> getFollowing(@PathVariable("id") Long id,
                                                             @RequestParam(required = false) String name,
-                                                            HttpSession session,
                                                             @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        Page<UserSearchDto> following = userService.getFollowing(id, name, session, pageable);
+        Page<UserSearchDto> following = userService.getFollowing(id, name, pageable);
         return ResponseEntity.ok(following);
     }
 
     @GetMapping("/{id}/followers")
     public ResponseEntity<Page<UserSearchDto>> getFollowers(@PathVariable("id") Long id,
                                                             @RequestParam(required = false) String name,
-                                                            HttpSession session,
                                                             @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        Page<UserSearchDto> followers = userService.getFollowers(id, name, session, pageable);
+        Page<UserSearchDto> followers = userService.getFollowers(id, name, pageable);
         return ResponseEntity.ok(followers);
     }
 
@@ -133,14 +126,14 @@ public class UserController {
     // ========== SOCIAL ==========
 
     @PostMapping("/{id}/followers")
-    public ResponseEntity<Void> followUser(@PathVariable("id") Long followId, HttpSession session) {
-        userService.followUser(followId, session);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> followUser(@PathVariable("id") Long followId) {
+        userService.followUser(followId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{id}/followers")
-    public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId, HttpSession session) {
-        userService.unfollowUser(unfollowId, session);
+    public ResponseEntity<Void> unfollowUser(@PathVariable("id") Long unfollowId) {
+        userService.unfollowUser(unfollowId);
         return ResponseEntity.noContent().build();
     }
 
@@ -155,20 +148,20 @@ public class UserController {
     }
 
     @GetMapping("/collections/{collectionId}")
-    public ResponseEntity<CollectionReturnDto> getCollectionDetails(@PathVariable Long collectionId, HttpSession session) {
-        CollectionReturnDto collection = userService.getShowsInCollection(collectionId, session);
+    public ResponseEntity<CollectionReturnDto> getCollectionDetails(@PathVariable Long collectionId) {
+        CollectionReturnDto collection = userService.getShowsInCollection(collectionId);
         return ResponseEntity.ok(collection);
     }
 
     @PostMapping("/collections/{collectionId}/likes")
-    public ResponseEntity<Void> likeCollection(@PathVariable Long collectionId, HttpSession session) {
-        userService.likeCollection(collectionId, session);
+    public ResponseEntity<Void> likeCollection(@PathVariable Long collectionId) {
+        userService.likeCollection(collectionId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/collections/{collectionId}/likes")
-    public ResponseEntity<Void> unlikeCollection(@PathVariable Long collectionId, HttpSession session) {
-        userService.unlikeCollection(collectionId, session);
+    public ResponseEntity<Void> unlikeCollection(@PathVariable Long collectionId) {
+        userService.unlikeCollection(collectionId);
         return ResponseEntity.noContent().build();
     }
 }
