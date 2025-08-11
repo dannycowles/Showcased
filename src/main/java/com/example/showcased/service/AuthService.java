@@ -153,11 +153,7 @@ public class AuthService {
 
     public void changePassword(NewPasswordDto newPasswordDto) {
         // Retrieve change password JWT
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User userDetails = (User) authentication.getPrincipal();
-
-        User user = userRepository.findByEmail(userDetails.getEmail())
-                .orElseThrow(() -> new NotVerifiedException("You are not verified"));
+        User user = retrieveUserFromJwt();
 
         // Update and save new encoded password
         String encodedPassword = passwordEncoder.encode(newPasswordDto.getNewPassword());
