@@ -1,10 +1,17 @@
 package com.example.showcased.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.nio.file.AccessDeniedException;
+import java.security.SignatureException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -201,5 +208,53 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RecaptchaInvalidException.class)
     ResponseEntity<ErrorResponse> recaptchaInvalidHandler(RecaptchaInvalidException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    /**
+     * Exception handler for invalid login credentials
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    ProblemDetail badCredentialsHandler(BadCredentialsException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    /**
+     * Exception handler for locked accounts
+     */
+    @ExceptionHandler(AccountStatusException.class)
+    ProblemDetail lockedAccountHandler(AccountStatusException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    /**
+     * Exception handler for unauthorized access
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    ProblemDetail accessDeniedHandler(AccessDeniedException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    /**
+     * Exception handler for invalid JWT signatures
+     */
+    @ExceptionHandler(SignatureException.class)
+    ProblemDetail signatureExceptionHandler(SignatureException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    /**
+     * Exception handler for expired JWT
+     */
+    @ExceptionHandler(ExpiredJwtException.class)
+    ProblemDetail expiredJwtExceptionHandler(ExpiredJwtException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    /**
+     * Exception handler for all other system exceptions
+     */
+    @ExceptionHandler(Exception.class)
+    ProblemDetail exceptionHandler(Exception ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 }
