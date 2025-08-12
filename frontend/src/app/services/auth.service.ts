@@ -3,12 +3,20 @@ import {LoginDto} from '../data/dto/login-dto';
 import {RegisterDto} from '../data/dto/register-dto';
 import {ValidateOtpDto} from '../data/dto/validate-otp-dto';
 import {ChangePasswordDto} from '../data/dto/change-password-dto';
+import {JwtResponseData} from '../data/jwt-response-data';
+import {Router} from '@angular/router';
+
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
   baseUrl: string = 'http://localhost:8080/auth';
+  private accessToken: string | null = localStorage.getItem("accessToken");
+  private resetPasswordToken: string | null = localStorage.getItem("resetPasswordToken");
+
+  constructor(public router: Router) {};
 
   /**
    * Attempts to log in to an account using given email & password
@@ -20,7 +28,6 @@ export class AuthenticationService {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -28,6 +35,10 @@ export class AuthenticationService {
     if (response.status === 401) {
       throw new Error('Invalid credentials');
     }
+
+    const loginResponse: JwtResponseData = await response.json();
+    this.accessToken = loginResponse.token;
+    localStorage.setItem("accessToken", loginResponse.token);
   }
 
   /**
@@ -35,8 +46,13 @@ export class AuthenticationService {
    */
   async loginStatus(): Promise<boolean> {
     try {
+      const headers = new Headers();
+      if (this.accessToken) {
+        headers.append('Authorization', `Bearer ${this.accessToken}`);
+      }
+
       const response = await fetch(`${this.baseUrl}/login-status`, {
-        credentials: 'include',
+        headers: headers
       });
 
       const data = await response.json();
@@ -96,7 +112,7 @@ export class AuthenticationService {
    */
   async validateOTP(data: ValidateOtpDto): Promise<Response> {
     try {
-      return await fetch(`${this.baseUrl}/validate-otp`, {
+      const response = await fetch(`${this.baseUrl}/validate-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,6 +120,11 @@ export class AuthenticationService {
         credentials: 'include',
         body: JSON.stringify(data),
       });
+
+      const validateResponse: JwtResponseData = await response.json();
+      this.resetPasswordToken = validateResponse.token;
+      localStorage.setItem("resetPasswordToken", this.resetPasswordToken);
+      return response;
     } catch (error) {
       throw error;
     }
@@ -115,18 +136,26 @@ export class AuthenticationService {
    */
   async changePassword(data: ChangePasswordDto) {
     try {
+      const headers = new Headers({
+        "Content-Type": "application/json"
+      });
+
+      if (this.resetPasswordToken) {
+        headers.append("Authorization", `Bearer ${this.resetPasswordToken}`);
+      }
+
       const response = await fetch(`${this.baseUrl}/change-password`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
         credentials: 'include',
         body: JSON.stringify(data),
       });
 
       // Upon successful update redirect the user to the login page
       if (response.ok) {
-        window.location.href = '/login';
+        this.resetPasswordToken = null;
+        localStorage.removeItem("resetPasswordToken");
+        this.router.navigate(['/login']);
       }
     } catch (error) {
       throw error;
