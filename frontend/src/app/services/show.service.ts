@@ -19,15 +19,27 @@ import {UpdateReviewDto} from '../data/dto/update-review-dto';
 })
 export class ShowService {
   baseUrl: string = "http://localhost:8080/shows";
+  private accessToken: string | null = localStorage.getItem("accessToken");
 
   constructor(public router: Router) {};
 
   // If the user is unauthorized, we redirect user to the login page
   checkUnauthorizedUser(response: Response) {
-    if (response.status === 401) {
+    if (response.status === 403) {
       this.router.navigate(['/login']);
       throw new Error("Unauthorized");
     }
+  }
+
+  getHeaders(containsPayload: boolean = false): Headers {
+    const headers = new Headers();
+    if (this.accessToken) {
+      headers.append("Authorization", `Bearer ${this.accessToken}`);
+    }
+    if (containsPayload) {
+      headers.append("Content-Type", "application/json");
+    }
+    return headers;
   }
 
   // If the show / season / episode is not found, we redirect user to the 404 page
@@ -75,7 +87,7 @@ export class ShowService {
    */
   async fetchShowDetails(showId: number): Promise<ShowData> {
     const response = await fetch(`${this.baseUrl}/${showId}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkPageNotFound(response);
@@ -104,7 +116,7 @@ export class ShowService {
     if (sortOption != null) url.searchParams.set('sort', sortOption);
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return await response.json();
   }
@@ -115,7 +127,7 @@ export class ShowService {
    */
   async fetchShowReview(reviewId: number): Promise<ShowReviewData> {
     const response = await fetch(`${this.baseUrl}/reviews/${reviewId}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return await response.json();
   }
@@ -128,10 +140,7 @@ export class ShowService {
   async addShowReview(showId:number, data: AddShowReviewDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/${showId}/reviews`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data)
     });
 
@@ -146,7 +155,7 @@ export class ShowService {
   async likeShowReview(reviewId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/likes`, {
       method: 'POST',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -160,7 +169,7 @@ export class ShowService {
   async unlikeShowReview(reviewId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/likes`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -174,7 +183,7 @@ export class ShowService {
   async deleteShowReview(reviewId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/reviews/${reviewId}`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -189,11 +198,8 @@ export class ShowService {
   async updateShowReview(reviewId: number, updates: UpdateReviewDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/reviews/${reviewId}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updates),
-      credentials: 'include'
+      headers: this.getHeaders(true),
+      body: JSON.stringify(updates)
     });
 
     this.checkUnauthorizedUser(response);
@@ -208,10 +214,7 @@ export class ShowService {
   async addCommentToShowReview(reviewId: number, data: AddCommentDto): Promise<ReviewCommentData> {
     const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/comments`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data)
     });
 
@@ -227,7 +230,7 @@ export class ShowService {
   async getShowReviewComments(reviewId: number, page ?: number): Promise<PageData<ReviewCommentData>> {
     const params = page != null ? `?page=${page}` : '';
     const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/comments${params}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return response.json();
   }
@@ -238,7 +241,7 @@ export class ShowService {
    */
   async getShowReviewComment(commentId: number): Promise<ReviewCommentData> {
     const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return response.json();
   }
@@ -250,7 +253,7 @@ export class ShowService {
   async likeShowReviewComment(commentId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}/likes`, {
       method: 'POST',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -264,7 +267,7 @@ export class ShowService {
   async unlikeShowReviewComment(commentId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}/likes`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -278,7 +281,7 @@ export class ShowService {
   async deleteShowReviewComment(commentId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -293,10 +296,7 @@ export class ShowService {
   async updateShowReviewComment(commentId: number, updates: AddCommentDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/reviews/comments/${commentId}`, {
       method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(updates)
     });
 
@@ -312,10 +312,7 @@ export class ShowService {
   async addEpisodeReview(episodeId: number, data: AddEpisodeReviewDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episodes/${episodeId}/reviews`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data)
     });
 
@@ -335,7 +332,7 @@ export class ShowService {
     if (sortOption != null) url.searchParams.set('sort', sortOption);
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return await response.json();
   }
@@ -346,7 +343,7 @@ export class ShowService {
    */
   async fetchEpisodeReview(reviewId: number): Promise<EpisodeReviewData> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return await response.json();
   }
@@ -358,7 +355,7 @@ export class ShowService {
   async likeEpisodeReview(reviewId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/likes`, {
       method: 'POST',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -372,7 +369,7 @@ export class ShowService {
   async unlikeEpisodeReview(reviewId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/likes`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -386,7 +383,7 @@ export class ShowService {
   async deleteEpisodeReview(reviewId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -401,11 +398,8 @@ export class ShowService {
   async updateEpisodeReview(reviewId: number, updates: UpdateReviewDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(updates),
-      credentials: 'include'
     });
 
     this.checkUnauthorizedUser(response);
@@ -420,10 +414,7 @@ export class ShowService {
   async addCommentToEpisodeReview(reviewId: number, data: AddCommentDto): Promise<ReviewCommentData> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/comments`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data)
     });
 
@@ -439,7 +430,7 @@ export class ShowService {
   async getEpisodeReviewComments(reviewId: number, page ?: number): Promise<PageData<ReviewCommentData>> {
     const params = page != null ? `?page=${page}` : '';
     const response = await fetch(`${this.baseUrl}/episode-reviews/${reviewId}/comments${params}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return response.json();
   }
@@ -450,7 +441,7 @@ export class ShowService {
    */
   async getEpisodeReviewComment(commentId: number): Promise<ReviewCommentData> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return response.json();
   }
@@ -462,7 +453,7 @@ export class ShowService {
   async likeEpisodeReviewComment(commentId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}/likes`, {
       method: 'POST',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -476,7 +467,7 @@ export class ShowService {
   async unlikeEpisodeReviewComment(commentId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}/likes`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -490,7 +481,7 @@ export class ShowService {
   async deleteEpisodeReviewComment(commentId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -505,10 +496,7 @@ export class ShowService {
   async updateEpisodeReviewComment(commentId: number, updates: AddCommentDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-reviews/comments/${commentId}`, {
       method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(updates)
     });
 
@@ -523,7 +511,7 @@ export class ShowService {
    */
   async fetchSeasonDetails(showId: number, seasonNumber: number): Promise<SeasonData> {
     const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkPageNotFound(response);
@@ -550,7 +538,7 @@ export class ShowService {
    */
   async fetchEpisodeDetails(showId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeData> {
     const response = await fetch(`${this.baseUrl}/${showId}/seasons/${seasonNumber}/episodes/${episodeNumber}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkPageNotFound(response);
