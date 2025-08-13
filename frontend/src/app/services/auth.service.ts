@@ -6,8 +6,6 @@ import {ChangePasswordDto} from '../data/dto/change-password-dto';
 import {JwtResponseData} from '../data/jwt-response-data';
 import {Router} from '@angular/router';
 
-
-
 @Injectable({
   providedIn: 'root',
 })
@@ -117,7 +115,6 @@ export class AuthenticationService {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify(data),
       });
 
@@ -147,7 +144,6 @@ export class AuthenticationService {
       const response = await fetch(`${this.baseUrl}/change-password`, {
         method: 'POST',
         headers: headers,
-        credentials: 'include',
         body: JSON.stringify(data),
       });
 

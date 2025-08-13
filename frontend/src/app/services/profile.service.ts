@@ -38,15 +38,27 @@ import {ProfileReviewData} from '../data/types';
 })
 export class ProfileService {
   readonly baseUrl: string = 'http://localhost:8080/profile';
+  private accessToken: string | null = localStorage.getItem("accessToken");
 
   constructor(public router: Router) {};
 
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
-    if (response.status === 401) {
+    if (response.status === 403) {
       this.router.navigate(['/login']);
       throw new Error("Unauthorized");
     }
+  }
+
+  getHeaders(containsPayload: boolean = false): Headers {
+    const headers = new Headers();
+    if (this.accessToken) {
+      headers.append("Authorization", `Bearer ${this.accessToken}`);
+    }
+    if (containsPayload) {
+      headers.append("Content-Type", "application/json");
+    }
+    return headers;
   }
 
   /**
@@ -54,7 +66,7 @@ export class ProfileService {
    */
   async getProfileDetails(): Promise<UserData> {
     const response = await fetch(`${this.baseUrl}/details`, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -67,7 +79,7 @@ export class ProfileService {
   async getProfileActivity(page ?: number): Promise<PageData<ActivityData>> {
     const params = page != null ? `?page=${page}` : '';
     const response = await fetch(`${this.baseUrl}/activity${params}`, {
-      credentials: "include"
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -82,9 +94,7 @@ export class ProfileService {
     const response = await fetch(`${this.baseUrl}/details`, {
       method: 'PATCH',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -101,9 +111,7 @@ export class ProfileService {
     const response = await fetch(`${this.baseUrl}/socials`, {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -118,7 +126,7 @@ export class ProfileService {
   async removeSocialAccount(socialId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/socials/${socialId}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -132,7 +140,7 @@ export class ProfileService {
   async uploadProfilePicture(formData: FormData): Promise<string> {
     const response = await fetch(`${this.baseUrl}/profile-picture`, {
       method: 'POST',
-      credentials: 'include',
+      headers: this.getHeaders(),
       body: formData,
     });
 
@@ -151,7 +159,7 @@ export class ProfileService {
     if (sort != null) url.searchParams.set('sort', sort);
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -169,7 +177,7 @@ export class ProfileService {
     if (sort != null) url.searchParams.set('sort', sort);
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -187,7 +195,7 @@ export class ProfileService {
     if (sort != null) url.searchParams.set('sort', sort);
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -202,9 +210,7 @@ export class ProfileService {
     const response = await fetch(`${this.baseUrl}/watchlist`, {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -217,7 +223,7 @@ export class ProfileService {
    */
   async getFullWatchlist(): Promise<ShowListData[]> {
     const response = await fetch(`${this.baseUrl}/watchlist`, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -231,7 +237,7 @@ export class ProfileService {
   async removeShowFromWatchlist(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -245,7 +251,7 @@ export class ProfileService {
   async moveShowToWatchingList(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/watchlist/${id}`, {
       method: 'PUT',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -259,10 +265,7 @@ export class ProfileService {
   async addShowToWatchingList(data: AddToWatchingListDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/currently-watching`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -275,7 +278,7 @@ export class ProfileService {
    */
   async getFullWatchingList(): Promise<ShowListData[]> {
     const response = await fetch(`${this.baseUrl}/currently-watching`, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -289,7 +292,7 @@ export class ProfileService {
   async removeShowFromWatchingList(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/currently-watching/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -303,7 +306,7 @@ export class ProfileService {
   async moveShowToRankingList(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/currently-watching/${id}`, {
       method: 'PUT',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -317,10 +320,7 @@ export class ProfileService {
   async addShowToRankingList(data: AddToShowRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/show-rankings`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -333,7 +333,7 @@ export class ProfileService {
    */
   async getFullShowRankingList(): Promise<ShowRankingData[]> {
     const response = await fetch(`${this.baseUrl}/show-rankings`, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -347,7 +347,7 @@ export class ProfileService {
   async removeShowFromRankingList(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/show-rankings/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -361,10 +361,7 @@ export class ProfileService {
   async updateShowRankingList(data: UpdateShowRankingDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/show-rankings`, {
       method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -379,10 +376,7 @@ export class ProfileService {
   async addEpisodeToRankingList(data: AddToEpisodeRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-rankings`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -395,7 +389,7 @@ export class ProfileService {
    */
   async getFullEpisodeRankingList(): Promise<EpisodeRankingData[]> {
     const response = await fetch(`${this.baseUrl}/episode-rankings`, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -409,7 +403,7 @@ export class ProfileService {
   async removeEpisodeFromRankingList(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-rankings/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -423,10 +417,7 @@ export class ProfileService {
   async updateEpisodeRankingList(data: UpdateEpisodeRankingDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/episode-rankings`, {
       method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -441,10 +432,7 @@ export class ProfileService {
   async addSeasonToRankingList(data: AddToSeasonRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/season-rankings`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -459,7 +447,7 @@ export class ProfileService {
   async removeSeasonFromRankingList(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/season-rankings/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -471,7 +459,7 @@ export class ProfileService {
    */
   async getSeasonRankingList(): Promise<SeasonRankingData[]> {
     const response = await fetch(`${this.baseUrl}/season-rankings`, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -489,7 +477,7 @@ export class ProfileService {
     if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -507,7 +495,7 @@ export class ProfileService {
     if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -521,10 +509,7 @@ export class ProfileService {
   async updateSeasonRankingList(data: UpdateSeasonRankingDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/season-rankings`, {
       method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -537,7 +522,7 @@ export class ProfileService {
    */
   async getCharacterRankingLists(): Promise<CharacterRankingsData> {
     const response = await fetch(`${this.baseUrl}/character-rankings`, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -551,10 +536,7 @@ export class ProfileService {
   async addCharacterToRankingList(data: AddToCharacterRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-rankings`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -568,7 +550,7 @@ export class ProfileService {
   async removeCharacterFromRankingList(id: string): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-rankings/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -581,10 +563,7 @@ export class ProfileService {
   async updateCharacterRankingList(data: UpdateCharacterRankingDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-rankings`, {
       method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -599,7 +578,7 @@ export class ProfileService {
   async removeFollower(id: number): Promise<Response> {
     const response: Response = await fetch(`${this.baseUrl}/followers/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -614,7 +593,7 @@ export class ProfileService {
     const url = `${this.baseUrl}/collections${params}`;
 
     const response = await fetch(url, {
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -628,10 +607,7 @@ export class ProfileService {
   async createCollection(data: CreateCollectionDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -646,7 +622,7 @@ export class ProfileService {
   async deleteCollection(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections/${id}`, {
       method: 'DELETE',
-      credentials: 'include',
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -661,10 +637,7 @@ export class ProfileService {
   async updateCollection(id: number, data: UpdateCollectionDetails): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections/${id}`, {
       method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -680,10 +653,7 @@ export class ProfileService {
   async addShowToCollection(id: number, data: AddToCollection): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections/${id}/shows`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
 
@@ -697,7 +667,7 @@ export class ProfileService {
    */
   async getCollectionDetails(id: number): Promise<SingleCollectionData> {
     const response = await fetch(`${this.baseUrl}/collections/${id}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -712,7 +682,7 @@ export class ProfileService {
   async removeShowFromCollection(collectionId: number, showId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections/${collectionId}/shows/${showId}`, {
         method: 'DELETE',
-        credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -724,7 +694,7 @@ export class ProfileService {
    */
   async getDynamicRankingList(): Promise<DynamicRankingData[]> {
     const response = await fetch(`${this.baseUrl}/character-dynamics`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -738,10 +708,7 @@ export class ProfileService {
   async addDynamicToRankingList(data: AddToDynamicRankingList): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-dynamics`, {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data)
     });
 
@@ -756,7 +723,7 @@ export class ProfileService {
   async removeDynamicFromRankingList(dynamicId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-dynamics/${dynamicId}`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -770,10 +737,7 @@ export class ProfileService {
   async updateDynamicRankingList(data: UpdateDynamicRankingDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/character-dynamics`, {
       method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this.getHeaders(true),
       body: JSON.stringify(data)
     });
 
