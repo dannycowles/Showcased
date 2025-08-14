@@ -1,20 +1,15 @@
-<form id="login-form" novalidate>
+<form [formGroup]="loginForm">
   <div class="form-floating mb-3">
-    <input type="email" class="form-control" id="emailInput" placeholder="Enter email" name="email" required autocomplete="username">
-    <label for="emailInput" class="form-label">Email</label>
-    <div class="invalid-feedback">
-      Please enter an email
-    </div>
-  </div>
-  <div class="form-floating mb-3">
-    <input type="password" class="form-control" id="passwordInput" placeholder="Enter password" name="password" required autocomplete="current-password">
-    <label for="passwordInput" class="form-label">Password</label>
-    <div class="invalid-feedback">
-      Please enter a password
-    </div>
+    <input class="form-control" id="email" type="email" formControlName="email" placeholder="Enter email" autocomplete="email">
+    <label for="email" class="form-label">Email</label>
   </div>
 
-  <p id="login-error-message" hidden>You have entered an invalid email or password</p>
+  <div class="form-floating mb-3">
+    <input class="form-control" id="password" type="password" formControlName="password" placeholder="Enter password" autocomplete="current-password">
+    <label for="password" class="form-label">Password</label>
+  </div>
+
+  <div></div>
 
   <p>Don't have an account? <a href="/register">Create one</a></p>
   <p>Forgot your password? <a href="/reset-password">Reset it</a></p>
