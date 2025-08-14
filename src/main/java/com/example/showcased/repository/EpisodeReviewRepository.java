@@ -96,7 +96,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                 e.season,
                 e.episode,
                 CASE
-                    WHEN :userId IS NULL THEN FALSE
+                    WHEN :loggedInUserId IS NULL THEN FALSE
                     WHEN EXISTS (
                             SELECT lr FROM LikedEpisodeReview lr
                             WHERE lr.userId = :loggedInUserId AND lr.reviewId = r.id
@@ -107,9 +107,9 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
             FROM EpisodeReview r
             JOIN EpisodeInfo e ON e.id = r.episodeId
             JOIN User u ON u.id = r.userId
-            WHERE r.userId = :userId
+            WHERE u.displayName = :username
         """)
-    Page<EpisodeReviewDto> findByUserId(@Param("userId") Long userId, @Param("loggedInUserId") Long loggedInUser, Pageable pageable);
+    Page<EpisodeReviewDto> findByUsername(@Param("username") String username, @Param("loggedInUserId") Long loggedInUserId, Pageable pageable);
 
     void deleteByUserIdAndEpisodeId(Long userId, Long episodeId);
 

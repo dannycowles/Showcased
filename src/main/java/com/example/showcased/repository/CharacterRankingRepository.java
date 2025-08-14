@@ -30,8 +30,9 @@ public interface CharacterRankingRepository extends JpaRepository<CharacterRanki
             FROM CharacterRanking c
             JOIN CharacterInfo i ON c.id.characterId = i.id
             JOIN ShowInfo s ON i.showId = s.showId
-            WHERE c.id.userId = :userId AND c.characterType = :characterType
+            JOIN User u ON c.id.userId = u.id
+            WHERE u.displayName = :username AND c.characterType = :characterType
             ORDER BY c.rankNum
     """)
-    List<CharacterRankingReturnDto> findByIdUserIdAndCharacterType(@Param("userId") Long userId, @Param("characterType") String characterType, Pageable pageRequest);
+    List<CharacterRankingReturnDto> findByUsernameAndCharacterType(@Param("username") String username, @Param("characterType") String characterType, Pageable pageRequest);
 }

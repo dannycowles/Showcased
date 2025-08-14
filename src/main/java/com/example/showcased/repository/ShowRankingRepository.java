@@ -14,9 +14,21 @@ public interface ShowRankingRepository extends JpaRepository<ShowRanking, WatchI
     @Query("SELECT MAX(s.rankNum) FROM ShowRanking s WHERE s.id.userId = :userId")
     Integer findMaxRankNumByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT new com.example.showcased.dto.RankingReturnDto(s.showId, r.rankNum, s.title, s.posterPath)" +
-            "FROM ShowInfo s JOIN ShowRanking r ON s.showId = r.id.showId AND r.id.userId = :userId ORDER BY r.rankNum")
-    List<RankingReturnDto> findByIdUserId(@Param("userId") Long user, Pageable pageable);
+    @Query("""
+        SELECT new com.example.showcased.dto.RankingReturnDto(s.showId, r.rankNum, s.title, s.posterPath)
+        FROM ShowRanking r
+        JOIN ShowInfo s ON r.id.showId = s.showId
+        JOIN User u ON r.id.userId = u.id
+        WHERE u.displayName = :username
+        ORDER BY r.rankNum
+    """)
+    List<RankingReturnDto> findByUsername(@Param("username") String username, Pageable pageable);
 
-    int countByIdUserId(Long userId);
+    @Query("""
+        SELECT COUNT(r)
+        FROM ShowRanking r
+        JOIN User u ON r.id.userId = u.id
+        WHERE u.displayName = :username
+    """)
+    int countByUsername(@Param("username") String username);
 }

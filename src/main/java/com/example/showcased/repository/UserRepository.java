@@ -1,6 +1,7 @@
 package com.example.showcased.repository;
 
 import com.example.showcased.entity.User;
+import com.example.showcased.service.TMDBClient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User u SET u.numFollowing = u.numFollowing - 1 WHERE u.id = :userId")
     void decrementFollowingCount(@Param("userId") Long userId);
+
+    Optional<User> findByDisplayName(String username);
 }

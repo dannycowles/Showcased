@@ -160,7 +160,7 @@ public class ProfileService {
 
     public List<WatchReturnDto> getWatchlist(Integer limit) {
         User user = authService.retrieveUserFromJwt();
-        return watchlistRepository.findByIdUserId(user.getId(), getPageRequest(limit));
+        return watchlistRepository.findByUsername(user.getDisplayName(), getPageRequest(limit));
     }
 
     public void removeFromWatchlist(String id) {
@@ -197,7 +197,7 @@ public class ProfileService {
 
     private List<SocialAccountReturnDto> getSocialAccounts() {
         User user = authService.retrieveUserFromJwt();
-        return userSocialRepository.findByIdUserId(user.getId());
+        return userSocialRepository.findByUsername(user.getDisplayName());
     }
 
 
@@ -218,7 +218,7 @@ public class ProfileService {
 
     public List<WatchReturnDto> getWatchingList(Integer limit) {
         User user = authService.retrieveUserFromJwt();
-        return watchingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
+        return watchingRepository.findByUsername(user.getDisplayName(), getPageRequest(limit));
     }
 
     public void removeFromWatchingList(String id) {
@@ -272,7 +272,7 @@ public class ProfileService {
 
     public List<RankingReturnDto> getShowRankingList(Integer limit) {
         User user = authService.retrieveUserFromJwt();
-        return showRankingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
+        return showRankingRepository.findByUsername(user.getDisplayName(), getPageRequest(limit));
     }
 
     public void removeFromShowRankingList(String id) {
@@ -280,7 +280,7 @@ public class ProfileService {
         showRankingRepository.deleteById(new WatchId(user.getId(), Long.valueOf(id)));
 
         // After deleting from the show ranking list we will need to adjust the ranking numbers to account for it
-        List<RankingReturnDto> rankings = showRankingRepository.findByIdUserId(user.getId(), Pageable.unpaged());
+        List<RankingReturnDto> rankings = showRankingRepository.findByUsername(user.getDisplayName(), Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             ShowRanking ranking = new ShowRanking();
             ranking.setId(new WatchId(user.getId(), rankings.get(i).getShowId()));
@@ -339,7 +339,7 @@ public class ProfileService {
 
     public List<EpisodeRankingReturnDto> getEpisodeRankingList(Integer limit) {
         User user = authService.retrieveUserFromJwt();
-        return episodeRankingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
+        return episodeRankingRepository.findByUsername(user.getDisplayName(), getPageRequest(limit));
     }
 
     public void removeFromEpisodeRankingList(Long episodeId) {
@@ -347,7 +347,7 @@ public class ProfileService {
         episodeRankingRepository.deleteById(new EpisodeRankingId(user.getId(), episodeId));
 
         // After deleting from the show ranking list we will need to adjust the ranking numbers to account for it
-        List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByIdUserId(user.getId(), Pageable.unpaged());
+        List<EpisodeRankingReturnDto> rankings = episodeRankingRepository.findByUsername(user.getDisplayName(), Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             EpisodeRanking ranking = new EpisodeRanking();
             ranking.setId(new EpisodeRankingId(user.getId(), rankings.get(i).getEpisodeId()));
@@ -408,7 +408,7 @@ public class ProfileService {
 
     public List<SeasonRankingReturnDto> getSeasonRankingList(Integer limit) {
         User user = authService.retrieveUserFromJwt();
-        return seasonRankingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
+        return seasonRankingRepository.findByUsername(user.getDisplayName(), getPageRequest(limit));
     }
 
     public void removeFromSeasonRankingList(Long seasonId) {
@@ -416,7 +416,7 @@ public class ProfileService {
         seasonRankingRepository.deleteById(new SeasonRankingId(user.getId(), seasonId));
 
         // After deleting the season we need to adjust all the rank numbers to account for it
-        List<SeasonRankingReturnDto> rankings = seasonRankingRepository.findByIdUserId(user.getId(), Pageable.unpaged());
+        List<SeasonRankingReturnDto> rankings = seasonRankingRepository.findByUsername(user.getDisplayName(), Pageable.unpaged());
         for (int i = 0; i < rankings.size(); i++) {
             SeasonRanking newRanking = new SeasonRanking();
             newRanking.setId(new SeasonRankingId(user.getId(), rankings.get(i).getId()));
@@ -488,18 +488,18 @@ public class ProfileService {
             throw new InvalidCharacterType("Invalid character type: " + characterType);
         }
 
-        return characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), characterType, getPageRequest(limit));
+        return characterRankingRepository.findByUsernameAndCharacterType(user.getDisplayName(), characterType, getPageRequest(limit));
     }
 
     public AllCharacterRankingDto getAllCharacterRankings(Integer limit) {
         User user = authService.retrieveUserFromJwt();
         AllCharacterRankingDto rankings = new AllCharacterRankingDto();
 
-        rankings.setProtagonists(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[0], getPageRequest(limit)));
-        rankings.setDeuteragonists(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[1], getPageRequest(limit)));
-        rankings.setAntagonists(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[2], getPageRequest(limit)));
-        rankings.setTritagonists(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[3], getPageRequest(limit)));
-        rankings.setSide(characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), validCharacterTypes[4], getPageRequest(limit)));
+        rankings.setProtagonists(characterRankingRepository.findByUsernameAndCharacterType(user.getDisplayName(), validCharacterTypes[0], getPageRequest(limit)));
+        rankings.setDeuteragonists(characterRankingRepository.findByUsernameAndCharacterType(user.getDisplayName(), validCharacterTypes[1], getPageRequest(limit)));
+        rankings.setAntagonists(characterRankingRepository.findByUsernameAndCharacterType(user.getDisplayName(), validCharacterTypes[2], getPageRequest(limit)));
+        rankings.setTritagonists(characterRankingRepository.findByUsernameAndCharacterType(user.getDisplayName(), validCharacterTypes[3], getPageRequest(limit)));
+        rankings.setSide(characterRankingRepository.findByUsernameAndCharacterType(user.getDisplayName(), validCharacterTypes[4], getPageRequest(limit)));
         return rankings;
     }
 
@@ -512,7 +512,7 @@ public class ProfileService {
             characterRankingRepository.delete(characterDelete.get());
 
             // After deleting the character, we need to update the ranks of the other characters on list
-            List<CharacterRankingReturnDto> rankings = characterRankingRepository.findByIdUserIdAndCharacterType(user.getId(), characterType, Pageable.unpaged());
+            List<CharacterRankingReturnDto> rankings = characterRankingRepository.findByUsernameAndCharacterType(user.getDisplayName(), characterType, Pageable.unpaged());
             for (int i = 0; i < rankings.size(); i++) {
                 CharacterRanking newRanking = new CharacterRanking();
                 newRanking.setId(new CharacterRankingId(user.getId(), rankings.get(i).getId()));
@@ -554,8 +554,8 @@ public class ProfileService {
                 pageable.getSort()
         );
 
-        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(user.getId(), user.getId(), Pageable.unpaged()).getContent();
-        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(user.getId(), user.getId(), Pageable.unpaged()).getContent();
+        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUsername(user.getDisplayName(), user.getId(), Pageable.unpaged()).getContent();
+        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUsername(user.getDisplayName(), user.getId(), Pageable.unpaged()).getContent();
 
         Sort sort = modifiedPage.getSort();
         Comparator<ShowReviewDto> comparator;
@@ -595,7 +595,7 @@ public class ProfileService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return showReviewRepository.findByUserId(user.getId(), user.getId(), modifiedPage);
+        return showReviewRepository.findByUsername(user.getDisplayName(), user.getId(), modifiedPage);
     }
 
     public Page<EpisodeReviewDto> getEpisodeReviews(Pageable pageable) {
@@ -607,7 +607,7 @@ public class ProfileService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return episodeReviewRepository.findByUserId(user.getId(), user.getId(), modifiedPage);
+        return episodeReviewRepository.findByUsername(user.getDisplayName(), user.getId(), modifiedPage);
     }
 
     public Page<UserSearchDto> getFollowers(String name, Pageable pageable) {
@@ -620,9 +620,9 @@ public class ProfileService {
         );
 
         if (name != null) {
-            return followersRepository.getFollowersByIdFollowingIdFiltered(user.getId(), name, modifiedPage);
+            return followersRepository.getFollowersByUsernameFiltered(user.getDisplayName(), name, modifiedPage);
         } else {
-            return followersRepository.getFollowersByIdFollowingId(user.getId(), modifiedPage);
+            return followersRepository.getFollowersByUsername(user.getDisplayName(), modifiedPage);
         }
     }
 
@@ -636,9 +636,9 @@ public class ProfileService {
         );
 
         if (name != null) {
-            return followersRepository.getFollowingByIdFollowerIdFiltered(user.getId(), name, modifiedPage);
+            return followersRepository.getFollowingByUsernameFiltered(user.getDisplayName(), name, modifiedPage);
         } else {
-            return followersRepository.getFollowingByIdFollowerId(user.getId(), modifiedPage);
+            return followersRepository.getFollowingByUsername(user.getDisplayName(), modifiedPage);
         }
     }
 
@@ -818,7 +818,7 @@ public class ProfileService {
 
     public List<DynamicRankingReturnDto> getDynamicsRankingList(Integer limit) {
         User user = authService.retrieveUserFromJwt();
-        return dynamicRankingRepository.findByIdUserId(user.getId(), getPageRequest(limit));
+        return dynamicRankingRepository.findByUsername(user.getDisplayName(), getPageRequest(limit));
     }
 
     public DynamicRankingReturnDto addDynamicToRankingList(DynamicRankingDto dynamic) {

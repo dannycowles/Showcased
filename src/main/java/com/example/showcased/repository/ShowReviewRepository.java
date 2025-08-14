@@ -98,9 +98,9 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
         FROM ShowReview r
         JOIN User u ON r.userId = u.id
         JOIN ShowInfo s ON r.showId = s.showId
-        WHERE r.userId = :userId
+        WHERE u.displayName = :username
     """)
-    Page<ShowReviewDto> findByUserId(@Param("userId") Long userId, @Param("loggedInUserId") Long loggedInUserId, Pageable pageable);
+    Page<ShowReviewDto> findByUsername(@Param("username") String username, @Param("loggedInUserId") Long loggedInUserId, Pageable pageable);
 
     void deleteByUserIdAndShowId(Long userId, Long showId);
 

@@ -8,6 +8,7 @@ import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,6 +85,13 @@ public class UserService {
         }
     }
 
+    private void ensureUserExistsByUsername(String username) {
+        // Check to make sure user exists in system
+        if (!userRepository.existsByDisplayName(username)) {
+            throw new UserNotFoundException(username);
+        }
+    }
+
     public List<UserSearchDto> searchUsers(String query) {
         ModelMapper searchMapper = new ModelMapper();
         searchMapper.typeMap(User.class, UserSearchDto.class).addMappings(mapper -> {
@@ -94,9 +102,9 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public ProfileDetailsDto getUserDetails(Long userId) {
-        ensureUserExists(userId);
-        User user = userRepository.findById(userId).get();
+    public ProfileDetailsDto getUserDetails(String username) {
+        ensureUserExistsByUsername(username);
+        User user = userRepository.findByDisplayName(username).get();
 
         // Special user details model mapper that skips the set following column
         ModelMapper userMapper = new ModelMapper();
@@ -106,50 +114,50 @@ public class UserService {
 
         ProfileDetailsDto userDetails = new ProfileDetailsDto();
         UserHeaderDataDto headerData = userMapper.map(user, UserHeaderDataDto.class);
-        headerData.setSocialAccounts(getSocialAccounts(userId));
+        headerData.setSocialAccounts(getSocialAccounts(username));
 
         // Check if the user is logged in, if so we check they are following this user
         User loggedInUser = authService.retrieveUserFromJwt();
         if (loggedInUser != null) {
-            headerData.setFollowing(followersRepository.existsByFollowerIdAndFollowingId(loggedInUser.getId(), userId));
-            headerData.setOwnProfile(loggedInUser.getId().equals(userId));
+            headerData.setFollowing(followersRepository.existsByFollowerIdAndFollowingId(loggedInUser.getId(), user.getId()));
+            headerData.setOwnProfile(loggedInUser.getId().equals(user.getId()));
         }
         userDetails.setHeaderData(headerData);
 
-        userDetails.setWatchlistTop(getUserWatchlist(userId, numTopEntries));
-        if (watchlistRepository.countByIdUserId(userId) > numTopEntries) {
+        userDetails.setWatchlistTop(getUserWatchlist(username, numTopEntries));
+        if (watchlistRepository.countByUsername(username) > numTopEntries) {
             userDetails.setHasMoreWatchlist(true);
         }
 
-        userDetails.setWatchingTop(getUserWatchingList(userId, numTopEntries));
-        if (watchingRepository.countByIdUserId(userId) > numTopEntries) {
+        userDetails.setWatchingTop(getUserWatchingList(username, numTopEntries));
+        if (watchingRepository.countByUsername(username) > numTopEntries) {
             userDetails.setHasMoreWatching(true);
         }
 
-        userDetails.setShowRankingTop(getUserShowRankings(userId, numTopEntries));
-        if (showRankingRepository.countByIdUserId(userId) > numTopEntries) {
+        userDetails.setShowRankingTop(getUserShowRankings(username, numTopEntries));
+        if (showRankingRepository.countByUsername(username) > numTopEntries) {
             userDetails.setHasMoreShowRanking(true);
         }
 
-        userDetails.setEpisodeRankingTop(getUserEpisodeRankings(userId, numTopEntries));
-        if (episodeRankingRepository.countByIdUserId(userId) > numTopEntries) {
+        userDetails.setEpisodeRankingTop(getUserEpisodeRankings(username, numTopEntries));
+        if (episodeRankingRepository.countByUsername(username) > numTopEntries) {
             userDetails.setHasMoreEpisodeRanking(true);
         }
 
-        userDetails.setSeasonRankingTop(getUserSeasonRankings(userId, numTopEntries));
-        if (seasonRankingRepository.countByIdUserId(userId) > numTopEntries) {
+        userDetails.setSeasonRankingTop(getUserSeasonRankings(username, numTopEntries));
+        if (seasonRankingRepository.countByUsername(username) > numTopEntries) {
             userDetails.setHasMoreSeasonRanking(true);
         }
 
-        userDetails.setReviews(getUserReviews(userId, PageRequest.of(1, numTopEntries)).getContent());
-        userDetails.setCharacterRankings(getAllUserCharacterRankings(userId, numTopEntries));
-        userDetails.setDynamicRankingTop(getUserDynamicRankings(userId, numTopEntries));
+        userDetails.setReviews(getUserReviews(username, PageRequest.of(1, numTopEntries)).getContent());
+        userDetails.setCharacterRankings(getAllUserCharacterRankings(username, numTopEntries));
+        userDetails.setDynamicRankingTop(getUserDynamicRankings(username, numTopEntries));
         return userDetails;
     }
 
-    private List<SocialAccountReturnDto> getSocialAccounts(Long userId) {
-        ensureUserExists(userId);
-        return userSocialRepository.findByIdUserId(userId);
+    private List<SocialAccountReturnDto> getSocialAccounts(String username) {
+        ensureUserExistsByUsername(username);
+        return userSocialRepository.findByUsername(username);
     }
 
 
@@ -164,57 +172,57 @@ public class UserService {
         }
     }
 
-    public List<WatchReturnDto> getUserWatchlist(Long userId, Integer limit) {
-        ensureUserExists(userId);
-        return watchlistRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<WatchReturnDto> getUserWatchlist(String username, Integer limit) {
+        ensureUserExistsByUsername(username);
+        return watchlistRepository.findByUsername(username, getPageRequest(limit));
     }
 
-    public List<WatchReturnDto> getUserWatchingList(Long userId, Integer limit) {
-        ensureUserExists(userId);
-        return watchingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<WatchReturnDto> getUserWatchingList(String username, Integer limit) {
+        ensureUserExistsByUsername(username);
+        return watchingRepository.findByUsername(username, getPageRequest(limit));
     }
 
-    public List<RankingReturnDto> getUserShowRankings(Long userId, Integer limit) {
-        ensureUserExists(userId);
-        return showRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<RankingReturnDto> getUserShowRankings(String username, Integer limit) {
+        ensureUserExistsByUsername(username);
+        return showRankingRepository.findByUsername(username, getPageRequest(limit));
     }
 
-    public List<EpisodeRankingReturnDto> getUserEpisodeRankings(Long userId, Integer limit) {
-        ensureUserExists(userId);
-        return episodeRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<EpisodeRankingReturnDto> getUserEpisodeRankings(String username, Integer limit) {
+        ensureUserExistsByUsername(username);
+        return episodeRankingRepository.findByUsername(username, getPageRequest(limit));
     }
 
-    public List<SeasonRankingReturnDto> getUserSeasonRankings(Long userId, Integer limit) {
-        ensureUserExists(userId);
-        return seasonRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<SeasonRankingReturnDto> getUserSeasonRankings(String username, Integer limit) {
+        ensureUserExistsByUsername(username);
+        return seasonRankingRepository.findByUsername(username, getPageRequest(limit));
     }
 
-    public List<CharacterRankingReturnDto> getUserCharacterRankings(Long userId, Integer limit, String characterType) {
-        ensureUserExists(userId);
+    public List<CharacterRankingReturnDto> getUserCharacterRankings(String username, Integer limit, String characterType) {
+        ensureUserExistsByUsername(username);
 
         // Make sure that the requested character type is valid
         if (!Arrays.asList(validCharacterTypes).contains(characterType)) {
             throw new InvalidCharacterType("Invalid character type: " + characterType);
         }
 
-        return characterRankingRepository.findByIdUserIdAndCharacterType(userId, characterType, getPageRequest(limit));
+        return characterRankingRepository.findByUsernameAndCharacterType(username, characterType, getPageRequest(limit));
     }
 
-    public AllCharacterRankingDto getAllUserCharacterRankings(Long userId, Integer limit) {
-        ensureUserExists(userId);
+    public AllCharacterRankingDto getAllUserCharacterRankings(String username, Integer limit) {
+        ensureUserExistsByUsername(username);
         AllCharacterRankingDto rankings = new AllCharacterRankingDto();
 
-        rankings.setProtagonists(getUserCharacterRankings(userId, limit, validCharacterTypes[0]));
-        rankings.setDeuteragonists(getUserCharacterRankings(userId, limit, validCharacterTypes[1]));
-        rankings.setAntagonists(getUserCharacterRankings(userId, limit, validCharacterTypes[2]));
-        rankings.setTritagonists(getUserCharacterRankings(userId, limit, validCharacterTypes[3]));
-        rankings.setSide(getUserCharacterRankings(userId, limit, validCharacterTypes[4]));
+        rankings.setProtagonists(getUserCharacterRankings(username, limit, validCharacterTypes[0]));
+        rankings.setDeuteragonists(getUserCharacterRankings(username, limit, validCharacterTypes[1]));
+        rankings.setAntagonists(getUserCharacterRankings(username, limit, validCharacterTypes[2]));
+        rankings.setTritagonists(getUserCharacterRankings(username, limit, validCharacterTypes[3]));
+        rankings.setSide(getUserCharacterRankings(username, limit, validCharacterTypes[4]));
         return rankings;
     }
 
 
 
-    public Page<ShowReviewDto> getUserReviews(Long userId, Pageable pageable) {
+    public Page<ShowReviewDto> getUserReviews(String username, Pageable pageable) {
         User loggedInUser = authService.retrieveUserFromJwt();
         Long loggedInUserId = (loggedInUser != null) ? loggedInUser.getId() : null;
 
@@ -225,8 +233,8 @@ public class UserService {
                 pageable.getSort()
         );
 
-        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUserId(userId, loggedInUserId, Pageable.unpaged()).getContent();
-        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUserId(userId, loggedInUserId, Pageable.unpaged()).getContent();
+        List<ShowReviewDto> topShowReviews = showReviewRepository.findByUsername(username, loggedInUserId, Pageable.unpaged()).getContent();
+        List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUsername(username, loggedInUserId, Pageable.unpaged()).getContent();
 
         Sort sort = modifiedPage.getSort();
         Comparator<ShowReviewDto> comparator;
@@ -257,8 +265,8 @@ public class UserService {
         return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
     }
 
-    public Page<ShowReviewDto> getUserShowReviews(Long userId, Pageable pageable) {
-        ensureUserExists(userId);
+    public Page<ShowReviewDto> getUserShowReviews(String username, Pageable pageable) {
+        ensureUserExistsByUsername(username);
         User loggedInUser = authService.retrieveUserFromJwt();
         Long loggedInUserId = (loggedInUser != null) ? loggedInUser.getId() : null;
 
@@ -268,11 +276,11 @@ public class UserService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return showReviewRepository.findByUserId(userId, loggedInUserId, modifiedPage);
+        return showReviewRepository.findByUsername(username, loggedInUserId, modifiedPage);
     }
 
-    public Page<EpisodeReviewDto> getUserEpisodeReviews(Long userId, Pageable pageable) {
-        ensureUserExists(userId);
+    public Page<EpisodeReviewDto> getUserEpisodeReviews(String username, Pageable pageable) {
+        ensureUserExistsByUsername(username);
         User loggedInUser = authService.retrieveUserFromJwt();
         Long loggedInUserId = (loggedInUser != null) ? loggedInUser.getId() : null;
 
@@ -282,7 +290,7 @@ public class UserService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-        return episodeReviewRepository.findByUserId(userId, loggedInUserId, modifiedPage);
+        return episodeReviewRepository.findByUsername(username, loggedInUserId, modifiedPage);
     }
 
     @Transactional
@@ -329,8 +337,8 @@ public class UserService {
         userRepository.decrementFollowingCount(loggedInUser.getId());
     }
 
-    public Page<UserSearchDto> getFollowers(Long userId, String name, Pageable pageable) {
-        ensureUserExists(userId);
+    public Page<UserSearchDto> getFollowers(String username, String name, Pageable pageable) {
+        ensureUserExistsByUsername(username);
 
         // Subtract 1 from page to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -339,15 +347,15 @@ public class UserService {
         );
 
         Page<UserSearchDto> followers = (name != null)
-                ? followersRepository.getFollowersByIdFollowingIdFiltered(userId, name, modifiedPage)
-                : followersRepository.getFollowersByIdFollowingId(userId,  modifiedPage);
+                ? followersRepository.getFollowersByUsernameFiltered(username, name, modifiedPage)
+                : followersRepository.getFollowersByUsername(username, modifiedPage);
 
         setFollowingFlags(followers.getContent());
         return followers;
     }
 
-    public Page<UserSearchDto> getFollowing(Long userId, String name, Pageable pageable) {
-        ensureUserExists(userId);
+    public Page<UserSearchDto> getFollowing(String username, String name, Pageable pageable) {
+        ensureUserExistsByUsername(username);
 
         // Subtract 1 from page to align with 0-index
         Pageable modifiedPage = PageRequest.of(
@@ -356,8 +364,8 @@ public class UserService {
         );
 
         Page<UserSearchDto> following = (name != null)
-                ? followersRepository.getFollowingByIdFollowerIdFiltered(userId, name, modifiedPage)
-                : followersRepository.getFollowingByIdFollowerId(userId, modifiedPage);
+                ? followersRepository.getFollowingByUsernameFiltered(username, name, modifiedPage)
+                : followersRepository.getFollowingByUsername(username, modifiedPage);
 
         setFollowingFlags(following.getContent());
         return following;
@@ -380,16 +388,17 @@ public class UserService {
 
 
 
-    public List<CollectionDto> getCollections(String name, Long userId) {
-        ensureUserExists(userId);
+    public List<CollectionDto> getCollections(String name, String username) {
+        ensureUserExistsByUsername(username);
+        User user = userRepository.findByDisplayName(username).get();
 
         // If a name is specified filter by that, else retrieve all collections
         if (name != null) {
-            return collectionsRepository.findByUserIdAndPrivateCollectionFalseAndCollectionNameContainingIgnoreCase(userId, name).stream()
+            return collectionsRepository.findByUserIdAndPrivateCollectionFalseAndCollectionNameContainingIgnoreCase(user.getId(), name).stream()
                     .map(collection -> modelMapper.map(collection, CollectionDto.class))
                     .collect(Collectors.toList());
         } else {
-            return collectionsRepository.findByUserIdAndPrivateCollectionFalse(userId).stream()
+            return collectionsRepository.findByUserIdAndPrivateCollectionFalse(user.getId()).stream()
                     .map(collection -> modelMapper.map(collection, CollectionDto.class))
                     .collect(Collectors.toList());
         }
@@ -467,8 +476,8 @@ public class UserService {
         }
     }
 
-    public List<DynamicRankingReturnDto> getUserDynamicRankings(Long userId, Integer limit) {
-        ensureUserExists(userId);
-        return dynamicRankingRepository.findByIdUserId(userId, getPageRequest(limit));
+    public List<DynamicRankingReturnDto> getUserDynamicRankings(String username, Integer limit) {
+        ensureUserExistsByUsername(username);
+        return dynamicRankingRepository.findByUsername(username, getPageRequest(limit));
     }
 }

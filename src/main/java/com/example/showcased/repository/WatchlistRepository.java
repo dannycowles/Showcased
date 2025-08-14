@@ -11,9 +11,21 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface WatchlistRepository extends JpaRepository<Watchlist, WatchId> {
-    @Query("SELECT new com.example.showcased.dto.WatchReturnDto(s.showId, s.title, s.posterPath)" +
-            "FROM ShowInfo s JOIN Watchlist w ON s.showId = w.id.showId AND w.id.userId = :userId")
-    List<WatchReturnDto> findByIdUserId(@Param("userId") Long userId, Pageable pageable);
 
-    int countByIdUserId(Long userId);
+    @Query("""
+        SELECT new com.example.showcased.dto.WatchReturnDto(s.showId, s.title, s.posterPath)
+        FROM Watchlist w
+        JOIN ShowInfo s ON w.id.showId = s.showId
+        JOIN User u ON w.id.userId = u.id
+        WHERE u.displayName = :username
+    """)
+    List<WatchReturnDto> findByUsername(@Param("username") String username, Pageable pageable);
+
+    @Query("""
+        SELECT COUNT(w)
+        FROM Watchlist w
+        JOIN User u ON w.id.userId = u.id
+        WHERE u.displayName = :username
+    """)
+    int countByUsername(@Param("username") String username);
 }

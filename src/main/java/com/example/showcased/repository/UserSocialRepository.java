@@ -10,9 +10,14 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserSocialRepository extends JpaRepository<UserSocial, UserSocialId> {
-    @Query("SELECT new com.example.showcased.dto.SocialAccountReturnDto(s.id, s.name, u.handle, s.url, s.icon) " +
-            "FROM SocialPlatform s " +
-            "LEFT JOIN UserSocial u ON u.id.socialId = s.id AND u.id.userId = :userId " +
-            "ORDER BY s.id ASC")
-    List<SocialAccountReturnDto> findByIdUserId(@Param("userId") Long userId);
+
+    @Query("""
+        SELECT new com.example.showcased.dto.SocialAccountReturnDto(s.id, s.name, u.handle, s.url, s.icon)
+        FROM SocialPlatform s
+        LEFT JOIN UserSocial u ON u.id.socialId = s.id
+        JOIN User user ON u.id.userId = user.id
+        WHERE user.displayName = :username
+        ORDER BY s.id
+""")
+    List<SocialAccountReturnDto> findByUsername(@Param("username") String username);
 }

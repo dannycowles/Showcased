@@ -14,9 +14,21 @@ public interface EpisodeRankingRepository extends JpaRepository<EpisodeRanking, 
     @Query("SELECT MAX(e.rankNum) FROM EpisodeRanking e WHERE e.id.userId = :userId")
     Integer findMaxRankNumByUserId(@Param("userId") Long user);
 
-    @Query("SELECT new com.example.showcased.dto.EpisodeRankingReturnDto(r.id.episodeId, e.showId, r.rankNum, e.showTitle, e.episodeTitle, e.season, e.episode, e.posterPath)" +
-            "FROM EpisodeInfo e JOIN EpisodeRanking r ON e.id = r.id.episodeId AND r.id.userId = :userId ORDER BY r.rankNum")
-    List<EpisodeRankingReturnDto> findByIdUserId(@Param("userId") Long user, Pageable pageable);
+    @Query("""
+        SELECT new com.example.showcased.dto.EpisodeRankingReturnDto(e.id, e.showId, r.rankNum, e.showTitle, e.episodeTitle, e.season, e.episode, e.posterPath)
+        FROM EpisodeRanking r
+        JOIN EpisodeInfo e ON r.id.episodeId = e.id
+        JOIN User u ON r.id.userId = u.id
+        WHERE u.displayName = :username
+        ORDER BY r.rankNum
+    """)
+    List<EpisodeRankingReturnDto> findByUsername(@Param("username") String username, Pageable pageable);
 
-    int countByIdUserId(Long userId);
+    @Query("""
+        SELECT COUNT(r)
+        FROM EpisodeRanking r
+        JOIN User u ON r.id.userId = u.id
+        WHERE u.displayName = :username
+    """)
+    int countByUsername(@Param("username") String username);
 }

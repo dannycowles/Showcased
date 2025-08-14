@@ -25,10 +25,11 @@ public interface DynamicRankingRepository extends JpaRepository<DynamicRanking, 
         JOIN CharacterInfo c1 ON d.character1Id = c1.id
         JOIN CharacterInfo c2 ON d.character2Id = c2.id
         JOIN ShowInfo s ON c1.showId = s.showId
-        WHERE d.userId = :userId
-        ORDER BY d.rankNum ASC
+        JOIN User u ON d.userId = u.id
+        WHERE u.displayName = :username
+        ORDER BY d.rankNum
 """)
-    List<DynamicRankingReturnDto> findByIdUserId(@Param("userId") Long userId, Pageable pageable);
+    List<DynamicRankingReturnDto> findByUsername(@Param("username") String username, Pageable pageable);
 
     @Query("SELECT MAX(d.rankNum) FROM DynamicRanking d WHERE d.userId = :userId")
     Integer findMaxRankNumByUserId(@Param("userId") Long userId);
