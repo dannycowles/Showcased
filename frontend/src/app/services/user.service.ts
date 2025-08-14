@@ -19,6 +19,7 @@ import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-r
 })
 export class UserService {
   readonly baseUrl: string = "http://localhost:8080/users";
+  private accessToken: string | null = localStorage.getItem("accessToken");
 
   constructor(public router: Router) {};
 
@@ -29,78 +30,86 @@ export class UserService {
     }
   }
 
+  getHeaders() {
+    const headers = new Headers();
+    if (this.accessToken) {
+      headers.append("Authorization", `Bearer ${this.accessToken}`);
+    }
+    return headers;
+  }
+
   /**
    * Searches for users given a query
    * @param query
    */
   async searchUsers(query: string): Promise<UserSearchData[]> {
-    const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(query)}`);
+    const response = await fetch(`${this.baseUrl}?query=${encodeURIComponent(query)}`);
     return await response.json();
   }
 
   /**
-   * Retrieves the user details for the given user id
-   * @param id
+   * Retrieves the user details for the given username
+   * @param username
    */
-  async getUserDetails(id: number): Promise<UserData> {
-    const response = await fetch(`${this.baseUrl}/${id}/details`, {
-      credentials: 'include'
+  async getUserDetails(username: string): Promise<UserData> {
+    const response = await fetch(`${this.baseUrl}/${username}/details`, {
+      headers: this.getHeaders()
     });
 
     return await response.json();
   }
 
   /**
-   * Retrieves the full watchlist for the user with the specified id
-   * @param id
+   * Retrieves the full watchlist for the user with the specified username
+   * @param username
    */
-  async getFullWatchlist(id: number): Promise<ShowListData[]> {
-    const response = await fetch(`${this.baseUrl}/${id}/watchlist`);
+  async getFullWatchlist(username: string): Promise<ShowListData[]> {
+    const response = await fetch(`${this.baseUrl}/${username}/watchlist`);
     return await response.json();
   }
 
   /**
-   * Retrieves the full watching list for the user with the specified id
-   * @param id
+   * Retrieves the full watching list for the user with the specified username
+   * @param username
    */
-  async getFullWatchingList(id:number): Promise<ShowListData[]> {
-    const response = await fetch(`${this.baseUrl}/${id}/currently-watching`);
+  async getFullWatchingList(username: string): Promise<ShowListData[]> {
+    const response = await fetch(`${this.baseUrl}/${username}/currently-watching`);
     return await response.json();
   }
 
   /**
-   * Retrieves the full show ranking list for the user with the specified id
-   * @param id
+   * Retrieves the full show ranking list for the user with the specified username
+   * @param username
    */
-  async getFullShowRankingList(id:number): Promise<ShowRankingData[]> {
-    const response = await fetch(`${this.baseUrl}/${id}/show-rankings`);
+  async getFullShowRankingList(username: string): Promise<ShowRankingData[]> {
+    const response = await fetch(`${this.baseUrl}/${username}/show-rankings`);
     return await response.json();
   }
 
   /**
-   * Retrieves the full episode ranking list for the user with the specified id
-   * @param id
+   * Retrieves the full episode ranking list for the user with the specified username
+   * @param username
    */
-  async getFullEpisodeRankingList(id:number): Promise<EpisodeRankingData[]> {
-    const response = await fetch(`${this.baseUrl}/${id}/episode-rankings`);
+  async getFullEpisodeRankingList(username: string): Promise<EpisodeRankingData[]> {
+    const response = await fetch(`${this.baseUrl}/${username}/episode-rankings`);
     return await response.json();
   }
 
   /**
-   * Retrieves the full season ranking list for the user with the specified id
-   * @param id
+   * Retrieves the full season ranking list for the user with the specified username
+   * @param username
    */
-  async getFullSeasonRankingList(id:number): Promise<SeasonRankingData[]> {
-    const response = await fetch(`${this.baseUrl}/${id}/season-rankings`);
+  async getFullSeasonRankingList(username: string): Promise<SeasonRankingData[]> {
+    const response = await fetch(`${this.baseUrl}/${username}/season-rankings`);
     return await response.json();
   }
 
   /**
-   * Retrieves all the character ranking lists for the user with the specified id
-   * @param id
+   * Retrieves all the character ranking lists for the user with the specified username
+   * @param username
    */
-  async getAllCharacterRankingLists(id: number): Promise<CharacterRankingsData> {
-    const response = await fetch(`${this.baseUrl}/${id}/character-rankings`);
+  async getAllCharacterRankingLists(username: string): Promise<CharacterRankingsData> {
+    const response = await fetch(`${this.baseUrl}/${username}/character-rankings`);
     return await response.json();
   }
 
@@ -111,7 +120,7 @@ export class UserService {
   async unfollowUser(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/${id}/followers`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -125,7 +134,7 @@ export class UserService {
   async followUser(id: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/${id}/followers`, {
       method: 'POST',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -133,49 +142,49 @@ export class UserService {
   }
 
   /**
-   * Retrieves the followers list for user with the specified id
-   * @param id
+   * Retrieves the followers list for user with the specified username
+   * @param username
    * @param name
    * @param page
    */
-  async getFollowersList(id: number, name ?: string, page ?: number): Promise<PageData<UserSearchData>> {
-    const url = new URL(`${this.baseUrl}/${id}/followers`);
+  async getFollowersList(username: string, name ?: string, page ?: number): Promise<PageData<UserSearchData>> {
+    const url = new URL(`${this.baseUrl}/${username}/followers`);
     if (name?.length > 0) url.searchParams.set('name', name);
     if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     return response.json();
   }
 
   /**
-   * Retrieves the following list for user with the specified id
-   * @param id
+   * Retrieves the following list for user with the specified username
+   * @param username
    * @param name
    * @param page
    */
-  async getFollowingList(id: number, name ?: string, page ?: number): Promise<PageData<UserSearchData>> {
-    const url = new URL(`${this.baseUrl}/${id}/following`);
+  async getFollowingList(username: string, name ?: string, page ?: number): Promise<PageData<UserSearchData>> {
+    const url = new URL(`${this.baseUrl}/${username}/following`);
     if (name?.length > 0) url.searchParams.set('name', name);
     if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     return response.json();
   }
 
   /**
-   * Retrieves the public collections for user with the specified id
+   * Retrieves the public collections for user with the specified username
+   * @param username
    * @param name
-   * @param id
    */
-  async getPublicCollections(id: number, name ?: string): Promise<CollectionData[]> {
+  async getPublicCollections(username: string, name ?: string): Promise<CollectionData[]> {
     const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
-    const url = `${this.baseUrl}/${id}/collections${params}`;
+    const url = `${this.baseUrl}/${username}/collections${params}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -187,7 +196,7 @@ export class UserService {
    */
   async getCollectionDetails(collectionId: number): Promise<SingleCollectionData> {
     const response = await fetch(`${this.baseUrl}/collections/${collectionId}`, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
     return await response.json();
   }
@@ -199,7 +208,7 @@ export class UserService {
   async likeCollection(collectionId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections/${collectionId}/likes`, {
       method: 'POST',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -213,7 +222,7 @@ export class UserService {
   async unlikeCollection(collectionId: number): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/collections/${collectionId}/likes`, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -221,27 +230,27 @@ export class UserService {
   }
 
   /**
-   * Retrieves the full character dynamic ranking list for the user with the specified id
-   * @param id
+   * Retrieves the full character dynamic ranking list for the user with the specified username
+   * @param username
    */
-  async getFullDynamicRankingList(id: number): Promise<DynamicRankingData[]> {
-    const response = await fetch(`${this.baseUrl}/${id}/character-dynamics`);
+  async getFullDynamicRankingList(username: string): Promise<DynamicRankingData[]> {
+    const response = await fetch(`${this.baseUrl}/${username}/character-dynamics`);
     return await response.json();
   }
 
   /**
-   * Retrieves the combined list of all review types for the user with the specified id, paged & sorted as requested
-   * @param id
+   * Retrieves the combined list of all review types for the user with the specified username, paged & sorted as requested
+   * @param username
    * @param page
    * @param sort
    */
-  async getCombinedReviews(id: number, page ?: number, sort ?: string): Promise<PageData<ProfileReviewData>>  {
-    const url = new URL(`${this.baseUrl}/${id}/reviews`);
+  async getCombinedReviews(username: string, page ?: number, sort ?: string): Promise<PageData<ProfileReviewData>>  {
+    const url = new URL(`${this.baseUrl}/${username}/reviews`);
     if (page != null) url.searchParams.set('page', String(page));
     if (sort != null) url.searchParams.set('sort', sort);
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -249,18 +258,18 @@ export class UserService {
   }
 
   /**
-   * Retrieves show reviews for the user with the specified id, paged & sorted as requested
-   * @param id
+   * Retrieves show reviews for the user with the specified username, paged & sorted as requested
+   * @param username
    * @param page
    * @param sort
    */
-  async getShowReviews(id: number, page ?: number, sort ?: string): Promise<PageData<ProfileShowReviewData>>  {
-    const url = new URL(`${this.baseUrl}/${id}/show-reviews`);
+  async getShowReviews(username: string, page ?: number, sort ?: string): Promise<PageData<ProfileShowReviewData>>  {
+    const url = new URL(`${this.baseUrl}/${username}/show-reviews`);
     if (page != null) url.searchParams.set('page', String(page));
     if (sort != null) url.searchParams.set('sort', sort);
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
@@ -268,18 +277,18 @@ export class UserService {
   }
 
   /**
-   * Retrieves episode reviews for the user with the specified id, paged & sorted as requested
-   * @param id
+   * Retrieves episode reviews for the user with the specified username, paged & sorted as requested
+   * @param username
    * @param page
    * @param sort
    */
-  async getEpisodeReviews(id: number, page ?: number, sort ?: string): Promise<PageData<ProfileEpisodeReviewData>>  {
-    const url = new URL(`${this.baseUrl}/${id}/episode-reviews`);
+  async getEpisodeReviews(username: string, page ?: number, sort ?: string): Promise<PageData<ProfileEpisodeReviewData>>  {
+    const url = new URL(`${this.baseUrl}/${username}/episode-reviews`);
     if (page != null) url.searchParams.set('page', String(page));
     if (sort != null) url.searchParams.set('sort', sort);
 
     const response = await fetch(url, {
-      credentials: 'include'
+      headers: this.getHeaders()
     });
 
     this.checkUnauthorizedUser(response);
