@@ -3,7 +3,6 @@ package com.example.showcased.exception;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,8 +20,8 @@ public class GlobalExceptionHandler {
      * return the id of the user that wasn't found
      */
     @ExceptionHandler(UserNotFoundException.class)
-    ResponseEntity<ErrorResponse> userNotFoundHandler(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail userNotFoundHandler(UserNotFoundException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     /**
@@ -30,8 +29,8 @@ public class GlobalExceptionHandler {
      * aka username/password were incorrect
      */
     @ExceptionHandler(InvalidLoginException.class)
-    ResponseEntity<ErrorResponse> invalidLoginHandler(InvalidLoginException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail invalidLoginHandler(InvalidLoginException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     /**
@@ -39,8 +38,8 @@ public class GlobalExceptionHandler {
      * existing username
      */
     @ExceptionHandler(UsernameTakenException.class)
-    ResponseEntity<ErrorResponse> usernameTakenHandler(UsernameTakenException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail usernameTakenHandler(UsernameTakenException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     /**
@@ -48,8 +47,8 @@ public class GlobalExceptionHandler {
      * existing email
      */
     @ExceptionHandler(EmailTakenException.class)
-    ResponseEntity<ErrorResponse> alreadyOnListHandler(EmailTakenException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail alreadyOnListHandler(EmailTakenException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     /**
@@ -57,8 +56,8 @@ public class GlobalExceptionHandler {
      * they need to be logged in to take
      */
     @ExceptionHandler(NotLoggedInException.class)
-    ResponseEntity<ErrorResponse> notLoggedInHandler(NotLoggedInException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail notLoggedInHandler(NotLoggedInException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     /**
@@ -66,8 +65,8 @@ public class GlobalExceptionHandler {
      * that is already on their list
      */
     @ExceptionHandler(AlreadyOnListException.class)
-    ResponseEntity<ErrorResponse> alreadyOnListHandler(AlreadyOnListException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail alreadyOnListHandler(AlreadyOnListException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     /**
@@ -75,26 +74,26 @@ public class GlobalExceptionHandler {
      * and sends it back
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
         // Retrieve the first validation error message
         String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorMessage));
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage);
     }
 
     /**
      * Exception handler for when a user tries to like something they already have
      */
     @ExceptionHandler(AlreadyLikedException.class)
-    public ResponseEntity<ErrorResponse> alreadyLikedShowReviewHandler(AlreadyLikedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail alreadyLikedShowReviewHandler(AlreadyLikedException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     /**
      * Exception handler for when a user tries to unlike something they haven't yet liked
      */
     @ExceptionHandler(HaventLikedException.class)
-    public ResponseEntity<ErrorResponse> haventLikedShowReviewHandler(HaventLikedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail haventLikedShowReviewHandler(HaventLikedException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     /**
@@ -102,112 +101,112 @@ public class GlobalExceptionHandler {
      * reviews to the same show
      */
     @ExceptionHandler(AlreadyReviewedShowException.class)
-    public ResponseEntity<ErrorResponse> alreadyReviewedShowHandler(AlreadyReviewedShowException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail alreadyReviewedShowHandler(AlreadyReviewedShowException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     /**
      * Exception handler for when a user enters invalid or expired OTP code
      */
     @ExceptionHandler(OTPValidationException.class)
-    public ResponseEntity<ErrorResponse> otpValidationHandler(OTPValidationException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail otpValidationHandler(OTPValidationException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     /**
      * Exception handler for invalid change password attempt
      */
     @ExceptionHandler(NotVerifiedException.class)
-    public ResponseEntity<ErrorResponse> notVerifiedHandler(NotVerifiedException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail notVerifiedHandler(NotVerifiedException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     /**
      * Exception handler for invalid file type for profile picture upload
      */
     @ExceptionHandler(InvalidFileType.class)
-    ResponseEntity<ErrorResponse> invalidFileTypeHandler(InvalidFileType ex) {
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail invalidFileTypeHandler(InvalidFileType ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage());
     }
 
     /**
      * Exception handler for trying to follow yourself
      */
     @ExceptionHandler(FollowSelfException.class)
-    ResponseEntity<ErrorResponse> followSelfHandler(FollowSelfException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail followSelfHandler(FollowSelfException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     /**
      * Exception handler for trying to add invalid character type to rankings
      */
     @ExceptionHandler(InvalidCharacterType.class)
-    ResponseEntity<ErrorResponse> invalidCharacterTypeHandler(InvalidCharacterType ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail invalidCharacterTypeHandler(InvalidCharacterType ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     /**
      * Exception handler for invalid page number for filter
      */
     @ExceptionHandler(InvalidPageException.class)
-    ResponseEntity<ErrorResponse> invalidPageHandler(InvalidPageException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail invalidPageHandler(InvalidPageException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     /**
      * Exception handler for duplicate collection names
      */
     @ExceptionHandler(DuplicateCollectionNameException.class)
-    ResponseEntity<ErrorResponse> duplicateCollectionNameHandler(DuplicateCollectionNameException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail duplicateCollectionNameHandler(DuplicateCollectionNameException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     /**
      * Exception handler for trying to modify or delete an item that doesn't belong to them
      */
     @ExceptionHandler(UnauthorizedAccessException.class)
-    ResponseEntity<ErrorResponse> unauthorizedAccessHandler(UnauthorizedAccessException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail unauthorizedAccessHandler(UnauthorizedAccessException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     /**
      * Exception handler for user collection not found
      */
     @ExceptionHandler(CollectionNotFoundException.class)
-    ResponseEntity<ErrorResponse> collectionNotFoundHandler(CollectionNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail collectionNotFoundHandler(CollectionNotFoundException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     /**
      * Exception handler for trying to add a show to a collection that already has that show
      */
     @ExceptionHandler(AlreadyInCollectionException.class)
-    ResponseEntity<ErrorResponse> alreadyInCollectionHandler(AlreadyInCollectionException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail alreadyInCollectionHandler(AlreadyInCollectionException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     /**
      * Exception handler when some item being requested was not found
      */
     @ExceptionHandler(ItemNotFoundException.class)
-    ResponseEntity<ErrorResponse> itemNotFoundHandler(ItemNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail itemNotFoundHandler(ItemNotFoundException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     /**
      * Exception handler when same characters is duplicated in dynamic ranking
      */
     @ExceptionHandler(InvalidDynamicException.class)
-    ResponseEntity<ErrorResponse> invalidDynamicHandler(InvalidDynamicException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail invalidDynamicHandler(InvalidDynamicException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     /**
      * Exception handler for when the recaptcha form is invalid
      */
     @ExceptionHandler(RecaptchaInvalidException.class)
-    ResponseEntity<ErrorResponse> recaptchaInvalidHandler(RecaptchaInvalidException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    ProblemDetail recaptchaInvalidHandler(RecaptchaInvalidException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     /**
