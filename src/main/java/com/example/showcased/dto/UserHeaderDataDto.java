@@ -7,7 +7,8 @@ import java.util.List;
 
 @Data
 public class UserHeaderDataDto {
-    private String username;
+    private String displayName;
+    private Long id;
     private String profilePicture;
     private String bio;
     private List<SocialAccountReturnDto> socialAccounts;

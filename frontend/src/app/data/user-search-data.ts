@@ -1,6 +1,6 @@
 export interface UserSearchData {
   readonly id: number;
-  readonly username: string;
+  readonly displayName: string;
   readonly profilePicture: string;
   isFollowing: boolean;
   readonly isOwnProfile: boolean;

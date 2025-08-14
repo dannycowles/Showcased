@@ -10,14 +10,14 @@ import {SingleCollectionData} from '../../../data/single-collection-data';
   standalone: false
 })
 export class UserCollectionDetailsPageComponent implements OnInit {
-  readonly userId: number;
+  readonly username: string;
   readonly collectionId: number;
   collection: SingleCollectionData;
 
   constructor(private userService: UserService,
               private route: ActivatedRoute,
               private router: Router) {
-    this.userId = route.snapshot.params['id'];
+    this.username = route.snapshot.params['username'];
     this.collectionId = route.snapshot.params['collectionId'];
   };
 

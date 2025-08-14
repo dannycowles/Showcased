@@ -12,7 +12,7 @@
       @for (user of searchResults.content; track user.id) {
         <div class="d-flex align-items-center ms-5 mb-4 me-5">
           <img [ngSrc]="user.profilePicture" id="profile-picture" alt="User Profile Picture" width="100" height="100">
-          <h3 class="ms-5"><a [routerLink]="['/user', user.id]" class="text-dark">{{user.username}}</a></h3>
+          <h3 class="ms-5"><a [routerLink]="['/user', user.displayName]" class="text-dark">{{user.displayName}}</a></h3>
 
           @if (editable) {
             @if (listType === "followers") {

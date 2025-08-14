@@ -10,17 +10,17 @@ import {ActivatedRoute} from '@angular/router';
   standalone: false
 })
 export class UserDynamicRankingPageComponent implements OnInit {
-  readonly userId: number;
+  readonly username: string;
   dynamics: DynamicRankingData[];
 
   constructor(private userService: UserService,
               private route: ActivatedRoute) {
-    this.userId = this.route.snapshot.params['id'];
+    this.username = this.route.snapshot.params['username'];
   };
 
   async ngOnInit() {
     try {
-      this.dynamics = await this.userService.getFullDynamicRankingList(this.userId);
+      this.dynamics = await this.userService.getFullDynamicRankingList(this.username);
     } catch (error) {
       console.error(error);
     }

@@ -10,17 +10,17 @@ import {SeasonRankingData} from '../../../data/lists/season-ranking-data';
   standalone: false
 })
 export class UserSeasonRankingPageComponent implements OnInit {
-  readonly userId: number;
+  readonly username: string;
   rankingEntries: SeasonRankingData[];
 
   constructor(private userService: UserService,
               private route: ActivatedRoute) {
-    this.userId = this.route.snapshot.params['id'];
+    this.username = this.route.snapshot.params['username'];
   };
 
   async ngOnInit() {
     try {
-      this.rankingEntries = await this.userService.getFullSeasonRankingList(this.userId);
+      this.rankingEntries = await this.userService.getFullSeasonRankingList(this.username);
     } catch(error) {
       console.error(error);
     }

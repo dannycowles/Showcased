@@ -8,9 +8,9 @@ import {ActivatedRoute} from '@angular/router';
   standalone: false
 })
 export class UserFollowersPageComponent {
-  readonly userId: number;
+  readonly username: string;
 
   constructor(private route: ActivatedRoute) {
-    this.userId = this.route.snapshot.params['id'];
+    this.username = this.route.snapshot.params['username'];
   };
 }

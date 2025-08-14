@@ -19,7 +19,7 @@ import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 export class FollowersFollowingComponent implements OnInit {
   @Input({ required: true }) listType: 'followers' | 'following';
   @Input() editable: boolean = true; // true for profile page, false for user page
-  @Input() userId: number;
+  @Input() username: string;
 
   searchString: string = '';
   debouncedSearch: () => void;
@@ -30,14 +30,14 @@ export class FollowersFollowingComponent implements OnInit {
       if (this.editable) {
         return this.profileService.getFollowersList(this.searchString, page);
       } else {
-        return this.userService.getFollowersList(this.userId, this.searchString, page);
+        return this.userService.getFollowersList(this.username, this.searchString, page);
       }
     },
     getFollowing: (page: number) => {
       if (this.editable) {
         return this.profileService.getFollowingList(this.searchString, page);
       } else {
-        return this.userService.getFollowingList(this.userId, this.searchString, page);
+        return this.userService.getFollowingList(this.username, this.searchString, page);
       }
     }
   }

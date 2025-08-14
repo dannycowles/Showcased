@@ -26,7 +26,6 @@ import {AddSocialDto} from '../../data/dto/add-social-dto';
 export class UserInfoComponent implements OnInit {
   @Input({required: true}) headerData: UserHeaderData;
   @Input() editable: boolean = true; // true for profile page, false for user page
-  @Input() userId: number;
 
   objectUrl: string | null = null;
   newBio: string;
@@ -51,11 +50,11 @@ export class UserInfoComponent implements OnInit {
   }
 
   get followersUrl(): string {
-    return this.editable ? 'followers' : `/user/${this.userId}/followers`;
+    return this.editable ? 'followers' : `/user/${this.headerData.displayName}/followers`;
   }
 
   get followingUrl(): string {
-    return this.editable ? 'following' : `/user/${this.userId}/following`;
+    return this.editable ? 'following' : `/user/${this.headerData.displayName}/following`;
   }
 
   async onFileSelected(event: Event) {
@@ -132,7 +131,7 @@ export class UserInfoComponent implements OnInit {
 
   async followUser() {
     try {
-      const response = await this.userService.followUser(this.userId);
+      const response = await this.userService.followUser(this.headerData.id);
       if (response.ok) {
         this.headerData.isFollowing = true;
         this.headerData.numFollowers += 1;
@@ -144,7 +143,7 @@ export class UserInfoComponent implements OnInit {
 
   async unfollowUser() {
     try {
-      const response = await this.userService.unfollowUser(this.userId);
+      const response = await this.userService.unfollowUser(this.headerData.id);
       if (response.ok) {
         this.headerData.isFollowing = false;
         this.headerData.numFollowers -= 1;

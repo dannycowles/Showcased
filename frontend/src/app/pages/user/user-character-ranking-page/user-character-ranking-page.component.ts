@@ -14,12 +14,12 @@ export class UserCharacterRankingPageComponent implements OnInit {
   characterRankings: CharacterRankingsData;
   readonly validCharacterTypes: string[] = ["protagonists", "deuteragonists", "antagonists", "tritagonists", "side"];
   characterType: string;
-  readonly userId: number;
+  readonly username: string
 
   constructor(private userService: UserService,
               private route: ActivatedRoute,
               private router: Router) {
-    this.userId = this.route.snapshot.params["id"];
+    this.username = this.route.snapshot.params["username"];
     this.route.params.subscribe(params => {
       this.characterType = params["type"];
     });
@@ -33,7 +33,7 @@ export class UserCharacterRankingPageComponent implements OnInit {
   async ngOnInit() {
     // Retrieve all character rankings from backend
     try {
-      this.characterRankings = await this.userService.getAllCharacterRankingLists(this.userId);
+      this.characterRankings = await this.userService.getAllCharacterRankingLists(this.username);
     } catch(error) {
       console.error(error);
     }

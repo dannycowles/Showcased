@@ -1,5 +1,5 @@
 @if (userDetails) {
-  <app-user-info [headerData]="userDetails.headerData" [editable]="false" [userId]="userId"></app-user-info>
+  <app-user-info [headerData]="userDetails.headerData" [editable]="false"></app-user-info>
 
   <app-show-list title="Watchlist" [shows]="userDetails.watchlistTop"></app-show-list>
   @if (userDetails.hasMoreWatchlist) {

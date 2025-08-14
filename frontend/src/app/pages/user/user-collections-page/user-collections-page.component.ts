@@ -11,7 +11,7 @@ import {UtilsService} from '../../../services/utils.service';
   standalone: false
 })
 export class UserCollectionsPageComponent implements OnInit {
-  readonly userId: number;
+  readonly username: string;
   collections: CollectionData[];
   newCollectionName: string;
   debouncedSearchCollections: () => void;
@@ -19,12 +19,12 @@ export class UserCollectionsPageComponent implements OnInit {
   constructor(private userService: UserService,
               private route: ActivatedRoute,
               private utilsService: UtilsService) {
-    this.userId = route.snapshot.params['id'];
+    this.username = route.snapshot.params['username'];
   };
 
   async ngOnInit() {
     try {
-      this.collections = await this.userService.getPublicCollections(this.userId);
+      this.collections = await this.userService.getPublicCollections(this.username);
     } catch (error) {
       console.error(error);
     }
@@ -37,7 +37,7 @@ export class UserCollectionsPageComponent implements OnInit {
 
   async searchCollections() {
     try {
-      this.collections = await this.userService.getPublicCollections(this.userId, this.newCollectionName);
+      this.collections = await this.userService.getPublicCollections(this.username, this.newCollectionName);
     } catch (error) {
       console.error(error);
     }

@@ -1,7 +1,8 @@
 import {UserSocialData} from './user-social-data';
 
 export interface UserHeaderData {
-  readonly username: string;
+  readonly displayName: string;
+  readonly id: number
   bio: string;
   profilePicture: string;
   numFollowers: number;

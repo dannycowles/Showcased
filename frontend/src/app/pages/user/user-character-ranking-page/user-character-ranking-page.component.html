@@ -1,4 +1,4 @@
-<button class="btn btn-primary" [routerLink]="['/user', userId]">Return to Profile</button>
+<button class="btn btn-primary" [routerLink]="['..']">Return to Profile</button>
 
 @if (characterRankings) {
   <h1>{{uppercaseCharacterType()}} Rankings</h1>
@@ -9,7 +9,7 @@
     </button>
     <ul class="dropdown-menu">
       @for (type of validCharacterTypes; track type) {
-        <li><a class="dropdown-item" [routerLink]="['/user', userId, 'character-ranking', type]">{{uppercaseCharacterType(type)}}</a></li>
+        <li><a class="dropdown-item" [routerLink]="['/user', username, 'character-ranking', type]">{{uppercaseCharacterType(type)}}</a></li>
       }
     </ul>
   </div>

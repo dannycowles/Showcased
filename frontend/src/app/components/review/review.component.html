@@ -2,7 +2,7 @@
   <img class="profile-picture" [ngSrc]="review.profilePicture" alt="Profile Picture" width="100" height="100">
   <div class="ms-3 w-100">
     <div>
-      <h4><a [routerLink]="['/user', review.userId]" class="text-dark">{{review.username}}</a></h4>
+      <h4><a [routerLink]="['/user', review.username]" class="text-dark">{{review.username}}</a></h4>
       <span>{{utilsService.getRelativeDate(review.reviewDate)}}</span>
     </div>
     <div>

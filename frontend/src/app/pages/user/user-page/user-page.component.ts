@@ -12,20 +12,20 @@ import {ReviewType} from '../../../data/enums';
   standalone: false
 })
 export class UserPageComponent implements OnInit {
-  readonly userId: number;
+  readonly username: string;
   userDetails: UserData;
   readonly ReviewType = ReviewType;
 
   constructor(private route: ActivatedRoute,
               private userService: UserService,
               public utilsService: UtilsService) {
-    this.userId = this.route.snapshot.params['id'];
+    this.username = this.route.snapshot.params['username'];
   }
 
   async ngOnInit() {
     // Retrieve user details from the backend
     try {
-      this.userDetails = await this.userService.getUserDetails(this.userId);
+      this.userDetails = await this.userService.getUserDetails(this.username);
     } catch(error) {
       console.error(error);
     }

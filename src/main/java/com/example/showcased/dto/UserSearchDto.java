@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserSearchDto {
     private Long id;
-    private String username;
+    private String displayName;
     private String profilePicture;
     @JsonProperty("isFollowing")
     private boolean isFollowing = false;
