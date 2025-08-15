@@ -29,14 +29,10 @@ export class AuthenticationService {
       body: JSON.stringify(data),
     });
 
-    // If the credentials were invalid we throw an error
-    if (response.status === 401) {
-      throw new Error('Invalid credentials');
-    }
-
     const loginResponse: JwtResponseData = await response.json();
     this.accessToken = loginResponse.token;
     localStorage.setItem("accessToken", loginResponse.token);
+    return response;
   }
 
   /**

@@ -1,17 +1,27 @@
-<form [formGroup]="loginForm">
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <div class="form-floating mb-3">
     <input class="form-control" id="email" type="email" formControlName="email" placeholder="Enter email" autocomplete="email">
     <label for="email" class="form-label">Email</label>
   </div>
 
   <div class="form-floating mb-3">
-    <input class="form-control" id="password" type="password" formControlName="password" placeholder="Enter password" autocomplete="current-password">
+    <input class="form-control" id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Enter password" autocomplete="current-password">
     <label for="password" class="form-label">Password</label>
+    <i id="show-password-icon"
+       role="button"
+       class="bi"
+       [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"
+       (click)="toggleShowPassword()"
+       tabindex="0"
+       (keyup.space)="toggleShowPassword()"
+       (keyup.enter)="toggleShowPassword()">
+      {{showPassword ? "Hide" : "Show"}} Password
+    </i>
   </div>
 
-  <div></div>
+  <div id="login-error-message" role="alert" aria-live="assertive" class="mb-2">{{errorMessage}}</div>
 
-  <p>Don't have an account? <a href="/register">Create one</a></p>
-  <p>Forgot your password? <a href="/reset-password">Reset it</a></p>
-  <button type="submit" class="btn btn-primary">Log in</button>
+  <p>Don't have an account? <a [routerLink]="['/register']">Create one</a></p>
+  <p>Forgot your password? <a [routerLink]="['/reset-password']">Reset it</a></p>
+  <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Log in</button>
 </form>

@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {AuthenticationService} from '../../../services/auth.service';
 import {LoginDto} from '../../../data/dto/login-dto';
-import {FormControl, FormGroup} from '@angular/forms';
-import {log} from '@angular-devkit/build-angular/src/builders/ssr-dev-server';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -10,16 +10,37 @@ import {log} from '@angular-devkit/build-angular/src/builders/ssr-dev-server';
   styleUrl: './login-page.component.css',
   standalone: false
 })
-export class LoginPageComponent implements OnInit {
+export class LoginPageComponent {
+  showPassword: boolean = false;
+  errorMessage: string = "";
   loginForm = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl('')
+    email: new FormControl('', [
+      Validators.required
+    ]),
+    password: new FormControl('', [
+      Validators.required
+    ])
   });
 
-  constructor(private authService: AuthenticationService) { }
+  constructor(private authService: AuthenticationService,
+              public router: Router) { }
 
-  ngOnInit() {
+  async onSubmit() {
+    try {
+      const data = this.loginForm.value as LoginDto;
+      const response = await this.authService.loginUser(data);
+
+      if (response.status === 401) {
+        this.errorMessage = "You have entered an incorrect username or password";
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => this.errorMessage = "", 5000);
+    }
   }
 
-  protected readonly log = log;
+  toggleShowPassword() {
+    this.showPassword = !this.showPassword;
+  }
 }
