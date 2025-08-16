@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
 import {AuthenticationService} from '../../../services/auth.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {ValidateOtpDto} from '../../../data/dto/validate-otp-dto';
 import {ChangePasswordDto} from '../../../data/dto/change-password-dto';
+import {JwtResponseData} from '../../../data/jwt-response-data';
 
 @Component({
   selector: 'app-reset-password-page',
@@ -11,18 +12,40 @@ import {ChangePasswordDto} from '../../../data/dto/change-password-dto';
   standalone: false
 })
 export class ResetPasswordPageComponent{
-  formNumber: number = 1;
+  readonly passwordMinLength: number = 8;
+  formNumber: number = 3;
+  invalidOtpMessage: string = "";
   email: string;
   otp: string = "";
   passwordForm: FormGroup = new FormGroup({
-    password: new FormControl('', Validators.required)
-  });
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(this.passwordMinLength)
+    ]),
+    confirmPassword: new FormControl('', Validators.required)
+  }, { validators: this.passwordsMatchingValidator() });
 
-  get password() {
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
+  constructor(private authService: AuthenticationService) {};
+
+  passwordsMatchingValidator(): ValidatorFn {
+    return (control: AbstractControl<string, string>): ValidationErrors | null => {
+      const password: string = control.get('password').value;
+      const confirmPassword: string = control.get('confirmPassword').value;
+
+      return (password !== confirmPassword) ? { passwordsDontMatch: true } : null;
+    }
+  }
+
+  get password(): AbstractControl<string, string> {
     return this.passwordForm.get('password');
   }
 
-  constructor(private authService: AuthenticationService) {};
+  get confirmPassword(): AbstractControl<string, string> {
+    return this.passwordForm.get('confirmPassword');
+  }
 
   async onSubmitPasswordForm() {
     // Check to see if new password was valid aka not blank
@@ -35,7 +58,6 @@ export class ResetPasswordPageComponent{
       email: this.email,
       newPassword: this.password.value
     };
-    console.log("data", data);
     await this.authService.changePassword(data);
   }
 
@@ -57,21 +79,25 @@ export class ResetPasswordPageComponent{
 
   async verifyCode() {
     try {
-      let data: ValidateOtpDto = {
+      const data: ValidateOtpDto = {
         email: this.email,
         otp: this.otp
       };
-      let response: Response = await this.authService.validateOTP(data);
+      await this.authService.validateOTP(data);
+      this.formNumber = 3;
 
-      // If successful, update page to new password section, else display error message
-      if (response.ok) {
-        this.formNumber = 3;
-      } else {
-        let text = await response.json();
-        document.getElementById("otp-error-message").innerText = text["error"];
-      }
-    } catch(error) {
-      console.error(error);
+    } catch(error: any) {
+      this.invalidOtpMessage = error.detail;
+    } finally {
+      setTimeout(() => this.invalidOtpMessage = "", 5000);
     }
+  }
+
+  toggleShowPassword() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleShowConfirmPassword() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

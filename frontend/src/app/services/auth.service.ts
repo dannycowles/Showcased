@@ -104,23 +104,23 @@ export class AuthenticationService {
    * Validates the given OTP against the backend DB
    * @param data
    */
-  async validateOTP(data: ValidateOtpDto): Promise<Response> {
-    try {
-      const response = await fetch(`${this.baseUrl}/validate-otp`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+  async validateOTP(data: ValidateOtpDto): Promise<JwtResponseData> {
+    const response = await fetch(`${this.baseUrl}/validate-otp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-      const validateResponse: JwtResponseData = await response.json();
-      this.resetPasswordToken = validateResponse.token;
-      localStorage.setItem("resetPasswordToken", this.resetPasswordToken);
-      return response;
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      throw await response.json();
     }
+
+    const validateResponse: JwtResponseData = await response.json();
+    this.resetPasswordToken = validateResponse.token;
+    localStorage.setItem("resetPasswordToken", this.resetPasswordToken);
+    return validateResponse;
   }
 
   /**

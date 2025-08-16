@@ -64,7 +64,7 @@
 
   <div class="form-floating">
     <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" formControlName="confirmPassword" placeholder="Re-enter your password" autocomplete="new-password"
-           [class.is-invalid]="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)">
+           [class.is-invalid]="registerForm.hasError('passwordsDontMatch') && (confirmPassword.dirty || confirmPassword.touched)">
     <label for="confirmPassword" class="form-label">Confirm password</label>
     <i role="button"
        class="bi show-password-icon"
