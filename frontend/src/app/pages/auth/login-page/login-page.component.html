@@ -7,9 +7,8 @@
   <div class="form-floating mb-3">
     <input class="form-control" id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Enter password" autocomplete="current-password">
     <label for="password" class="form-label">Password</label>
-    <i id="show-password-icon"
-       role="button"
-       class="bi"
+    <i role="button"
+       class="bi show-password-icon"
        [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"
        (click)="toggleShowPassword()"
        tabindex="0"

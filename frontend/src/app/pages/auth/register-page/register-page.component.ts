@@ -27,6 +27,9 @@ export class RegisterPageComponent{
   readonly usernameMinLength: number = 3;
   readonly passwordMinLength: number = 8;
 
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
   registerForm = new FormGroup({
     email: new FormControl('', [
       Validators.required,
@@ -114,5 +117,13 @@ export class RegisterPageComponent{
     } finally {
       setTimeout(() => this.registerMessage = '', 5000);
     }
+  }
+
+  toggleShowPassword() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleShowConfirmPassword() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

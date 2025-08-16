@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+.show-password-icon {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6c757d;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  user-select: none;
+  font-style: normal;
+}
+
+.show-password-icon:hover {
+  color: #000;
+}
+
+.form-control.is-invalid ~ .show-password-icon {
+  right: 2.5rem;
+}
