@@ -14,6 +14,7 @@ import {AddEpisodeReviewDto} from '../../../data/dto/add-review-dto';
 import {AddToEpisodeRankingList} from '../../../data/dto/add-to-list-dto';
 import {PageData} from '../../../data/page-data';
 import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-episode-page',
@@ -40,7 +41,8 @@ export class EpisodePageComponent implements OnInit {
               private toastService: ToastDisplayService,
               public utilsService: UtilsService,
               private modalService: NgbModal,
-              private authService: AuthenticationService) {
+              private authService: AuthenticationService,
+              private title: Title) {
     this.showId = +this.route.snapshot.params['id'];
     this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
     this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
@@ -74,6 +76,7 @@ export class EpisodePageComponent implements OnInit {
   async loadData() {
     try {
       this.episode = await this.showService.fetchEpisodeDetails(this.showId, this.seasonNumber, this.episodeNumber);
+      this.title.setTitle(`${this.episode.showTitle} S${this.seasonNumber}E${this.episodeNumber} | Showcased`);
       this.reviews = await this.showService.fetchEpisodeReviews(this.episode.id);
 
       // If there was a notification review in the navigation state, fetch that review and append it to the beginning of the reviews list

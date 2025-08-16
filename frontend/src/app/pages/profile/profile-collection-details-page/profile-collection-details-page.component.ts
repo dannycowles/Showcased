@@ -13,6 +13,7 @@ import {SearchShowsModalComponent} from '../../../components/search-shows-modal/
 import {AddShowType} from '../../../data/enums';
 import {EditCollectionModalComponent} from '../../../components/edit-collection-modal/edit-collection-modal.component';
 import {UpdateCollectionDetails} from '../../../data/dto/update-collection-details';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -29,13 +30,15 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
               private router: Router,
               public utils : UtilsService,
               private userService: UserService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private title: Title) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
   async ngOnInit() {
     try {
       this.collectionData = await this.profileService.getCollectionDetails(this.collectionId);
+      this.title.setTitle(`${this.collectionData.name}, Your Collection | Showcased`);
     } catch (error) {
       console.error(error);
       this.router.navigate(['not-found']);

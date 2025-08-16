@@ -3,6 +3,7 @@ import {UserService} from '../../../services/user.service';
 import {ActivatedRoute} from '@angular/router';
 import {CollectionData} from '../../../data/collection-data';
 import {UtilsService} from '../../../services/utils.service';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-collections-page',
@@ -18,8 +19,10 @@ export class UserCollectionsPageComponent implements OnInit {
 
   constructor(private userService: UserService,
               private route: ActivatedRoute,
+              private title: Title,
               private utilsService: UtilsService) {
     this.username = route.snapshot.params['username'];
+    this.title.setTitle(`${this.username}'s Collections | Showcased`);
   };
 
   async ngOnInit() {

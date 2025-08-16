@@ -16,7 +16,7 @@ import {AddShowReviewDto} from '../../../data/dto/add-review-dto';
 import {AddToShowRankingList, AddToWatchingListDto, AddToWatchlistDto} from '../../../data/dto/add-to-list-dto';
 import {PageData} from '../../../data/page-data';
 import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
-import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {DomSanitizer, SafeResourceUrl, Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-show-page',
@@ -42,7 +42,8 @@ export class ShowPageComponent implements OnInit {
               private modalService: NgbModal,
               private authService: AuthenticationService,
               private router: Router,
-              private sanitizer: DomSanitizer) {
+              private sanitizer: DomSanitizer,
+              private title: Title) {
     this.route.params.subscribe(params => {
       this.showId = params['id'];
       this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
@@ -75,6 +76,12 @@ export class ShowPageComponent implements OnInit {
     // Retrieve show data from backend
     try {
       this.show = await this.showService.fetchShowDetails(this.showId);
+
+      if (this.show.startYear == this.show.endYear) {
+        this.title.setTitle(`${this.show.title} (${this.show.startYear}) | Showcased`);
+      } else {
+        this.title.setTitle(`${this.show.title} (${this.show.startYear} - ${this.show.endYear}) | Showcased`);
+      }
       if (this.show.trailerPath != null) {
         this.safeTrailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.show.trailerPath);
       }

@@ -5,6 +5,7 @@ import {ShowService} from '../../../services/show.service';
 import {UtilsService} from '../../../services/utils.service';
 import {ProfileService} from '../../../services/profile.service';
 import {AddToSeasonRankingList} from '../../../data/dto/add-to-list-dto';
+import {Title} from '@angular/platform-browser';
 
 
 @Component({
@@ -22,7 +23,8 @@ export class SeasonPageComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
               public utilsService: UtilsService,
-              private profileService: ProfileService) {
+              private profileService: ProfileService,
+              private title: Title) {
     this.showId = this.route.snapshot.params['id'];
     this.route.params.subscribe(params => {
       this.seasonNumber = params['seasonNumber'];
@@ -45,6 +47,7 @@ export class SeasonPageComponent implements OnInit {
     // Retrieve season details from backend
     try {
       this.season = await this.showService.fetchSeasonDetails(this.showId, this.seasonNumber);
+      this.title.setTitle(`${this.season.showTitle} S${this.seasonNumber} | Showcased`);
     } catch(error) {
       console.error(error);
     }

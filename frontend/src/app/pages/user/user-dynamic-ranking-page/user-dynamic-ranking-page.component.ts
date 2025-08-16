@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {DynamicRankingData} from '../../../data/lists/dynamic-ranking-data';
 import {UserService} from '../../../services/user.service';
 import {ActivatedRoute} from '@angular/router';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-dynamic-ranking-page',
@@ -14,8 +15,10 @@ export class UserDynamicRankingPageComponent implements OnInit {
   dynamics: DynamicRankingData[];
 
   constructor(private userService: UserService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private title: Title) {
     this.username = this.route.snapshot.params['username'];
+    this.title.setTitle(`${this.username}'s Dynamic Ranking | Showcased`);
   };
 
   async ngOnInit() {

@@ -61,48 +61,198 @@ import {ProfileReviewsPageComponent} from './pages/profile/profile-reviews-page/
 import {UserReviewsPageComponent} from './pages/user/user-reviews-page/user-reviews-page.component';
 
 const routes: Routes = [
-    { path: '', component: HomePageComponent},
-    { path: 'login', component: LoginPageComponent},
-    { path: 'register', component: RegisterPageComponent},
-    { path: 'reset-password', component: ResetPasswordPageComponent},
-    { path: 'profile', component: ProfilePageComponent},
-    { path: 'profile/watchlist', component: ProfileWatchlistPageComponent},
-    { path: 'profile/watching', component: ProfileWatchingPageComponent},
-    { path: 'profile/show-ranking', component: ProfileShowRankingPageComponent},
-    { path: 'profile/episode-ranking', component: ProfileEpisodeRankingPageComponent},
-    { path: 'profile/season-ranking', component: ProfileSeasonRankingPageComponent},
-    { path: 'profile/followers', component: ProfileFollowersPageComponent},
-    { path: 'profile/following', component: ProfileFollowingPageComponent},
-    { path: 'profile/character-ranking/:type', component: ProfileCharacterRankingPageComponent },
-    { path: 'profile/dynamic-ranking', component: ProfileDynamicsRankingPageComponent },
-    { path: 'profile/collections', component: ProfileCollectionsPageComponent },
-    { path: 'profile/collections/:id', component: ProfileCollectionDetailsPageComponent },
-    { path: 'profile/activity', component: ProfileActivityPageComponent },
-    { path: 'profile/reviews', component: ProfileReviewsPageComponent },
-    { path: 'user/:username', component: UserPageComponent},
-    { path: 'user/:username/watchlist', component: UserWatchlistPageComponent},
-    { path: 'user/:username/watching', component: UserWatchingPageComponent},
-    { path: 'user/:username/show-ranking', component: UserShowRankingPageComponent},
-    { path: 'user/:username/season-ranking', component: UserSeasonRankingPageComponent},
-    { path: 'user/:username/episode-ranking', component: UserEpisodeRankingPageComponent},
-    { path: 'user/:username/character-ranking/:type', component: UserCharacterRankingPageComponent},
-    { path: 'user/:username/followers', component: UserFollowersPageComponent},
-    { path: 'user/:username/following', component: UserFollowingPageComponent},
-    { path: 'user/:username/collections', component: UserCollectionsPageComponent},
-    { path: 'user/:username/collections/:collectionId', component: UserCollectionDetailsPageComponent},
-    { path: 'user/:username/dynamic-ranking', component: UserDynamicRankingPageComponent},
-    { path: 'user/:username/reviews', component: UserReviewsPageComponent },
-    { path: 'search', component: SearchPageComponent},
-    { path: 'search-users', component: UserSearchPageComponent},
-    { path: 'show/:id', component: ShowPageComponent},
-    { path: 'show/:id/season/:seasonNumber', component: SeasonPageComponent},
-    { path: 'show/:id/season/:seasonNumber/episode/:episodeNumber', component: EpisodePageComponent },
-    { path: 'discover', component: DiscoverPageComponent},
-    { path: 'discover/show', component: DiscoverGenresPageComponent},
-    { path: 'discover/trending', component: DiscoverTrendingPageComponent },
-    { path: 'discover/top', component: DiscoverTopRatedPageComponent},
-    { path: 'not-found', component: PageNotFoundComponent},
-    { path: '**', redirectTo: 'not-found'}
+    {
+      path: '',
+      title: 'Home | Showcased',
+      component: HomePageComponent
+    },
+    {
+      path: 'login',
+      title: 'Login | Showcased',
+      component: LoginPageComponent
+    },
+    {
+      path: 'register',
+      title: 'Create Account | Showcased',
+      component: RegisterPageComponent
+    },
+    {
+      path: 'reset-password',
+      title: 'Reset Password | Showcased',
+      component: ResetPasswordPageComponent
+    },
+    {
+      path: 'profile',
+      title: 'Your Profile | Showcased',
+      component: ProfilePageComponent
+    },
+    {
+      path: 'profile/watchlist',
+      title: 'Your Watchlist | Showcased',
+      component: ProfileWatchlistPageComponent
+    },
+    {
+      path: 'profile/watching',
+      title: 'Your Watching List | Showcased',
+      component: ProfileWatchingPageComponent
+    },
+    {
+      path: 'profile/show-ranking',
+      title: 'Your Show Ranking | Showcased',
+      component: ProfileShowRankingPageComponent
+    },
+    {
+      path: 'profile/episode-ranking',
+      title: 'Your Episode Ranking | Showcased',
+      component: ProfileEpisodeRankingPageComponent
+    },
+    {
+      path: 'profile/season-ranking',
+      title: 'Your Season Ranking | Showcased',
+      component: ProfileSeasonRankingPageComponent
+    },
+    {
+      path: 'profile/followers',
+      title: 'Your Followers | Showcased',
+      component: ProfileFollowersPageComponent
+    },
+    {
+      path: 'profile/following',
+      title: 'Your Following List | Showcased',
+      component: ProfileFollowingPageComponent
+    },
+    {
+      path: 'profile/character-ranking/:type',
+      title: 'Your Character Ranking | Showcased',
+      component: ProfileCharacterRankingPageComponent
+    },
+    {
+      path: 'profile/dynamic-ranking',
+      title: 'Your Dynamic Ranking | Showcased',
+      component: ProfileDynamicsRankingPageComponent
+    },
+    {
+      path: 'profile/collections',
+      title: 'Your Collections | Showcased',
+      component: ProfileCollectionsPageComponent
+    },
+    {
+      path: 'profile/collections/:id',
+      component: ProfileCollectionDetailsPageComponent
+    },
+    {
+      path: 'profile/activity',
+      title: 'Your Activity | Showcased',
+      component: ProfileActivityPageComponent
+    },
+    {
+      path: 'profile/reviews',
+      title: 'Your Reviews | Showcased',
+      component: ProfileReviewsPageComponent
+    },
+    {
+      path: 'user/:username',
+      component: UserPageComponent
+    },
+    {
+      path: 'user/:username/watchlist',
+      component: UserWatchlistPageComponent
+    },
+    {
+      path: 'user/:username/watching',
+      component: UserWatchingPageComponent
+    },
+    {
+      path: 'user/:username/show-ranking',
+      component: UserShowRankingPageComponent
+    },
+    {
+      path: 'user/:username/season-ranking',
+      component: UserSeasonRankingPageComponent
+    },
+    {
+      path: 'user/:username/episode-ranking',
+      component: UserEpisodeRankingPageComponent
+    },
+    {
+      path: 'user/:username/character-ranking/:type',
+      component: UserCharacterRankingPageComponent
+    },
+    {
+      path: 'user/:username/followers',
+      component: UserFollowersPageComponent
+    },
+    {
+      path: 'user/:username/following',
+      component: UserFollowingPageComponent
+    },
+    {
+      path: 'user/:username/collections',
+      component: UserCollectionsPageComponent
+    },
+    {
+      path: 'user/:username/collections/:collectionId',
+      component: UserCollectionDetailsPageComponent
+    },
+    {
+      path: 'user/:username/dynamic-ranking',
+      component: UserDynamicRankingPageComponent
+    },
+    {
+      path: 'user/:username/reviews',
+      component: UserReviewsPageComponent
+    },
+    {
+      path: 'search',
+      title: 'Search | Showcased',
+      component: SearchPageComponent
+    },
+    {
+      path: 'search-users',
+      title: 'Find Users | Showcased',
+      component: UserSearchPageComponent
+    },
+    {
+      path: 'show/:id',
+      component: ShowPageComponent
+    },
+    {
+      path: 'show/:id/season/:seasonNumber',
+      component: SeasonPageComponent
+    },
+    {
+      path: 'show/:id/season/:seasonNumber/episode/:episodeNumber',
+      component: EpisodePageComponent
+    },
+    {
+      path: 'discover',
+      title: 'Discover | Showcased',
+      component: DiscoverPageComponent
+    },
+    {
+      path: 'discover/show',
+      title: 'Discover by Genre | Showcased',
+      component: DiscoverGenresPageComponent
+    },
+    {
+      path: 'discover/trending',
+      title: 'Trending Shows | Showcased',
+      component: DiscoverTrendingPageComponent
+    },
+    {
+      path: 'discover/top',
+      title: 'Top Rated Shows | Showcased',
+      component: DiscoverTopRatedPageComponent
+    },
+    {
+      path: 'not-found',
+      title: 'Not Found | Showcased',
+      component: PageNotFoundComponent
+    },
+    {
+      path: '**',
+      redirectTo: 'not-found'
+    }
 ];
 
 @NgModule({

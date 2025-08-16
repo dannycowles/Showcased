@@ -3,6 +3,7 @@ import {UserService} from '../../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CharacterRankingsData} from '../../../data/character-rankings-data';
 import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-character-ranking-page',
@@ -18,8 +19,10 @@ export class UserCharacterRankingPageComponent implements OnInit {
 
   constructor(private userService: UserService,
               private route: ActivatedRoute,
-              private router: Router) {
+              private router: Router,
+              private title: Title) {
     this.username = this.route.snapshot.params["username"];
+    this.title.setTitle(`${this.username}'s Character Ranking | Showcased`);
     this.route.params.subscribe(params => {
       this.characterType = params["type"];
     });

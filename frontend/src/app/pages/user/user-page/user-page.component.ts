@@ -4,6 +4,7 @@ import {UserData} from '../../../data/user-data';
 import {UserService} from '../../../services/user.service';
 import {UtilsService} from '../../../services/utils.service';
 import {ReviewType} from '../../../data/enums';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-page',
@@ -18,8 +19,10 @@ export class UserPageComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private userService: UserService,
-              public utilsService: UtilsService) {
+              public utilsService: UtilsService,
+              private title: Title) {
     this.username = this.route.snapshot.params['username'];
+    this.title.setTitle(`${this.username} | Showcased`);
   }
 
   async ngOnInit() {

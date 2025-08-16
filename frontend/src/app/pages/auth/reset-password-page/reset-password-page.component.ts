@@ -13,7 +13,7 @@ import {JwtResponseData} from '../../../data/jwt-response-data';
 })
 export class ResetPasswordPageComponent{
   readonly passwordMinLength: number = 8;
-  formNumber: number = 3;
+  formNumber: number = 1;
   invalidOtpMessage: string = "";
   email: string;
   otp: string = "";

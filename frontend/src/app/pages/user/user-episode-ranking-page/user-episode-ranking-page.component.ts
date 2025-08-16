@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {EpisodeRankingData} from '../../../data/lists/episode-ranking-data';
 import {UserService} from '../../../services/user.service';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-episode-ranking-page',
@@ -14,8 +15,10 @@ export class UserEpisodeRankingPageComponent implements OnInit {
   rankingEntries: EpisodeRankingData[];
 
   constructor(private route: ActivatedRoute,
-              private userService: UserService) {
+              private userService: UserService,
+              private title: Title) {
     this.username = this.route.snapshot.params['username'];
+    this.title.setTitle(`${this.username}'s Episode Ranking | Showcased`);
   };
 
   async ngOnInit() {

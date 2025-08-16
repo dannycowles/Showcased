@@ -4,6 +4,7 @@ import {ProfileReviewData} from '../../../data/types';
 import {ReviewTypeOption, reviewTypeOptions, SortReviewOption, sortReviewOptions} from '../../../data/constants';
 import {UserService} from '../../../services/user.service';
 import {ActivatedRoute} from '@angular/router';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-reviews-page',
@@ -19,8 +20,10 @@ export class UserReviewsPageComponent {
   isLoadingReviews: boolean = false;
 
   constructor(private userService: UserService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private title: Title) {
     this.username = this.route.snapshot.params['username'];
+    this.title.setTitle(`${this.username}'s reviews | Showcased`);
   };
 
   async ngOnInit() {
