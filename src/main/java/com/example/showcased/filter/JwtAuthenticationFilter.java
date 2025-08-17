@@ -1,6 +1,7 @@
 package com.example.showcased.filter;
 
 import com.example.showcased.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,9 +56,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-            filterChain.doFilter(request, response);
+
+        } catch (ExpiredJwtException expiredException) {
+            SecurityContextHolder.clearContext();
         } catch (Exception exception) {
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }
+        filterChain.doFilter(request, response);
     }
 }

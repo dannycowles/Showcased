@@ -1,0 +1,50 @@
+<h2>New Collection</h2>
+
+<form [formGroup]="newCollectionForm">
+  <div class="mb-3 w-50">
+    <label for="collectionName" class="form-label">Name</label>
+    <input type="text"
+           class="form-control"
+           formControlName="name"
+           id="collectionName"
+           placeholder="Enter Collection Name..."
+           aria-describedby="nameHelpBlock"
+           [minLength]="minNameLength"
+           [maxLength]="maxNameLength">
+    <div id="nameHelpBlock" class="form-text">
+      {{maxNameLength - newCollectionForm.get("name").value.length}} characters remaining
+    </div>
+  </div>
+
+  <div class="mb-3 w-50">
+    <label for="collectionDescription" class="form-label">Description</label>
+    <textarea class="form-control"
+              formControlName="description"
+              id="collectionDescription"
+              [maxLength]="maxDescriptionLength"
+              rows="5"
+    ></textarea>
+    <div id="descriptionHelpBlock" class="form-text">
+      {{maxDescriptionLength - newCollectionForm.get("description").value.length}} characters remaining
+    </div>
+  </div>
+
+  <div class="mb-3 w-25">
+    <label for="collectionVisibility" class="form-label">Visibility</label>
+    <select id="collectionVisibility" class="form-select" formControlName="isPrivate">
+      <option selected [ngValue]="false">Public - Anyone can view</option>
+      <option [ngValue]="true">Private - Only you can view</option>
+    </select>
+  </div>
+
+  <div class="mb-5">
+    <div class="btn-group" id="ranked-radios" role="group" aria-label="Toggle ranked/unranked">
+      <input type="radio" class="btn-check" name="rankedRadio" id="unrankedRadio" autocomplete="off" value="unranked">
+      <label class="btn btn-outline-primary" for="unrankedRadio">Unranked</label>
+
+      <input type="radio" class="btn-check" name="rankedRadio" id="rankedRadio" autocomplete="off" value="ranked">
+      <label class="btn btn-outline-primary" for="rankedRadio">Ranked</label>
+    </div>
+  </div>
+  <button type="submit" [disabled]="newCollectionForm.invalid" class="btn btn-primary col-2">Create</button>
+</form>

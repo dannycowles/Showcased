@@ -59,6 +59,9 @@ import {
 import {ProfileActivityPageComponent} from './pages/profile/profile-activity-page/profile-activity-page.component';
 import {ProfileReviewsPageComponent} from './pages/profile/profile-reviews-page/profile-reviews-page.component';
 import {UserReviewsPageComponent} from './pages/user/user-reviews-page/user-reviews-page.component';
+import {
+  ProfileNewCollectionPageComponent
+} from './pages/profile/profile-new-collection-page/profile-new-collection-page.component';
 
 const routes: Routes = [
     {
@@ -135,6 +138,10 @@ const routes: Routes = [
       path: 'profile/collections',
       title: 'Your Collections | Showcased',
       component: ProfileCollectionsPageComponent
+    },
+    {
+      path: 'profile/collections/new',
+      component: ProfileNewCollectionPageComponent
     },
     {
       path: 'profile/collections/:id',
