@@ -5,4 +5,7 @@ import lombok.Data;
 @Data
 public class CreateCollectionDto {
     private String collectionName;
+    private String description;
+    private boolean privateCollection = false;
+    private boolean ranked = false;
 }

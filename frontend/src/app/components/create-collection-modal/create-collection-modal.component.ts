@@ -24,26 +24,26 @@ export class CreateCollectionModalComponent {
                public utilsService: UtilsService,
                private profileService: ProfileService) {};
 
-  async createNewCollection() {
-    try {
-      const data: CreateCollectionDto = {
-        collectionName: this.newCollectionName
-      };
-
-      const response = await this.profileService.createCollection(data);
-      if (response.ok) {
-        this.message = "Collection created!";
-        this.messageColor = "green";
-        const newCollection = await response.json();
-        this.onCreate(newCollection);
-      } else {
-        this.message = "You already have a collection with this name!";
-        this.messageColor = "red";
-      }
-    } catch(error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => this.message = "", 3000);
-    }
-  }
+  // async createNewCollection() {
+  //   try {
+  //     const data: CreateCollectionDto = {
+  //       collectionName: this.newCollectionName
+  //     };
+  //
+  //     const response = await this.profileService.createCollection(data);
+  //     if (response.ok) {
+  //       this.message = "Collection created!";
+  //       this.messageColor = "green";
+  //       const newCollection = await response.json();
+  //       this.onCreate(newCollection);
+  //     } else {
+  //       this.message = "You already have a collection with this name!";
+  //       this.messageColor = "red";
+  //     }
+  //   } catch(error) {
+  //     console.error(error);
+  //   } finally {
+  //     setTimeout(() => this.message = "", 3000);
+  //   }
+  // }
 }

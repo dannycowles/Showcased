@@ -2,27 +2,30 @@ import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {CollectionData} from '../../../data/collection-data';
 import {UtilsService} from '../../../services/utils.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {
-  CreateCollectionModalComponent
-} from '../../../components/create-collection-modal/create-collection-modal.component';
+import {Router, RouterLink} from '@angular/router';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-profile-collections-page',
   templateUrl: './profile-collections-page.component.html',
   styleUrl: './profile-collections-page.component.css',
-  standalone: false
+  imports: [FormsModule, RouterLink],
+  standalone: true,
 })
 export class ProfileCollectionsPageComponent implements OnInit {
   collectionData: CollectionData[];
-  searchCollectionString: string = "";
+  searchCollectionString: string = '';
   debouncedSearchCollections: () => void;
 
-  constructor(private profileService: ProfileService,
-              public utilsService: UtilsService,
-              private modalService: NgbModal) {
-    this.debouncedSearchCollections = this.utilsService.debounce(() => this.searchCollections());
-  };
+  constructor(
+    private profileService: ProfileService,
+    public utilsService: UtilsService,
+    private router: Router,
+  ) {
+    this.debouncedSearchCollections = this.utilsService.debounce(() =>
+      this.searchCollections(),
+    );
+  }
 
   async ngOnInit() {
     try {
@@ -30,19 +33,17 @@ export class ProfileCollectionsPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
-  };
+  }
 
-  openCreateCollectionModal() {
-    const createCollectionModalRef = this.modalService.open(CreateCollectionModalComponent, {
-      centered: true,
-      ariaLabelledBy: "createCollectionModal"
-    });
-    createCollectionModalRef.componentInstance.onCreate = (collection: CollectionData)=> this.collectionData.push(collection);
+  createNewCollection() {
+    this.router.navigate(['/profile/collections/new']);
   }
 
   async searchCollections() {
     try {
-      this.collectionData = await this.profileService.getCollections(this.searchCollectionString);
+      this.collectionData = await this.profileService.getCollections(
+        this.searchCollectionString,
+      );
     } catch (error) {
       console.error(error);
     }

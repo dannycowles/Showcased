@@ -48,9 +48,6 @@ import {
 import {DiscoverPageComponent} from './pages/discover/discover-page/discover-page.component';
 import {DiscoverGenresPageComponent} from './pages/discover/discover-genres-page/discover-genres-page.component';
 import {
-  ProfileCollectionsPageComponent
-} from './pages/profile/profile-collections-page/profile-collections-page.component';
-import {
   ProfileCollectionDetailsPageComponent
 } from './pages/profile/profile-collection-details-page/profile-collection-details-page.component';
 import {UserCollectionsPageComponent} from './pages/user/user-collections-page/user-collections-page.component';
@@ -121,7 +118,6 @@ import {RecaptchaFormsModule, RecaptchaModule} from 'ng-recaptcha';
     UserCharacterRankingPageComponent,
     DiscoverPageComponent,
     DiscoverGenresPageComponent,
-    ProfileCollectionsPageComponent,
     ProfileCollectionDetailsPageComponent,
     ProfileDynamicsRankingPageComponent,
     UserCollectionsPageComponent,

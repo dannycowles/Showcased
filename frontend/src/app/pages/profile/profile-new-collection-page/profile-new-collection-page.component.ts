@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AuthenticationService} from '../../../services/auth.service';
+import {Router} from '@angular/router';
+import {CreateCollectionDto} from '../../../data/dto/create-collection-dto';
+import {CollectionData} from '../../../data/collection-data';
 
 @Component({
   selector: 'app-profile-new-collection-page',
@@ -9,14 +13,16 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
   styleUrl: './profile-new-collection-page.component.css',
   standalone: true,
 })
-export class ProfileNewCollectionPageComponent {
+export class ProfileNewCollectionPageComponent implements OnInit {
   readonly maxNameLength = 100;
   readonly minNameLength = 5;
 
   readonly maxDescriptionLength = 250;
 
+  errorMessage: string = "";
+
   newCollectionForm = new FormGroup({
-    name: new FormControl('', [
+    collectionName: new FormControl('', [
       Validators.required,
       Validators.minLength(this.minNameLength),
       Validators.maxLength(this.maxNameLength),
@@ -24,10 +30,45 @@ export class ProfileNewCollectionPageComponent {
     description: new FormControl('', [
       Validators.maxLength(this.maxDescriptionLength),
     ]),
-    isPrivate: new FormControl(false),
-    isRanked: new FormControl(false),
+    privateCollection: new FormControl(false),
+    ranked: new FormControl(false)
   });
 
-  constructor(private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService,
+              private authService: AuthenticationService,
+              private router: Router) {};
 
+  async ngOnInit() {
+    try {
+      const response = await this.authService.loginStatus();
+      if (response === false) {
+        this.router.navigate(['/login']);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async createCollection() {
+    try {
+      const data: CreateCollectionDto = this.newCollectionForm.value as CreateCollectionDto;
+      const response = await this.profileService.createCollection(data);
+
+      if (response.ok) {
+        const newCollection: CollectionData = await response.json();
+        this.router.navigate(['/profile/collections', newCollection.id]);
+        return;
+      } else {
+        this.errorMessage = "You already have a collection with this name";
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => this.errorMessage = "", 5000);
+    }
+  }
+
+  cancelCreateCollection() {
+    this.router.navigate(['/profile/collections']);
+  }
 }

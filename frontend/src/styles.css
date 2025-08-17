@@ -21,3 +21,13 @@
 .form-control.is-invalid ~ .show-password-icon {
   right: 2.5rem;
 }
+
+.validation-error {
+  color: #d10505;
+}
+
+.required-label {
+  font-size: 0.9rem;
+  opacity: 75%;
+  color: #d00;
+}

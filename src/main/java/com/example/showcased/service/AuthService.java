@@ -6,7 +6,6 @@ import com.example.showcased.entity.User;
 import com.example.showcased.exception.*;
 import com.example.showcased.repository.OtpRequestRepository;
 import com.example.showcased.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -84,7 +83,7 @@ public class AuthService {
     public LoginStatusDto loginStatus() {
         // Extract user details if JWT token is present
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean loggedIn = authentication != null && authentication.isAuthenticated();
+        boolean loggedIn = authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof User;
 
         LoginStatusDto loginStatusDto = new LoginStatusDto();
         loginStatusDto.setLoggedIn(loggedIn);

@@ -141,6 +141,7 @@ const routes: Routes = [
     },
     {
       path: 'profile/collections/new',
+      title: 'New Collection | Showcased',
       component: ProfileNewCollectionPageComponent
     },
     {

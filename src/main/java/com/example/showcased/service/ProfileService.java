@@ -672,16 +672,17 @@ public class ProfileService {
         }
     }
 
-    public CollectionDto createCollection(CreateCollectionDto collection) {
+    public CollectionDto createCollection(CreateCollectionDto collectionDto) {
         User user = authService.retrieveUserFromJwt();
 
         // Check to make sure user doesn't have a collection with the provided name already
-        if (collectionsRepository.existsByUserIdAndCollectionName(user.getId(), collection.getCollectionName())) {
-            throw new DuplicateCollectionNameException("You already have a collection named " + collection.getCollectionName());
+        if (collectionsRepository.existsByUserIdAndCollectionName(user.getId(), collectionDto.getCollectionName())) {
+            throw new DuplicateCollectionNameException("You already have a collection named " + collectionDto.getCollectionName());
         }
 
         // Save new collection to database
-        Collection newCollection = new Collection(user.getId(), collection.getCollectionName());
+        Collection newCollection = modelMapper.map(collectionDto, Collection.class);
+        newCollection.setUserId(user.getId());
         collectionsRepository.save(newCollection);
         return modelMapper.map(newCollection, CollectionDto.class);
     }
