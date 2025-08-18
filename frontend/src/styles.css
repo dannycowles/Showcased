@@ -26,6 +26,10 @@
   color: #d10505;
 }
 
+.validation-success {
+  color: green;
+}
+
 .required-label {
   font-size: 0.9rem;
   opacity: 75%;

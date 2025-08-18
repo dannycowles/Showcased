@@ -62,6 +62,9 @@ import {UserReviewsPageComponent} from './pages/user/user-reviews-page/user-revi
 import {
   ProfileNewCollectionPageComponent
 } from './pages/profile/profile-new-collection-page/profile-new-collection-page.component';
+import {
+  ProfileEditCollectionPageComponent
+} from './pages/profile/profile-edit-collection-page/profile-edit-collection-page.component';
 
 const routes: Routes = [
     {
@@ -143,6 +146,10 @@ const routes: Routes = [
       path: 'profile/collections/new',
       title: 'New Collection | Showcased',
       component: ProfileNewCollectionPageComponent
+    },
+    {
+      path: 'profile/collections/:id/edit',
+      component: ProfileEditCollectionPageComponent
     },
     {
       path: 'profile/collections/:id',

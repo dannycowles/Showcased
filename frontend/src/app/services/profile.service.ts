@@ -93,7 +93,6 @@ export class ProfileService {
   async updateProfileDetails(data: UpdateProfileDetailsDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/details`, {
       method: 'PATCH',
-      credentials: 'include',
       headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
@@ -110,7 +109,6 @@ export class ProfileService {
   async addSocialAccount(data: AddSocialDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/socials`, {
       method: 'POST',
-      credentials: 'include',
       headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });
@@ -209,7 +207,6 @@ export class ProfileService {
   async addShowToWatchlist(data: AddToWatchlistDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/watchlist`, {
       method: 'POST',
-      credentials: 'include',
       headers: this.getHeaders(true),
       body: JSON.stringify(data),
     });

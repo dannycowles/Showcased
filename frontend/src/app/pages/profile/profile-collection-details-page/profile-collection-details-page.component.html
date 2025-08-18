@@ -9,31 +9,9 @@
     <div id="like-count">{{collectionData.numLikes}}</div>
   </div>
 
-  <button class="btn btn-primary" (click)="openEditCollectionModal()">Edit Collection Details</button>
-
-  <button class="btn btn-danger" (click)="deleteCollection()">Delete Collection</button>
+  <button class="btn btn-primary me-3" routerLink="edit">Edit Collection</button>
 
   <button class="btn btn-success" (click)="openSearchShowsModal()">Add Show</button>
-  <br>
-  <br>
-
-  <div class="btn-group" id="visibility-radios" role="group" aria-label="Toggle private/public visibility" (change)="toggleCollectionVisibility()">
-    <input type="radio" class="btn-check" name="visibilityRadio" id="privateRadio" autocomplete="off" value="private" [checked]="collectionData.isPrivate">
-    <label class="btn btn-outline-danger" for="privateRadio">Private</label>
-
-    <input type="radio" class="btn-check" name="visibilityRadio" id="publicRadio" autocomplete="off" value="public" [checked]="!collectionData.isPrivate">
-    <label class="btn btn-outline-success" for="publicRadio">Public</label>
-  </div>
-
-  <br>
-  <br>
-  <div class="btn-group" id="ranked-radios" role="group" aria-label="Toggle ranked/unranked" (change)="toggleRankSetting()">
-    <input type="radio" class="btn-check" name="rankedRadio" id="unrankedRadio" autocomplete="off" value="unranked" [checked]="!collectionData.isRanked">
-    <label class="btn btn-outline-primary" for="unrankedRadio">Unranked</label>
-
-    <input type="radio" class="btn-check" name="rankedRadio" id="rankedRadio" autocomplete="off" value="ranked" [checked]="collectionData.isRanked">
-    <label class="btn btn-outline-primary" for="rankedRadio">Ranked</label>
-  </div>
   <br>
   <br>
 
