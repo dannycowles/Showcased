@@ -1,0 +1,54 @@
+<button type="button" class="btn btn-secondary mb-3" [routerLink]="['../']">Return to Profile</button>
+<h2 class="mb-5">Account Settings</h2>
+
+<ul class="nav nav-tabs mb-5" id="settingsTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+            type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="true">
+      Profile
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="avatar-tab" data-bs-toggle="tab" data-bs-target="#avatar-tab-pane"
+            type="button" role="tab" aria-controls="avatar-tab-pane" aria-selected="false">
+      Avatar
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="social-tab" data-bs-toggle="tab" data-bs-target="#social-tab-pane"
+            type="button" role="tab" aria-controls="social-tab-pane" aria-selected="false">
+      Social
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content" id="settingsTabsContent">
+  <div class="tab-pane show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+    <h3 class="mb-4">Profile</h3>
+
+    <div class="mb-3 w-25">
+      <label for="usernameInput" class="form-label">Username</label>
+      <input type="text" class="form-control" id="usernameInput" [value]="profileSettings.displayName" aria-label="Disabled username input" disabled>
+    </div>
+    <div class="mb-3 w-25">
+      <label for="emailInput" class="form-label">Email</label>
+      <input type="text" class="form-control" id="emailInput" [value]="profileSettings.email" disabled>
+    </div>
+    <div class="mb-3 w-50">
+      <label for="bioInput" class="form-label">Bio</label>
+      <textarea class="form-control" [formControl]="bio" id="bioInput" rows="5" aria-describedby="bioHelpBlock"></textarea>
+      <div id="bioHelpBlock" class="form-text">
+        {{maxBioLength - bio.value.length}} characters remaining.
+      </div>
+    </div>
+
+    <div class="validation-success">{{saveMessage}}</div>
+    <button type="button" [disabled]="isProfileSaveDisabled()" class="btn btn-primary mt-3" (click)="saveProfileChanges()">Save Changes</button>
+  </div>
+  <div class="tab-pane" id="avatar-tab-pane" role="tabpanel" aria-labelledby="avatar-tab" tabindex="0">
+    <h3>Avatar</h3>
+  </div>
+  <div class="tab-pane" id="social-tab-pane" role="tabpanel" aria-labelledby="social-tab" tabindex="0">
+    <h3>Social</h3>
+  </div>
+</div>

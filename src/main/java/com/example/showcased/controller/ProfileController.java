@@ -39,9 +39,15 @@ public class ProfileController {
     }
 
     @PatchMapping("/details")
-    public ResponseEntity<Void> updateProfileDetails(@RequestBody UpdateBioDto update) {
+    public ResponseEntity<Void> updateProfileDetails(@RequestBody UpdateProfileDetailsDto update) {
         profileService.updateProfileDetails(update);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/settings")
+    public ResponseEntity<ProfileSettingsDto> getProfileSettings() {
+        ProfileSettingsDto profileSettings = profileService.getProfileSettings();
+        return ResponseEntity.ok(profileSettings);
     }
 
     @GetMapping("/activity")

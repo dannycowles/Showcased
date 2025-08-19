@@ -65,6 +65,7 @@ import {
 import {
   ProfileEditCollectionPageComponent
 } from './pages/profile/profile-edit-collection-page/profile-edit-collection-page.component';
+import {ProfileSettingsPageComponent} from './pages/profile/profile-settings-page/profile-settings-page.component';
 
 const routes: Routes = [
     {
@@ -164,6 +165,11 @@ const routes: Routes = [
       path: 'profile/reviews',
       title: 'Your Reviews | Showcased',
       component: ProfileReviewsPageComponent
+    },
+    {
+      path: 'profile/settings',
+      title: 'Profile Settings | Showcased',
+      component: ProfileSettingsPageComponent
     },
     {
       path: 'user/:username',

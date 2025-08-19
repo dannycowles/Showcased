@@ -14,9 +14,11 @@ public interface UserSocialRepository extends JpaRepository<UserSocial, UserSoci
     @Query("""
         SELECT new com.example.showcased.dto.SocialAccountReturnDto(s.id, s.name, u.handle, s.url, s.icon)
         FROM SocialPlatform s
-        LEFT JOIN UserSocial u ON u.id.socialId = s.id
-        JOIN User user ON u.id.userId = user.id
-        WHERE user.displayName = :username
+        LEFT JOIN UserSocial u ON u.id.socialId = s.id AND u.id.userId = (
+            SELECT user.id
+            FROM User user
+            WHERE user.displayName = :username
+        )
         ORDER BY s.id
 """)
     List<SocialAccountReturnDto> findByUsername(@Param("username") String username);

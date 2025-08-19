@@ -32,6 +32,7 @@ import {PageData} from '../data/page-data';
 import {UserService} from './user.service';
 import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
 import {ProfileReviewData} from '../data/types';
+import {ProfileSettingsData} from '../data/profile-settings-data';
 
 @Injectable({
   providedIn: 'root',
@@ -66,6 +67,18 @@ export class ProfileService {
    */
   async getProfileDetails(): Promise<UserData> {
     const response = await fetch(`${this.baseUrl}/details`, {
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return await response.json();
+  }
+
+  /**
+   * Retrieves all profile settings for the logged-in user
+   */
+  async getProfileSettings(): Promise<ProfileSettingsData> {
+    const response = await fetch(`${this.baseUrl}/settings`, {
       headers: this.getHeaders()
     });
 

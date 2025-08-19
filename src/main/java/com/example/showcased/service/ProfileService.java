@@ -132,7 +132,14 @@ public class ProfileService {
         return profileDetails;
     }
 
-    public void updateProfileDetails(UpdateBioDto update) {
+    public ProfileSettingsDto getProfileSettings() {
+        User user = authService.retrieveUserFromJwt();
+        ProfileSettingsDto profileSettings = modelMapper.map(user, ProfileSettingsDto.class);
+        profileSettings.setSocialAccounts(getSocialAccounts());
+        return profileSettings;
+    }
+
+    public void updateProfileDetails(UpdateProfileDetailsDto update) {
         User user = authService.retrieveUserFromJwt();
         user.setBio(update.getBio());
         userRepository.save(user);
