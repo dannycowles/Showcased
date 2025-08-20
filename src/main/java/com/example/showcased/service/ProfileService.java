@@ -150,9 +150,20 @@ public class ProfileService {
         addToShowInfoRepository(show);
 
         // Check if the show is already in the user's watchlist, if so we throw an exception
-        if (watchlistRepository.existsById(new WatchId(user.getId(), show.getShowId()))) {
-            throw new AlreadyOnListException("Show is already on watchlist");
+        WatchId watchId = new WatchId(user.getId(), show.getShowId());
+        if (watchlistRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You already have " + show.getShowTitle() + " on your watchlist");
         }
+
+        // If the show is already on either the watching list or ranking list throw an exception
+        if (watchingRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You have " + show.getShowTitle() + " currently on your watching list");
+        }
+
+        if (showRankingRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You have " + show.getShowTitle() + " currently on your ranking list");
+        }
+
         watchlistRepository.save(modelMapper.map(show, Watchlist.class));
     }
 
@@ -221,9 +232,20 @@ public class ProfileService {
         addToShowInfoRepository(show);
 
         // Check if the show is already in the user's currently watching list, if so we throw an exception
-        if (watchingRepository.existsById(new WatchId(user.getId(), show.getShowId()))) {
-            throw new AlreadyOnListException("Show is already on watching list");
+        WatchId watchId = new WatchId(user.getId(), show.getShowId());
+        if (watchingRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You already have " + show.getShowTitle() + " on your watching list");
         }
+
+        // If the show is already on the watchlist or ranking list, throw an exception
+        if (watchlistRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You have " + show.getShowTitle() + " currently on your watchlist");
+        }
+
+        if (showRankingRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You have " + show.getShowTitle() + " currently on your ranking list");
+        }
+
         watchingRepository.save(modelMapper.map(show, Watching.class));
     }
 
@@ -264,8 +286,18 @@ public class ProfileService {
         addToShowInfoRepository(show);
 
         // Check if the show is already in the user's show ranking list, if so we throw an exception
-        if (showRankingRepository.existsById(new WatchId(user.getId(), show.getShowId()))) {
-            throw new AlreadyOnListException("Show is already on ranking list");
+        WatchId watchId = new WatchId(user.getId(), show.getShowId());
+        if (showRankingRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You already have " + show.getShowTitle() + " on your ranking list");
+        }
+
+        // If the show is already on the watching list or watchlist, throw an exception
+        if (watchingRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You have " + show.getShowTitle() + " currently on your watching list");
+        }
+
+        if (watchlistRepository.existsById(watchId)) {
+            throw new AlreadyOnListException("You have " + show.getShowTitle() + " currently on your watchlist");
         }
 
         // Check if the user's show ranking list is empty, if so it's rank number will be 1,
@@ -787,7 +819,7 @@ public class ProfileService {
         addToShowInfoRepository(show);
         ShowsInCollectionId showsInCollectionId = new ShowsInCollectionId(collectionId, show.getShowId());
         if (showsInCollectionRepository.existsById(showsInCollectionId)) {
-            throw new AlreadyInCollectionException("Show is already in this collection");
+            throw new AlreadyInCollectionException("You already have " + show.getShowTitle() + " in this collection");
         }
 
         ShowsInCollection newShow = new ShowsInCollection();

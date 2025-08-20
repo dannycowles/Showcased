@@ -114,7 +114,8 @@ export class SearchShowsModalComponent {
         this.messageColor = 'green';
         this.onAddShow(showData);
       } else if (response.status === 409) {
-        this.message = `You already have ${selectedShow.title} on your ${this.addType}.`;
+        const errorBody = await response.json();
+        this.message = errorBody["detail"];
         this.messageColor = 'red';
       }
     } catch (error) {
