@@ -189,14 +189,18 @@ public class ProfileService {
 
 
 
-    public void addSocialAccount(SocialAccountDto account) {
-        User user =  authService.retrieveUserFromJwt();
-        UserSocial socialAccount = new UserSocial();
-        socialAccount.setId(new UserSocialId(user.getId(), account.getSocialId()));
-        socialAccount.setHandle(account.getHandle());
-        userSocialRepository.save(socialAccount);
+    @Transactional
+    public void addSocialAccount(List<SocialAccountDto> accounts) {
+        for (SocialAccountDto account : accounts) {
+            User user =  authService.retrieveUserFromJwt();
+            UserSocial socialAccount = new UserSocial();
+            socialAccount.setId(new UserSocialId(user.getId(), account.getSocialId()));
+            socialAccount.setHandle(account.getHandle());
+            userSocialRepository.save(socialAccount);
+        }
     }
 
+    @Transactional
     public void removeSocialAccount(Long socialId) {
         User user =  authService.retrieveUserFromJwt();
         userSocialRepository.deleteById(new UserSocialId(user.getId(), socialId));

@@ -1,0 +1,22 @@
+#profile-picture {
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+
+.social-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.social-name {
+  flex-basis: 5%;
+  min-width: 100px;
+}
+
+.social-input {
+  flex-basis: 25%;
+  min-width: 150px;
+}

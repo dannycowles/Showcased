@@ -106,8 +106,8 @@ public class ProfileController {
     // ========== SOCIALS =========
 
     @PostMapping("/socials")
-    public ResponseEntity<Void> addSocialAccount(@RequestBody SocialAccountDto account) {
-        profileService.addSocialAccount(account);
+    public ResponseEntity<Void> addSocialAccounts(@RequestBody List<SocialAccountDto> accounts) {
+        profileService.addSocialAccount(accounts);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

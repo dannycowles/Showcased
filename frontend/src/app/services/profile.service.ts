@@ -119,7 +119,7 @@ export class ProfileService {
    * the given social page it will overwrite it
    * @param data
    */
-  async addSocialAccount(data: AddSocialDto): Promise<Response> {
+  async addSocialAccounts(data: AddSocialDto[]): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/socials`, {
       method: 'POST',
       headers: this.getHeaders(true),
@@ -148,7 +148,7 @@ export class ProfileService {
    * Uploads a profile picture for the logged-in user
    * @param formData
    */
-  async uploadProfilePicture(formData: FormData): Promise<string> {
+  async uploadProfilePicture(formData: FormData): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/profile-picture`, {
       method: 'POST',
       headers: this.getHeaders(),
@@ -156,7 +156,7 @@ export class ProfileService {
     });
 
     this.checkUnauthorizedUser(response);
-    return await response.text();
+    return response;
   }
 
   /**

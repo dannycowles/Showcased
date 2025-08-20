@@ -124,8 +124,8 @@ public class GlobalExceptionHandler {
     /**
      * Exception handler for invalid file type for profile picture upload
      */
-    @ExceptionHandler(InvalidFileType.class)
-    ProblemDetail invalidFileTypeHandler(InvalidFileType ex) {
+    @ExceptionHandler(InvalidFileTypeException.class)
+    ProblemDetail invalidFileTypeHandler(InvalidFileTypeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage());
     }
 
@@ -255,5 +255,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     ProblemDetail exceptionHandler(Exception ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+    /**
+     * Exception handler for file upload that exceeds max size
+     */
+    @ExceptionHandler(InvalidFileSizeException.class)
+    ProblemDetail invalidFileSizeHandler(InvalidFileSizeException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
     }
 }
