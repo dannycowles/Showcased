@@ -21,6 +21,7 @@ public class SeasonEpisodeDto {
     @JsonAlias("still_path")
     private String stillPath;
 
+    @JsonAlias("vote_average")
     private String imdbRating;
 
     public void setStillPath(String stillPath) {

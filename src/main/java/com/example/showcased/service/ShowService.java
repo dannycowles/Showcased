@@ -339,51 +339,63 @@ public class ShowService {
                 .queryParam("i", imdbId)
                 .queryParam("Season", seasonNumber)
                 .toUriString();
-        jsonResponse = new JSONObject(tmdbClient.getRaw(url));
-        JSONArray episodes = jsonResponse.getJSONArray("Episodes");
-        season.setShowTitle(jsonResponse.optString("Title"));
+        jsonResponse = new JSONObject(omdbClient.getRaw(url));
 
-        // This check ensures that unaired episodes don't appear
-        // on both OMDB and TMDB don't cause alignment and indexing issues
-        for (int i = episodes.length() - 1; i >= 0; i--) {
-            JSONObject episode = episodes.getJSONObject(i);
-            if (episode.optString("Released").equals("N/A")) {
-                episodes.remove(i);
-            }
-        }
+        // If the season details were not found (due to occasional mismatch between TMDB and OMDB)
+        if (jsonResponse.getString("Response").equals("False")) {
+            // Make request to TMDB series details to fetch show title
+            url = UriComponentsBuilder
+                    .fromUriString("https://api.themoviedb.org/3/tv")
+                    .pathSegment(showId)
+                    .toUriString();
+            jsonResponse = new JSONObject(tmdbClient.getRaw(url));
+            season.setShowTitle(jsonResponse.optString("name"));
+        } else {
+            JSONArray episodes = jsonResponse.optJSONArray("Episodes");
+            season.setShowTitle(jsonResponse.optString("Title"));
 
-        // For each episode, extract the imdb rating and update the season object accordingly
-        for (int i = 0; i < episodes.length(); i++) {
-            JSONObject episode = episodes.getJSONObject(i);
-            String rating = episode.optString("imdbRating");
-            season.setRating(episode.optInt("Episode"), rating);
-        }
-
-        // For each of the episodes, extract the plot from the OMDB episode endpoint
-        // previous TMDB endpoint contained spoilers in overview
-        List<SeasonEpisodeDto> seasonEpisodes = season.getEpisodes();
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
-        for (SeasonEpisodeDto episode : seasonEpisodes) {
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                // Make request to OMDB episode endpoint
-                String url2 = UriComponentsBuilder
-                        .fromUriString("https://www.omdbapi.com")
-                        .queryParam("apikey", omdbKey)
-                        .queryParam("i", imdbId)
-                        .queryParam("Season", seasonNumber)
-                        .queryParam("Episode", episode.getEpisodeNumber())
-                        .toUriString();
-                JSONObject response = new JSONObject(omdbClient.getRaw(url2));
-
-                if (!response.optString("Plot").equals("N/A") && response.optBoolean("Plot")) {
-                    episode.setPlot(response.optString("Plot"));
+            // This check ensures that unaired episodes don't appear
+            // on both OMDB and TMDB don't cause alignment and indexing issues
+            for (int i = episodes.length() - 1; i >= 0; i--) {
+                JSONObject episode = episodes.getJSONObject(i);
+                if (episode.optString("Released").equals("N/A")) {
+                    episodes.remove(i);
                 }
-            });
-            futures.add(future);
+            }
+
+            // For each episode, extract the imdb rating and update the season object accordingly
+            for (int i = 0; i < episodes.length(); i++) {
+                JSONObject episode = episodes.getJSONObject(i);
+                String rating = episode.optString("imdbRating");
+                season.setRating(episode.optInt("Episode"), rating);
+            }
+
+            // For each of the episodes, extract the plot from the OMDB episode endpoint
+            // previous TMDB endpoint contained spoilers in overview
+            List<SeasonEpisodeDto> seasonEpisodes = season.getEpisodes();
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            for (SeasonEpisodeDto episode : seasonEpisodes) {
+                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                    // Make request to OMDB episode endpoint
+                    String url2 = UriComponentsBuilder
+                            .fromUriString("https://www.omdbapi.com")
+                            .queryParam("apikey", omdbKey)
+                            .queryParam("i", imdbId)
+                            .queryParam("Season", seasonNumber)
+                            .queryParam("Episode", episode.getEpisodeNumber())
+                            .toUriString();
+                    JSONObject response = new JSONObject(omdbClient.getRaw(url2));
+
+                    if (!response.optString("Plot").equals("N/A") && response.optBoolean("Plot")) {
+                        episode.setPlot(response.optString("Plot"));
+                    }
+                });
+                futures.add(future);
+            }
+            // Wait for all API calls to complete
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            season.setEpisodes(seasonEpisodes);
         }
-        // Wait for all API calls to complete
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-        season.setEpisodes(seasonEpisodes);
 
         // If the user is logged in, check whether season is on their ranking list
         User user = authService.retrieveUserFromJwt();
