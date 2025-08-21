@@ -96,7 +96,6 @@ export class EpisodePageComponent implements OnInit {
               const reviewElement = document.getElementById(String(this.notifReviewId));
               if (reviewElement) {
                 reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
                 reviewElement.classList.add('highlight');
                 setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
               }
@@ -230,6 +229,10 @@ export class EpisodePageComponent implements OnInit {
   }
 
   goPreviousEpisode() {
+    // Reset the values from review/notif so that navigations to other season/episode will not reuse it
+    this.notifReviewId = null;
+    this.notifCommentId = null;
+
     if (this.episodeNumber != 1) {
       this.router.navigate(['/show', this.showId, 'season', this.seasonNumber, 'episode', this.episodeNumber - 1]);
     } else {
@@ -238,6 +241,10 @@ export class EpisodePageComponent implements OnInit {
   }
 
   goNextEpisode() {
+    // Reset the values from review/notif so that navigations to other season/episode will not reuse it
+    this.notifReviewId = null;
+    this.notifCommentId = null;
+
     if (this.episodeNumber < this.episode.numEpisodesInSeason) {
       this.router.navigate(['/show', this.showId, 'season', this.seasonNumber, 'episode', this.episodeNumber + 1]);
     } else {

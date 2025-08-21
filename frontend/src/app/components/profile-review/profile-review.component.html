@@ -1,5 +1,5 @@
-<div class="py-3 ps-2 row review" (click)="navigateToReview()">
-    <div class="col-4">
+<div class="py-3 ps-2 row review">
+    <div class="col-4" (click)="navigateToReview()">
       @switch (review.type) {
         @case (ReviewType.Show) {
           <h4>{{review.showTitle}}</h4>
@@ -14,7 +14,7 @@
         <i class="bi bi-star-fill ms-1 fs-5" style="color: #f2cb22;"></i>
       </div>
     </div>
-    <div class="col-5">
+    <div class="col-5" (click)="navigateToReview()">
       <h4>Commentary: {{review.commentary}}</h4>
       <h4>Contains Spoilers: {{review.containsSpoilers}}</h4>
     </div>
