@@ -5,6 +5,7 @@ import {SingleCollectionData} from '../../../data/single-collection-data';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {UpdateCollectionDetails} from '../../../data/dto/update-collection-details';
 import {NgClass} from '@angular/common';
+import {ConfirmationService} from '../../../services/confirmation.service';
 
 @Component({
   selector: 'app-profile-edit-collection-page',
@@ -41,7 +42,8 @@ export class ProfileEditCollectionPageComponent implements OnInit {
 
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
-              private router: Router) {
+              private router: Router,
+              private confirmationService: ConfirmationService) {
     this.collectionId = this.route.snapshot.params['id'];
   }
 
@@ -98,14 +100,17 @@ export class ProfileEditCollectionPageComponent implements OnInit {
   }
 
   async deleteCollection() {
-    try {
-      const response = await this.profileService.deleteCollection(this.collectionId);
+    const confirmation = await this.confirmationService.confirmDeleteCollection(this.collectionDetails.name);
+    if (confirmation) {
+      try {
+        const response = await this.profileService.deleteCollection(this.collectionId);
 
-      if (response.ok) {
-        this.router.navigate(['/profile/collections']);
+        if (response.ok) {
+          this.router.navigate(['/profile/collections']);
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
   }
 }
