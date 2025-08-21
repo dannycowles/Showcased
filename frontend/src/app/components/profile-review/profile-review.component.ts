@@ -1,13 +1,14 @@
 import {booleanAttribute, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import { UtilsService } from '../../services/utils.service';
-import { ButtonHeartComponent } from '../button-heart.component';
-import { ShowService } from '../../services/show.service';
-import { ReviewType } from '../../data/enums';
+import {UtilsService} from '../../services/utils.service';
+import {ButtonHeartComponent} from '../button-heart.component';
+import {ShowService} from '../../services/show.service';
+import {ReviewType} from '../../data/enums';
 import {ProfileReviewData} from '../../data/types';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {EditReviewModalComponent} from '../edit-review-modal/edit-review-modal.component';
 import {UpdateReviewDto} from '../../data/dto/update-review-dto';
 import {Router} from '@angular/router';
+import {ConfirmationService} from '../../services/confirmation.service';
 
 @Component({
   selector: 'app-profile-review',
@@ -25,7 +26,8 @@ export class ProfileReviewComponent implements OnInit {
   constructor(public utilsService: UtilsService,
               private showService: ShowService,
               private modalService: NgbModal,
-              private router: Router) {};
+              private router: Router,
+              private confirmationService: ConfirmationService) {};
 
   ngOnInit() {
     this.reviewHandler = this.reviewMethods[this.review.type];
@@ -63,15 +65,28 @@ export class ProfileReviewComponent implements OnInit {
   }
 
   async deleteReview() {
-    try {
-      const response = await this.reviewHandler.delete();
+    let itemName;
+    switch (this.review.type) {
+      case ReviewType.Show:
+        itemName = this.review.showTitle;
+        break;
+      case ReviewType.Episode:
+        itemName = `${this.review.showTitle} S${this.review.season} E${this.review.episode}`;
+        break;
+    }
 
-      if (response.ok) {
-        // Raise event to parent component so it can remove the review from the shown entries
-        this.delete.emit(this.review);
+    const confirmation = await this.confirmationService.confirmDeleteReview(itemName);
+    if (confirmation) {
+      try {
+        const response = await this.reviewHandler.delete();
+
+        if (response.ok) {
+          // Raise event to parent component so it can remove the review from the shown entries
+          this.delete.emit(this.review);
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
   }
 

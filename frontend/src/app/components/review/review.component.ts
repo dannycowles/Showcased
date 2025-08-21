@@ -4,7 +4,7 @@ import {NgOptimizedImage} from '@angular/common';
 import {UtilsService} from '../../services/utils.service';
 import {ButtonHeartComponent} from '../button-heart.component';
 import {ShowService} from '../../services/show.service';
-import {ReviewType} from '../../data/enums';
+import {ReviewPageType, ReviewType} from '../../data/enums';
 import {Router, RouterLink} from '@angular/router';
 import {CommentComponent} from '../comment/comment.component';
 import {AddCommentDto} from '../../data/dto/add-comment-dto';
@@ -12,6 +12,7 @@ import {EditReviewModalComponent} from '../edit-review-modal/edit-review-modal.c
 import {ProfileReviewData, ReviewData} from '../../data/types';
 import {UpdateReviewDto} from '../../data/dto/update-review-dto';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ConfirmationService} from '../../services/confirmation.service';
 
 @Component({
   selector: 'app-review',
@@ -44,7 +45,8 @@ export class ReviewComponent implements OnChanges {
   constructor(public utilsService: UtilsService,
               private showService: ShowService,
               private router: Router,
-              private modalService: NgbModal) { };
+              private modalService: NgbModal,
+              private confirmationService: ConfirmationService) { };
 
   ngOnChanges() {
     if (this.review.notifCommentId != null) {
@@ -165,8 +167,21 @@ export class ReviewComponent implements OnChanges {
     }
   }
 
-  deleteReviewEvent() {
-    this.deleteReview.emit(this.review.id);
+  async deleteReviewEvent() {
+    let itemName;
+    switch (this.review.type) {
+      case ReviewPageType.ShowPage:
+        itemName = this.review.showTitle;
+        break;
+      case ReviewPageType.EpisodePage:
+        itemName = `${this.review.showTitle} S${this.review.season} E${this.review.episode}`;
+        break;
+    }
+
+    const confirmation = await this.confirmationService.confirmDeleteReview(itemName);
+    if (confirmation) {
+      this.deleteReview.emit(this.review.id);
+    }
   }
 
   async openEditReviewModal() {
