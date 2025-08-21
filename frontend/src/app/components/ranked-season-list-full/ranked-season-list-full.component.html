@@ -12,7 +12,7 @@
           <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Show Poster" width="185" height="278" priority></a>
 
           @if (editable) {
-            <button class="btn btn-danger" (click)="removeEvent(season.id)">Remove Season</button>
+            <button class="btn btn-danger" (click)="removeEvent(season)">Remove Season</button>
           }
         </div>
       }

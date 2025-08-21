@@ -25,7 +25,7 @@
 
             <!-- Poster images are sized w185, using 2:3 ratio -->
             <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-            <button class="btn btn-danger" (click)="removeShowFromCollection(show.showId)">Remove Show</button>
+            <button class="btn btn-danger" (click)="removeShowFromCollection(show)">Remove Show</button>
           </div>
         }
       </div>
@@ -37,7 +37,7 @@
 
             <!-- Poster images are sized w185, using 2:3 ratio -->
             <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-            <button class="btn btn-danger" (click)="removeShowFromCollection(show.showId)">Remove Show</button>
+            <button class="btn btn-danger" (click)="removeShowFromCollection(show)">Remove Show</button>
           </div>
         }
       </div>

@@ -4,6 +4,8 @@ import {CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList, DragDropModule, moveItem
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
 import {CdkScrollableModule} from '@angular/cdk/scrolling';
+import {ConfirmationService} from '../../services/confirmation.service';
+import {ShowListData} from '../../data/lists/show-list-data';
 
 @Component({
   selector: 'app-ranked-season-list-full',
@@ -29,6 +31,8 @@ export class RankedSeasonListFullComponent {
   private readonly scrollThreshold = 50;
   private readonly scrollSpeed = 10;
 
+  constructor(private confirmationService: ConfirmationService) {}
+
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.seasons, event.previousIndex, event.currentIndex);
 
@@ -39,8 +43,11 @@ export class RankedSeasonListFullComponent {
     this.update.emit();
   }
 
-  removeEvent(removeId: number) {
-    this.remove.emit(removeId);
+  async removeEvent(removeSeason: SeasonRankingData) {
+    const confirmation = await this.confirmationService.confirmRemove(`${removeSeason.showTitle} S${removeSeason.season}`);
+    if (confirmation) {
+      this.remove.emit(removeSeason.id);
+    }
   }
 
   onDragMoved(event: CdkDragMove) {

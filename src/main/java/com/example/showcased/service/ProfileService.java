@@ -164,7 +164,8 @@ public class ProfileService {
             throw new AlreadyOnListException("You have " + show.getShowTitle() + " currently on your ranking list");
         }
 
-        watchlistRepository.save(modelMapper.map(show, Watchlist.class));
+        Watchlist watchlistEntry = new Watchlist(watchId);
+        watchlistRepository.save(watchlistEntry);
     }
 
     // If a limit was provided, use that, else retrieve the entire ranking list
@@ -246,7 +247,8 @@ public class ProfileService {
             throw new AlreadyOnListException("You have " + show.getShowTitle() + " currently on your ranking list");
         }
 
-        watchingRepository.save(modelMapper.map(show, Watching.class));
+        Watching watchingEntry = new Watching(watchId);
+        watchingRepository.save(watchingEntry);
     }
 
     public List<WatchReturnDto> getWatchingList(Integer limit) {

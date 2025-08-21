@@ -11,6 +11,7 @@ import {SearchShowsModalComponent} from '../../../components/search-shows-modal/
 import {AddShowType} from '../../../data/enums';
 import {UpdateCollectionDetails} from '../../../data/dto/update-collection-details';
 import {Title} from '@angular/platform-browser';
+import {ConfirmationService} from '../../../services/confirmation.service';
 
 @Component({
   selector: 'app-profile-collection-details-page',
@@ -28,7 +29,8 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
               public utils : UtilsService,
               private userService: UserService,
               private modalService: NgbModal,
-              private title: Title) {
+              private title: Title,
+              private confirmationService: ConfirmationService) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
@@ -54,10 +56,16 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
     searchShowsModalRef.componentInstance.onAddShow = (show: CollectionShowData) => this.collectionData.shows.push(show);
   }
 
-  async removeShowFromCollection(showId: number ) {
+  async removeShowFromCollection(removeShow: CollectionShowData) {
     try {
-      await this.profileService.removeShowFromCollection(this.collectionId, showId);
-      this.collectionData.shows = this.collectionData.shows.filter(show => show.showId != showId);
+      const confirmation = await this.confirmationService.confirmRemove(removeShow.title);
+
+      if (confirmation) {
+        const response = await this.profileService.removeShowFromCollection(this.collectionId, removeShow.showId);
+        if (response.ok) {
+          this.collectionData.shows = this.collectionData.shows.filter(show => show.showId != removeShow.showId);
+        }
+      }
     } catch (error) {
       console.error(error);
     }

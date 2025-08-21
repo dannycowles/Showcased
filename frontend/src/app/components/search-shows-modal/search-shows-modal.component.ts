@@ -7,6 +7,7 @@ import {ShowService} from '../../services/show.service';
 import {ProfileService} from '../../services/profile.service';
 import {SearchResultData} from '../../data/search-result-data';
 import {AddShowType} from '../../data/enums';
+import {ShowListData} from '../../data/lists/show-list-data';
 
 @Component({
   selector: 'app-search-shows-modal',
@@ -112,7 +113,13 @@ export class SearchShowsModalComponent {
       if (response.ok) {
         this.message = `Added ${selectedShow.title} to your ${this.addType}!`;
         this.messageColor = 'green';
-        this.onAddShow(showData);
+
+        const newShow: ShowListData = {
+          showId: this.selectedShowId,
+          title: selectedShow.title,
+          posterPath: selectedShow.posterPath
+        };
+        this.onAddShow(newShow);
       } else if (response.status === 409) {
         const errorBody = await response.json();
         this.message = errorBody["detail"];

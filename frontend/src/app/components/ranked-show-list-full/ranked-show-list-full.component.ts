@@ -3,6 +3,7 @@ import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ShowRankingData} from '../../data/lists/show-ranking-data';
+import {ConfirmationService} from '../../services/confirmation.service';
 
 @Component({
   selector: 'app-ranked-show-list-full',
@@ -24,6 +25,8 @@ export class RankedShowListFullComponent {
   @Output() update = new EventEmitter<void>();
   @Output() remove = new EventEmitter<number>();
 
+  constructor(private confirmationService: ConfirmationService) {}
+
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.shows, event.previousIndex, event.currentIndex);
 
@@ -34,7 +37,10 @@ export class RankedShowListFullComponent {
     this.update.emit();
   }
 
-  removeEvent(removeId: number) {
-    this.remove.emit(removeId);
+  async removeEvent(removeShow: ShowRankingData) {
+    const confirmation = await this.confirmationService.confirmRemove(removeShow.title);
+    if (confirmation) {
+      this.remove.emit(removeShow.showId);
+    }
   }
 }

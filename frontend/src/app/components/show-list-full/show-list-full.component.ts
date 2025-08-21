@@ -2,6 +2,7 @@ import {booleanAttribute, Component, EventEmitter, Input, Output} from '@angular
 import {NgOptimizedImage} from '@angular/common';
 import {ShowListData} from '../../data/lists/show-list-data';
 import {RouterLink} from '@angular/router';
+import {ConfirmationService} from '../../services/confirmation.service';
 
 @Component({
   selector: 'app-show-list-full',
@@ -22,8 +23,13 @@ export class ShowListFullComponent {
   @Output() remove = new EventEmitter<number>();
   @Output() move = new EventEmitter<number>();
 
-  removeEvent(removeId: number) {
-    this.remove.emit(removeId);
+  constructor(private confirmationService: ConfirmationService) {}
+
+  async removeEvent(removeShow: ShowListData) {
+    const confirmation = await this.confirmationService.confirmRemove(removeShow.title);
+    if (confirmation) {
+      this.remove.emit(removeShow.showId);
+    }
   }
 
   moveEvent(moveId: number) {

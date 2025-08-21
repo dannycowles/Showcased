@@ -12,6 +12,7 @@ import {SearchShowsModalComponent} from '../../../components/search-shows-modal/
 import {SearchCharactersModalComponent} from '../../../components/search-characters-modal/search-characters-modal.component';
 import {SearchResultData} from '../../../data/search-result-data';
 import {UpdateCharacterRankingDto} from '../../../data/dto/update-list-ranks-dto';
+import {ConfirmationService} from '../../../services/confirmation.service';
 
 @Component({
   selector: 'app-profile-character-ranking-page',
@@ -35,7 +36,8 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
               private router: Router,
               public utils: UtilsService,
               private showService: ShowService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private confirmationService: ConfirmationService) {
     this.route.params.subscribe(params => {
       this.characterType = params['type'];
     });
@@ -139,11 +141,15 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
     }
   }
 
-  async removeCharacter(removeId: string) {
+  async removeCharacter(removeCharacter: CharacterRankingData) {
     try {
-      const response = await this.profileService.removeCharacterFromRankingList(removeId);
-      if (response.ok) {
-        this.characterRankings[this.characterType] = this.characterRankings[this.characterType].filter(character => character.id !== removeId);
+      const confirmation = await this.confirmationService.confirmRemove(removeCharacter.name);
+
+      if (confirmation) {
+        const response = await this.profileService.removeCharacterFromRankingList(removeCharacter.id);
+        if (response.ok) {
+          this.characterRankings[this.characterType] = this.characterRankings[this.characterType].filter(character => character.id !== removeCharacter.id);
+        }
       }
     } catch (error) {
       console.error(error);

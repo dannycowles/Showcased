@@ -14,7 +14,7 @@
           <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
 
           @if (editable) {
-            <button class="btn btn-danger" (click)="removeEvent(episode.episodeId)">Remove Episode</button>
+            <button class="btn btn-danger" (click)="removeEvent(episode)">Remove Episode</button>
           }
         </div>
       }
