@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {AuthenticationService} from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +8,15 @@ import { Component } from '@angular/core';
   standalone: false
 })
 export class AppComponent {
+  readonly username: string;
+  readonly profilePicture: string;
 
-  constructor() {
+  constructor(private authService: AuthenticationService) {
+    this.username = localStorage.getItem("username");
+    this.profilePicture = localStorage.getItem("profilePicture");
+  }
+
+  logoutUser() {
+    this.authService.logout();
   }
 }

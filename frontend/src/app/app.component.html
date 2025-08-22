@@ -1,4 +1,64 @@
-<router-outlet></router-outlet>
+<nav class="navbar fixed-top navbar-expand-md bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center me-5" routerLink="/">
+      <img ngSrc="favicon.ico" alt="Showcased Logo" class="me-2" priority width="25" height="25">
+      <span>Showcased</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav gap-3">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/search">Shows</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/discover">Discover</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/search-users">Members</a>
+        </li>
+        @if (username) {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/profile/activity">Activity</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img [ngSrc]="profilePicture" id="profile-picture" alt="Profile Picture" priority width="25" height="25">
+              {{username}}
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/watchlist">Watchlist</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/watching">Watching</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/show-ranking">Favorite Shows</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/season-ranking">Favorite Seasons</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/episode-ranking">Favorite Episodes</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/character-ranking">Favorite Characters</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/dynamic-ranking">Favorite Dynamics</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/collections">Collections</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/reviews">Reviews</a></li>
+
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" routerLink="/profile/settings">Settings</a></li>
+              <li><a class="dropdown-item" (click)="logoutUser()">Logout</a></li>
+            </ul>
+          </li>
+        } @else {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login">Log in</a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main style="margin-top: 5rem">
+  <router-outlet></router-outlet>
+</main>
+
 <lib-toastify-toast-container
   [position]="'top-right'"
   [transition]="'bounce'"

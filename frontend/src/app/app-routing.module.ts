@@ -134,6 +134,10 @@ const routes: Routes = [
       component: ProfileCharacterRankingPageComponent
     },
     {
+      path: 'profile/character-ranking',
+      redirectTo: 'profile/character-ranking/protagonists'
+    },
+    {
       path: 'profile/dynamic-ranking',
       title: 'Your Dynamic Ranking | Showcased',
       component: ProfileDynamicsRankingPageComponent

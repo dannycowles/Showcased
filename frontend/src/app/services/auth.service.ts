@@ -3,7 +3,7 @@ import {LoginDto} from '../data/dto/login-dto';
 import {RegisterDto} from '../data/dto/register-dto';
 import {ValidateOtpDto} from '../data/dto/validate-otp-dto';
 import {ChangePasswordDto} from '../data/dto/change-password-dto';
-import {JwtResponseData} from '../data/jwt-response-data';
+import {JwtResponseData, LoginResponseData} from '../data/jwt-response-data';
 import {Router} from '@angular/router';
 
 @Injectable({
@@ -29,10 +29,22 @@ export class AuthenticationService {
       body: JSON.stringify(data),
     });
 
-    const loginResponse: JwtResponseData = await response.json();
+    const loginResponse: LoginResponseData = await response.json();
     this.accessToken = loginResponse.token;
     localStorage.setItem("accessToken", loginResponse.token);
+    localStorage.setItem("username", loginResponse.username);
+    localStorage.setItem("profilePicture", loginResponse.profilePicture);
     return response;
+  }
+
+  /**
+   * Logs the current user out, effectively clearing their status and returning them to the login page
+   */
+  logout() {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("username");
+    localStorage.removeItem("profilePicture");
+    window.location.href = "/login";
   }
 
   /**

@@ -46,10 +46,10 @@ public class AuthService {
     }
 
     // Function that verifies that the login credentials are valid
-    public JwtResponse loginUser(LoginDto loginDto) {
+    public LoginResponseDto loginUser(LoginDto loginDto) {
         User authenticatedUser = authenticate(loginDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
-        return new JwtResponse(jwtToken, jwtService.getExpirationTime());
+        return new LoginResponseDto(jwtToken, jwtService.getExpirationTime(), authenticatedUser.getDisplayName(), authenticatedUser.getProfilePicture());
     }
 
     public User registerUser(RegisterDto registerDto) {
