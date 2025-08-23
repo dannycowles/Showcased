@@ -5,21 +5,23 @@ import {
   AbstractControl,
   AsyncValidatorFn,
   FormControl,
-  FormGroup,
+  FormGroup, ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
   Validators
 } from '@angular/forms';
 import {UtilsService} from '../../../services/utils.service';
 import {map, Observable, of, switchMap, timer} from 'rxjs';
+import {NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.css',
-  standalone: false
+  imports: [ReactiveFormsModule, NgClass],
+  standalone: true,
 })
-export class RegisterPageComponent{
+export class RegisterPageComponent {
   usernameMessage: string = '';
   usernameMessageColor: string = '';
   registerMessage: string = '';
@@ -30,28 +32,28 @@ export class RegisterPageComponent{
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
-  registerForm = new FormGroup({
-    email: new FormControl('', [
-      Validators.required,
-      Validators.email,
-    ]),
-    username: new FormControl('', [
-      Validators.required,
-      Validators.minLength(this.usernameMinLength)
-    ],
-    [
-      this.usernameAvailableValidator()
-    ]),
-    password: new FormControl('', [
-      Validators.required,
-      Validators.minLength(this.passwordMinLength)
-    ]),
-    confirmPassword: new FormControl('', Validators.required),
-    recaptcha: new FormControl(null, Validators.required)
-  }, { validators: this.passwordsMatchingValidator() });
+  registerForm = new FormGroup(
+    {
+      email: new FormControl('', [Validators.required, Validators.email]),
+      username: new FormControl(
+        '',
+        [Validators.required, Validators.minLength(this.usernameMinLength)],
+        [this.usernameAvailableValidator()],
+      ),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(this.passwordMinLength),
+      ]),
+      confirmPassword: new FormControl('', Validators.required),
+      recaptcha: new FormControl(null, Validators.required),
+    },
+    { validators: this.passwordsMatchingValidator() },
+  );
 
-  constructor(private authService: AuthenticationService,
-              public utilsService: UtilsService) {};
+  constructor(
+    private authService: AuthenticationService,
+    public utilsService: UtilsService,
+  ) {}
 
   get email(): AbstractControl<string, string> {
     return this.registerForm.get('email');
@@ -70,16 +72,20 @@ export class RegisterPageComponent{
   }
 
   passwordsMatchingValidator(): ValidatorFn {
-    return (control: AbstractControl<string, string>): ValidationErrors | null => {
+    return (
+      control: AbstractControl<string, string>,
+    ): ValidationErrors | null => {
       const password: string = control.get('password').value;
       const confirmPassword: string = control.get('confirmPassword').value;
 
-      return (password !== confirmPassword) ? { passwordsDontMatch: true } : null;
-    }
+      return password !== confirmPassword ? { passwordsDontMatch: true } : null;
+    };
   }
 
   usernameAvailableValidator(): AsyncValidatorFn {
-    return (control: AbstractControl<string, string>): Observable<ValidationErrors | null> => {
+    return (
+      control: AbstractControl<string, string>,
+    ): Observable<ValidationErrors | null> => {
       const username = control.value.trim();
 
       if (username.length < this.usernameMinLength) {
@@ -88,7 +94,7 @@ export class RegisterPageComponent{
 
       return timer(300).pipe(
         switchMap(() => this.authService.checkUsernameAvailability(username)),
-        map(taken => {
+        map((taken) => {
           if (taken) {
             this.usernameMessage = 'Username is taken';
             this.usernameMessageColor = 'red';
@@ -98,9 +104,9 @@ export class RegisterPageComponent{
             this.usernameMessageColor = 'green';
             return null;
           }
-        })
-      )
-    }
+        }),
+      );
+    };
   }
 
   async onSubmit() {
@@ -109,16 +115,16 @@ export class RegisterPageComponent{
       const response = await this.authService.registerUser(data);
 
       if (response.ok) {
-        window.location.href = this.authService.returnUrl || "/profile";
+        window.location.href = this.authService.returnUrl || '/profile';
       }
       if (!response.ok) {
         this.registerMessage = (await response.json()).error;
         this.registerMessageColor = 'red';
       }
     } catch (error) {
-      console.error()
+      console.error();
     } finally {
-      setTimeout(() => this.registerMessage = '', 5000);
+      setTimeout(() => (this.registerMessage = ''), 5000);
     }
   }
 

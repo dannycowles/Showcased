@@ -3,12 +3,16 @@ import {ReviewTypeOption, reviewTypeOptions, SortReviewOption, sortReviewOptions
 import {ProfileService} from '../../../services/profile.service';
 import {PageData} from '../../../data/page-data';
 import {ProfileReviewData} from '../../../data/types';
+import {RouterLink} from '@angular/router';
+import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
+import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
 
 @Component({
   selector: 'app-profile-reviews-page',
   templateUrl: './profile-reviews-page.component.html',
   styleUrl: './profile-reviews-page.component.css',
-  standalone: false
+  imports: [RouterLink, InfiniteScrollDirective, ProfileReviewComponent],
+  standalone: true,
 })
 export class ProfileReviewsPageComponent implements OnInit {
   reviews: PageData<ProfileReviewData>;
@@ -16,7 +20,7 @@ export class ProfileReviewsPageComponent implements OnInit {
   selectedSortOption: SortReviewOption = sortReviewOptions[0];
   isLoadingReviews: boolean = false;
 
-  constructor(private profileService: ProfileService) {};
+  constructor(private profileService: ProfileService) {}
 
   async ngOnInit() {
     await this.loadReviews();
@@ -39,13 +43,22 @@ export class ProfileReviewsPageComponent implements OnInit {
       this.isLoadingReviews = true;
       switch (this.selectedReviewType.value) {
         case 'all':
-          this.reviews = await this.profileService.getCombinedReviews(1, this.selectedSortOption.value);
+          this.reviews = await this.profileService.getCombinedReviews(
+            1,
+            this.selectedSortOption.value,
+          );
           break;
         case 'show':
-          this.reviews = await this.profileService.getShowReviews(1, this.selectedSortOption.value);
+          this.reviews = await this.profileService.getShowReviews(
+            1,
+            this.selectedSortOption.value,
+          );
           break;
         case 'episode':
-          this.reviews = await this.profileService.getEpisodeReviews(1, this.selectedSortOption.value);
+          this.reviews = await this.profileService.getEpisodeReviews(
+            1,
+            this.selectedSortOption.value,
+          );
           break;
       }
     } catch (error) {
@@ -61,13 +74,22 @@ export class ProfileReviewsPageComponent implements OnInit {
     try {
       switch (this.selectedReviewType.value) {
         case 'all':
-          this.reviews = await this.profileService.getCombinedReviews(this.reviews.page.number + 2, this.selectedSortOption.value);
+          this.reviews = await this.profileService.getCombinedReviews(
+            this.reviews.page.number + 2,
+            this.selectedSortOption.value,
+          );
           break;
         case 'show':
-          this.reviews = await this.profileService.getShowReviews(this.reviews.page.number + 2, this.selectedSortOption.value);
+          this.reviews = await this.profileService.getShowReviews(
+            this.reviews.page.number + 2,
+            this.selectedSortOption.value,
+          );
           break;
         case 'episode':
-          this.reviews = await this.profileService.getEpisodeReviews(this.reviews.page.number + 2, this.selectedSortOption.value);
+          this.reviews = await this.profileService.getEpisodeReviews(
+            this.reviews.page.number + 2,
+            this.selectedSortOption.value,
+          );
           break;
       }
     } catch (error) {
@@ -76,7 +98,9 @@ export class ProfileReviewsPageComponent implements OnInit {
   }
 
   deleteReview(deleteItem: ProfileReviewData) {
-    this.reviews.content = this.reviews.content.filter(review => review !== deleteItem);
+    this.reviews.content = this.reviews.content.filter(
+      (review) => review !== deleteItem,
+    );
   }
 
   protected readonly sortReviewOptions = sortReviewOptions;

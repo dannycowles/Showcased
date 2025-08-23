@@ -68,7 +68,7 @@ import {
 import {ProfileSettingsPageComponent} from './pages/profile/profile-settings-page/profile-settings-page.component';
 import {authGuard} from './guards/auth.guard';
 
-const routes: Routes = [
+export const routes: Routes = [
     {
       path: '',
       title: 'Home | Showcased',
@@ -300,7 +300,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, {scrollPositionRestoration:'top'})],
+    imports: [RouterModule.forRoot(routes, {scrollPositionRestoration:'enabled'})],
     exports: [RouterModule]
 })
 export class AppRoutingModule { }

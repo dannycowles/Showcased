@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 
 import {ShowService} from '../../../services/show.service';
 import {ProfileService} from '../../../services/profile.service';
@@ -7,7 +7,7 @@ import {ToastDisplayService} from '../../../services/toast.service';
 import {UtilsService} from '../../../services/utils.service';
 import {ShowData} from '../../../data/show/show-data';
 import {ShowReviewData} from '../../../data/reviews-data';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDropdown, NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddReviewModalComponent} from '../../../components/add-review-modal/add-review-modal.component';
 import {AddToCollectionModalComponent} from '../../../components/add-to-collection-modal/add-to-collection-modal.component';
 import {AuthenticationService} from '../../../services/auth.service';
@@ -16,13 +16,30 @@ import {AddShowReviewDto} from '../../../data/dto/add-review-dto';
 import {AddToShowRankingList, AddToWatchingListDto, AddToWatchlistDto} from '../../../data/dto/add-to-list-dto';
 import {PageData} from '../../../data/page-data';
 import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
-import {DomSanitizer, SafeResourceUrl, Title} from '@angular/platform-browser';
+import {
+  DomSanitizer,
+  SafeResourceUrl,
+  Title,
+} from '@angular/platform-browser';
+import {NgOptimizedImage} from '@angular/common';
+import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
+import {ReviewComponent} from '../../../components/review/review.component';
 
 @Component({
   selector: 'app-show-page',
   templateUrl: './show-page.component.html',
   styleUrl: './show-page.component.css',
-  standalone: false
+  imports: [
+    RouterLink,
+    NgOptimizedImage,
+    InfiniteScrollDirective,
+    ReviewComponent,
+    NgbDropdown,
+    NgbDropdownMenu,
+    NgbDropdownItem,
+    NgbDropdownToggle,
+  ],
+  standalone: true,
 })
 export class ShowPageComponent implements OnInit {
   showId: number;
@@ -34,20 +51,24 @@ export class ShowPageComponent implements OnInit {
   selectedSort: SortReviewOption = sortReviewOptions[0];
   safeTrailerUrl: SafeResourceUrl | null = null;
 
-  constructor(private route: ActivatedRoute,
-              private showService: ShowService,
-              private profileService: ProfileService,
-              private toastService: ToastDisplayService,
-              public utilsService: UtilsService,
-              private modalService: NgbModal,
-              private authService: AuthenticationService,
-              private router: Router,
-              private sanitizer: DomSanitizer,
-              private title: Title) {
-    this.route.params.subscribe(params => {
+  constructor(
+    private route: ActivatedRoute,
+    private showService: ShowService,
+    private profileService: ProfileService,
+    private toastService: ToastDisplayService,
+    public utilsService: UtilsService,
+    private modalService: NgbModal,
+    private authService: AuthenticationService,
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    private title: Title,
+  ) {
+    this.route.params.subscribe((params) => {
       this.showId = params['id'];
-      this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
-      this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
+      this.notifReviewId =
+        this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
+      this.notifCommentId =
+        this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
       history.replaceState({}, document.title, window.location.href);
       this.loadShowData();
     });
@@ -62,7 +83,11 @@ export class ShowPageComponent implements OnInit {
     this.selectedSort = option;
 
     try {
-      this.reviews = await this.showService.fetchShowReviews(this.showId, 1, this.selectedSort.value);
+      this.reviews = await this.showService.fetchShowReviews(
+        this.showId,
+        1,
+        this.selectedSort.value,
+      );
     } catch (error) {
       console.error(error);
     }
@@ -74,12 +99,18 @@ export class ShowPageComponent implements OnInit {
       this.show = await this.showService.fetchShowDetails(this.showId);
 
       if (this.show.startYear == this.show.endYear) {
-        this.title.setTitle(`${this.show.title} (${this.show.startYear}) | Showcased`);
+        this.title.setTitle(
+          `${this.show.title} (${this.show.startYear}) | Showcased`,
+        );
       } else {
-        this.title.setTitle(`${this.show.title} (${this.show.startYear} - ${this.show.endYear}) | Showcased`);
+        this.title.setTitle(
+          `${this.show.title} (${this.show.startYear} - ${this.show.endYear}) | Showcased`,
+        );
       }
       if (this.show.trailerPath != null) {
-        this.safeTrailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.show.trailerPath);
+        this.safeTrailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          this.show.trailerPath,
+        );
       }
     } catch (error) {
       console.error(error);
@@ -95,10 +126,14 @@ export class ShowPageComponent implements OnInit {
     // If there was a notification review in the navigation state, fetch that review and append it to the beginning of the reviews list
     if (this.notifReviewId != null) {
       try {
-        const notifReview = await this.showService.fetchShowReview(this.notifReviewId);
+        const notifReview = await this.showService.fetchShowReview(
+          this.notifReviewId,
+        );
 
         // Filter out the review if it already exists on the first page of results
-        this.reviews.content = this.reviews.content.filter(review => review.id != this.notifReviewId);
+        this.reviews.content = this.reviews.content.filter(
+          (review) => review.id != this.notifReviewId,
+        );
 
         // Appends the notification review to the beginning of the first page of results
         this.reviews.content.unshift(notifReview);
@@ -106,30 +141,55 @@ export class ShowPageComponent implements OnInit {
         if (this.notifCommentId == null) {
           // Scroll to the review itself
           requestAnimationFrame(() => {
-            const reviewElement = document.getElementById(String(this.notifReviewId));
+            const reviewElement = document.getElementById(
+              String(this.notifReviewId),
+            );
             if (reviewElement) {
-              reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              reviewElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+              });
 
               reviewElement.classList.add('highlight');
-              setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
+              setTimeout(
+                () => reviewElement.classList.remove('highlight'),
+                2000,
+              );
             }
           });
         } else {
           // Retrieve the first page of comments, and then fetch the notification comment
-          this.reviews.content[0].comments = await this.showService.getShowReviewComments(this.notifReviewId)
-          const notifComment = await this.showService.getShowReviewComment(this.notifCommentId);
+          this.reviews.content[0].comments =
+            await this.showService.getShowReviewComments(this.notifReviewId);
+          const notifComment = await this.showService.getShowReviewComment(
+            this.notifCommentId,
+          );
 
           // If the comment exists on the first page, filter it out before appending to beginning so no duplicates
-          this.reviews.content[0].comments.content = this.reviews.content[0].comments.content.filter(comment => comment.id != notifComment.id);
+          this.reviews.content[0].comments.content =
+            this.reviews.content[0].comments.content.filter(
+              (comment) => comment.id != notifComment.id,
+            );
           this.reviews.content[0].comments.content.unshift(notifComment);
-          this.reviews.content[0] = {...this.reviews.content[0], notifCommentId: this.notifCommentId};
+          this.reviews.content[0] = {
+            ...this.reviews.content[0],
+            notifCommentId: this.notifCommentId,
+          };
 
           requestAnimationFrame(() => {
-            const commentElement = document.getElementById(String(this.notifCommentId));
+            const commentElement = document.getElementById(
+              String(this.notifCommentId),
+            );
             if (commentElement) {
-              commentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              commentElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+              });
               commentElement.classList.add('highlight');
-              setTimeout(() => commentElement.classList.remove('highlight'), 2000);
+              setTimeout(
+                () => commentElement.classList.remove('highlight'),
+                2000,
+              );
             }
           });
         }
@@ -146,13 +206,16 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      const addReviewModalRef =  this.modalService.open(AddReviewModalComponent, {
-        ariaLabelledBy: "addReviewModal",
-        centered: true
-      });
+      const addReviewModalRef = this.modalService.open(
+        AddReviewModalComponent,
+        {
+          ariaLabelledBy: 'addReviewModal',
+          centered: true,
+        },
+      );
       addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.show.title}`;
 
-      const result =  await addReviewModalRef.result;
+      const result = await addReviewModalRef.result;
       await this.reviewSubmitted(result);
     } catch (modalDismissReason) {}
   }
@@ -164,15 +227,18 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      const addToCollectionModalRef = this.modalService.open(AddToCollectionModalComponent, {
-        ariaLabelledBy: "addToCollectionModal",
-        centered: true
-      });
+      const addToCollectionModalRef = this.modalService.open(
+        AddToCollectionModalComponent,
+        {
+          ariaLabelledBy: 'addToCollectionModal',
+          centered: true,
+        },
+      );
 
       addToCollectionModalRef.componentInstance.show = {
         showId: this.showId,
         title: this.show.title,
-        posterPath: this.show.posterPath
+        posterPath: this.show.posterPath,
       };
     } catch (modalDismissReason) {}
   }
@@ -183,17 +249,20 @@ export class ShowPageComponent implements OnInit {
       showTitle: this.show.title,
       commentary: data.commentary,
       containsSpoilers: data.containsSpoilers,
-      posterPath: this.show.posterPath
+      posterPath: this.show.posterPath,
     };
 
     try {
-      const response = await this.showService.addShowReview(this.showId, reviewData);
+      const response = await this.showService.addShowReview(
+        this.showId,
+        reviewData,
+      );
 
       if (response.ok) {
         const newReview: ShowReviewData = await response.json();
         this.reviews.content.unshift(newReview);
       }
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }
@@ -205,9 +274,15 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      const result = await this.showService.fetchShowReviews(this.showId, this.reviews.page.number + 2, this.selectedSort.value);
+      const result = await this.showService.fetchShowReviews(
+        this.showId,
+        this.reviews.page.number + 2,
+        this.selectedSort.value,
+      );
       if (this.notifReviewId !== null) {
-        result.content = result.content.filter(review => review.id !== this.notifReviewId);
+        result.content = result.content.filter(
+          (review) => review.id !== this.notifReviewId,
+        );
       }
       this.reviews.content.push(...result.content);
       this.reviews.page = result.page;
@@ -215,7 +290,6 @@ export class ShowPageComponent implements OnInit {
       console.error(error);
     }
   }
-
 
   // Adds the current show to the user's watchlist
   async addShowToWatchlist() {
@@ -228,7 +302,7 @@ export class ShowPageComponent implements OnInit {
       const data: AddToWatchlistDto = {
         showId: this.showId,
         showTitle: this.show.title,
-        posterPath: this.show.posterPath
+        posterPath: this.show.posterPath,
       };
       const response = await this.profileService.addShowToWatchlist(data);
 
@@ -246,7 +320,7 @@ export class ShowPageComponent implements OnInit {
     try {
       await this.profileService.removeShowFromWatchlist(this.showId);
       this.show.isOnWatchlist = false;
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }
@@ -262,7 +336,7 @@ export class ShowPageComponent implements OnInit {
       const data: AddToWatchingListDto = {
         showId: this.showId,
         showTitle: this.show.title,
-        posterPath: this.show.posterPath
+        posterPath: this.show.posterPath,
       };
       const response = await this.profileService.addShowToWatchingList(data);
 
@@ -280,7 +354,7 @@ export class ShowPageComponent implements OnInit {
     try {
       await this.profileService.removeShowFromWatchingList(this.showId);
       this.show.isOnWatchingList = false;
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }
@@ -296,7 +370,7 @@ export class ShowPageComponent implements OnInit {
       const data: AddToShowRankingList = {
         showId: this.showId,
         showTitle: this.show.title,
-        posterPath: this.show.posterPath
+        posterPath: this.show.posterPath,
       };
       const response = await this.profileService.addShowToRankingList(data);
 
@@ -314,7 +388,7 @@ export class ShowPageComponent implements OnInit {
     try {
       await this.profileService.removeShowFromRankingList(this.showId);
       this.show.isOnRankingList = false;
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }
@@ -323,14 +397,20 @@ export class ShowPageComponent implements OnInit {
   // If the user already has a show on ANY of their lists it cannot be added to another one
   // It wouldn't make sense for a show to be both on watchlist and currently watching for instance
   isUserListConflict(): boolean {
-    return (this.show.isOnWatchingList || this.show.isOnWatchlist || this.show.isOnRankingList);
+    return (
+      this.show.isOnWatchingList ||
+      this.show.isOnWatchlist ||
+      this.show.isOnRankingList
+    );
   }
 
   async handleDeleteReview(deleteId: number) {
     try {
       const response = await this.showService.deleteShowReview(deleteId);
       if (response.ok) {
-        this.reviews.content = this.reviews.content.filter(review => review.id !== deleteId);
+        this.reviews.content = this.reviews.content.filter(
+          (review) => review.id !== deleteId,
+        );
       }
     } catch (error) {
       console.error(error);

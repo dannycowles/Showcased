@@ -3,23 +3,31 @@ import {ShowService} from '../../../services/show.service';
 import {ResultPageData} from '../../../data/show/result-page-data';
 import {UtilsService} from '../../../services/utils.service';
 import {SearchResultData} from '../../../data/search-result-data';
+import {RouterLink} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-search-page',
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.css',
-  standalone: false
+  imports: [RouterLink, FormsModule, NgOptimizedImage],
+  standalone: true,
 })
 export class SearchPageComponent {
-  searchString: string = "";
+  searchString: string = '';
   searchResults: ResultPageData;
   debouncedSearchShows: () => void;
   isLoading: boolean = false;
   hasSearched: boolean = false;
 
-  constructor(private showService: ShowService,
-              public utilsService: UtilsService) {
-    this.debouncedSearchShows = this.utilsService.debounce(() => this.searchShows());
+  constructor(
+    private showService: ShowService,
+    public utilsService: UtilsService,
+  ) {
+    this.debouncedSearchShows = this.utilsService.debounce(() =>
+      this.searchShows(),
+    );
   }
 
   async searchShows() {
@@ -27,7 +35,9 @@ export class SearchPageComponent {
       try {
         this.isLoading = true;
         this.hasSearched = true;
-        this.searchResults = await this.showService.searchForShows(this.searchString);
+        this.searchResults = await this.showService.searchForShows(
+          this.searchString,
+        );
       } catch (error) {
         console.error(error);
       } finally {
@@ -45,7 +55,7 @@ export class SearchPageComponent {
     } else if (show.endYear == null) {
       return `${show.startYear} - `;
     } else {
-      return `${show.startYear} - ${show.endYear}`
+      return `${show.startYear} - ${show.endYear}`;
     }
   }
 }

@@ -12,20 +12,25 @@ import {
   SearchCharactersDynamicModalComponent
 } from '../../../components/search-characters-dynamic-modal/search-characters-dynamic-modal.component';
 import {UpdateDynamicRankingDto} from '../../../data/dto/update-list-ranks-dto';
+import { RankedDynamicListFullComponent } from '../../../components/ranked-dynamic-list-full/ranked-dynamic-list-full.component';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-profile-dynamics-ranking-page',
   templateUrl: './profile-dynamics-ranking-page.component.html',
   styleUrl: './profile-dynamics-ranking-page.component.css',
-  standalone: false,
+  standalone: true,
+  imports: [RankedDynamicListFullComponent, RouterLink],
 })
 export class ProfileDynamicsRankingPageComponent implements OnInit {
   dynamics: DynamicRankingData[];
   selectedShow: SearchResultData | null = null;
   selectedCharacter1: RoleData | null = null;
 
-  constructor(private profileService: ProfileService,
-              private modalService: NgbModal) {}
+  constructor(
+    private profileService: ProfileService,
+    private modalService: NgbModal,
+  ) {}
 
   async ngOnInit() {
     try {
@@ -36,11 +41,15 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
   }
 
   async openSearchShowsModal() {
-    const searchShowsModalRef = this.modalService.open(SearchShowsModalComponent, {
-      ariaLabelledBy: "searchShowsModal",
-      centered: true
-    });
-    searchShowsModalRef.componentInstance.modalTitle = "Add Character Dynamic to Ranking List";
+    const searchShowsModalRef = this.modalService.open(
+      SearchShowsModalComponent,
+      {
+        ariaLabelledBy: 'searchShowsModal',
+        centered: true,
+      },
+    );
+    searchShowsModalRef.componentInstance.modalTitle =
+      'Add Character Dynamic to Ranking List';
 
     this.selectedShow = await searchShowsModalRef.result;
     await this.openSearchCharacter1Modal();
@@ -48,17 +57,21 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
 
   async openSearchCharacter1Modal() {
     try {
-      const searchCharacter1ModalRef = this.modalService.open(SearchCharactersModalComponent, {
-        ariaLabelledBy: "searchCharactersModal",
-        centered: true
-      });
-      searchCharacter1ModalRef.componentInstance.selectedShow = this.selectedShow;
+      const searchCharacter1ModalRef = this.modalService.open(
+        SearchCharactersModalComponent,
+        {
+          ariaLabelledBy: 'searchCharactersModal',
+          centered: true,
+        },
+      );
+      searchCharacter1ModalRef.componentInstance.selectedShow =
+        this.selectedShow;
       searchCharacter1ModalRef.componentInstance.dynamicSearch = true;
 
       this.selectedCharacter1 = await searchCharacter1ModalRef.result;
       await this.openSearchCharacter2Modal();
     } catch (modalDismissReason) {
-      if (modalDismissReason === "backFromCharacters") {
+      if (modalDismissReason === 'backFromCharacters') {
         await this.openSearchShowsModal();
       }
     }
@@ -66,20 +79,27 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
 
   async openSearchCharacter2Modal() {
     try {
-      const searchCharacter2ModalRef = this.modalService.open(SearchCharactersDynamicModalComponent, {
-        ariaLabelledBy: "searchCharacterDynamicModal",
-        centered: true
-      });
-      searchCharacter2ModalRef.componentInstance.selectedShow = this.selectedShow;
-      searchCharacter2ModalRef.componentInstance.selectedCharacter1 = this.selectedCharacter1;
-      searchCharacter2ModalRef.componentInstance.onAdd = (dynamic: DynamicRankingData) => {
+      const searchCharacter2ModalRef = this.modalService.open(
+        SearchCharactersDynamicModalComponent,
+        {
+          ariaLabelledBy: 'searchCharacterDynamicModal',
+          centered: true,
+        },
+      );
+      searchCharacter2ModalRef.componentInstance.selectedShow =
+        this.selectedShow;
+      searchCharacter2ModalRef.componentInstance.selectedCharacter1 =
+        this.selectedCharacter1;
+      searchCharacter2ModalRef.componentInstance.onAdd = (
+        dynamic: DynamicRankingData,
+      ) => {
         dynamic.rankNum = this.dynamics.length + 1;
         this.dynamics.push(dynamic);
-      }
+      };
 
       await searchCharacter2ModalRef.result;
     } catch (modalDismissReason) {
-      if (modalDismissReason === "backFromCharacters2") {
+      if (modalDismissReason === 'backFromCharacters2') {
         await this.openSearchCharacter1Modal();
       }
     }
@@ -90,7 +110,9 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
       await this.profileService.removeDynamicFromRankingList(removeId);
 
       // Remove the dynamic from the list visible to the user
-      this.dynamics = this.dynamics.filter(dynamic => dynamic.id !== removeId);
+      this.dynamics = this.dynamics.filter(
+        (dynamic) => dynamic.id !== removeId,
+      );
     } catch (error) {
       console.error(error);
     }
@@ -98,10 +120,12 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
 
   async updateDynamicRankingList() {
     try {
-      const updates: UpdateDynamicRankingDto[] = this.dynamics.map(dynamic => ({
-        id: dynamic.id,
-        rankNum: dynamic.rankNum
-      }));
+      const updates: UpdateDynamicRankingDto[] = this.dynamics.map(
+        (dynamic) => ({
+          id: dynamic.id,
+          rankNum: dynamic.rankNum,
+        }),
+      );
 
       await this.profileService.updateDynamicRankingList(updates);
     } catch (error) {

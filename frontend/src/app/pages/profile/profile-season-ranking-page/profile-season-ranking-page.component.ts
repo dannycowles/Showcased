@@ -6,20 +6,27 @@ import {SeasonSelectModalComponent} from '../../../components/season-select-moda
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SearchResultData} from '../../../data/search-result-data';
 import {UpdateSeasonRankingDto} from '../../../data/dto/update-list-ranks-dto';
+import {
+  RankedSeasonListFullComponent
+} from '../../../components/ranked-season-list-full/ranked-season-list-full.component';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-profile-season-ranking-page',
   templateUrl: './profile-season-ranking-page.component.html',
   styleUrl: './profile-season-ranking-page.component.css',
-  standalone: false
+  imports: [RankedSeasonListFullComponent, RouterLink],
+  standalone: true,
 })
-export class ProfileSeasonRankingPageComponent implements OnInit{
+export class ProfileSeasonRankingPageComponent implements OnInit {
   rankingEntries: SeasonRankingData[];
   selectedSeason: number = 1;
   selectedShow: SearchResultData | null = null;
 
-  constructor(private profileService: ProfileService,
-              private modalService: NgbModal) { };
+  constructor(
+    private profileService: ProfileService,
+    private modalService: NgbModal,
+  ) {}
 
   async ngOnInit() {
     try {
@@ -27,14 +34,14 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
     } catch (error) {
       console.error(error);
     }
-  };
+  }
 
   async openSearchShowsModal() {
     const searchModalRef = this.modalService.open(SearchShowsModalComponent, {
-      ariaLabelledBy: "searchShowsModal",
-      centered: true
+      ariaLabelledBy: 'searchShowsModal',
+      centered: true,
     });
-    searchModalRef.componentInstance.modalTitle = "Add Season to Ranking List";
+    searchModalRef.componentInstance.modalTitle = 'Add Season to Ranking List';
 
     this.selectedShow = await searchModalRef.result;
     await this.openSeasonSelectModal();
@@ -43,22 +50,28 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
   async openSeasonSelectModal() {
     try {
       // Open season select modal and send required data
-      const seasonModalRef = this.modalService.open(SeasonSelectModalComponent, {
-        ariaLabelledBy: "seasonSelectModal",
-        centered: true
-      });
+      const seasonModalRef = this.modalService.open(
+        SeasonSelectModalComponent,
+        {
+          ariaLabelledBy: 'seasonSelectModal',
+          centered: true,
+        },
+      );
       seasonModalRef.componentInstance.selectedShowId = this.selectedShow.id;
-      seasonModalRef.componentInstance.selectedShowTitle = this.selectedShow.title;
+      seasonModalRef.componentInstance.selectedShowTitle =
+        this.selectedShow.title;
       seasonModalRef.componentInstance.seasonRanking = true;
-      seasonModalRef.componentInstance.onAddSeason = (season: SeasonRankingData) => {
+      seasonModalRef.componentInstance.onAddSeason = (
+        season: SeasonRankingData,
+      ) => {
         season.rankNum = this.rankingEntries.length + 1;
         this.rankingEntries.push(season);
-      }
+      };
 
       const seasonResult = await seasonModalRef.result;
       this.selectedSeason = seasonResult.selectedSeason;
     } catch (modalDismissReason) {
-      if (modalDismissReason === "backFromSeason"){
+      if (modalDismissReason === 'backFromSeason') {
         await this.openSearchShowsModal();
       }
     }
@@ -69,20 +82,24 @@ export class ProfileSeasonRankingPageComponent implements OnInit{
       await this.profileService.removeSeasonFromRankingList(removeId);
 
       // Remove the season from entries shown to user
-      this.rankingEntries = this.rankingEntries.filter(season => season.id != removeId);
-    } catch(error) {
+      this.rankingEntries = this.rankingEntries.filter(
+        (season) => season.id != removeId,
+      );
+    } catch (error) {
       console.error(error);
     }
   }
 
   async updateSeasonRankingList() {
     try {
-      const updates: UpdateSeasonRankingDto[] = this.rankingEntries.map(season => ({
-        id: season.id,
-        rankNum: season.rankNum
-      }));
+      const updates: UpdateSeasonRankingDto[] = this.rankingEntries.map(
+        (season) => ({
+          id: season.id,
+          rankNum: season.rankNum,
+        }),
+      );
       await this.profileService.updateSeasonRankingList(updates);
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }

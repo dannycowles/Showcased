@@ -1,17 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivityData} from '../../../data/activity-data';
-import {ProfileService} from '../../../services/profile.service';
-import {ActivityType} from '../../../data/enums';
-import {UtilsService} from '../../../services/utils.service';
-import {Router} from '@angular/router';
-import {PageData} from '../../../data/page-data';
-import {query} from '@angular/animations';
+import { Component, OnInit } from '@angular/core';
+import { ActivityData } from '../../../data/activity-data';
+import { ProfileService } from '../../../services/profile.service';
+import { ActivityType } from '../../../data/enums';
+import { UtilsService } from '../../../services/utils.service';
+import { Router, RouterLink } from '@angular/router';
+import { PageData } from '../../../data/page-data';
+import { query } from '@angular/animations';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-profile-activity-page',
   templateUrl: './profile-activity-page.component.html',
   styleUrl: './profile-activity-page.component.css',
-  standalone: false
+  imports: [NgOptimizedImage, RouterLink],
+  standalone: true,
 })
 export class ProfileActivityPageComponent implements OnInit {
   activityData: PageData<ActivityData>;
@@ -19,9 +21,11 @@ export class ProfileActivityPageComponent implements OnInit {
   isLoading: boolean = false;
   isLoadingMore: boolean = false;
 
-  constructor(private profileService: ProfileService,
-              public utilsService: UtilsService,
-              private router: Router) {};
+  constructor(
+    private profileService: ProfileService,
+    public utilsService: UtilsService,
+    private router: Router,
+  ) {}
 
   async ngOnInit() {
     try {
@@ -38,7 +42,9 @@ export class ProfileActivityPageComponent implements OnInit {
     try {
       // Retrieves the next page from the backend, adds by 2 because zero indexed on frontend and 1 indexed on backend
       this.isLoadingMore = true;
-      const result = await this.profileService.getProfileActivity(this.activityData.page.number + 2);
+      const result = await this.profileService.getProfileActivity(
+        this.activityData.page.number + 2,
+      );
       this.activityData.content.push(...result.content);
       this.activityData.page = result.page;
     } catch (error) {
@@ -53,8 +59,10 @@ export class ProfileActivityPageComponent implements OnInit {
   }
 
   getShowReviewLikeDescription(activity: ActivityData): string[] {
-    const replacedDescription = activity.description
-      .replace('{showTitle}', activity.showReviewLike.showTitle);
+    const replacedDescription = activity.description.replace(
+      '{showTitle}',
+      activity.showReviewLike.showTitle,
+    );
     return replacedDescription.split('{user}');
   }
 
@@ -85,17 +93,26 @@ export class ProfileActivityPageComponent implements OnInit {
   }
 
   getShowReviewCommentLikeDescription(activity: ActivityData): string[] {
-    const replacedDescription = (activity.showReviewCommentLike.isOwnComment)
-      ? activity.description.replace("{reviewUser}'s", "your")
-      : activity.description.replace('{reviewUser}', activity.showReviewCommentLike.reviewUser.username);
-    return replacedDescription.replace('{showTitle}', activity.showReviewCommentLike.showTitle).split('{user}');
+    const replacedDescription = activity.showReviewCommentLike.isOwnComment
+      ? activity.description.replace("{reviewUser}'s", 'your')
+      : activity.description.replace(
+          '{reviewUser}',
+          activity.showReviewCommentLike.reviewUser.username,
+        );
+    return replacedDescription
+      .replace('{showTitle}', activity.showReviewCommentLike.showTitle)
+      .split('{user}');
   }
 
   getEpisodeReviewCommentLikeDescription(activity: ActivityData): string[] {
-    const replacedDescription = (activity.episodeReviewCommentLike.isOwnComment)
-      ? activity.description.replace("{reviewUser}'s", "your")
-      : activity.description.replace('{reviewUser}', activity.episodeReviewCommentLike.reviewUser.username);
-    return replacedDescription.replace('{showTitle}', activity.episodeReviewCommentLike.showTitle)
+    const replacedDescription = activity.episodeReviewCommentLike.isOwnComment
+      ? activity.description.replace("{reviewUser}'s", 'your')
+      : activity.description.replace(
+          '{reviewUser}',
+          activity.episodeReviewCommentLike.reviewUser.username,
+        );
+    return replacedDescription
+      .replace('{showTitle}', activity.episodeReviewCommentLike.showTitle)
       .replace('{season}', String(activity.episodeReviewCommentLike.season))
       .replace('{episode}', String(activity.episodeReviewCommentLike.episode))
       .replace('{episodeTitle}', activity.episodeReviewCommentLike.episodeTitle)
@@ -103,7 +120,9 @@ export class ProfileActivityPageComponent implements OnInit {
   }
 
   getCollectionLikeDescription(activity: ActivityData): string[] {
-    return activity.description.replace('{collectionName}', activity.collectionLike.collectionName).split('{user}');
+    return activity.description
+      .replace('{collectionName}', activity.collectionLike.collectionName)
+      .split('{user}');
   }
 
   navigateToActivity(activity: ActivityData) {
@@ -113,51 +132,84 @@ export class ProfileActivityPageComponent implements OnInit {
       case ActivityType.LikeShowReview:
         this.router.navigate(['/show', activity.showReviewLike.showId], {
           state: {
-            reviewId: activity.showReviewLike.reviewId
-          }
+            reviewId: activity.showReviewLike.reviewId,
+          },
         });
         break;
       case ActivityType.CommentShowReview:
         this.router.navigate(['/show', activity.showReviewComment.showId], {
           state: {
             reviewId: activity.showReviewComment.reviewId,
-            commentId: activity.showReviewComment.commentId
-          }
+            commentId: activity.showReviewComment.commentId,
+          },
         });
         break;
       case ActivityType.LikeEpisodeReview:
-        this.router.navigate(['/show', activity.episodeReviewLike.showId, 'season', activity.episodeReviewLike.season, 'episode', activity.episodeReviewLike.episode], {
-          state: {
-            reviewId: activity.episodeReviewLike.reviewId
-          }
-        });
+        this.router.navigate(
+          [
+            '/show',
+            activity.episodeReviewLike.showId,
+            'season',
+            activity.episodeReviewLike.season,
+            'episode',
+            activity.episodeReviewLike.episode,
+          ],
+          {
+            state: {
+              reviewId: activity.episodeReviewLike.reviewId,
+            },
+          },
+        );
         break;
       case ActivityType.CommentEpisodeReview:
-        this.router.navigate(['/show', activity.episodeReviewComment.showId, 'season', activity.episodeReviewComment.season, 'episode', activity.episodeReviewComment.episode], {
-          state: {
-            reviewId: activity.episodeReviewComment.reviewId,
-            commentId: activity.episodeReviewComment.commentId
-          }
-        });
+        this.router.navigate(
+          [
+            '/show',
+            activity.episodeReviewComment.showId,
+            'season',
+            activity.episodeReviewComment.season,
+            'episode',
+            activity.episodeReviewComment.episode,
+          ],
+          {
+            state: {
+              reviewId: activity.episodeReviewComment.reviewId,
+              commentId: activity.episodeReviewComment.commentId,
+            },
+          },
+        );
         break;
       case ActivityType.LikeShowReviewComment:
         this.router.navigate(['/show', activity.showReviewCommentLike.showId], {
           state: {
             reviewId: activity.showReviewCommentLike.reviewId,
-            commentId: activity.showReviewCommentLike.commentId
-          }
+            commentId: activity.showReviewCommentLike.commentId,
+          },
         });
         break;
       case ActivityType.LikeEpisodeReviewComment:
-        this.router.navigate(['/show', activity.episodeReviewCommentLike.showId, 'season', activity.episodeReviewCommentLike.season, 'episode', activity.episodeReviewCommentLike.episode], {
-          state: {
-            reviewId: activity.episodeReviewCommentLike.reviewId,
-            commentId: activity.episodeReviewCommentLike.commentId
-          }
-        });
+        this.router.navigate(
+          [
+            '/show',
+            activity.episodeReviewCommentLike.showId,
+            'season',
+            activity.episodeReviewCommentLike.season,
+            'episode',
+            activity.episodeReviewCommentLike.episode,
+          ],
+          {
+            state: {
+              reviewId: activity.episodeReviewCommentLike.reviewId,
+              commentId: activity.episodeReviewCommentLike.commentId,
+            },
+          },
+        );
         break;
-      case (ActivityType.LikeCollection):
-        this.router.navigate(['profile/collections', activity.collectionLike.collectionId]);
+      case ActivityType.LikeCollection:
+        this.router.navigate([
+          'profile/collections',
+          activity.collectionLike.collectionId,
+        ]);
         break;
     }
   }

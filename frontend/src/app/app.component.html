@@ -19,14 +19,14 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/search-users">Members</a>
         </li>
-        @if (username) {
+        @if (isLoggedIn) {
           <li class="nav-item">
             <a class="nav-link" routerLink="/profile/activity">Activity</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img [ngSrc]="profilePicture" id="profile-picture" alt="Profile Picture" priority width="25" height="25">
-              {{username}}
+              <img [ngSrc]="localStorage.getItem('profilePicture')" id="profile-picture" alt="Profile Picture" priority width="25" height="25">
+              {{localStorage.getItem('username')}}
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>

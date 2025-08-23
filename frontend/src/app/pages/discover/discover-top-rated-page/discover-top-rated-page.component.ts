@@ -1,26 +1,30 @@
 import {Component, OnInit} from '@angular/core';
 import {ResultPageData} from '../../../data/show/result-page-data';
 import {ShowService} from '../../../services/show.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-discover-top-rated-page',
   templateUrl: './discover-top-rated-page.component.html',
   styleUrl: './discover-top-rated-page.component.css',
-  standalone: false
+  imports: [RouterLink, NgOptimizedImage],
+  standalone: true,
 })
 export class DiscoverTopRatedPageComponent implements OnInit {
   resultData: ResultPageData;
   page: number = 1;
   isLoading: boolean = false;
 
-  constructor(private showService: ShowService,
-              private router: Router,
-              private route: ActivatedRoute) {};
+  constructor(
+    private showService: ShowService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(async params => {
-      this.page = +params["page"];
+    this.route.queryParams.subscribe(async (params) => {
+      this.page = +params['page'];
 
       try {
         this.isLoading = true;
@@ -37,8 +41,8 @@ export class DiscoverTopRatedPageComponent implements OnInit {
     this.page = newPage;
     this.router.navigate([], {
       queryParams: {
-        page: this.page
-      }
+        page: this.page,
+      },
     });
   }
 }

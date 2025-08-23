@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {ShowService} from '../../../services/show.service';
 import {EpisodeData} from '../../../data/show/episode-data';
 import {ProfileService} from '../../../services/profile.service';
@@ -15,12 +15,21 @@ import {AddToEpisodeRankingList} from '../../../data/dto/add-to-list-dto';
 import {PageData} from '../../../data/page-data';
 import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
 import {Title} from '@angular/platform-browser';
+import { NgOptimizedImage } from '@angular/common';
+import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
+import {ReviewComponent} from '../../../components/review/review.component';
 
 @Component({
   selector: 'app-episode-page',
   templateUrl: './episode-page.component.html',
   styleUrl: './episode-page.component.css',
-  standalone: false
+  imports: [
+    NgOptimizedImage,
+    RouterLink,
+    InfiniteScrollDirective,
+    ReviewComponent,
+  ],
+  standalone: true,
 })
 export class EpisodePageComponent implements OnInit {
   readonly showId: number;
@@ -34,25 +43,29 @@ export class EpisodePageComponent implements OnInit {
   notifCommentId: number | null = null;
   selectedSort: SortReviewOption = sortReviewOptions[0];
 
-  constructor(private route: ActivatedRoute,
-              private router: Router,
-              private showService: ShowService,
-              private profileService: ProfileService,
-              private toastService: ToastDisplayService,
-              public utilsService: UtilsService,
-              private modalService: NgbModal,
-              private authService: AuthenticationService,
-              private title: Title) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private showService: ShowService,
+    private profileService: ProfileService,
+    private toastService: ToastDisplayService,
+    public utilsService: UtilsService,
+    private modalService: NgbModal,
+    private authService: AuthenticationService,
+    private title: Title,
+  ) {
     this.showId = +this.route.snapshot.params['id'];
-    this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
-    this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
+    this.notifReviewId =
+      this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
+    this.notifCommentId =
+      this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
     history.replaceState({}, document.title, window.location.href);
   }
 
   ngOnInit() {
     try {
       this.isLoggedIn = this.authService.isLoggedIn();
-      this.route.params.subscribe(params => {
+      this.route.params.subscribe((params) => {
         this.seasonNumber = +params['seasonNumber'];
         this.episodeNumber = +params['episodeNumber'];
         this.loadData();
@@ -67,7 +80,11 @@ export class EpisodePageComponent implements OnInit {
     this.selectedSort = option;
 
     try {
-      this.reviews = await this.showService.fetchEpisodeReviews(this.episode.id, 1, this.selectedSort.value);
+      this.reviews = await this.showService.fetchEpisodeReviews(
+        this.episode.id,
+        1,
+        this.selectedSort.value,
+      );
     } catch (error) {
       console.error(error);
     }
@@ -75,17 +92,29 @@ export class EpisodePageComponent implements OnInit {
 
   async loadData() {
     try {
-      this.episode = await this.showService.fetchEpisodeDetails(this.showId, this.seasonNumber, this.episodeNumber);
-      this.title.setTitle(`${this.episode.showTitle} S${this.seasonNumber}E${this.episodeNumber} | Showcased`);
-      this.reviews = await this.showService.fetchEpisodeReviews(this.episode.id);
+      this.episode = await this.showService.fetchEpisodeDetails(
+        this.showId,
+        this.seasonNumber,
+        this.episodeNumber,
+      );
+      this.title.setTitle(
+        `${this.episode.showTitle} S${this.seasonNumber}E${this.episodeNumber} | Showcased`,
+      );
+      this.reviews = await this.showService.fetchEpisodeReviews(
+        this.episode.id,
+      );
 
       // If there was a notification review in the navigation state, fetch that review and append it to the beginning of the reviews list
       if (this.notifReviewId != null) {
         try {
-          const notifReview = await this.showService.fetchEpisodeReview(this.notifReviewId);
+          const notifReview = await this.showService.fetchEpisodeReview(
+            this.notifReviewId,
+          );
 
           // Filter out the review if it already exists on the first page of results
-          this.reviews.content = this.reviews.content.filter(review => review.id != this.notifReviewId);
+          this.reviews.content = this.reviews.content.filter(
+            (review) => review.id != this.notifReviewId,
+          );
 
           // Appends the notification review to the beginning of the first page of results
           this.reviews.content.unshift(notifReview);
@@ -93,29 +122,56 @@ export class EpisodePageComponent implements OnInit {
           if (this.notifCommentId == null) {
             // Scroll to the review itself
             requestAnimationFrame(() => {
-              const reviewElement = document.getElementById(String(this.notifReviewId));
+              const reviewElement = document.getElementById(
+                String(this.notifReviewId),
+              );
               if (reviewElement) {
-                reviewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                reviewElement.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                });
                 reviewElement.classList.add('highlight');
-                setTimeout(() => reviewElement.classList.remove('highlight'), 2000);
+                setTimeout(
+                  () => reviewElement.classList.remove('highlight'),
+                  2000,
+                );
               }
             });
           } else {
             // Retrieve the first page of comments, and then fetch the notification comment
-            this.reviews.content[0].comments = await this.showService.getEpisodeReviewComments(this.notifReviewId)
-            const notifComment = await this.showService.getEpisodeReviewComment(this.notifCommentId);
+            this.reviews.content[0].comments =
+              await this.showService.getEpisodeReviewComments(
+                this.notifReviewId,
+              );
+            const notifComment = await this.showService.getEpisodeReviewComment(
+              this.notifCommentId,
+            );
 
             // If the comment exists on the first page, filter it out before appending to beginning so no duplicates
-            this.reviews.content[0].comments.content = this.reviews.content[0].comments.content.filter(comment => comment.id != notifComment.id);
+            this.reviews.content[0].comments.content =
+              this.reviews.content[0].comments.content.filter(
+                (comment) => comment.id != notifComment.id,
+              );
             this.reviews.content[0].comments.content.unshift(notifComment);
-            this.reviews.content[0] = {...this.reviews.content[0], notifCommentId: this.notifCommentId};
+            this.reviews.content[0] = {
+              ...this.reviews.content[0],
+              notifCommentId: this.notifCommentId,
+            };
 
             requestAnimationFrame(() => {
-              const commentElement = document.getElementById(String(this.notifCommentId));
+              const commentElement = document.getElementById(
+                String(this.notifCommentId),
+              );
               if (commentElement) {
-                commentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                commentElement.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                });
                 commentElement.classList.add('highlight');
-                setTimeout(() => commentElement.classList.remove('highlight'), 2000);
+                setTimeout(
+                  () => commentElement.classList.remove('highlight'),
+                  2000,
+                );
               }
             });
           }
@@ -135,9 +191,15 @@ export class EpisodePageComponent implements OnInit {
     }
 
     try {
-      const result = await this.showService.fetchEpisodeReviews(this.episode.id, this.reviews.page.number + 2, this.selectedSort.value);
+      const result = await this.showService.fetchEpisodeReviews(
+        this.episode.id,
+        this.reviews.page.number + 2,
+        this.selectedSort.value,
+      );
       if (this.notifReviewId != null) {
-        result.content = result.content.filter(review => review.id != this.notifReviewId);
+        result.content = result.content.filter(
+          (review) => review.id != this.notifReviewId,
+        );
       }
       this.reviews.content.push(...result.content);
       this.reviews.page = result.page;
@@ -156,7 +218,7 @@ export class EpisodePageComponent implements OnInit {
         episodeTitle: this.episode.episodeTitle,
         season: this.seasonNumber,
         episode: this.episodeNumber,
-        posterPath: this.episode.stillPath
+        posterPath: this.episode.stillPath,
       };
 
       const response = await this.profileService.addEpisodeToRankingList(data);
@@ -165,12 +227,15 @@ export class EpisodePageComponent implements OnInit {
         this.toastService.addToEpisodeRankingToast(this.episode.episodeTitle);
       }
     } catch (error) {
-    console.error(error);}
+      console.error(error);
+    }
   }
 
   async removeFromRankingList() {
     try {
-      const response = await this.profileService.removeEpisodeFromRankingList(this.episode.id);
+      const response = await this.profileService.removeEpisodeFromRankingList(
+        this.episode.id,
+      );
 
       if (response.ok) {
         this.episode.isOnRankingList = false;
@@ -181,14 +246,14 @@ export class EpisodePageComponent implements OnInit {
   }
 
   async openAddReviewModal() {
-    if (!this.isLoggedIn){
+    if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
       return;
     }
 
     const addReviewModalRef = this.modalService.open(AddReviewModalComponent, {
-      ariaLabelledBy: "addReviewModal",
-      centered: true
+      ariaLabelledBy: 'addReviewModal',
+      centered: true,
     });
     addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.episode.showTitle} S${this.seasonNumber} E${this.episodeNumber}: ${this.episode.episodeTitle}`;
 
@@ -202,11 +267,14 @@ export class EpisodePageComponent implements OnInit {
       episode: this.episodeNumber,
       commentary: result.commentary,
       containsSpoilers: result.containsSpoilers,
-      posterPath: this.episode.stillPath
+      posterPath: this.episode.stillPath,
     };
 
     try {
-      const response = await this.showService.addEpisodeReview(this.episode.id, reviewData);
+      const response = await this.showService.addEpisodeReview(
+        this.episode.id,
+        reviewData,
+      );
 
       if (response.ok) {
         const newReview: EpisodeReviewData = await response.json();
@@ -224,8 +292,11 @@ export class EpisodePageComponent implements OnInit {
   }
 
   hasNextEpisode() {
-    return (this.episodeNumber < this.episode.numEpisodesInSeason ||
-      (this.episodeNumber == this.episode.numEpisodesInSeason && this.seasonNumber < this.episode.numSeasons));
+    return (
+      this.episodeNumber < this.episode.numEpisodesInSeason ||
+      (this.episodeNumber == this.episode.numEpisodesInSeason &&
+        this.seasonNumber < this.episode.numSeasons)
+    );
   }
 
   goPreviousEpisode() {
@@ -234,9 +305,23 @@ export class EpisodePageComponent implements OnInit {
     this.notifCommentId = null;
 
     if (this.episodeNumber != 1) {
-      this.router.navigate(['/show', this.showId, 'season', this.seasonNumber, 'episode', this.episodeNumber - 1]);
+      this.router.navigate([
+        '/show',
+        this.showId,
+        'season',
+        this.seasonNumber,
+        'episode',
+        this.episodeNumber - 1,
+      ]);
     } else {
-      this.router.navigate(['/show', this.showId, 'season', this.seasonNumber - 1, 'episode', this.episode.numEpisodesInPreviousSeason]);
+      this.router.navigate([
+        '/show',
+        this.showId,
+        'season',
+        this.seasonNumber - 1,
+        'episode',
+        this.episode.numEpisodesInPreviousSeason,
+      ]);
     }
   }
 
@@ -246,9 +331,23 @@ export class EpisodePageComponent implements OnInit {
     this.notifCommentId = null;
 
     if (this.episodeNumber < this.episode.numEpisodesInSeason) {
-      this.router.navigate(['/show', this.showId, 'season', this.seasonNumber, 'episode', this.episodeNumber + 1]);
+      this.router.navigate([
+        '/show',
+        this.showId,
+        'season',
+        this.seasonNumber,
+        'episode',
+        this.episodeNumber + 1,
+      ]);
     } else {
-      this.router.navigate(['/show', this.showId, 'season', this.seasonNumber + 1, 'episode', 1]);
+      this.router.navigate([
+        '/show',
+        this.showId,
+        'season',
+        this.seasonNumber + 1,
+        'episode',
+        1,
+      ]);
     }
   }
 
@@ -256,7 +355,9 @@ export class EpisodePageComponent implements OnInit {
     try {
       const response = await this.showService.deleteEpisodeReview(deleteId);
       if (response.ok) {
-        this.reviews.content = this.reviews.content.filter(review => review.id !== deleteId);
+        this.reviews.content = this.reviews.content.filter(
+          (review) => review.id !== deleteId,
+        );
       }
     } catch (error) {
       console.error(error);
