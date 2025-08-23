@@ -52,7 +52,7 @@ public class AuthService {
         return new LoginResponseDto(jwtToken, jwtService.getExpirationTime(), authenticatedUser.getDisplayName(), authenticatedUser.getProfilePicture());
     }
 
-    public User registerUser(RegisterDto registerDto) {
+    public LoginResponseDto registerUser(RegisterDto registerDto) {
         // If the username already exists, throw an exception since we cannot have duplicates
         if (userRepository.existsByDisplayName(registerDto.getUsername())) {
             throw new UsernameTakenException("Username is already taken");
@@ -71,7 +71,10 @@ public class AuthService {
         // Use the encryptor to encrypt the password before storing
         String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
         User user = new User(registerDto.getEmail(), registerDto.getUsername(), encodedPassword);
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        String jwtToken = jwtService.generateToken(user);
+        return new LoginResponseDto(jwtToken, jwtService.getExpirationTime(), user.getDisplayName(), user.getProfilePicture());
     }
 
     public User authenticate(LoginDto input) {

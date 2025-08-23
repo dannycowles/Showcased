@@ -1,7 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthenticationService} from '../../../services/auth.service';
 import {Router} from '@angular/router';
 import {CreateCollectionDto} from '../../../data/dto/create-collection-dto';
 import {CollectionData} from '../../../data/collection-data';
@@ -13,7 +12,7 @@ import {CollectionData} from '../../../data/collection-data';
   styleUrl: './profile-new-collection-page.component.css',
   standalone: true,
 })
-export class ProfileNewCollectionPageComponent implements OnInit {
+export class ProfileNewCollectionPageComponent {
   readonly maxNameLength = 100;
   readonly minNameLength = 5;
 
@@ -35,19 +34,7 @@ export class ProfileNewCollectionPageComponent implements OnInit {
   });
 
   constructor(private profileService: ProfileService,
-              private authService: AuthenticationService,
               private router: Router) {};
-
-  async ngOnInit() {
-    try {
-      const response = await this.authService.loginStatus();
-      if (response === false) {
-        this.router.navigate(['/login']);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   async createCollection() {
     try {

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ShowService} from '../../../services/show.service';
 import {EpisodeData} from '../../../data/show/episode-data';
@@ -49,9 +49,9 @@ export class EpisodePageComponent implements OnInit {
     history.replaceState({}, document.title, window.location.href);
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     try {
-      this.isLoggedIn = await this.authService.loginStatus();
+      this.isLoggedIn = this.authService.isLoggedIn();
       this.route.params.subscribe(params => {
         this.seasonNumber = +params['seasonNumber'];
         this.episodeNumber = +params['episodeNumber'];

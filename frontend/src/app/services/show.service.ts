@@ -13,6 +13,7 @@ import {AddCommentDto} from '../data/dto/add-comment-dto';
 import {AddEpisodeReviewDto, AddShowReviewDto} from '../data/dto/add-review-dto';
 import {PageData} from '../data/page-data';
 import {UpdateReviewDto} from '../data/dto/update-review-dto';
+import {AuthenticationService} from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,12 +22,13 @@ export class ShowService {
   baseUrl: string = "http://localhost:8080/shows";
   private accessToken: string | null = localStorage.getItem("accessToken");
 
-  constructor(public router: Router) {};
+  constructor(public router: Router,
+              private authService: AuthenticationService) {};
 
   // If the user is unauthorized, we redirect user to the login page
   checkUnauthorizedUser(response: Response) {
     if (response.status === 403) {
-      this.router.navigate(['/login']);
+      this.authService.logout();
       throw new Error("Unauthorized");
     }
   }

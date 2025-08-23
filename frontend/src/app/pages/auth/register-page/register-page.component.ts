@@ -107,7 +107,10 @@ export class RegisterPageComponent{
     try {
       const data: RegisterDto = this.registerForm.value as RegisterDto;
       const response = await this.authService.registerUser(data);
-      console.log(response);
+
+      if (response.ok) {
+        window.location.href = this.authService.returnUrl || "/profile";
+      }
       if (!response.ok) {
         this.registerMessage = (await response.json()).error;
         this.registerMessageColor = 'red';

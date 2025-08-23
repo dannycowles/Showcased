@@ -53,12 +53,8 @@ export class ShowPageComponent implements OnInit {
     });
   }
 
-  async ngOnInit() {
-    try {
-      this.isLoggedIn = await this.authService.loginStatus();
-    } catch (error) {
-      console.error(error);
-    }
+  ngOnInit() {
+    this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   async setSort(option: SortReviewOption) {

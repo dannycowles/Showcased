@@ -104,79 +104,95 @@ const routes: Routes = [
     {
       path: 'profile/watching',
       title: 'Your Watching List | Showcased',
-      component: ProfileWatchingPageComponent
+      component: ProfileWatchingPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/show-ranking',
       title: 'Your Show Ranking | Showcased',
-      component: ProfileShowRankingPageComponent
+      component: ProfileShowRankingPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/episode-ranking',
       title: 'Your Episode Ranking | Showcased',
-      component: ProfileEpisodeRankingPageComponent
+      component: ProfileEpisodeRankingPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/season-ranking',
       title: 'Your Season Ranking | Showcased',
-      component: ProfileSeasonRankingPageComponent
+      component: ProfileSeasonRankingPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/followers',
       title: 'Your Followers | Showcased',
-      component: ProfileFollowersPageComponent
+      component: ProfileFollowersPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/following',
       title: 'Your Following List | Showcased',
-      component: ProfileFollowingPageComponent
+      component: ProfileFollowingPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/character-ranking/:type',
       title: 'Your Character Ranking | Showcased',
-      component: ProfileCharacterRankingPageComponent
+      component: ProfileCharacterRankingPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/character-ranking',
-      redirectTo: 'profile/character-ranking/protagonists'
+      redirectTo: 'profile/character-ranking/protagonists',
+      pathMatch: 'full'
     },
     {
       path: 'profile/dynamic-ranking',
       title: 'Your Dynamic Ranking | Showcased',
-      component: ProfileDynamicsRankingPageComponent
+      component: ProfileDynamicsRankingPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/collections',
       title: 'Your Collections | Showcased',
-      component: ProfileCollectionsPageComponent
+      component: ProfileCollectionsPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/collections/new',
       title: 'New Collection | Showcased',
-      component: ProfileNewCollectionPageComponent
+      component: ProfileNewCollectionPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/collections/:id/edit',
-      component: ProfileEditCollectionPageComponent
+      component: ProfileEditCollectionPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/collections/:id',
-      component: ProfileCollectionDetailsPageComponent
+      component: ProfileCollectionDetailsPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/activity',
       title: 'Your Activity | Showcased',
-      component: ProfileActivityPageComponent
+      component: ProfileActivityPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/reviews',
       title: 'Your Reviews | Showcased',
-      component: ProfileReviewsPageComponent
+      component: ProfileReviewsPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/settings',
       title: 'Profile Settings | Showcased',
-      component: ProfileSettingsPageComponent
+      component: ProfileSettingsPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'user/:username',

@@ -30,11 +30,13 @@ export class AuthenticationService {
       body: JSON.stringify(data),
     });
 
-    const loginResponse: LoginResponseData = await response.json();
-    this.accessToken = loginResponse.token;
-    localStorage.setItem("accessToken", loginResponse.token);
-    localStorage.setItem("username", loginResponse.username);
-    localStorage.setItem("profilePicture", loginResponse.profilePicture);
+    if (response.ok) {
+      const loginResponse: LoginResponseData = await response.json();
+      this.accessToken = loginResponse.token;
+      localStorage.setItem("accessToken", loginResponse.token);
+      localStorage.setItem("username", loginResponse.username);
+      localStorage.setItem("profilePicture", loginResponse.profilePicture);
+    }
     return response;
   }
 
@@ -80,13 +82,22 @@ export class AuthenticationService {
    * @param data
    */
   async registerUser(data: RegisterDto): Promise<Response> {
-    return await fetch(`${this.baseUrl}/register`, {
+    const response = await fetch(`${this.baseUrl}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     });
+
+    if (response.ok) {
+      const registerResponse: LoginResponseData = await response.json();
+      this.accessToken = registerResponse.token;
+      localStorage.setItem("accessToken", registerResponse.token);
+      localStorage.setItem("username", registerResponse.username);
+      localStorage.setItem("profilePicture", registerResponse.profilePicture);
+    }
+    return response;
   }
 
   /**

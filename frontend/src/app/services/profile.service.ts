@@ -33,6 +33,7 @@ import {UserService} from './user.service';
 import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
 import {ProfileReviewData} from '../data/types';
 import {ProfileSettingsData} from '../data/profile-settings-data';
+import {AuthenticationService} from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -41,12 +42,13 @@ export class ProfileService {
   readonly baseUrl: string = 'http://localhost:8080/profile';
   private accessToken: string | null = localStorage.getItem("accessToken");
 
-  constructor(public router: Router) {};
+  constructor(public router: Router,
+              private authService: AuthenticationService) {};
 
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
     if (response.status === 403) {
-      this.router.navigate(['/login']);
+      this.authService.logout();
       throw new Error("Unauthorized");
     }
   }
