@@ -11,6 +11,7 @@ import {Router} from '@angular/router';
 })
 export class AuthenticationService {
   baseUrl: string = 'http://localhost:8080/auth';
+  returnUrl: string;
   private accessToken: string | null = localStorage.getItem("accessToken");
   private resetPasswordToken: string | null = localStorage.getItem("resetPasswordToken");
 
@@ -35,6 +36,11 @@ export class AuthenticationService {
     localStorage.setItem("username", loginResponse.username);
     localStorage.setItem("profilePicture", loginResponse.profilePicture);
     return response;
+  }
+
+  isLoggedIn(): boolean {
+    const accessToken = localStorage.getItem("accessToken");
+    return accessToken != null;
   }
 
   /**

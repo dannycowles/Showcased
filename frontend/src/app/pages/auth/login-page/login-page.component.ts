@@ -30,7 +30,9 @@ export class LoginPageComponent {
       const data = this.loginForm.value as LoginDto;
       const response = await this.authService.loginUser(data);
 
-      if (response.status === 401) {
+      if (response.ok) {
+        window.location.href = this.authService.returnUrl || "/profile";
+      } else if (response.status === 401) {
         this.errorMessage = "You have entered an incorrect username or password";
       }
     } catch (error) {

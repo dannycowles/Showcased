@@ -13,6 +13,7 @@ import {ProfileReviewData, ReviewData} from '../../data/types';
 import {UpdateReviewDto} from '../../data/dto/update-review-dto';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfirmationService} from '../../services/confirmation.service';
+import {AuthenticationService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-review',
@@ -46,7 +47,8 @@ export class ReviewComponent implements OnChanges {
               private showService: ShowService,
               private router: Router,
               private modalService: NgbModal,
-              private confirmationService: ConfirmationService) { };
+              private confirmationService: ConfirmationService,
+              private authService: AuthenticationService) { };
 
   ngOnChanges() {
     if (this.review.notifCommentId != null) {
@@ -74,6 +76,12 @@ export class ReviewComponent implements OnChanges {
   };
 
   async toggleReviewLikeState() {
+    if (!this.authService.isLoggedIn()) {
+      this.authService.returnUrl = window.location.href;
+      this.router.navigateByUrl("/login");
+      return;
+    }
+
     try {
       const handler = this.reviewHandlers[this.reviewType];
 

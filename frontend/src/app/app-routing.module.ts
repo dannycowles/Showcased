@@ -66,6 +66,7 @@ import {
   ProfileEditCollectionPageComponent
 } from './pages/profile/profile-edit-collection-page/profile-edit-collection-page.component';
 import {ProfileSettingsPageComponent} from './pages/profile/profile-settings-page/profile-settings-page.component';
+import {authGuard} from './guards/auth.guard';
 
 const routes: Routes = [
     {
@@ -91,12 +92,14 @@ const routes: Routes = [
     {
       path: 'profile',
       title: 'Your Profile | Showcased',
-      component: ProfilePageComponent
+      component: ProfilePageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/watchlist',
       title: 'Your Watchlist | Showcased',
-      component: ProfileWatchlistPageComponent
+      component: ProfileWatchlistPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/watching',
