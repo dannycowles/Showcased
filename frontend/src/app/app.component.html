@@ -9,7 +9,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav gap-3">
+      <ul class="navbar-nav gap-3 me-auto">
         <li class="nav-item">
           <a class="nav-link" routerLink="/search">Shows</a>
         </li>
@@ -19,6 +19,8 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/search-users">Members</a>
         </li>
+      </ul>
+      <ul class="navbar-nav gap-3">
         @if (isLoggedIn) {
           <li class="nav-item">
             <a class="nav-link" routerLink="/profile/activity">Activity</a>
@@ -28,7 +30,7 @@
               <img [ngSrc]="localStorage.getItem('profilePicture')" id="profile-picture" alt="Profile Picture" priority width="25" height="25">
               {{localStorage.getItem('username')}}
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
               <li><a class="dropdown-item" routerLink="/profile/watchlist">Watchlist</a></li>
               <li><a class="dropdown-item" routerLink="/profile/watching">Watching</a></li>

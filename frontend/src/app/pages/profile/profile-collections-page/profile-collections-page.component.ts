@@ -4,20 +4,19 @@ import {CollectionData} from '../../../data/collection-data';
 import {UtilsService} from '../../../services/utils.service';
 import {Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {NgOptimizedImage} from '@angular/common';
+import {CollectionComponent} from '../../../components/collection/collection.component';
 
 @Component({
   selector: 'app-profile-collections-page',
   templateUrl: './profile-collections-page.component.html',
   styleUrl: './profile-collections-page.component.css',
-  imports: [FormsModule, RouterLink, NgOptimizedImage],
+  imports: [FormsModule, RouterLink, CollectionComponent],
   standalone: true,
 })
 export class ProfileCollectionsPageComponent implements OnInit {
   collectionData: CollectionData[];
   searchCollectionString: string = '';
   debouncedSearchCollections: () => void;
-  readonly numPosters: number = 5;
 
   constructor(
     private profileService: ProfileService,

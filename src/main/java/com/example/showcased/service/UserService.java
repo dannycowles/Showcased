@@ -393,15 +393,25 @@ public class UserService {
         User user = userRepository.findByDisplayName(username).get();
 
         // If a name is specified filter by that, else retrieve all collections
+        List<Object[]> collectionObjects;
         if (name != null) {
-            return collectionsRepository.findByUserIdAndPrivateCollectionFalseAndCollectionNameContainingIgnoreCase(user.getId(), name).stream()
-                    .map(collection -> modelMapper.map(collection, CollectionDto.class))
-                    .collect(Collectors.toList());
+            collectionObjects = collectionsRepository.findByUserIdAndPrivateCollectionFalseAndCollectionNameContainingIgnoreCase(user.getId(), name);
         } else {
-            return collectionsRepository.findByUserIdAndPrivateCollectionFalse(user.getId()).stream()
-                    .map(collection -> modelMapper.map(collection, CollectionDto.class))
-                    .collect(Collectors.toList());
+            collectionObjects = collectionsRepository.findByUserIdAndPrivateCollectionFalse(user.getId());
         }
+
+        List<CollectionDto> collections = new ArrayList<>();
+        for (Object[] row : collectionObjects) {
+            CollectionDto collection = new CollectionDto(
+                    ((Integer) row[0]).longValue(),
+                    ((Integer) row[1]).longValue(),
+                    (String) row[2],
+                    (Boolean) row[3],
+                    (String) row[4],
+                    ((Long) row[5]).intValue());
+            collections.add(collection);
+        }
+        return collections;
     }
 
     public CollectionReturnDto getShowsInCollection(Long collectionId) {
