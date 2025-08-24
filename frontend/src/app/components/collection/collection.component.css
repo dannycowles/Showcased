@@ -6,6 +6,11 @@
   display: flex;
 }
 
+.poster-stack img {
+  flex-shrink: 0.25;
+  min-width: 0;
+}
+
 .poster-stack img,
 .poster-stack .poster-placeholder {
   margin-left: -2rem;
@@ -16,6 +21,8 @@
 .poster-stack img:first-child,
 .poster-stack .poster-placeholder:first-child {
   margin-left: 0;
+  flex-shrink: 0;
+  min-width: 185px;
 }
 
 .poster-stack img:last-child,
@@ -25,6 +32,7 @@
 
 .poster-placeholder {
   background-color: #eeeeee;
+  flex-shrink: 0.25;
   width: 185px;
   height: 278px;
 }

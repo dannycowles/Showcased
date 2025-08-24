@@ -4,4 +4,5 @@ export interface CollectionData {
   readonly isPrivate: boolean;
   readonly showPosters: string[];
   readonly showCount: number;
+  readonly likeCount: number;
 }

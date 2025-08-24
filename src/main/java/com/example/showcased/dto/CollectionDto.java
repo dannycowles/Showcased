@@ -19,9 +19,10 @@ public class CollectionDto {
     private boolean isPrivate;
     private List<String> showPosters;
     private int showCount;
+    private int likeCount;
 
     // Constructor for native query results (comma-separated posters)
-    public CollectionDto(Long userId, Long collectionId, String name, Boolean isPrivate, String posters, int showCount) {
+    public CollectionDto(Long userId, Long collectionId, String name, Boolean isPrivate, String posters, int showCount, int likeCount) {
         this.userId = userId;
         this.collectionId = collectionId;
         this.name = name;
@@ -31,5 +32,6 @@ public class CollectionDto {
                         .collect(Collectors.toList()) :
                 new ArrayList<>();
         this.showCount = showCount;
+        this.likeCount = likeCount;
     }
 }

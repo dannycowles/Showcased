@@ -12,6 +12,10 @@
   <div class="d-flex align-items-center gap-4 mb-5">
     <h3>{{collection.name}}</h3>
     <span class="fs-5">{{collection.showCount}} Show{{collection.showCount === 1 ? '' : 's'}}</span>
+    <div class="d-flex align-items-center">
+      <yt-button-heart [isLiked]="false" [size]="70" style="margin-right: -0.5rem"></yt-button-heart>
+      <span class="fs-5">{{collection.likeCount}}</span>
+    </div>
   </div>
 </div>
 

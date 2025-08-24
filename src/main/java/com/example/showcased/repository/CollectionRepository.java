@@ -12,7 +12,8 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
     @Query(value ="""
         SELECT c.user_id, c.collection_id, c.collection_name, c.is_private,
                SUBSTRING_INDEX(GROUP_CONCAT(si.poster_path ORDER BY sc.rank_num), ',', 5) as posters,
-               COUNT(sc.show_id) as show_count
+               COUNT(sc.show_id) as show_count,
+               c.num_likes
         FROM user_collections c
         LEFT JOIN shows_in_collections sc ON c.collection_id = sc.collection_id
         LEFT JOIN show_info si ON sc.show_id = si.show_id
@@ -24,7 +25,8 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
     @Query(value ="""
         SELECT c.user_id, c.collection_id, c.collection_name, c.is_private,
                SUBSTRING_INDEX(GROUP_CONCAT(si.poster_path ORDER BY sc.rank_num), ',', 5) as posters,
-               COUNT(sc.show_id) as show_count
+               COUNT(sc.show_id) as show_count,
+               c.num_likes
         FROM user_collections c
         LEFT JOIN shows_in_collections sc ON c.collection_id = sc.collection_id
         LEFT JOIN show_info si ON sc.show_id = si.show_id
@@ -37,7 +39,8 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
     @Query(value ="""
         SELECT c.user_id, c.collection_id, c.collection_name, c.is_private,
                SUBSTRING_INDEX(GROUP_CONCAT(si.poster_path ORDER BY sc.rank_num), ',', 5) as posters,
-               COUNT(sc.show_id) as show_count
+               COUNT(sc.show_id) as show_count,
+               c.num_likes
         FROM user_collections c
         LEFT JOIN shows_in_collections sc ON c.collection_id = sc.collection_id
         LEFT JOIN show_info si ON sc.show_id = si.show_id
@@ -49,7 +52,8 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
     @Query(value ="""
         SELECT c.user_id, c.collection_id, c.collection_name, c.is_private,
                SUBSTRING_INDEX(GROUP_CONCAT(si.poster_path ORDER BY sc.rank_num), ',', 5) as posters,
-               COUNT(sc.show_id) as show_count
+               COUNT(sc.show_id) as show_count,
+               c.num_likes
         FROM user_collections c
         LEFT JOIN shows_in_collections sc ON c.collection_id = sc.collection_id
         LEFT JOIN show_info si ON sc.show_id = si.show_id

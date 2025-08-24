@@ -10,7 +10,7 @@
 @if (collections) {
   @if (collections.length != 0) {
     @for (collection of collections; track collection.id) {
-      <a [routerLink]="[collection.id]"><h3>{{collection.name}}</h3></a>
+      <app-collection [collection]="collection"></app-collection>
     }
   } @else {
     <p>No Collections Found!</p>

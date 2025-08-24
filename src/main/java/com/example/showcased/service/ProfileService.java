@@ -721,7 +721,8 @@ public class ProfileService {
                     (String) row[2],
                     (Boolean) row[3],
                     (String) row[4],
-                    ((Long) row[5]).intValue());
+                    ((Long) row[5]).intValue(),
+                    (int) row[6]);
             collections.add(collection);
         }
         return collections;

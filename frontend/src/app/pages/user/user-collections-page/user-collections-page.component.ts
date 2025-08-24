@@ -5,12 +5,13 @@ import {CollectionData} from '../../../data/collection-data';
 import {UtilsService} from '../../../services/utils.service';
 import {Title} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
+import {CollectionComponent} from '../../../components/collection/collection.component';
 
 @Component({
   selector: 'app-user-collections-page',
   templateUrl: './user-collections-page.component.html',
   styleUrl: './user-collections-page.component.css',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, CollectionComponent],
   standalone: true,
 })
 export class UserCollectionsPageComponent implements OnInit {
