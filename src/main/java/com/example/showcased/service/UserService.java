@@ -388,16 +388,23 @@ public class UserService {
 
 
 
-    public List<CollectionDto> getCollections(String name, String username) {
+    public Page<CollectionDto> getCollections(String name, String username, Pageable pageable) {
         ensureUserExistsByUsername(username);
         User user = userRepository.findByDisplayName(username).get();
 
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                Math.min(pageable.getPageNumber() - 1, 0),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+
         // If a name is specified filter by that, else retrieve all collections
-        List<Object[]> collectionObjects;
+        Page<Object[]> collectionObjects;
         if (name != null) {
-            collectionObjects = collectionsRepository.findByUserIdAndPrivateCollectionFalseAndCollectionNameContainingIgnoreCase(user.getId(), name);
+            collectionObjects = collectionsRepository.findByUserIdAndPrivateCollectionFalseAndCollectionNameContainingIgnoreCase(user.getId(), name, modifiedPage);
         } else {
-            collectionObjects = collectionsRepository.findByUserIdAndPrivateCollectionFalse(user.getId());
+            collectionObjects = collectionsRepository.findByUserIdAndPrivateCollectionFalse(user.getId(), modifiedPage);
         }
 
         List<CollectionDto> collections = new ArrayList<>();
@@ -412,7 +419,7 @@ public class UserService {
                     (int) row[6]);
             collections.add(collection);
         }
-        return collections;
+        return new PageImpl<>(collections, pageable, collectionObjects.getTotalElements());
     }
 
     public CollectionReturnDto getShowsInCollection(Long collectionId) {

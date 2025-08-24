@@ -142,8 +142,9 @@ public class UserController {
     // ========== COLLECTIONS ==========
 
     @GetMapping("/{username}/collections")
-    public ResponseEntity<List<CollectionDto>> getCollections(@RequestParam(required = false) String name, @PathVariable String username) {
-        List<CollectionDto> collections = userService.getCollections(name, username);
+    public ResponseEntity<Page<CollectionDto>> getCollections(@RequestParam(required = false) String name, @PathVariable String username,
+                                                              @PageableDefault(page = 1, size = 2) Pageable pageable) {
+        Page<CollectionDto> collections = userService.getCollections(name, username, pageable);
         return ResponseEntity.ok(collections);
     }
 

@@ -318,8 +318,9 @@ public class ProfileController {
     // ========== COLLECTIONS ==========
 
     @GetMapping("/collections")
-    public ResponseEntity<List<CollectionDto>> getCollectionList(@RequestParam(required = false) String name) {
-        List<CollectionDto> collections = profileService.getCollectionList(name);
+    public ResponseEntity<Page<CollectionDto>> getCollectionList(@RequestParam(required = false) String name,
+                                                                 @PageableDefault(page = 1, size = 2) Pageable pageable) {
+        Page<CollectionDto> collections = profileService.getCollectionList(name, pageable);
         return ResponseEntity.ok(collections);
     }
 

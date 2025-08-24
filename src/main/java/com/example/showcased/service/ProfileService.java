@@ -702,15 +702,22 @@ public class ProfileService {
 
 
 
-    public List<CollectionDto> getCollectionList(String name) {
+    public Page<CollectionDto> getCollectionList(String name, Pageable pageable) {
         User user = authService.retrieveUserFromJwt();
 
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                Math.min(pageable.getPageNumber() - 1, 0),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+
         // If a name is specified filter by that, else retrieve all collections
-        List<Object[]> collectionObjects;
+        Page<Object[]> collectionObjects;
         if (name != null) {
-            collectionObjects = collectionsRepository.findByUserIdAndCollectionNameContainingIgnoreCase(user.getId(), name);
+            collectionObjects = collectionsRepository.findByUserIdAndCollectionNameContainingIgnoreCase(user.getId(), name, modifiedPage);
         } else {
-            collectionObjects = collectionsRepository.findByUserId(user.getId());
+            collectionObjects = collectionsRepository.findByUserId(user.getId(), modifiedPage);
         }
 
         List<CollectionDto> collections = new ArrayList<>();
@@ -725,7 +732,7 @@ public class ProfileService {
                     (int) row[6]);
             collections.add(collection);
         }
-        return collections;
+        return new PageImpl<>(collections, pageable, collectionObjects.getTotalElements());
     }
 
     public CollectionDto createCollection(CreateCollectionDto collectionDto) {
