@@ -9,11 +9,32 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CollectionRepository extends JpaRepository<Collection, Long> {
-    List<Collection> findByUserId(Long userId);
+    @Query(value ="""
+        SELECT c.user_id, c.collection_id, c.collection_name, c.is_private,
+               SUBSTRING_INDEX(GROUP_CONCAT(si.poster_path ORDER BY sc.rank_num), ',', 5) as posters,
+               COUNT(sc.show_id) as show_count
+        FROM user_collections c
+        LEFT JOIN shows_in_collections sc ON c.collection_id = sc.collection_id
+        LEFT JOIN show_info si ON sc.show_id = si.show_id
+        WHERE c.user_id = :userId
+        GROUP BY c.user_id, c.collection_id, c.collection_name, c.is_private
+    """, nativeQuery = true)
+    List<Object[]> findByUserId(@Param("userId") Long userId);
+
+    @Query(value ="""
+        SELECT c.user_id, c.collection_id, c.collection_name, c.is_private,
+               SUBSTRING_INDEX(GROUP_CONCAT(si.poster_path ORDER BY sc.rank_num), ',', 5) as posters,
+               COUNT(sc.show_id) as show_count
+        FROM user_collections c
+        JOIN shows_in_collections sc ON c.collection_id = sc.collection_id
+        JOIN show_info si ON sc.show_id = si.show_id
+        WHERE c.user_id = :userId AND UPPER(c.collection_name) LIKE UPPER(CONCAT('%', :name, '%'))
+        GROUP BY c.collection_id, c.collection_id, c.collection_name, c.is_private
+    """, nativeQuery = true)
+    List<Object[]> findByUserIdAndCollectionNameContainingIgnoreCase(@Param("userId") Long userId, @Param("name") String name);
+
     boolean existsByUserIdAndCollectionName(Long userId, String collectionName);
     boolean existsByUserIdAndCollectionId(Long userId, Long collectionId);
-
-    List<Collection> findByUserIdAndCollectionNameContainingIgnoreCase(Long userId, String name);
     List<Collection> findByUserIdAndPrivateCollectionFalseAndCollectionNameContainingIgnoreCase(Long userId, String name);
     List<Collection> findByUserIdAndPrivateCollectionFalse(Long userId);
 

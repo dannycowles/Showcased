@@ -1,5 +1,7 @@
 export interface CollectionData {
   readonly id: number;
-  name: string;
-  isPrivate: boolean;
+  readonly name: string;
+  readonly isPrivate: boolean;
+  readonly showPosters: string[];
+  readonly showCount: number;
 }

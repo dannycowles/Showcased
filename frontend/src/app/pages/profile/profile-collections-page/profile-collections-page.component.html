@@ -11,7 +11,20 @@
 @if (collectionData) {
   @if (collectionData.length != 0) {
     @for (collection of collectionData; track collection.id) {
-      <a [routerLink]="[collection.id]"><h3>{{collection.name}}</h3></a>
+      <div class="poster-stack">
+        @for (_ of [].constructor(numPosters); let i = $index; track i) {
+          <!-- Poster images are sized w185, using 2:3 ratio -->
+          @if (collection.showPosters[i]) {
+            <img [ngSrc]="collection.showPosters[i]" alt="Show Poster" width="185" height="278" priority [style.z-index]="numPosters - i">
+          } @else {
+            <div class="poster-placeholder" [style.z-index]="numPosters - i"></div>
+          }
+        }
+      </div>
+      <div class="d-flex align-items-center gap-4 mb-5">
+        <a [routerLink]="[collection.id]"><h3>{{collection.name}}</h3></a>
+        <span class="fs-5">{{collection.showCount}} Shows</span>
+      </div>
     }
   } @else {
     <p>No Collections Found!</p>
