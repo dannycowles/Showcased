@@ -707,7 +707,7 @@ public class ProfileService {
 
         // Subtract 1 from provided pageable to align with 0-index
         Pageable modifiedPage = PageRequest.of(
-                Math.min(pageable.getPageNumber() - 1, 0),
+                Math.max(pageable.getPageNumber() - 1, 0),
                 pageable.getPageSize(),
                 pageable.getSort()
         );
@@ -732,7 +732,7 @@ public class ProfileService {
                     (int) row[6]);
             collections.add(collection);
         }
-        return new PageImpl<>(collections, pageable, collectionObjects.getTotalElements());
+        return new PageImpl<>(collections, modifiedPage, collectionObjects.getTotalElements());
     }
 
     public CollectionDto createCollection(CreateCollectionDto collectionDto) {

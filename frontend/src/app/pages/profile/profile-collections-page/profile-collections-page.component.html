@@ -9,10 +9,16 @@
 </div>
 
 @if (collectionData) {
-  @if (collectionData.length != 0) {
-    @for (collection of collectionData; track collection.id) {
-      <app-collection [collection]="collection"></app-collection>
-    }
+  @if (collectionData.content.length != 0) {
+    <div class="collections"
+         infiniteScroll
+         [infiniteScrollDistance]="1"
+         (scrolled)="loadMoreCollections()"
+    >
+      @for (collection of collectionData.content; track collection.id) {
+        <app-collection [collection]="collection"></app-collection>
+      }
+    </div>
   } @else {
     <p>No Collections Found!</p>
   }

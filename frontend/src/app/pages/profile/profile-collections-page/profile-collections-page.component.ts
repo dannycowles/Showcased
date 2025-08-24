@@ -5,16 +5,23 @@ import {UtilsService} from '../../../services/utils.service';
 import {Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {CollectionComponent} from '../../../components/collection/collection.component';
+import {PageData} from '../../../data/page-data';
+import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 
 @Component({
   selector: 'app-profile-collections-page',
   templateUrl: './profile-collections-page.component.html',
   styleUrl: './profile-collections-page.component.css',
-  imports: [FormsModule, RouterLink, CollectionComponent],
+  imports: [
+    FormsModule,
+    RouterLink,
+    CollectionComponent,
+    InfiniteScrollDirective,
+  ],
   standalone: true,
 })
 export class ProfileCollectionsPageComponent implements OnInit {
-  collectionData: CollectionData[];
+  collectionData: PageData<CollectionData>;
   searchCollectionString: string = '';
   debouncedSearchCollections: () => void;
 
@@ -45,6 +52,21 @@ export class ProfileCollectionsPageComponent implements OnInit {
       this.collectionData = await this.profileService.getCollections(
         this.searchCollectionString,
       );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async loadMoreCollections() {
+    // If all pages have already been loaded, return
+    if (this.collectionData.page.number + 1 >= this.collectionData.page.totalPages) {
+      return;
+    }
+
+    try {
+      const response = await this.profileService.getCollections(this.searchCollectionString, this.collectionData.page.number + 2);
+      this.collectionData.content.push(...response.content);
+      this.collectionData.page = response.page;
     } catch (error) {
       console.error(error);
     }

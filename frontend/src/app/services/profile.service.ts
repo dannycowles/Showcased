@@ -599,10 +599,13 @@ export class ProfileService {
 
   /**
    * Retrieves all collections for the logged-in user
+   * @param name
+   * @param page
    */
-  async getCollections(name?: string): Promise<CollectionData[]> {
-    const params = name?.length > 0 ? `?name=${encodeURIComponent(name)}` : '';
-    const url = `${this.baseUrl}/collections${params}`;
+  async getCollections(name?: string, page?: number): Promise<PageData<CollectionData>> {
+    const url = new URL(`${this.baseUrl}/collections`);
+    if (name?.length > 0) url.searchParams.set('name', name);
+    if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url, {
       headers: this.getHeaders()

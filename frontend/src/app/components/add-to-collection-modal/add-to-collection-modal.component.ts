@@ -7,6 +7,7 @@ import {ProfileService} from '../../services/profile.service';
 import {ShowListData} from '../../data/lists/show-list-data';
 import {AddToCollection} from '../../data/dto/add-to-list-dto';
 import {Router} from '@angular/router';
+import {PageData} from '../../data/page-data';
 
 @Component({
   selector: 'app-add-to-collection-modal',
@@ -18,7 +19,7 @@ import {Router} from '@angular/router';
 export class AddToCollectionModalComponent implements OnInit {
   @Input({ required: true }) show: ShowListData;
   searchCollectionString: string = '';
-  collections: CollectionData[];
+  collections: PageData<CollectionData>;
   selectedCollection: CollectionData | null = null;
 
   message: string = '';

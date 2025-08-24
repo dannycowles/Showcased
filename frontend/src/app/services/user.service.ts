@@ -181,10 +181,12 @@ export class UserService {
    * Retrieves the public collections for user with the specified username
    * @param username
    * @param name
+   * @param page
    */
-  async getPublicCollections(username: string, name ?: string): Promise<CollectionData[]> {
-    const params = (name?.length > 0) ? `?name=${encodeURIComponent(name)}` : '';
-    const url = `${this.baseUrl}/${username}/collections${params}`;
+  async getPublicCollections(username: string, name ?: string, page?: number): Promise<PageData<CollectionData>> {
+    const url = new URL(`${this.baseUrl}/${username}/collections`);
+    if (name?.length > 0) url.searchParams.set('name', name);
+    if (page != null) url.searchParams.set('page', String(page));
 
     const response = await fetch(url);
     return await response.json();

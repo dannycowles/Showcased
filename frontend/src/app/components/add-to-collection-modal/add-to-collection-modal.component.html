@@ -14,9 +14,9 @@
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-  } @else if (collections?.length) {
+  } @else if (collections?.content.length) {
     <ul class="list-group overflow-auto" style="max-height: 25vh">
-      @for (collection of collections; track collection.id) {
+      @for (collection of collections.content; track collection.id) {
         <li class="list-group-item">
           <input class="form-check-input me-2" type="radio" name="collectionRadio" [value]="collection" [id]="collection.id" [(ngModel)]="selectedCollection">
           <label class="form-check-label stretched-link" [for]="collection.id">{{collection.name}}</label>

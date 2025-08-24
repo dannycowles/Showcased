@@ -6,18 +6,25 @@ import {UtilsService} from '../../../services/utils.service';
 import {Title} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
 import {CollectionComponent} from '../../../components/collection/collection.component';
+import {PageData} from '../../../data/page-data';
+import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 
 @Component({
   selector: 'app-user-collections-page',
   templateUrl: './user-collections-page.component.html',
   styleUrl: './user-collections-page.component.css',
-  imports: [RouterLink, FormsModule, CollectionComponent],
+  imports: [
+    RouterLink,
+    FormsModule,
+    CollectionComponent,
+    InfiniteScrollDirective,
+  ],
   standalone: true,
 })
 export class UserCollectionsPageComponent implements OnInit {
   readonly username: string;
-  collections: CollectionData[];
-  newCollectionName: string;
+  collectionData: PageData<CollectionData>;
+  searchCollectionString: string;
   debouncedSearchCollections: () => void;
 
   constructor(
@@ -32,9 +39,7 @@ export class UserCollectionsPageComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.collections = await this.userService.getPublicCollections(
-        this.username,
-      );
+      this.collectionData = await this.userService.getPublicCollections(this.username);
     } catch (error) {
       console.error(error);
     }
@@ -46,10 +51,22 @@ export class UserCollectionsPageComponent implements OnInit {
 
   async searchCollections() {
     try {
-      this.collections = await this.userService.getPublicCollections(
-        this.username,
-        this.newCollectionName,
-      );
+      this.collectionData = await this.userService.getPublicCollections(this.username, this.searchCollectionString);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async loadMoreCollections() {
+    // If all pages have already been loaded, return
+    if (this.collectionData.page.number + 1 >= this.collectionData.page.totalPages) {
+      return;
+    }
+
+    try {
+      const response = await this.userService.getPublicCollections(this.username, this.searchCollectionString, this.collectionData.page.number + 2);
+      this.collectionData.content.push(...response.content);
+      this.collectionData.page = response.page;
     } catch (error) {
       console.error(error);
     }
