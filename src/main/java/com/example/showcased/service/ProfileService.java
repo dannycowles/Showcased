@@ -7,6 +7,7 @@ import com.example.showcased.exception.*;
 import com.example.showcased.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,7 @@ public class ProfileService {
     private final ShowService showService;
     private final ActivitiesRepository activitiesRepository;
     private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
     public ProfileService(WatchlistRepository watchlistRepository,
                           ShowInfoRepository showInfoRepository,
@@ -66,7 +68,8 @@ public class ProfileService {
                           DynamicRankingRepository dynamicRankingRepository,
                           ShowService showService,
                           ActivitiesRepository activitiesRepository,
-                          AuthService authService) {
+                          AuthService authService,
+                          PasswordEncoder passwordEncoder) {
         this.watchlistRepository = watchlistRepository;
         this.showInfoRepository = showInfoRepository;
         this.watchingRepository = watchingRepository;
@@ -90,6 +93,7 @@ public class ProfileService {
         this.showService = showService;
         this.activitiesRepository = activitiesRepository;
         this.authService = authService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -143,6 +147,20 @@ public class ProfileService {
     public void updateProfileDetails(UpdateProfileDetailsDto update) {
         User user = authService.retrieveUserFromJwt();
         user.setBio(update.getBio());
+        userRepository.save(user);
+    }
+
+    public void changePassword(ChangePasswordDto changePasswordDto) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Ensure the provided password (old/current password) matches expected value
+        if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
+            throw new UnauthorizedAccessException("The provided current password is incorrect.");
+        }
+
+        // Encode the new password before saving
+        String encodedPassword = passwordEncoder.encode(changePasswordDto.getNewPassword());
+        user.setPassword(encodedPassword);
         userRepository.save(user);
     }
 

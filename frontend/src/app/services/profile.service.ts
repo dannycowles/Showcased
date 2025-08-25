@@ -34,6 +34,7 @@ import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-r
 import {ProfileReviewData} from '../data/types';
 import {ProfileSettingsData} from '../data/profile-settings-data';
 import {AuthenticationService} from './auth.service';
+import {ChangePasswordDto} from '../data/dto/change-password-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -110,6 +111,21 @@ export class ProfileService {
       method: 'PATCH',
       headers: this.getHeaders(true),
       body: JSON.stringify(data),
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Changes the password for the logged-in user
+   * @param data
+   */
+  async changePassword(data: ChangePasswordDto) {
+    const response = await fetch(`${this.baseUrl}/password`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data)
     });
 
     this.checkUnauthorizedUser(response);

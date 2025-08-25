@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {LoginDto} from '../data/dto/login-dto';
 import {RegisterDto} from '../data/dto/register-dto';
 import {ValidateOtpDto} from '../data/dto/validate-otp-dto';
-import {ChangePasswordDto} from '../data/dto/change-password-dto';
+import {ResetPasswordDto} from '../data/dto/reset-password-dto';
 import {JwtResponseData, LoginResponseData} from '../data/jwt-response-data';
 import {Router} from '@angular/router';
 
@@ -156,7 +156,7 @@ export class AuthenticationService {
    * Used to change/reset a user's password
    * @param data
    */
-  async changePassword(data: ChangePasswordDto) {
+  async changePassword(data: ResetPasswordDto) {
     try {
       const headers = new Headers({
         "Content-Type": "application/json"

@@ -10,7 +10,7 @@ import {
   Validators
 } from '@angular/forms';
 import {ValidateOtpDto} from '../../../data/dto/validate-otp-dto';
-import {ChangePasswordDto} from '../../../data/dto/change-password-dto';
+import {ResetPasswordDto} from '../../../data/dto/reset-password-dto';
 import {NgOtpInputComponent} from 'ng-otp-input';
 import {NgClass} from '@angular/common';
 
@@ -69,7 +69,7 @@ export class ResetPasswordPageComponent {
       return;
     }
 
-    const data: ChangePasswordDto = {
+    const data: ResetPasswordDto = {
       email: this.email,
       newPassword: this.password.value,
     };

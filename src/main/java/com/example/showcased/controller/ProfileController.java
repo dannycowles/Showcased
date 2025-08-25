@@ -44,6 +44,12 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/password")
+    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
+        profileService.changePassword(changePasswordDto);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/settings")
     public ResponseEntity<ProfileSettingsDto> getProfileSettings() {
         ProfileSettingsDto profileSettings = profileService.getProfileSettings();
