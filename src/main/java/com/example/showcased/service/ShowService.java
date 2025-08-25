@@ -756,7 +756,7 @@ public class ShowService {
     public ShowResultsPageDto getTrendingShows(Integer page) {
         // Make request to TMDB trending TV endpoint
         String url = UriComponentsBuilder
-                .fromUriString("https://api.themoviedb.org/3/trending/tv/day")
+                .fromUriString("https://api.themoviedb.org/3/trending/tv/week")
                 .queryParam("page", page != null ? page : 1)
                 .toUriString();
 

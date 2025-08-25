@@ -1,0 +1,7 @@
+.show-poster:hover {
+  cursor: pointer;
+}
+
+.show-poster {
+  border-radius: 0.2rem;
+}
