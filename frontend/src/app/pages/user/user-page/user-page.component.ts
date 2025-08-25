@@ -12,6 +12,7 @@ import {EpisodeListComponent} from '../../../components/episode-list/episode-lis
 import {CharacterListComponent} from '../../../components/character-list/character-list.component';
 import {DynamicListComponent} from '../../../components/dynamic-list/dynamic-list.component';
 import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
+import {CollectionComponent} from '../../../components/collection/collection.component';
 
 @Component({
   selector: 'app-user-page',
@@ -26,6 +27,7 @@ import {ProfileReviewComponent} from '../../../components/profile-review/profile
     CharacterListComponent,
     DynamicListComponent,
     ProfileReviewComponent,
+    CollectionComponent,
   ],
   standalone: true,
 })

@@ -1,7 +1,7 @@
-import {Component, Input} from '@angular/core';
+import {booleanAttribute, Component, Input} from '@angular/core';
 import {CollectionData} from '../../data/collection-data';
 import {NgOptimizedImage} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {ButtonHeartComponent} from '../button-heart.component';
 
 @Component({
@@ -13,5 +13,17 @@ import {ButtonHeartComponent} from '../button-heart.component';
 })
 export class CollectionComponent {
   @Input({ required: true }) collection: CollectionData;
+  @Input({ transform: booleanAttribute }) onProfilePage: boolean = false;
   readonly numPosters: number = 5;
+
+  constructor(private router: Router,
+              private route: ActivatedRoute) {}
+
+  navigateToCollection() {
+    if (this.onProfilePage) {
+      this.router.navigate(['collections', this.collection.id], {relativeTo: this.route});
+    } else {
+      this.router.navigate([this.collection.id], {relativeTo: this.route});
+    }
+  }
 }

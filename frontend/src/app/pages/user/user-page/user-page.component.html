@@ -42,7 +42,16 @@
   <app-dynamic-list [dynamics]="userDetails.dynamicRankingTop"></app-dynamic-list>
   <button class="btn btn-primary my-3" routerLink="dynamic-ranking">View Full List</button>
   <br>
-  <button class="btn btn-primary my-3" routerLink="collections">View Collections</button>
+
+  <h3>Collections</h3>
+  @if (userDetails?.collections?.length != 0) {
+    @for (collection of userDetails.collections; track collection.id) {
+      <app-collection [collection]="collection" onProfilePage></app-collection>
+    }
+  } @else {
+    <div>No collections yet!</div>
+  }
+  <button class="btn btn-primary mb-4" routerLink="collections">View All</button>
 
   <h3>Recent Reviews</h3>
   <button type="button" class="btn btn-secondary mb-3" routerLink="reviews">View All</button>

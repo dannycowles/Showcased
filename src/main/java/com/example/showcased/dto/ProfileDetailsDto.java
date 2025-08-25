@@ -23,5 +23,6 @@ public class ProfileDetailsDto {
     private boolean hasMoreSeasonRanking = false;
     private boolean hasMoreEpisodeRanking = false;
 
+    private List<CollectionDto> collections;
     private List<ShowReviewDto> reviews;
 }

@@ -11,6 +11,7 @@ import {CharacterListComponent} from '../../../components/character-list/charact
 import {DynamicListComponent} from '../../../components/dynamic-list/dynamic-list.component';
 import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
 import {RouterLink} from '@angular/router';
+import {CollectionComponent} from '../../../components/collection/collection.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -25,6 +26,7 @@ import {RouterLink} from '@angular/router';
     DynamicListComponent,
     ProfileReviewComponent,
     RouterLink,
+    CollectionComponent,
   ],
   standalone: true,
 })

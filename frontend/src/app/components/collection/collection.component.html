@@ -1,4 +1,4 @@
-<div class="collection" [routerLink]="[collection.id]">
+<div class="collection" (click)="navigateToCollection()">
   <div class="poster-stack">
     @for (_ of [].constructor(numPosters); let i = $index; track i) {
       <!-- Poster images are sized w185, using 2:3 ratio -->

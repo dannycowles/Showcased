@@ -23,7 +23,7 @@ public class UserService {
     private final EpisodeRankingRepository episodeRankingRepository;
     private final WatchlistRepository watchlistRepository;
     private final WatchingRepository watchingRepository;
-    private final int numTopEntries = 10;
+    private final int numTopEntries = 5;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final ShowReviewRepository showReviewRepository;
@@ -152,6 +152,7 @@ public class UserService {
         userDetails.setReviews(getUserReviews(username, PageRequest.of(1, numTopEntries)).getContent());
         userDetails.setCharacterRankings(getAllUserCharacterRankings(username, numTopEntries));
         userDetails.setDynamicRankingTop(getUserDynamicRankings(username, numTopEntries));
+        userDetails.setCollections(getCollections(null, username, PageRequest.of(1, numTopEntries)).getContent());
         return userDetails;
     }
 

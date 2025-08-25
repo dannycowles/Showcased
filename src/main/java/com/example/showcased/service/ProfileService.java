@@ -22,7 +22,7 @@ public class ProfileService {
     private final WatchingRepository watchingRepository;
     private final ModelMapper modelMapper;
     private final ShowRankingRepository showRankingRepository;
-    private final int numTopEntries = 10;
+    private final int numTopEntries = 5;
     private final int numActivities = 10;
     private final String[] validCharacterTypes = {"protagonist", "deuteragonist", "antagonist", "tritagonist", "side"};
     private final ShowReviewRepository showReviewRepository;
@@ -129,6 +129,7 @@ public class ProfileService {
         profileDetails.setSeasonRankingTop(getSeasonRankingList(numTopEntries));
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries));
         profileDetails.setDynamicRankingTop(getDynamicsRankingList(numTopEntries));
+        profileDetails.setCollections(getCollectionList(null, PageRequest.of(1, numTopEntries)).getContent());
         return profileDetails;
     }
 
