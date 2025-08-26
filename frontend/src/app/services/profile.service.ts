@@ -124,7 +124,7 @@ export class ProfileService {
   async changePassword(data: ChangePasswordDto) {
     const response = await fetch(`${this.baseUrl}/password`, {
       method: 'PUT',
-      headers: this.getHeaders(),
+      headers: this.getHeaders(true),
       body: JSON.stringify(data)
     });
 

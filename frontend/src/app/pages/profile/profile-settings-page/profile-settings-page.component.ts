@@ -2,11 +2,20 @@ import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {RouterLink} from '@angular/router';
 import {ProfileSettingsData} from '../../../data/profile-settings-data';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule, ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import {UpdateProfileDetailsDto} from '../../../data/dto/update-profile-details-dto';
 import {NgClass, NgOptimizedImage} from '@angular/common';
 import {UserSocialData} from '../../../data/user-social-data';
 import {AddSocialDto} from '../../../data/dto/add-social-dto';
+import {ChangePasswordDto} from '../../../data/dto/change-password-dto';
 
 @Component({
   selector: 'app-profile-settings-page',
@@ -36,6 +45,19 @@ export class ProfileSettingsPageComponent implements OnInit {
 
   originalSocialAccounts: UserSocialData[];
   socialMessage: string = '';
+
+  readonly passwordMinLength: number = 8;
+  changePasswordForm = new FormGroup({
+    currentPassword: new FormControl('', Validators.required),
+    newPassword: new FormControl('', [
+      Validators.required,
+      Validators.minLength(this.passwordMinLength)
+    ]),
+    confirmNewPassword: new FormControl('', Validators.required)
+  }, {validators: this.passwordsMatchingValidator()});
+  showNewPassword: boolean = false;
+  passwordMessage: string = '';
+  changePasswordSuccess: boolean = false;
 
   constructor(private profileService: ProfileService) {}
 
@@ -157,5 +179,52 @@ export class ProfileSettingsPageComponent implements OnInit {
     } finally {
       setTimeout(() => this.socialMessage = '', 5000);
     }
+  }
+
+  passwordsMatchingValidator(): ValidatorFn {
+    return (control: AbstractControl<string, string>): ValidationErrors | null => {
+      const password: string = control.get('newPassword').value;
+      const confirmPassword: string = control.get('confirmNewPassword').value;
+
+      return password !== confirmPassword ? { passwordsDontMatch: true } : null;
+    };
+  }
+
+  toggleShowNewPassword() {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+   async changePassword() {
+    try {
+      const data: ChangePasswordDto = {
+        currentPassword: this.changePasswordForm.value.currentPassword,
+        newPassword: this.changePasswordForm.value.newPassword
+      };
+
+      const response = await this.profileService.changePassword(data);
+      if (response.ok) {
+        this.passwordMessage = 'Password has been changed!';
+        this.changePasswordSuccess = true;
+      } else {
+        this.passwordMessage = 'Current password is incorrect.';
+        this.changePasswordSuccess = false;
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => this.passwordMessage = '', 5000);
+    }
+  }
+
+  get currentPassword(): AbstractControl<string, string> {
+    return this.changePasswordForm.get('currentPassword');
+  }
+
+  get newPassword(): AbstractControl<string, string> {
+    return this.changePasswordForm.get('newPassword');
+  }
+
+  get confirmNewPassword(): AbstractControl<string, string> {
+    return this.changePasswordForm.get('confirmNewPassword');
   }
 }
