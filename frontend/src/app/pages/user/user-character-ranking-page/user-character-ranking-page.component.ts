@@ -1,71 +1,31 @@
 import {Component, OnInit} from '@angular/core';
-import {UserService} from '../../../services/user.service';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {RankedCharacterListFullComponent} from '../../../components/ranked-character-list-full/ranked-character-list-full.component';
 import {CharacterRankingsData} from '../../../data/character-rankings-data';
-import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
-import {Title} from '@angular/platform-browser';
+import {UserService} from '../../../services/user.service';
 
 @Component({
   selector: 'app-user-character-ranking-page',
   templateUrl: './user-character-ranking-page.component.html',
   styleUrl: './user-character-ranking-page.component.css',
-  imports: [RouterLink],
+  imports: [RouterLink, RankedCharacterListFullComponent],
   standalone: true,
 })
 export class UserCharacterRankingPageComponent implements OnInit {
-  characterRankings: CharacterRankingsData;
-  readonly validCharacterTypes: string[] = [
-    'protagonists',
-    'deuteragonists',
-    'antagonists',
-    'tritagonists',
-    'side',
-  ];
-  characterType: string;
   readonly username: string;
+  characterRankings: CharacterRankingsData;
 
-  constructor(
-    private userService: UserService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private title: Title,
-  ) {
+  constructor(private userService: UserService,
+              private route: ActivatedRoute) {
     this.username = this.route.snapshot.params['username'];
-    this.title.setTitle(`${this.username}'s Character Ranking | Showcased`);
-    this.route.params.subscribe((params) => {
-      this.characterType = params['type'];
-    });
-
-    // Check to ensure the type in the route is valid, if not redirect to 404
-    if (!this.validCharacterTypes.includes(this.characterType)) {
-      this.router.navigate(['not-found']);
-    }
-  }
+  };
 
   async ngOnInit() {
-    // Retrieve all character rankings from backend
+    // Retrieve all character rankings from the backend
     try {
-      this.characterRankings =
-        await this.userService.getAllCharacterRankingLists(this.username);
+      this.characterRankings = await this.userService.getAllCharacterRankingLists(this.username);
     } catch (error) {
       console.error(error);
     }
-  }
-
-  uppercaseCharacterType(type?: string): string {
-    if (type) {
-      return type.charAt(0).toUpperCase() + type.slice(1);
-    } else {
-      return (
-        this.characterType.charAt(0).toUpperCase() + this.characterType.slice(1)
-      );
-    }
-  }
-
-  /**
-   * Returns all the rankings for the selected character type
-   */
-  get selectedCharacterRankings(): CharacterRankingData[] {
-    return this.characterRankings[this.characterType];
   }
 }

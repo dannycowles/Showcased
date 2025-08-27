@@ -1,0 +1,37 @@
+<h1>{{characterTypeTitle()}} Rankings</h1>
+
+<div class="dropdown mb-3">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    {{characterTypeTitle()}}
+  </button>
+  <ul class="dropdown-menu">
+    @for (type of validCharacterTypes; track type) {
+      @if (editable) {
+        <li><a class="dropdown-item" [routerLink]="['/profile/character-ranking', type]">{{characterTypeTitle(type)}}</a></li>
+      } @else {
+        <li><a class="dropdown-item" [routerLink]="['../', type]">{{characterTypeTitle(type)}}</a></li>
+      }
+    }
+  </ul>
+</div>
+
+@if (editable) {
+  <button class="btn btn-primary mb-5" (click)="openSearchShowsModal()">Add Character</button>
+}
+
+@if (selectedCharacterRankings.length != 0) {
+  <div cdkDropList class="character-list" [cdkDropListDisabled]="!editable" (cdkDropListDropped)="drop($event)">
+    @for (character of selectedCharacterRankings; track character.name; let rank = $index) {
+      <div class="character-box" cdkDrag [style.cursor]="editable ? 'move' : 'default'" >
+        <h3>{{rank + 1}}</h3>
+        <h3>{{character.name}} - {{character.showName}}</h3>
+
+        @if (editable) {
+          <button class="btn btn-danger" (click)="removeCharacter(character)">Remove Character</button>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <h3>No {{characterTypeTitle()}} ranked yet!</h3>
+}

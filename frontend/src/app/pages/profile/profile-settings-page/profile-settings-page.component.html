@@ -3,7 +3,7 @@
 
 <ul class="nav nav-tabs mb-5" id="settingsTabs" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+    <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
             type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
       Profile
     </button>
@@ -15,7 +15,7 @@
     </button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="auth-tab" data-bs-toggle="tab" data-bs-target="#auth-tab-pane"
+    <button class="nav-link" id="auth-tab" data-bs-toggle="tab" data-bs-target="#auth-tab-pane"
             type="button" role="tab" aria-controls="auth-tab-pane" aria-selected="true">
       Auth
     </button>
@@ -29,7 +29,7 @@
 </ul>
 
 <div class="tab-content" id="settingsTabsContent">
-  <div class="tab-pane" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+  <div class="tab-pane show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
     <h3 class="mb-4">Profile</h3>
     @if (profileSettings) {
       <div class="mb-3 w-25">
@@ -65,7 +65,7 @@
     }
   </div>
 
-  <div class="tab-pane show active" id="auth-tab-pane" role="tabpanel" aria-labelledby="auth-tab" tabindex="0">
+  <div class="tab-pane" id="auth-tab-pane" role="tabpanel" aria-labelledby="auth-tab" tabindex="0">
     <div class="w-50">
       <h3 class="mb-4">Change Password</h3>
       <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
