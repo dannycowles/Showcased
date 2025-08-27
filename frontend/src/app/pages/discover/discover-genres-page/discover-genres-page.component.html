@@ -1,6 +1,6 @@
-<h1>Genre Results</h1>
-
 @if (resultData) {
+  <h1>{{resultData.genre}}</h1>
+
   @for (show of resultData.results; track show.id) {
     <h2>{{show.title}}</h2>
 

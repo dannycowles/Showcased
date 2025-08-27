@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ShowService} from '../../../services/show.service';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {ResultPageData} from '../../../data/show/result-page-data';
+import {GenreResultPageData} from '../../../data/show/result-page-data';
 import {NgOptimizedImage} from '@angular/common';
 
 @Component({
@@ -12,15 +12,13 @@ import {NgOptimizedImage} from '@angular/common';
   standalone: true,
 })
 export class DiscoverGenresPageComponent implements OnInit {
-  resultData: ResultPageData;
+  resultData: GenreResultPageData;
   genre: number;
   page: number;
 
-  constructor(
-    private showService: ShowService,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {
+  constructor(private showService: ShowService,
+              private route: ActivatedRoute,
+              private router: Router) {
     this.genre = +this.route.snapshot.queryParams['genre'];
   }
 
@@ -28,10 +26,7 @@ export class DiscoverGenresPageComponent implements OnInit {
     this.route.queryParams.subscribe(async (params) => {
       this.page = +params['page'];
       try {
-        this.resultData = await this.showService.searchByGenre(
-          this.genre,
-          this.page,
-        );
+        this.resultData = await this.showService.searchByGenre(this.genre, this.page);
       } catch (error) {
         this.router.navigate(['/not-found']);
       }
@@ -45,6 +40,10 @@ export class DiscoverGenresPageComponent implements OnInit {
         genre: this.genre,
         page: this.page,
       },
+    });
+    window.scrollTo({
+      top: 0,
+      behavior: 'instant'
     });
   }
 }

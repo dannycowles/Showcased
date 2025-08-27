@@ -3,7 +3,7 @@ import {ShowData} from '../data/show/show-data';
 import {SeasonData} from '../data/show/season-data';
 import {EpisodeData} from '../data/show/episode-data';
 import {ShowGenresData} from '../data/show-genres-data';
-import {ResultPageData} from '../data/show/result-page-data';
+import {GenreResultPageData, ResultPageData} from '../data/show/result-page-data';
 import {RoleData} from '../data/role-data';
 import {EpisodeReviewData, ShowReviewData} from '../data/reviews-data';
 import {SeasonEpisodes} from '../data/show/season-episode';
@@ -65,7 +65,7 @@ export class ShowService {
    * @param genreId
    * @param page
    */
-  async searchByGenre(genreId: number, page: number = 1): Promise<ResultPageData> {
+  async searchByGenre(genreId: number, page: number = 1): Promise<GenreResultPageData> {
     const response = await fetch(`${this.baseUrl}?genre=${genreId}&page=${page}`);
     return await response.json();
   }

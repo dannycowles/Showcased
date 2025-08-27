@@ -134,7 +134,7 @@ public class ShowService {
         return shows;
     }
 
-    public ShowResultsPageDto searchByGenre(Integer genre, Integer page) {
+    public GenreShowResultsPageDto searchByGenre(int genre, Integer page) {
         // Make request to TMDB discover endpoint
         String url = UriComponentsBuilder
                 .fromUriString("https://api.themoviedb.org/3/discover/tv")
@@ -143,8 +143,23 @@ public class ShowService {
                 .queryParam("sort_by", "vote_count.desc")
                 .toUriString();
 
-        ShowResultsPageDto shows = tmdbClient.get(url, ShowResultsPageDto.class);
+        GenreShowResultsPageDto shows = tmdbClient.get(url, GenreShowResultsPageDto.class);
         retrieveEndYears(shows);
+
+        // Make request to TMDB genre endpoint to fetch the name of the genre
+        url = UriComponentsBuilder
+                .fromUriString("https://api.themoviedb.org/3/genre/tv/list")
+                .toUriString();
+        JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));
+        JSONArray genres = jsonResponse.getJSONArray("genres");
+
+        for  (int i = 0; i < genres.length(); i++) {
+            JSONObject genreObject = genres.getJSONObject(i);
+            if (genreObject.getInt("id") == genre) {
+                shows.setGenre(genreObject.getString("name"));
+                break;
+            }
+        }
         return shows;
     }
 

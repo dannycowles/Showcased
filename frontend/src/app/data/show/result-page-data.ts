@@ -6,3 +6,7 @@ export interface ResultPageData {
   readonly totalPages: number;
   readonly totalResults: number;
 }
+
+export interface GenreResultPageData extends ResultPageData {
+  readonly genre: string;
+}
