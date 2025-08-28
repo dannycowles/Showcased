@@ -1,5 +1,6 @@
 package com.example.showcased.repository;
 
+import com.example.showcased.dto.ReviewDistributionDto;
 import com.example.showcased.dto.ShowReviewDto;
 import com.example.showcased.dto.ShowReviewWithUserInfoDto;
 import com.example.showcased.entity.ShowReview;
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
 
@@ -74,6 +77,22 @@ public interface ShowReviewRepository extends JpaRepository<ShowReview, Long> {
             WHERE r.id = :reviewId
         """)
     ShowReviewWithUserInfoDto findById(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+
+
+    @Query(value = """
+        WITH RECURSIVE rating_values(rating) AS (
+            SELECT 1
+            UNION ALL
+            SELECT rating + 1
+            FROM rating_values
+            WHERE rating < 10
+        )
+        SELECT rv.rating, COUNT(sr.rating) as numReviews
+        FROM rating_values rv
+        LEFT JOIN show_reviews sr ON ROUND(sr.rating, 0) = rv.rating AND sr.show_id = :showId
+        GROUP BY rv.rating;
+    """, nativeQuery = true)
+    List<ReviewDistributionDto> getShowReviewDistribution(@Param("showId") Long showId);
 
     @Query("""
         SELECT new com.example.showcased.dto.ShowReviewDto (

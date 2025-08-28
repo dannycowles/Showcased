@@ -28,7 +28,13 @@ export interface ShowData {
   readonly buyOptions: WatchOptionData[];
   readonly recommendations: SearchResultData[];
   readonly trailerPath: string;
+  readonly reviewDistribution: ReviewBreakdown[];
   isOnWatchlist: boolean;
   isOnWatchingList: boolean;
   isOnRankingList: boolean;
+}
+
+interface ReviewBreakdown {
+  readonly rating: number;
+  readonly numReviews: number;
 }

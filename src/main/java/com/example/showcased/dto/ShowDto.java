@@ -70,6 +70,8 @@ public class ShowDto {
 
     private String trailerPath;
 
+    private List<ReviewDistributionDto> reviewDistribution;
+
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {
             this.backdropPath = "https://image.tmdb.org/t/p/w1280" + backdropPath;

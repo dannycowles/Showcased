@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 
 import {ShowService} from '../../../services/show.service';
@@ -24,6 +24,8 @@ import {
 import {NgOptimizedImage} from '@angular/common';
 import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 import {ReviewComponent} from '../../../components/review/review.component';
+import {BaseChartDirective} from 'ng2-charts';
+import {ChartConfiguration} from 'chart.js';
 
 @Component({
   selector: 'app-show-page',
@@ -38,6 +40,7 @@ import {ReviewComponent} from '../../../components/review/review.component';
     NgbDropdownMenu,
     NgbDropdownItem,
     NgbDropdownToggle,
+    BaseChartDirective,
   ],
   standalone: true,
 })
@@ -51,25 +54,75 @@ export class ShowPageComponent implements OnInit {
   selectedSort: SortReviewOption = sortReviewOptions[0];
   safeTrailerUrl: SafeResourceUrl | null = null;
 
-  constructor(
-    private route: ActivatedRoute,
-    private showService: ShowService,
-    private profileService: ProfileService,
-    private toastService: ToastDisplayService,
-    public utilsService: UtilsService,
-    private modalService: NgbModal,
-    private authService: AuthenticationService,
-    private router: Router,
-    private sanitizer: DomSanitizer,
-    private title: Title,
-  ) {
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective;
+  barChartData: ChartConfiguration<'bar'>['data'] = {
+    labels: [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' ],
+    datasets: [
+      {
+        data: [],
+        backgroundColor: 'grey',
+        borderWidth: 1
+      }
+    ]
+  };
+
+  barChartOptions: ChartConfiguration<'bar'>['options'] = {
+    datasets: {
+      bar: {
+        categoryPercentage: 1,
+        barPercentage: 1,
+        borderRadius: 8
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false
+        }
+      },
+      y: {
+        display: false,
+        grid: {
+          display: false
+        }
+      }
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        displayColors: false,
+        callbacks: {
+          title: () => '',
+          label: (context) => {
+            const rating = context.label;
+            const count = context.parsed.y;
+            return `${rating}⭐ : ${count} reviews`;
+          }
+        }
+      }
+    }
+  };
+
+  reviewCount: number;
+  reviewAverage: number;
+
+  constructor(private route: ActivatedRoute,
+              private showService: ShowService,
+              private profileService: ProfileService,
+              private toastService: ToastDisplayService,
+              public utilsService: UtilsService,
+              private modalService: NgbModal,
+              private authService: AuthenticationService,
+              private router: Router,
+              private sanitizer: DomSanitizer,
+              private title: Title) {
     this.route.params.subscribe((params) => {
       this.showId = params['id'];
-      this.notifReviewId =
-        this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
-      this.notifCommentId =
-        this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
+      this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
+      this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
       history.replaceState({}, document.title, window.location.href);
+      this.safeTrailerUrl = null;
       this.loadShowData();
     });
   }
@@ -83,14 +136,16 @@ export class ShowPageComponent implements OnInit {
     this.selectedSort = option;
 
     try {
-      this.reviews = await this.showService.fetchShowReviews(
-        this.showId,
-        1,
-        this.selectedSort.value,
-      );
+      this.reviews = await this.showService.fetchShowReviews(this.showId, 1, this.selectedSort.value);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  computeReviewAverage() {
+    const weightedSum = this.show.reviewDistribution.reduce((sum, review) => sum + (review.rating * review.numReviews), 0);
+    this.reviewCount = this.show.reviewDistribution.reduce((sum, review) => sum + review.numReviews, 0);
+    this.reviewAverage =  parseFloat((weightedSum / this.reviewCount).toFixed(1));
   }
 
   async loadShowData() {
@@ -98,19 +153,18 @@ export class ShowPageComponent implements OnInit {
     try {
       this.show = await this.showService.fetchShowDetails(this.showId);
 
+      // Update the chart review counts
+      this.barChartData.datasets[0].data = this.show.reviewDistribution.map(review => review.numReviews);
+      this.chart.update();
+      this.computeReviewAverage();
+
       if (this.show.startYear == this.show.endYear) {
-        this.title.setTitle(
-          `${this.show.title} (${this.show.startYear}) | Showcased`,
-        );
+        this.title.setTitle(`${this.show.title} (${this.show.startYear}) | Showcased`,);
       } else {
-        this.title.setTitle(
-          `${this.show.title} (${this.show.startYear} - ${this.show.endYear}) | Showcased`,
-        );
+        this.title.setTitle(`${this.show.title} (${this.show.startYear} - ${this.show.endYear}) | Showcased`,);
       }
       if (this.show.trailerPath != null) {
-        this.safeTrailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-          this.show.trailerPath,
-        );
+        this.safeTrailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.show.trailerPath);
       }
     } catch (error) {
       console.error(error);
@@ -126,14 +180,10 @@ export class ShowPageComponent implements OnInit {
     // If there was a notification review in the navigation state, fetch that review and append it to the beginning of the reviews list
     if (this.notifReviewId != null) {
       try {
-        const notifReview = await this.showService.fetchShowReview(
-          this.notifReviewId,
-        );
+        const notifReview = await this.showService.fetchShowReview(this.notifReviewId,);
 
         // Filter out the review if it already exists on the first page of results
-        this.reviews.content = this.reviews.content.filter(
-          (review) => review.id != this.notifReviewId,
-        );
+        this.reviews.content = this.reviews.content.filter((review) => review.id != this.notifReviewId);
 
         // Appends the notification review to the beginning of the first page of results
         this.reviews.content.unshift(notifReview);

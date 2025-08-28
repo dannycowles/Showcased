@@ -30,6 +30,7 @@
     "jquery-serializejson": "^3.2.1",
     "ng-otp-input": "^2.0.7",
     "ng-recaptcha": "^13.2.1",
+    "ng2-charts": "^8.0.0",
     "ngx-infinite-scroll": "^19.0.0",
     "prettier": "^3.6.0",
     "rxjs": "~7.8.0",

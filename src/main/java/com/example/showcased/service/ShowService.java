@@ -290,7 +290,7 @@ public class ShowService {
             String trailerUrl = "https://www.youtube.com/embed/" + trailerKey;
             show.setTrailerPath(trailerUrl);
         }
-
+        show.setReviewDistribution(showReviewRepository.getShowReviewDistribution(Long.valueOf(id)));
         return show;
     }
 
