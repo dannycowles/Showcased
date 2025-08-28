@@ -34,7 +34,7 @@ export interface ShowData {
   isOnRankingList: boolean;
 }
 
-interface ReviewBreakdown {
+export interface ReviewBreakdown {
   readonly rating: number;
   readonly numReviews: number;
 }

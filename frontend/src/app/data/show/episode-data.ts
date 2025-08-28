@@ -1,3 +1,5 @@
+import {ReviewBreakdown} from './show-data';
+
 export interface EpisodeData {
   readonly id: number;
   readonly episodeTitle: string;
@@ -12,4 +14,5 @@ export interface EpisodeData {
   readonly numEpisodesInSeason: number;
   readonly numEpisodesInPreviousSeason: number;
   isOnRankingList: boolean;
+  readonly reviewDistribution: ReviewBreakdown[];
 }

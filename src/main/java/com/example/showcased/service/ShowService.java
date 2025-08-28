@@ -496,6 +496,7 @@ public class ShowService {
         if (user != null) {
             episode.setOnRankingList(episodeRankingRepository.existsById(new  EpisodeRankingId(user.getId(), episode.getId())));
         }
+        episode.setReviewDistribution(episodeReviewRepository.getEpisodeReviewDistribution(episode.getId()));
         return episode;
     }
 

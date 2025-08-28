@@ -18,6 +18,7 @@ import {Title} from '@angular/platform-browser';
 import { NgOptimizedImage } from '@angular/common';
 import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 import {ReviewComponent} from '../../../components/review/review.component';
+import {ReviewChartComponent} from '../../../components/review-chart/review-chart.component';
 
 @Component({
   selector: 'app-episode-page',
@@ -28,6 +29,7 @@ import {ReviewComponent} from '../../../components/review/review.component';
     RouterLink,
     InfiniteScrollDirective,
     ReviewComponent,
+    ReviewChartComponent,
   ],
   standalone: true,
 })

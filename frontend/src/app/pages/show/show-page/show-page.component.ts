@@ -1,31 +1,40 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import {ShowService} from '../../../services/show.service';
-import {ProfileService} from '../../../services/profile.service';
-import {ToastDisplayService} from '../../../services/toast.service';
-import {UtilsService} from '../../../services/utils.service';
-import {ShowData} from '../../../data/show/show-data';
-import {ShowReviewData} from '../../../data/reviews-data';
-import {NgbDropdown, NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {AddReviewModalComponent} from '../../../components/add-review-modal/add-review-modal.component';
-import {AddToCollectionModalComponent} from '../../../components/add-to-collection-modal/add-to-collection-modal.component';
-import {AuthenticationService} from '../../../services/auth.service';
-import {ReviewType} from '../../../data/enums';
-import {AddShowReviewDto} from '../../../data/dto/add-review-dto';
-import {AddToShowRankingList, AddToWatchingListDto, AddToWatchlistDto} from '../../../data/dto/add-to-list-dto';
-import {PageData} from '../../../data/page-data';
-import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
+import { ShowService } from '../../../services/show.service';
+import { ProfileService } from '../../../services/profile.service';
+import { ToastDisplayService } from '../../../services/toast.service';
+import { UtilsService } from '../../../services/utils.service';
+import { ShowData } from '../../../data/show/show-data';
+import { ShowReviewData } from '../../../data/reviews-data';
+import {
+  NgbDropdown,
+  NgbDropdownItem,
+  NgbDropdownMenu,
+  NgbDropdownToggle,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
+import { AddReviewModalComponent } from '../../../components/add-review-modal/add-review-modal.component';
+import { AddToCollectionModalComponent } from '../../../components/add-to-collection-modal/add-to-collection-modal.component';
+import { AuthenticationService } from '../../../services/auth.service';
+import { ReviewType } from '../../../data/enums';
+import { AddShowReviewDto } from '../../../data/dto/add-review-dto';
+import {
+  AddToShowRankingList,
+  AddToWatchingListDto,
+  AddToWatchlistDto,
+} from '../../../data/dto/add-to-list-dto';
+import { PageData } from '../../../data/page-data';
+import { SortReviewOption, sortReviewOptions } from '../../../data/constants';
 import {
   DomSanitizer,
   SafeResourceUrl,
   Title,
 } from '@angular/platform-browser';
-import {NgOptimizedImage} from '@angular/common';
-import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
-import {ReviewComponent} from '../../../components/review/review.component';
-import {BaseChartDirective} from 'ng2-charts';
-import {ChartConfiguration} from 'chart.js';
+import { NgOptimizedImage } from '@angular/common';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { ReviewComponent } from '../../../components/review/review.component';
+import { ReviewChartComponent } from '../../../components/review-chart/review-chart.component';
 
 @Component({
   selector: 'app-show-page',
@@ -40,7 +49,7 @@ import {ChartConfiguration} from 'chart.js';
     NgbDropdownMenu,
     NgbDropdownItem,
     NgbDropdownToggle,
-    BaseChartDirective,
+    ReviewChartComponent,
   ],
   standalone: true,
 })
@@ -53,59 +62,6 @@ export class ShowPageComponent implements OnInit {
   isLoggedIn: boolean = false;
   selectedSort: SortReviewOption = sortReviewOptions[0];
   safeTrailerUrl: SafeResourceUrl | null = null;
-
-  @ViewChild(BaseChartDirective) chart: BaseChartDirective;
-  barChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' ],
-    datasets: [
-      {
-        data: [],
-        backgroundColor: 'grey',
-        borderWidth: 1
-      }
-    ]
-  };
-
-  barChartOptions: ChartConfiguration<'bar'>['options'] = {
-    datasets: {
-      bar: {
-        categoryPercentage: 1,
-        barPercentage: 1,
-        borderRadius: 8
-      }
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false
-        }
-      },
-      y: {
-        display: false,
-        grid: {
-          display: false
-        }
-      }
-    },
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      tooltip: {
-        displayColors: false,
-        callbacks: {
-          title: () => '',
-          label: (context) => {
-            const rating = context.label;
-            const count = context.parsed.y;
-            return `${rating}⭐ : ${count} reviews`;
-          }
-        }
-      }
-    }
-  };
-
-  reviewCount: number;
-  reviewAverage: number;
 
   constructor(private route: ActivatedRoute,
               private showService: ShowService,
@@ -142,26 +98,15 @@ export class ShowPageComponent implements OnInit {
     }
   }
 
-  computeReviewAverage() {
-    const weightedSum = this.show.reviewDistribution.reduce((sum, review) => sum + (review.rating * review.numReviews), 0);
-    this.reviewCount = this.show.reviewDistribution.reduce((sum, review) => sum + review.numReviews, 0);
-    this.reviewAverage =  parseFloat((weightedSum / this.reviewCount).toFixed(1));
-  }
-
   async loadShowData() {
     // Retrieve show data from backend
     try {
       this.show = await this.showService.fetchShowDetails(this.showId);
 
-      // Update the chart review counts
-      this.barChartData.datasets[0].data = this.show.reviewDistribution.map(review => review.numReviews);
-      this.chart.update();
-      this.computeReviewAverage();
-
       if (this.show.startYear == this.show.endYear) {
-        this.title.setTitle(`${this.show.title} (${this.show.startYear}) | Showcased`,);
+        this.title.setTitle(`${this.show.title} (${this.show.startYear}) | Showcased`);
       } else {
-        this.title.setTitle(`${this.show.title} (${this.show.startYear} - ${this.show.endYear}) | Showcased`,);
+        this.title.setTitle(`${this.show.title} (${this.show.startYear} - ${this.show.endYear}) | Showcased`);
       }
       if (this.show.trailerPath != null) {
         this.safeTrailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.show.trailerPath);
@@ -180,7 +125,7 @@ export class ShowPageComponent implements OnInit {
     // If there was a notification review in the navigation state, fetch that review and append it to the beginning of the reviews list
     if (this.notifReviewId != null) {
       try {
-        const notifReview = await this.showService.fetchShowReview(this.notifReviewId,);
+        const notifReview = await this.showService.fetchShowReview(this.notifReviewId);
 
         // Filter out the review if it already exists on the first page of results
         this.reviews.content = this.reviews.content.filter((review) => review.id != this.notifReviewId);

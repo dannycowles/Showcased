@@ -41,6 +41,8 @@
     </div>
   </div>
 
+  <app-review-chart [reviewDistribution]="episode.reviewDistribution"></app-review-chart>
+
   <button type="button" class="btn btn-primary my-4" (click)="openAddReviewModal()">Add Review</button>
 
   @if (reviews?.content.length) {

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class EpisodeDto {
     private Long id;
@@ -34,6 +36,7 @@ public class EpisodeDto {
 
     @JsonProperty("isOnRankingList")
     private boolean isOnRankingList = false;
+    private List<ReviewDistributionDto> reviewDistribution;
 
     public void setStillPath(String stillPath) {
         this.stillPath = "https://image.tmdb.org/t/p/w780" + stillPath;

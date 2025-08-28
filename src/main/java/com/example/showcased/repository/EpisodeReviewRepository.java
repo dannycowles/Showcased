@@ -2,6 +2,7 @@ package com.example.showcased.repository;
 
 import com.example.showcased.dto.EpisodeReviewDto;
 import com.example.showcased.dto.EpisodeReviewWithUserInfoDto;
+import com.example.showcased.dto.ReviewDistributionDto;
 import com.example.showcased.entity.EpisodeReview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Long> {
     @Query(""" 
@@ -110,6 +113,21 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
             WHERE u.displayName = :username
         """)
     Page<EpisodeReviewDto> findByUsername(@Param("username") String username, @Param("loggedInUserId") Long loggedInUserId, Pageable pageable);
+
+    @Query(value = """
+        WITH RECURSIVE rating_values(rating) AS (
+            SELECT 1
+            UNION ALL
+            SELECT rating + 1
+            FROM rating_values
+            WHERE rating < 10
+        )
+        SELECT rv.rating, COUNT(er.rating) as numReviews
+        FROM rating_values rv
+        LEFT JOIN episode_reviews er ON ROUND(er.rating, 0) = rv.rating AND er.episode_id = :episodeId
+        GROUP BY rv.rating;
+    """, nativeQuery = true)
+    List<ReviewDistributionDto> getEpisodeReviewDistribution(@Param("episodeId") Long episodeId);
 
     void deleteByUserIdAndEpisodeId(Long userId, Long episodeId);
 
