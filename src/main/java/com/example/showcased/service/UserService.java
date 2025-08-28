@@ -153,6 +153,7 @@ public class UserService {
         userDetails.setCharacterRankings(getAllUserCharacterRankings(username, numTopEntries));
         userDetails.setDynamicRankingTop(getUserDynamicRankings(username, numTopEntries));
         userDetails.setCollections(getCollections(null, username, PageRequest.of(1, numTopEntries)).getContent());
+        userDetails.setReviewDistribution(userRepository.getReviewDistribution(user.getId()));
         return userDetails;
     }
 

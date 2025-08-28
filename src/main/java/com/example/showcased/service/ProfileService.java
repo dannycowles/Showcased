@@ -134,6 +134,7 @@ public class ProfileService {
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries));
         profileDetails.setDynamicRankingTop(getDynamicsRankingList(numTopEntries));
         profileDetails.setCollections(getCollectionList(null, PageRequest.of(1, numTopEntries)).getContent());
+        profileDetails.setReviewDistribution(userRepository.getReviewDistribution(user.getId()));
         return profileDetails;
     }
 

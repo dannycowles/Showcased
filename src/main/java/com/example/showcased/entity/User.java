@@ -22,6 +22,7 @@ public class User implements UserDetails {
     private String bio;
     private int numFollowers;
     private int numFollowing;
+    private int numReviews;
 
     public User(String email, String username, String password) {
         this.email = email;

@@ -34,6 +34,7 @@ public class ShowService {
     private final EpisodeInfoRepository episodeInfoRepository;
     private final EpisodeRankingRepository episodeRankingRepository;
     private final ActivitiesRepository activitiesRepository;
+    private final UserRepository userRepository;
     @Value("${omdbApi}")
     private String omdbKey;
 
@@ -73,7 +74,7 @@ public class ShowService {
                        EpisodeReviewCommentRepository episodeReviewCommentRepository,
                        LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository,
                        ActivitiesRepository activitiesRepository,
-                       AuthService authService) {
+                       AuthService authService, UserRepository userRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -94,6 +95,7 @@ public class ShowService {
         this.likedEpisodeReviewCommentsRepository = likedEpisodeReviewCommentsRepository;
         this.activitiesRepository = activitiesRepository;
         this.authService = authService;
+        this.userRepository = userRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -521,6 +523,10 @@ public class ShowService {
         review.setUserId(user.getId());
         review.setShowId(showId);
         showReviewRepository.save(review);
+
+        // Increment number of reviews for user
+        userRepository.incrementNumReviews(user.getId());
+
         return showReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
@@ -615,6 +621,9 @@ public class ShowService {
             // - Show Review Comment Notifications
             List<Integer> activityTypes = Arrays.asList(ActivityType.LIKE_SHOW_REVIEW.getDbValue(), ActivityType.COMMENT_SHOW_REVIEW.getDbValue());
             activitiesRepository.deleteShowReviewActivities(review.getId(), activityTypes);
+
+            // Decrement the number of reviews for the user
+            userRepository.decrementNumReviews(user.getId());
         }
     }
 
@@ -656,6 +665,10 @@ public class ShowService {
         review.setNumLikes(0L);
         review.setReviewDate(new Date());
         episodeReviewRepository.save(review);
+
+        // Increment the number of reviews for the user
+        userRepository.incrementNumReviews(user.getId());
+
         return episodeReviewRepository.findByIdWithUserInfo(review.getId());
     }
 
@@ -749,6 +762,9 @@ public class ShowService {
             // - Episode Review Comment Notifications
             List<Integer> activityTypes = Arrays.asList(ActivityType.LIKE_EPISODE_REVIEW.getDbValue(), ActivityType.COMMENT_EPISODE_REVIEW.getDbValue());
             activitiesRepository.deleteEpisodeReviewActivities(review.getId(), activityTypes);
+
+            // Decrement the number of reviews for the user
+            userRepository.decrementNumReviews(user.getId());
         }
     }
 

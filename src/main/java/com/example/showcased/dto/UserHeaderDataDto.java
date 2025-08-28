@@ -14,6 +14,7 @@ public class UserHeaderDataDto {
     private List<SocialAccountReturnDto> socialAccounts;
     private int numFollowers;
     private int numFollowing;
+    private int numReviews;
     @JsonProperty("isFollowing")
     private boolean isFollowing = false;
     @JsonProperty("isOwnProfile")
