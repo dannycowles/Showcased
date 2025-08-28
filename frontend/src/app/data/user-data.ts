@@ -7,6 +7,7 @@ import {CharacterRankingsData} from './character-rankings-data';
 import {DynamicRankingData} from './lists/dynamic-ranking-data';
 import {ProfileReviewData} from './types';
 import {CollectionData} from './collection-data';
+import {ReviewBreakdown} from './show/show-data';
 
 export interface UserData {
   readonly headerData: UserHeaderData
@@ -23,4 +24,5 @@ export interface UserData {
   readonly hasMoreEpisodeRanking: boolean;
   readonly reviews: ProfileReviewData[];
   readonly collections: CollectionData[];
+  readonly reviewDistribution: ReviewBreakdown[];
 }

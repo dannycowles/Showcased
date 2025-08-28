@@ -12,6 +12,7 @@ import {DynamicListComponent} from '../../../components/dynamic-list/dynamic-lis
 import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
 import {RouterLink} from '@angular/router';
 import {CollectionComponent} from '../../../components/collection/collection.component';
+import {ReviewChartComponent} from '../../../components/review-chart/review-chart.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -27,6 +28,7 @@ import {CollectionComponent} from '../../../components/collection/collection.com
     ProfileReviewComponent,
     RouterLink,
     CollectionComponent,
+    ReviewChartComponent,
   ],
   standalone: true,
 })

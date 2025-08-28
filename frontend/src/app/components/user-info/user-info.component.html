@@ -10,13 +10,17 @@
     }
   }
   <div class="d-flex m-3 gap-5">
-    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" [routerLink]="followersUrl">
+    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" [routerLink]="['followers']">
       <h3>{{headerData.numFollowers}}</h3>
       <h4>Followers</h4>
     </a>
-    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" [routerLink]="followingUrl">
+    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" [routerLink]="['following']">
       <h3>{{headerData.numFollowing}}</h3>
       <h4>Following</h4>
+    </a>
+    <a class="d-flex flex-column align-items-center text-decoration-none text-dark" [routerLink]="['reviews']">
+      <h3>{{headerData.numReviews}}</h3>
+      <h4>Reviews</h4>
     </a>
   </div>
   <pre class="fs-3">{{headerData.bio}}</pre>

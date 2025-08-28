@@ -13,6 +13,7 @@ import {CharacterListComponent} from '../../../components/character-list/charact
 import {DynamicListComponent} from '../../../components/dynamic-list/dynamic-list.component';
 import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
 import {CollectionComponent} from '../../../components/collection/collection.component';
+import {ReviewChartComponent} from '../../../components/review-chart/review-chart.component';
 
 @Component({
   selector: 'app-user-page',
@@ -28,6 +29,7 @@ import {CollectionComponent} from '../../../components/collection/collection.com
     DynamicListComponent,
     ProfileReviewComponent,
     CollectionComponent,
+    ReviewChartComponent,
   ],
   standalone: true,
 })

@@ -10,4 +10,5 @@ export interface UserHeaderData {
   socialAccounts: UserSocialData[];
   isFollowing: boolean;
   isOwnProfile: boolean;
+  numReviews: number;
 }

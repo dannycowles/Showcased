@@ -26,15 +26,6 @@ export class UserInfoComponent {
   constructor(private userService: UserService,
               public utilsService: UtilsService) { };
 
-
-  get followersUrl(): string {
-    return this.headerData.isOwnProfile ? 'followers' : `/user/${this.headerData.displayName}/followers`;
-  }
-
-  get followingUrl(): string {
-    return this.headerData.isOwnProfile ? 'following' : `/user/${this.headerData.displayName}/following`;
-  }
-
   async followUser() {
     try {
       const response = await this.userService.followUser(this.headerData.id);

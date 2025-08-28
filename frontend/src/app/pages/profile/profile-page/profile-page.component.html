@@ -45,7 +45,10 @@
   }
   <button class="btn btn-primary mb-4" routerLink="collections">Manage Collections</button>
 
-  <h3>Recent Reviews</h3>
+  <h3>Reviews</h3>
+
+  <app-review-chart [reviewDistribution]="profileData.reviewDistribution"></app-review-chart>
+
   <button type="button" class="btn btn-secondary mb-3" routerLink="reviews">View All</button>
   @if (profileData?.reviews?.length != 0) {
     @for (review of profileData.reviews; track review.id + '-' + review.type) {
