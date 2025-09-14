@@ -12,14 +12,22 @@ import {
 } from '@angular/forms';
 import {UtilsService} from '../../../services/utils.service';
 import {map, Observable, of, switchMap, timer} from 'rxjs';
-import {NgClass} from '@angular/common';
+import {NgClass, NgOptimizedImage} from '@angular/common';
 import {RecaptchaModule, RecaptchaFormsModule} from 'ng-recaptcha';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.css',
-  imports: [ReactiveFormsModule, NgClass, RecaptchaModule, RecaptchaFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    NgClass,
+    RecaptchaModule,
+    RecaptchaFormsModule,
+    NgOptimizedImage,
+    RouterLink,
+  ],
   standalone: true,
 })
 export class RegisterPageComponent {
@@ -31,7 +39,6 @@ export class RegisterPageComponent {
   readonly passwordMinLength: number = 8;
 
   showPassword: boolean = false;
-  showConfirmPassword: boolean = false;
 
   registerForm = new FormGroup(
     {
@@ -131,9 +138,5 @@ export class RegisterPageComponent {
 
   toggleShowPassword() {
     this.showPassword = !this.showPassword;
-  }
-
-  toggleShowConfirmPassword() {
-    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

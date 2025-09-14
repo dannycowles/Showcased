@@ -1,92 +1,102 @@
-<form [formGroup]="registerForm" class="row g-3" (ngSubmit)="onSubmit()">
-  <div class="form-floating mb-3">
-    <input id="email" type="email" class="form-control" formControlName="email" placeholder="Enter email" autocomplete="email"
-           [class.is-invalid]="email.invalid && (email.dirty || email.touched)">
-    <label for="email" class="form-label">Email</label>
-
-    @if (email.invalid && (email.dirty || email.touched)) {
-      @if (email.hasError('required')) {
-        <div class="validation-error">Email is required</div>
-      } @else if (email.hasError('email')) {
-        <div class="validation-error">Please enter a valid email</div>
+<div id="register-container">
+  <form id="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <h1>Welcome to Showcased!</h1>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <div class="position-relative">
+        <img class="input-icon" ngSrc="envelope.svg" alt="Email icon" height="20" width="20">
+        <input id="email" type="email" class="form-control" formControlName="email" placeholder="Enter your email" autocomplete="email"
+               [class.is-invalid]="email.invalid && (email.dirty || email.touched)">
+      </div>
+      @if (email.invalid && (email.dirty || email.touched)) {
+        @if (email.hasError('required')) {
+          <div class="validation-error">Email is required</div>
+        } @else if (email.hasError('email')) {
+          <div class="validation-error">Please enter a valid email</div>
+        }
       }
-    }
-  </div>
-
-  <div class="form-floating col-10">
-    <input id="username" type="text" class="form-control" formControlName="username" placeholder="Enter username" autocomplete="username"
-    [class.is-invalid]="username.invalid && (username.dirty || username.touched)">
-    <label for="username" class="form-label">Username</label>
-  </div>
-  <div class="col-2" [style.color]="usernameMessageColor">{{usernameMessage}}</div>
-  <div class="mb-3" style="margin-top: 0">
-    <div id="usernameHelpBlock" class="form-text">
-      Your username must be at least {{usernameMinLength}} characters long
     </div>
 
-    @if (username.invalid && (username.dirty || username.touched)) {
-      @if (username.hasError('required')) {
-        <div class="validation-error">Username is required</div>
-      } @else if (username.hasError('minlength')) {
-        <div class="validation-error">Username is too short</div>
+    <div>
+      <label for="username" class="form-label">Username</label>
+      <div class="position-relative">
+        <img class="input-icon" ngSrc="person.svg" alt="Username icon" height="20" width="20">
+        <input id="username" type="text" class="form-control" formControlName="username" placeholder="Enter your username" autocomplete="username"
+               [class.is-invalid]="username.invalid && (username.dirty || username.touched)">
+      </div>
+    </div>
+    <div class="mb-3" style="margin-top: 0">
+      <div id="usernameHelpBlock" class="form-text">
+        Must be at least {{usernameMinLength}} characters
+      </div>
+
+      @if (username.invalid && (username.dirty || username.touched)) {
+        @if (username.hasError('required')) {
+          <div class="validation-error">Username is required</div>
+        } @else if (username.hasError('minlength')) {
+          <div class="validation-error">Username is too short</div>
+        }
       }
-    }
-  </div>
-
-
-  <div class="form-floating">
-    <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password" autocomplete="new-password"
-    [class.is-invalid]="password.invalid && (password.dirty || password.touched)" aria-describedby="passwordHelpBlock">
-    <label for="password" class="form-label">Password</label>
-    <i role="button"
-       class="bi show-password-icon"
-       [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"
-       (click)="toggleShowPassword()"
-       tabindex="0"
-       (keyup.space)="toggleShowPassword()"
-       (keyup.enter)="toggleShowPassword()">
-      {{showPassword ? "Hide" : "Show"}} Password
-    </i>
-  </div>
-  <div class="mb-3" style="margin-top: 0">
-    <div id="passwordHelpBlock" class="form-text">
-      Your password must be at least {{passwordMinLength}} characters long
+      <div [style.color]="usernameMessageColor">{{usernameMessage}}</div>
     </div>
 
-    @if (password.invalid && (password.dirty || password.touched)) {
-      @if (password.hasError('required')) {
-        <div class="validation-error">Password is required</div>
-      } @else if (password.hasError('minlength')) {
-        <div class="validation-error">Password is too short</div>
-      }
-    }
-  </div>
 
-  <div class="form-floating">
-    <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" formControlName="confirmPassword" placeholder="Re-enter your password" autocomplete="new-password"
-           [class.is-invalid]="registerForm.hasError('passwordsDontMatch') && (confirmPassword.dirty || confirmPassword.touched)">
-    <label for="confirmPassword" class="form-label">Confirm password</label>
-    <i role="button"
-       class="bi show-password-icon"
-       [ngClass]="showConfirmPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"
-       (click)="toggleShowConfirmPassword()"
-       tabindex="0"
-       (keyup.space)="toggleShowConfirmPassword()"
-       (keyup.enter)="toggleShowConfirmPassword()">
-      {{showConfirmPassword ? "Hide" : "Show"}} Password
-    </i>
-  </div>
-  <div>
-    @if (confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)) {
-      @if (confirmPassword.hasError('required')) {
-        <div class="validation-error">Password is required</div>
-      }
-    } @else if (registerForm.hasError('passwordsDontMatch') && (confirmPassword.dirty || confirmPassword.touched)) {
-      <div class="validation-error">Passwords must match</div>
-    }
-  </div>
+    <div>
+      <label for="password" class="form-label">Password</label>
+      <div class="position-relative">
+        <img class="input-icon" ngSrc="lock.svg" alt="Password icon" height="20" width="20">
+        <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter your password" autocomplete="new-password"
+               [class.is-invalid]="password.invalid && (password.dirty || password.touched)" aria-describedby="passwordHelpBlock">
+        <i role="button"
+           class="bi show-password-icon"
+           [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"
+           (click)="toggleShowPassword()"
+           tabindex="0"
+           (keyup.space)="toggleShowPassword()"
+           (keyup.enter)="toggleShowPassword()">
+          {{showPassword ? "Hide" : "Show"}} Password
+        </i>
+      </div>
+    </div>
+    <div class="mb-3" style="margin-top: 0">
+      <div id="passwordHelpBlock" class="form-text">
+        Must be at least {{passwordMinLength}} characters
+      </div>
 
-  <re-captcha siteKey="6LdJnpkrAAAAABQtNCfpedd6bWR_wLQEojeVtofM" formControlName="recaptcha" ></re-captcha>
-  <div [style.color]="registerMessageColor">{{registerMessage}}</div>
-  <button type="submit" class="btn btn-primary col-2" [disabled]="registerForm.invalid || registerForm.pending">Create Account</button>
-</form>
+      @if (password.invalid && (password.dirty || password.touched)) {
+        @if (password.hasError('required')) {
+          <div class="validation-error">Password is required</div>
+        } @else if (password.hasError('minlength')) {
+          <div class="validation-error">Password is too short</div>
+        }
+      }
+    </div>
+
+    <div>
+      <label for="confirmPassword" class="form-label">Confirm password</label>
+      <div class="position-relative">
+        <img class="input-icon" ngSrc="lock.svg" alt="Confirm password icon" height="20" width="20">
+        <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm your password" autocomplete="new-password"
+               [class.is-invalid]="registerForm.hasError('passwordsDontMatch') && (confirmPassword.dirty || confirmPassword.touched)">
+      </div>
+    </div>
+    <div class="mb-4">
+      @if (confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)) {
+        @if (confirmPassword.hasError('required')) {
+          <div class="validation-error">Password is required</div>
+        }
+      } @else if (registerForm.hasError('passwordsDontMatch') && (confirmPassword.dirty || confirmPassword.touched)) {
+        <div class="validation-error">Passwords must match</div>
+      }
+    </div>
+
+    <re-captcha siteKey="6LdJnpkrAAAAABQtNCfpedd6bWR_wLQEojeVtofM" formControlName="recaptcha" ></re-captcha>
+    <div [style.color]="registerMessageColor">{{registerMessage}}</div>
+    <button id="register-button" type="submit" class="btn btn-primary mt-4" [disabled]="registerForm.invalid || registerForm.pending">Register</button>
+
+    <div class="text-center mt-4">
+      <p>Already have an account? <a class="link" routerLink="/login">Log in</a></p>
+    </div>
+  </form>
+</div>
+

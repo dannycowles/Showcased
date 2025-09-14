@@ -26,15 +26,15 @@
         </i>
       </div>
       <div class="text-end mt-2">
-        <a class="link" routerLink="/reset-password">Forgot Password?</a>
+        <a class="link" routerLink="/reset-password">Forgot password?</a>
       </div>
     </div>
 
-    <div id="login-error-message" role="alert" aria-live="assertive" class="mb-2">{{errorMessage}}</div>
+    <div id="login-error-message" role="alert" aria-live="assertive" class="validation-error mb-2">{{errorMessage}}</div>
     <button id="login-button" type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Log in</button>
 
     <div class="text-center mt-4">
-      <p>Don't have an account? <a class="link" routerLink="/register">Register Now</a></p>
+      <p>Don't have an account? <a class="link" routerLink="/register">Register now</a></p>
     </div>
   </form>
 </div>
