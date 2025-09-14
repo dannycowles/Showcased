@@ -3,13 +3,13 @@ import {AuthenticationService} from '../../../services/auth.service';
 import {LoginDto} from '../../../data/dto/login-dto';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import {NgClass} from '@angular/common';
+import {NgClass, NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css',
-  imports: [ReactiveFormsModule, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, NgClass, RouterLink, NgOptimizedImage],
   standalone: true,
 })
 export class LoginPageComponent {

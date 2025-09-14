@@ -10,6 +10,7 @@
 
 body {
   font-family: 'Lato', sans-serif !important;
+  background-color: var(--background-color) !important;
 }
 
 nav {
@@ -74,15 +75,15 @@ nav {
 }
 
 .validation-error {
-  color: #d10505;
+  color: var(--error-color);
 }
 
 .validation-success {
-  color: green;
+  color: var(--success-color);
 }
 
 .required-label {
   font-size: 0.9rem;
   opacity: 75%;
-  color: #d00;
+  color: var(--error-color);
 }

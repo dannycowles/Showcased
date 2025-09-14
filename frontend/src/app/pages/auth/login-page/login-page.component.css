@@ -1,3 +1,71 @@
 #login-error-message {
-  color: #d10505;
+  color: var(--error-color);
+}
+
+#login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: calc(100vh - 5rem);
+}
+
+#login-form {
+  width: 100%;
+  max-width: 550px;
+  border-radius: 5px;
+  padding: 50px 30px;
+  background-color: white;
+  border: 2px solid var(--outline-color);
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.form-control {
+  padding-left: 40px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-color: var(--outline-color);
+  border-width: 2px;
+}
+
+.show-password-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#login-button {
+  background-color: var(--button-color);
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+#login-button:hover {
+  background-color: var(--outline-color);
+}
+
+h1 {
+  font-weight: 500;
+}
+
+.link {
+  color: var(--button-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: var(--outline-color);
 }
