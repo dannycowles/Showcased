@@ -1,33 +1,35 @@
-<nav class="navbar fixed-top navbar-expand-md bg-body-tertiary">
+<nav class="navbar fixed-top navbar-expand-md">
   <div class="container-fluid">
     <a class="navbar-brand d-flex align-items-center me-5" routerLink="/">
-      <img ngSrc="favicon.ico" alt="Showcased Logo" class="me-2" priority width="25" height="25">
-      <span>Showcased</span>
+      <img ngSrc="logo.svg" alt="Showcased Logo" class="me-4" priority width="45" height="45">
+      <span class="nav-logo fs-3 fw-bold">Showcased</span>
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav gap-3 me-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/search">Shows</a>
-        </li>
+      <ul class="navbar-nav gap-5 me-auto">
         <li class="nav-item">
           <a class="nav-link" routerLink="/discover">Discover</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/search-users">Members</a>
-        </li>
+        <form class="d-flex">
+          <div id="nav-search" class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+              <img ngSrc="search.svg" alt="Search Icon" width="16" height="16">
+            </span>
+            <input type="text" class="form-control border-start-0" placeholder="Search">
+          </div>
+        </form>
       </ul>
-      <ul class="navbar-nav gap-3">
+      <ul class="navbar-nav gap-3 d-flex align-items-center">
         @if (isLoggedIn) {
           <li class="nav-item">
             <a class="nav-link" routerLink="/profile/activity">Activity</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img [ngSrc]="localStorage.getItem('profilePicture')" id="profile-picture" alt="Profile Picture" priority width="25" height="25">
+            <a class="nav-link dropdown-toggle me-2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img class="me-2" [ngSrc]="localStorage.getItem('profilePicture')" id="profile-picture" alt="Profile Picture" priority width="35" height="35">
               {{localStorage.getItem('username')}}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">

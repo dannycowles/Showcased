@@ -1,16 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import {NgOptimizedImage} from '@angular/common';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css',
-  standalone: true
+  imports: [NgOptimizedImage, RouterLink],
+  standalone: true,
 })
-export class HomePageComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class HomePageComponent {
+  constructor() {}
 }

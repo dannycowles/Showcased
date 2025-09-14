@@ -1,61 +1,62 @@
-@if (profileData) {
-  <app-user-info [headerData]="profileData.headerData" editable></app-user-info>
+<div class="content">
+  @if (profileData) {
+    <app-user-info [headerData]="profileData.headerData" editable></app-user-info>
 
-  <app-show-list title="Watchlist" [shows]="profileData.watchlistTop"></app-show-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="watchlist">Manage Watchlist</button>
+    <app-show-list title="Watchlist" [shows]="profileData.watchlistTop"></app-show-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="watchlist">Manage Watchlist</button>
 
-  <app-show-list title="Currently Watching" [shows]="profileData.watchingTop"></app-show-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="watching">Manage Currently Watching</button>
+    <app-show-list title="Currently Watching" [shows]="profileData.watchingTop"></app-show-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="watching">Manage Currently Watching</button>
 
-  <app-show-list title="Favorite Shows" [shows]="profileData.showRankingTop" ranked></app-show-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="show-ranking">Manage Favorite Shows</button>
+    <app-show-list title="Favorite Shows" [shows]="profileData.showRankingTop" ranked></app-show-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="show-ranking">Manage Favorite Shows</button>
 
-  <app-season-list [seasons]="profileData.seasonRankingTop"></app-season-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="season-ranking">Manage Favorite Seasons</button>
+    <app-season-list [seasons]="profileData.seasonRankingTop"></app-season-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="season-ranking">Manage Favorite Seasons</button>
 
-  <app-episode-list [episodes]="profileData.episodeRankingTop"></app-episode-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="episode-ranking">Manage Favorite Episodes</button>
+    <app-episode-list [episodes]="profileData.episodeRankingTop"></app-episode-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="episode-ranking">Manage Favorite Episodes</button>
 
-  <app-character-list title="Favorite Protagonists" [characters]="profileData.characterRankings.protagonists"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/protagonists">Manage Favorite Protagonists</button>
+    <app-character-list title="Favorite Protagonists" [characters]="profileData.characterRankings.protagonists"></app-character-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/protagonists">Manage Favorite Protagonists</button>
 
-  <app-character-list title="Favorite Deuteragonists" [characters]="profileData.characterRankings.deuteragonists"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/deuteragonists">Manage Favorite Deuteragonists</button>
+    <app-character-list title="Favorite Deuteragonists" [characters]="profileData.characterRankings.deuteragonists"></app-character-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/deuteragonists">Manage Favorite Deuteragonists</button>
 
-  <app-character-list title="Favorite Antagonists" [characters]="profileData.characterRankings.antagonists"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">Manage Favorite Antagonists</button>
+    <app-character-list title="Favorite Antagonists" [characters]="profileData.characterRankings.antagonists"></app-character-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">Manage Favorite Antagonists</button>
 
-  <app-character-list title="Favorite Tritagonists" [characters]="profileData.characterRankings.tritagonists"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/tritagonists">Manage Favorite Tritagonists</button>
+    <app-character-list title="Favorite Tritagonists" [characters]="profileData.characterRankings.tritagonists"></app-character-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/tritagonists">Manage Favorite Tritagonists</button>
 
-  <app-character-list title="Favorite Side Characters" [characters]="profileData.characterRankings.side"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">Manage Favorite Side Characters</button>
+    <app-character-list title="Favorite Side Characters" [characters]="profileData.characterRankings.side"></app-character-list>
+    <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">Manage Favorite Side Characters</button>
 
-  <app-dynamic-list [dynamics]="profileData.dynamicRankingTop"></app-dynamic-list>
-  <button class="btn btn-primary my-3" routerLink="dynamic-ranking">Manage Favorite Character Dynamics</button>
-  <br>
+    <app-dynamic-list [dynamics]="profileData.dynamicRankingTop"></app-dynamic-list>
+    <button class="btn btn-primary my-3" routerLink="dynamic-ranking">Manage Favorite Character Dynamics</button>
+    <br>
 
-  <h3>Collections</h3>
-  @if (profileData?.collections?.length != 0) {
-    @for (collection of profileData.collections; track collection.id) {
-      <app-collection [collection]="collection" onProfilePage></app-collection>
+    <h3>Collections</h3>
+    @if (profileData?.collections?.length != 0) {
+      @for (collection of profileData.collections; track collection.id) {
+        <app-collection [collection]="collection" onProfilePage></app-collection>
+      }
+    } @else {
+      <div>No collections yet!</div>
     }
-  } @else {
-    <div>No collections yet!</div>
-  }
-  <button class="btn btn-primary mb-4" routerLink="collections">Manage Collections</button>
+    <button class="btn btn-primary mb-4" routerLink="collections">Manage Collections</button>
 
-  <h3>Reviews</h3>
+    <h3>Reviews</h3>
 
-  <app-review-chart [reviewDistribution]="profileData.reviewDistribution"></app-review-chart>
+    <app-review-chart [reviewDistribution]="profileData.reviewDistribution"></app-review-chart>
 
-  <button type="button" class="btn btn-secondary mb-3" routerLink="reviews">View All</button>
-  @if (profileData?.reviews?.length != 0) {
-    @for (review of profileData.reviews; track review.id + '-' + review.type) {
-      <app-profile-review [review]="review"></app-profile-review>
+    <button type="button" class="btn btn-secondary mb-3 mt-5" routerLink="reviews">View All</button>
+    @if (profileData?.reviews?.length != 0) {
+      @for (review of profileData.reviews; track review.id + '-' + review.type) {
+        <app-profile-review [review]="review"></app-profile-review>
+      }
+    } @else {
+      <div>No reviews yet!</div>
     }
-  } @else {
-    <div>No reviews yet!</div>
   }
-}
-
+</div>

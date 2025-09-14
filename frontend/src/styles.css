@@ -1,4 +1,55 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --background-color: #020207;
+  --button-color: #1B263B;
+  --outline-color: #778DA9;
+  --star-color: #FFD51F;
+  --error-color: #DC3545;
+  --success-color: #198754;
+}
+
+body {
+  font-family: 'Lato', sans-serif !important;
+}
+
+nav {
+  background-color: var(--button-color);
+  border-bottom: 2px solid var(--outline-color);
+}
+
+.nav-link, .nav-logo {
+  color: white !important;
+}
+
+#nav-search {
+  border-radius: 50px;
+  overflow: hidden;
+  border: 2px solid var(--outline-color);
+  display: flex;
+  align-items: center;
+  background-color: transparent; /* wrapper is transparent */
+}
+
+#nav-search input {
+  background-color: transparent; /* input transparent */
+  border: none;
+  color: white;
+  outline: none;
+}
+
+#nav-search .input-group-text {
+  background-color: transparent !important; /* make icon background transparent */
+  border: none !important;                  /* remove borders */
+}
+
+#nav-search input::placeholder {
+  color: rgba(242, 242, 242, 0.7);
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+}
+
 .show-password-icon {
   position: absolute;
   top: 50%;

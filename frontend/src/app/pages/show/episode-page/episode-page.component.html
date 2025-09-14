@@ -1,63 +1,66 @@
-@if (episode) {
-  <button class="btn btn-primary" [routerLink]="['/show', showId, 'season', seasonNumber]">Return to Season Details</button>
+<div class="content">
+  @if (episode) {
+    <button class="btn btn-primary" [routerLink]="['/show', showId, 'season', seasonNumber]">Return to Season Details</button>
 
-  <div class="my-3">
-    <button class="btn btn-secondary me-3" [disabled]="!hasPreviousEpisode()" (click)="goPreviousEpisode()">Previous Episode</button>
-    <button class="btn btn-secondary" [disabled]="!hasNextEpisode()" (click)="goNextEpisode()">Next Episode</button>
-  </div>
+    <div class="my-3">
+      <button class="btn btn-secondary me-3" [disabled]="!hasPreviousEpisode()" (click)="goPreviousEpisode()">Previous Episode</button>
+      <button class="btn btn-secondary" [disabled]="!hasNextEpisode()" (click)="goNextEpisode()">Next Episode</button>
+    </div>
 
-  <h2>Season {{seasonNumber}} Episode {{episodeNumber}}: {{episode.episodeTitle}}</h2>
+    <h2>Season {{seasonNumber}} Episode {{episodeNumber}}: {{episode.episodeTitle}}</h2>
 
-  <h3>IMDb Rating: {{episode.imdbRating}} with {{episode.imdbVotes}} votes</h3>
-  <h3>Release Date: {{utilsService.getRelativeDate(episode.airDate)}}</h3>
-  <h3>Runtime: {{episode.runtime}} minutes</h3>
-  <h3>Plot: {{episode.plot}}</h3>
+    <h3>IMDb Rating: {{episode.imdbRating}} with {{episode.imdbVotes}} votes</h3>
+    <h3>Release Date: {{utilsService.getRelativeDate(episode.airDate)}}</h3>
+    <h3>Runtime: {{episode.runtime}} minutes</h3>
+    <h3>Plot: {{episode.plot}}</h3>
 
-  <!-- Episode still is size w780, with 16:9 aspect ratio -->
-  <img [ngSrc]="episode.stillPath" alt="Episode Still" width="780" height="438" priority>
+    <!-- Episode still is size w780, with 16:9 aspect ratio -->
+    <img [ngSrc]="episode.stillPath" alt="Episode Still" width="780" height="438" priority>
 
-  <br>
-  <br>
-  @if (episode.isOnRankingList) {
-    <button class="btn btn-outline-danger" (click)="removeFromRankingList()">Remove from Ranking List</button>
-  } @else {
-    <button class="btn btn-outline-success" (click)="addToRankingList()">Add to Ranking List</button>
-  }
+    <br>
+    <br>
+    @if (episode.isOnRankingList) {
+      <button class="btn btn-outline-danger" (click)="removeFromRankingList()">Remove from Ranking List</button>
+    } @else {
+      <button class="btn btn-outline-success" (click)="addToRankingList()">Add to Ranking List</button>
+    }
 
-  <div class="d-flex mt-3 align-items-center">
-    <h2>Reviews</h2>
-    <div class="ms-auto">
-      <div class="dropdown ms-auto">
-        <span class="fs-5 me-2">Sort</span>
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          {{ selectedSort.label }}
-        </button>
-        <ul class="dropdown-menu">
-          @for (sortOption of sortReviewOptions; track sortOption.value) {
-            <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
-          }
-        </ul>
+    <div class="d-flex mt-3 align-items-center">
+      <h2>Reviews</h2>
+      <div class="ms-auto">
+        <div class="dropdown ms-auto">
+          <span class="fs-5 me-2">Sort</span>
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ selectedSort.label }}
+          </button>
+          <ul class="dropdown-menu">
+            @for (sortOption of sortReviewOptions; track sortOption.value) {
+              <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
+            }
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
 
-  <app-review-chart [reviewDistribution]="episode.reviewDistribution"></app-review-chart>
+    <app-review-chart [reviewDistribution]="episode.reviewDistribution"></app-review-chart>
 
-  <button type="button" class="btn btn-primary my-4" (click)="openAddReviewModal()">Add Review</button>
+    <button type="button" class="btn btn-primary my-4" (click)="openAddReviewModal()">Add Review</button>
 
-  @if (reviews?.content.length) {
-    <div class="reviews"
-         infiniteScroll
-         [infiniteScrollDistance]="1"
-         (scrolled)="loadMoreReviews()"
-    >
-      @for (review of reviews.content; track review.id) {
-        <app-review [review]="review" [reviewType]="ReviewType.Episode" [isLoggedIn]="isLoggedIn" (deleteReview)="handleDeleteReview($event)"></app-review>
-      }
-    </div>
-  } @else {
-    <div>No reviews yet!</div>
+    @if (reviews?.content.length) {
+      <div class="reviews"
+           infiniteScroll
+           [infiniteScrollDistance]="1"
+           (scrolled)="loadMoreReviews()"
+      >
+        @for (review of reviews.content; track review.id) {
+          <app-review [review]="review" [reviewType]="ReviewType.Episode" [isLoggedIn]="isLoggedIn" (deleteReview)="handleDeleteReview($event)"></app-review>
+        }
+      </div>
+    } @else {
+      <div>No reviews yet!</div>
+    }
   }
-}
+
+</div>
 
 

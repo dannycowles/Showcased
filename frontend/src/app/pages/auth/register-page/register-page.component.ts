@@ -13,12 +13,13 @@ import {
 import {UtilsService} from '../../../services/utils.service';
 import {map, Observable, of, switchMap, timer} from 'rxjs';
 import {NgClass} from '@angular/common';
+import {RecaptchaModule, RecaptchaFormsModule} from 'ng-recaptcha';
 
 @Component({
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.css',
-  imports: [ReactiveFormsModule, NgClass],
+  imports: [ReactiveFormsModule, NgClass, RecaptchaModule, RecaptchaFormsModule],
   standalone: true,
 })
 export class RegisterPageComponent {

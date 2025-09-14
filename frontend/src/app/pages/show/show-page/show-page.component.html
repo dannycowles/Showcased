@@ -1,204 +1,208 @@
-@if (show) {
-  <h1>{{show.title}}</h1>
+<div class="content">
+  @if (show) {
+    <h1>{{show.title}}</h1>
 
-  <!-- If the show didn't air for more than one year only display once -->
-  @if (!show.startYear && !show.endYear) {
-    <h2>Air Dates Unknown</h2>
-  } @else if (show.startYear === show.endYear) {
-    <h2>{{show.startYear}}</h2>
-  } @else {
-    <h2>{{show.startYear}} - {{show.endYear}}</h2>
-  }
-
-  <h3>Rating: {{show.rating}}</h3>
-  <h3>IMDb rating: {{show.imdbRating}} with {{show.imdbVotes}} votes</h3>
-
-  <h3>Tagline: {{show.tagline}}</h3>
-  <h3>Plot: {{show.plot}}</h3>
-
-  <h3>Genres:
-  @for (genre of show.genres; track genre.id;) {
-    <button [routerLink]="['/discover/show']" [queryParams]="{ genre: genre.id }" class="btn btn-secondary me-3">{{genre.name}}</button>
-  }
-  </h3>
-
-  <h3>Awards: {{show.awards}}</h3>
-
-  <h3>Watch Options:</h3>
-
-  <h5>Stream:</h5>
-  @if (show.streamingOptions.length != 0) {
-    @for (service of show.streamingOptions; track service.name) {
-      <img [ngSrc]="service.logoPath" alt="Service Logo" width="100" height="100">
+    <!-- If the show didn't air for more than one year only display once -->
+    @if (!show.startYear && !show.endYear) {
+      <h2>Air Dates Unknown</h2>
+    } @else if (show.startYear === show.endYear) {
+      <h2>{{show.startYear}}</h2>
+    } @else {
+      <h2>{{show.startYear}} - {{show.endYear}}</h2>
     }
-  } @else {
-    <p>Unknown</p>
-  }
 
-  <h5>Buy:</h5>
-  @if (show.buyOptions.length != 0) {
-    @for (service of show.buyOptions; track service.name) {
-      <img [ngSrc]="service.logoPath" alt="Service Logo" width="100" height="100">
+    <h3>Rating: {{show.rating}}</h3>
+    <h3>IMDb rating: {{show.imdbRating}} with {{show.imdbVotes}} votes</h3>
+
+    <h3>Tagline: {{show.tagline}}</h3>
+    <h3>Plot: {{show.plot}}</h3>
+
+    <h3>Genres:
+      @for (genre of show.genres; track genre.id;) {
+        <button [routerLink]="['/discover/show']" [queryParams]="{ genre: genre.id }" class="btn btn-secondary me-3">{{genre.name}}</button>
+      }
+    </h3>
+
+    <h3>Awards: {{show.awards}}</h3>
+
+    <h3>Watch Options:</h3>
+
+    <h5>Stream:</h5>
+    @if (show.streamingOptions.length != 0) {
+      @for (service of show.streamingOptions; track service.name) {
+        <img [ngSrc]="service.logoPath" alt="Service Logo" width="100" height="100">
+      }
+    } @else {
+      <p>Unknown</p>
     }
-  } @else {
-    <p>Unknown</p>
-  }
 
-  @if (show.averageRuntime !== "N/A") {
-    <h3>Average Episode Runtime: {{show.averageRuntime}}</h3>
-  } @else {
-    <h3>Average Episode Runtime: Unknown</h3>
-  }
-  <h3>Number of Episodes: {{show.numEpisodes}}</h3>
-
-  <h3>Seasons: </h3>
-  <div ngbDropdown>
-    <button type="button" class="btn btn-secondary" id="seasonsDropdown" ngbDropdownToggle>Select Season</button>
-    <div ngbDropdownMenu aria-labelledby="seasonsDropdown">
-      @for (_ of [].constructor(show.numSeasons); let season = $index; track season) {
-        <button [routerLink]="['season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
+    <h5>Buy:</h5>
+    @if (show.buyOptions.length != 0) {
+      @for (service of show.buyOptions; track service.name) {
+        <img [ngSrc]="service.logoPath" alt="Service Logo" width="100" height="100">
       }
-    </div>
-  </div>
+    } @else {
+      <p>Unknown</p>
+    }
 
-  <!-- Backdrop images are sized w1280, using 16:9 ratio -->
-  <h3>Backdrop</h3>
-  <img [ngSrc]="show.backdropPath" alt="Show Backdrop" width="1280" height="720" priority>
+    @if (show.averageRuntime !== "N/A") {
+      <h3>Average Episode Runtime: {{show.averageRuntime}}</h3>
+    } @else {
+      <h3>Average Episode Runtime: Unknown</h3>
+    }
+    <h3>Number of Episodes: {{show.numEpisodes}}</h3>
 
-  <!-- Poster images are sized w500, using 2:3 ratio -->
-  <h3 class="ms-2">Poster</h3>
-  <img class="ms-2" [ngSrc]="show.posterPath" alt="Poster Image" width="500" height="750" priority>
-
-  <br>
-  <br>
-
-  @if (safeTrailerUrl) {
-    <iframe class="ms-2" [src]="safeTrailerUrl" width="560" height="315" allowfullscreen></iframe>
-  }
-
-  <br>
-  <br>
-
-  @if (show.isOnWatchlist) {
-    <button class="btn btn-danger ms-2" (click)="removeShowFromWatchlist()">Remove from Watchlist</button>
-  } @else {
-    <button class="btn btn-success ms-2" (click)="addShowToWatchlist()">Add to Watchlist</button>
-  }
-
-  <br>
-  <br>
-
-  @if (show.isOnWatchingList) {
-    <button class="btn btn-danger ms-2" (click)="removeShowFromWatchingList()">Remove from Currently Watching</button>
-  } @else {
-    <button class="btn btn-success ms-2" (click)="addShowToWatchingList()">Add to Currently Watching</button>
-  }
-
-  <br>
-  <br>
-
-  @if (show.isOnRankingList) {
-    <button class="btn btn-danger ms-2" (click)="removeShowFromRankingList()">Remove from Ranking List</button>
-  } @else {
-    <button class="btn btn-success ms-2" (click)="addShowToRankingList()">Add to Ranking List</button>
-  }
-
-  <br>
-  <br>
-
-  <button class="btn btn-success ms-2" (click)="openAddToCollectionModal()">Add to Collection</button>
-
-
-
-  <h2 class="ms-2">Cast</h2>
-  <div class="container ms-0">
-    <div class="row">
-      @if (show.cast.length != 0) {
-        @for (cast of show.cast; track cast.id) {
-          <div class="col-4 col-sm-4 col-md-3 col-lg-2 mb-4 me-4 d-flex flex-column">
-            <div class="flex-grow-1">
-              <h5>{{cast.name}}</h5>
-              <p class="text-muted mb-0">as {{cast.character}}</p>
-            </div>
-            <div class="mt-auto">
-              <!-- Profile images are sized w185, using 2:3 ratio -->
-              <img [ngSrc]="cast.profilePath" alt="Actor Picture" width="185" height="278" priority>
-            </div>
-          </div>
+    <h3>Seasons: </h3>
+    <div ngbDropdown>
+      <button type="button" class="btn btn-secondary" id="seasonsDropdown" ngbDropdownToggle>Select Season</button>
+      <div ngbDropdownMenu aria-labelledby="seasonsDropdown">
+        @for (_ of [].constructor(show.numSeasons); let season = $index; track season) {
+          <button [routerLink]="['season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
         }
-      } @else {
-        <h4 class="ms-2">No Cast Found</h4>
-      }
-    </div>
-  </div>
-
-
-  <h2 class="ms-2">Creator(s)</h2>
-  <div class="container ms-0">
-    <div class="row">
-      @if (show.creators.length != 0) {
-        @for (creator of show.creators; track creator.id) {
-          <div class="col-4 col-sm-4 col-md-3 col-lg-2 mb-4 me-4 d-flex flex-column">
-            <div class="flex-grow-1">
-              <h4>{{creator.name}}</h4>
-            </div>
-            <div class="mt-auto">
-              <!-- Profile images are sized w185, using 2:3 ratio -->
-              <img [ngSrc]="creator.profilePath" alt="Actor Picture" width="185" height="278" priority>
-            </div>
-          </div>
-        }
-      } @else {
-        <h4 class="ms-2">No Creators Found</h4>
-      }
-    </div>
-  </div>
-
-  <h2 class="ms-2">You Might Like...</h2>
-  <div class="d-flex">
-    @for (show of show.recommendations; track show.id) {
-      <div class="ms-2">
-        <a [routerLink]="['/show', show.id]">
-          <img [ngSrc]="show.posterPath" alt="Show Recommendation Picture" width="185" height="278">
-        </a>
       </div>
-    }
-  </div>
-}
+    </div>
 
-<div class="d-flex mt-3 align-items-center">
-  <h2>Reviews</h2>
-  <div class="ms-auto">
-    <div class="dropdown ms-auto">
-      <span class="fs-5 me-2">Sort</span>
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ selectedSort.label }}
-      </button>
-      <ul class="dropdown-menu">
-        @for (sortOption of sortReviewOptions; track sortOption.value) {
-          <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
+    <!-- Backdrop images are sized w1280, using 16:9 ratio -->
+    <h3>Backdrop</h3>
+    <img [ngSrc]="show.backdropPath" alt="Show Backdrop" width="1280" height="720" priority>
+
+    <!-- Poster images are sized w500, using 2:3 ratio -->
+    <h3 class="ms-2">Poster</h3>
+    <img class="ms-2" [ngSrc]="show.posterPath" alt="Poster Image" width="500" height="750" priority>
+
+    <br>
+    <br>
+
+    @if (safeTrailerUrl) {
+      <iframe class="ms-2" [src]="safeTrailerUrl" width="560" height="315" allowfullscreen></iframe>
+    }
+
+    <br>
+    <br>
+
+    @if (show.isOnWatchlist) {
+      <button class="btn btn-danger ms-2" (click)="removeShowFromWatchlist()">Remove from Watchlist</button>
+    } @else {
+      <button class="btn btn-success ms-2" (click)="addShowToWatchlist()">Add to Watchlist</button>
+    }
+
+    <br>
+    <br>
+
+    @if (show.isOnWatchingList) {
+      <button class="btn btn-danger ms-2" (click)="removeShowFromWatchingList()">Remove from Currently Watching</button>
+    } @else {
+      <button class="btn btn-success ms-2" (click)="addShowToWatchingList()">Add to Currently Watching</button>
+    }
+
+    <br>
+    <br>
+
+    @if (show.isOnRankingList) {
+      <button class="btn btn-danger ms-2" (click)="removeShowFromRankingList()">Remove from Ranking List</button>
+    } @else {
+      <button class="btn btn-success ms-2" (click)="addShowToRankingList()">Add to Ranking List</button>
+    }
+
+    <br>
+    <br>
+
+    <button class="btn btn-success ms-2" (click)="openAddToCollectionModal()">Add to Collection</button>
+
+
+
+    <h2 class="ms-2">Cast</h2>
+    <div class="container ms-0">
+      <div class="row">
+        @if (show.cast.length != 0) {
+          @for (cast of show.cast; track cast.id) {
+            <div class="col-4 col-sm-4 col-md-3 col-lg-2 mb-4 me-4 d-flex flex-column">
+              <div class="flex-grow-1">
+                <h5>{{cast.name}}</h5>
+                <p class="text-muted mb-0">as {{cast.character}}</p>
+              </div>
+              <div class="mt-auto">
+                <!-- Profile images are sized w185, using 2:3 ratio -->
+                <img [ngSrc]="cast.profilePath" alt="Actor Picture" width="185" height="278" priority>
+              </div>
+            </div>
+          }
+        } @else {
+          <h4 class="ms-2">No Cast Found</h4>
         }
-      </ul>
+      </div>
+    </div>
+
+
+    <h2 class="ms-2">Creator(s)</h2>
+    <div class="container ms-0">
+      <div class="row">
+        @if (show.creators.length != 0) {
+          @for (creator of show.creators; track creator.id) {
+            <div class="col-4 col-sm-4 col-md-3 col-lg-2 mb-4 me-4 d-flex flex-column">
+              <div class="flex-grow-1">
+                <h4>{{creator.name}}</h4>
+              </div>
+              <div class="mt-auto">
+                <!-- Profile images are sized w185, using 2:3 ratio -->
+                <img [ngSrc]="creator.profilePath" alt="Actor Picture" width="185" height="278" priority>
+              </div>
+            </div>
+          }
+        } @else {
+          <h4 class="ms-2">No Creators Found</h4>
+        }
+      </div>
+    </div>
+
+    <h2 class="ms-2">You Might Like...</h2>
+    <div class="d-flex">
+      @for (show of show.recommendations; track show.id) {
+        <div class="ms-2">
+          <a [routerLink]="['/show', show.id]">
+            <img [ngSrc]="show.posterPath" alt="Show Recommendation Picture" width="185" height="278">
+          </a>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="d-flex mt-3 align-items-center">
+    <h2>Reviews</h2>
+    <div class="ms-auto">
+      <div class="dropdown ms-auto">
+        <span class="fs-5 me-2">Sort</span>
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {{ selectedSort.label }}
+        </button>
+        <ul class="dropdown-menu">
+          @for (sortOption of sortReviewOptions; track sortOption.value) {
+            <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
+          }
+        </ul>
+      </div>
     </div>
   </div>
+
+  @if (show) {
+    <app-review-chart [reviewDistribution]="show.reviewDistribution"></app-review-chart>
+  }
+
+  <button type="button" class="btn btn-primary my-4" (click)="openAddReviewModal()">Add Review</button>
+
+  @if (reviews?.content.length) {
+    <div class="reviews"
+         infiniteScroll
+         [infiniteScrollDistance]="1"
+         (scrolled)="loadMoreReviews()"
+    >
+      @for (review of reviews.content; track review.id) {
+        <app-review [review]="review" [reviewType]="ReviewType.Show" [isLoggedIn]="isLoggedIn" (deleteReview)="handleDeleteReview($event)"></app-review>
+      }
+    </div>
+  } @else {
+    <h4 class="ms-2">No Reviews for this Show</h4>
+  }
+
 </div>
 
-@if (show) {
-  <app-review-chart [reviewDistribution]="show.reviewDistribution"></app-review-chart>
-}
-
-<button type="button" class="btn btn-primary my-4" (click)="openAddReviewModal()">Add Review</button>
-
-@if (reviews?.content.length) {
-  <div class="reviews"
-       infiniteScroll
-       [infiniteScrollDistance]="1"
-       (scrolled)="loadMoreReviews()"
-  >
-    @for (review of reviews.content; track review.id) {
-      <app-review [review]="review" [reviewType]="ReviewType.Show" [isLoggedIn]="isLoggedIn" (deleteReview)="handleDeleteReview($event)"></app-review>
-    }
-  </div>
-} @else {
-  <h4 class="ms-2">No Reviews for this Show</h4>
-}
