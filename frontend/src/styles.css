@@ -6,6 +6,7 @@
   --star-color: #FFD51F;
   --error-color: #DC3545;
   --success-color: #198754;
+  --subheader-color: #575757;
 }
 
 body {
@@ -81,6 +82,19 @@ nav {
   color: var(--outline-color);
 }
 
+.form-control {
+  padding-left: 40px !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  border-color: var(--outline-color) !important;
+  border-width: 2px !important;
+}
+
+#nav-searchbar {
+  padding-left: 0 !important;
+  width: 25vw;
+}
+
 .input-icon {
   position: absolute;
   left: 12px;
@@ -91,6 +105,10 @@ nav {
 
 h1 {
   font-weight: 500;
+}
+
+h4 {
+  color: var(--subheader-color) !important;
 }
 
 .form-control.is-invalid ~ .show-password-icon {

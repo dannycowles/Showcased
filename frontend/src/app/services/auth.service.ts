@@ -156,7 +156,7 @@ export class AuthenticationService {
    * Used to change/reset a user's password
    * @param data
    */
-  async changePassword(data: ResetPasswordDto) {
+  async changePassword(data: ResetPasswordDto): Promise<Response> {
     try {
       const headers = new Headers({
         "Content-Type": "application/json"
@@ -172,12 +172,12 @@ export class AuthenticationService {
         body: JSON.stringify(data),
       });
 
-      // Upon successful update redirect the user to the login page
+      // Upon successful update remove the reset password token from local storage and return back to the caller
       if (response.ok) {
         this.resetPasswordToken = null;
         localStorage.removeItem("resetPasswordToken");
-        this.router.navigate(['/login']);
       }
+      return response;
     } catch (error) {
       throw error;
     }

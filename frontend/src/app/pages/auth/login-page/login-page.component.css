@@ -15,14 +15,6 @@
   border: 2px solid var(--outline-color);
 }
 
-.form-control {
-  padding-left: 40px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-color: var(--outline-color);
-  border-width: 2px;
-}
-
 #login-button {
   background-color: var(--button-color);
   margin-top: 20px;

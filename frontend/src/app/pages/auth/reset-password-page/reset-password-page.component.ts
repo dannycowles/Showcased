@@ -12,21 +12,34 @@ import {
 import {ValidateOtpDto} from '../../../data/dto/validate-otp-dto';
 import {ResetPasswordDto} from '../../../data/dto/reset-password-dto';
 import {NgOtpInputComponent} from 'ng-otp-input';
-import {NgClass} from '@angular/common';
+import {NgClass, NgOptimizedImage} from '@angular/common';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-reset-password-page',
   templateUrl: './reset-password-page.component.html',
   styleUrl: './reset-password-page.component.css',
-  imports: [FormsModule, NgOtpInputComponent, ReactiveFormsModule, NgClass],
+  imports: [
+    FormsModule,
+    NgOtpInputComponent,
+    ReactiveFormsModule,
+    NgClass,
+    NgOptimizedImage,
+    RouterLink,
+  ],
   standalone: true,
 })
 export class ResetPasswordPageComponent {
   readonly passwordMinLength: number = 8;
   formNumber: number = 1;
   invalidOtpMessage: string = '';
-  email: string;
   otp: string = '';
+
+  emailForm: FormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+  ]);
+
   passwordForm: FormGroup = new FormGroup(
     {
       password: new FormControl('', [
@@ -39,7 +52,6 @@ export class ResetPasswordPageComponent {
   );
 
   showPassword: boolean = false;
-  showConfirmPassword: boolean = false;
 
   constructor(private authService: AuthenticationService) {}
 
@@ -70,17 +82,21 @@ export class ResetPasswordPageComponent {
     }
 
     const data: ResetPasswordDto = {
-      email: this.email,
+      email: this.emailForm.value,
       newPassword: this.password.value,
     };
-    await this.authService.changePassword(data);
+    const response = await this.authService.changePassword(data);
+
+    if (response.ok) {
+      this.formNumber = 4;
+    }
   }
 
   async submitEmail() {
-    if (this.email) {
+    if (this.emailForm.value) {
       // Call backend to generate OTP and send email
       try {
-        await this.authService.generateOTP(this.email);
+        await this.authService.generateOTP(this.emailForm.value);
       } catch (error) {
         console.error(error);
       }
@@ -95,7 +111,7 @@ export class ResetPasswordPageComponent {
   async verifyCode() {
     try {
       const data: ValidateOtpDto = {
-        email: this.email,
+        email: this.emailForm.value,
         otp: this.otp,
       };
       await this.authService.validateOTP(data);
@@ -109,9 +125,5 @@ export class ResetPasswordPageComponent {
 
   toggleShowPassword() {
     this.showPassword = !this.showPassword;
-  }
-
-  toggleShowConfirmPassword() {
-    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }
