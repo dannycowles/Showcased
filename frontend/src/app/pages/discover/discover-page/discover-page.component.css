@@ -1,7 +1,25 @@
-.show-poster:hover {
-  cursor: pointer;
+.white-link {
+  color: white;
+  transition: color 0.3s ease;
 }
 
-.show-poster {
-  border-radius: 0.2rem;
+.white-link:hover {
+  color: #d3d3d3;
+}
+
+#genre-container {
+  gap: 2rem 5rem;
+  margin-bottom: 15vh;
+}
+
+.genre-button {
+  background-color: var(--button-color);
+  border: none;
+  padding: 10px 20px;
+  min-width: 250px;
+  transition: background-color 0.3s ease;
+}
+
+.genre-button:hover {
+  background-color: var(--outline-color);
 }
