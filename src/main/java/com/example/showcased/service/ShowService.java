@@ -132,6 +132,19 @@ public class ShowService {
                 .toUriString();
 
         ShowResultsPageDto shows = tmdbClient.get(url, ShowResultsPageDto.class);
+
+        // Retrieve list of genres for cross-referencing names
+        AllGenresDto genres = getAllGenres();
+        Map<String, String> genreMap = genres.getGenres().stream()
+                .collect(Collectors.toMap(GenresDto::getId, GenresDto::getName));
+
+        for (SearchDto searchResult : shows.getResults()) {
+            String genreList = searchResult.getGenreIds().stream()
+                            .map(genreMap::get)
+                            .collect(Collectors.joining(", "));
+            searchResult.setGenreList(genreList);
+        }
+
         retrieveEndYears(shows);
         return shows;
     }

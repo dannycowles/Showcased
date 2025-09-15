@@ -13,12 +13,10 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/discover">Discover</a>
         </li>
-        <form class="d-flex">
-          <div id="nav-search" class="input-group">
-            <span class="input-group-text bg-white border-end-0">
-              <img ngSrc="search.svg" alt="Search Icon" width="16" height="16">
-            </span>
-            <input type="text" id="nav-searchbar" class="form-control border-start-0" placeholder="Search">
+        <form (ngSubmit)="navigateToSearch()">
+          <div id="nav-searchbar" class="position-relative">
+            <img class="input-icon" ngSrc="search.svg" alt="Search icon" width="16" height="16">
+            <input class="form-control" id="search-input" placeholder="Search" [(ngModel)]="searchQuery" name="search">
           </div>
         </form>
       </ul>

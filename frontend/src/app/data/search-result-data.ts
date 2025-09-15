@@ -4,4 +4,6 @@ export interface SearchResultData {
   readonly startYear: number;
   readonly endYear: number;
   readonly posterPath: string;
+  readonly overview: string;
+  readonly genreList: string;
 }

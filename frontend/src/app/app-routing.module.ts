@@ -6,7 +6,7 @@ import {PageNotFoundComponent} from "./pages/page-not-found/page-not-found.compo
 import {RegisterPageComponent} from "./pages/auth/register-page/register-page.component";
 import {ProfilePageComponent} from "./pages/profile/profile-page/profile-page.component";
 import {UserPageComponent} from "./pages/user/user-page/user-page.component";
-import {SearchPageComponent} from "./pages/show/search-page/search-page.component";
+import {SearchPageComponent} from "./pages/search-page/search-page.component";
 import {ShowPageComponent} from "./pages/show/show-page/show-page.component";
 import {SeasonPageComponent} from "./pages/show/season-page/season-page.component";
 import {EpisodePageComponent} from './pages/show/episode-page/episode-page.component';
@@ -16,7 +16,6 @@ import {ProfileShowRankingPageComponent} from './pages/profile/profile-show-rank
 import {
   ProfileEpisodeRankingPageComponent
 } from './pages/profile/profile-episode-ranking-page/profile-episode-ranking-page.component';
-import {UserSearchPageComponent} from './pages/user/user-search-page/user-search-page.component';
 import {UserWatchlistPageComponent} from './pages/user/user-watchlist-page/user-watchlist-page.component';
 import {UserWatchingPageComponent} from './pages/user/user-watching-page/user-watching-page.component';
 import {UserShowRankingPageComponent} from './pages/user/user-show-ranking-page/user-show-ranking-page.component';
@@ -250,11 +249,6 @@ export const routes: Routes = [
       path: 'search',
       title: 'Search | Showcased',
       component: SearchPageComponent
-    },
-    {
-      path: 'search-users',
-      title: 'Find Users | Showcased',
-      component: UserSearchPageComponent
     },
     {
       path: 'show/:id',
