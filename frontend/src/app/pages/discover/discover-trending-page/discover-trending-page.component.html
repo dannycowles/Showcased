@@ -1,34 +1,29 @@
-<h1>Trending Shows</h1>
+<div class="container text-white">
+  <div class="d-flex flex-column">
+    <h1 class="fw-bold pt-4 mb-4" style="margin-left: 5rem">Trending shows this week</h1>
+    <div id="show-container">
+      @if (isLoading) {
+        <div class="spinner-border " role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      } @else if (resultData) {
+        @for (show of resultData.results; track show.id) {
+          <!-- Poster images are sized w185, using 2:3 ratio -->
+          <a [routerLink]="['/show', show.id]">
+            <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster Path" width="185" height="278" priority>
+          </a>
+        }
 
-@if (isLoading) {
-  <div class="spinner-border" role="status">
-    <span class="visually-hidden">Loading...</span>
+        <div class="d-flex align-items-center justify-content-center w-100" style="margin-bottom: 15vh">
+          <button class="page-button" [disabled]="page === 1" (click)="navigateToPage(page - 1)">
+            <img ngSrc="chevron-left.svg" alt="Previous page button" width="50" height="50" >
+          </button>
+          <h2 class="mx-3">{{page}} of {{resultData.totalPages}}</h2>
+          <button class="page-button" [disabled]="page === resultData.totalPages" (click)="navigateToPage(page + 1)">
+            <img ngSrc="chevron-right.svg" alt="Next page button" width="50" height="50">
+          </button>
+        </div>
+      }
+    </div>
   </div>
-} @else if (resultData) {
-  @for (show of resultData.results; track show.id) {
-    <h2>{{show.title}}</h2>
-
-    <!-- If the show didn't air for more than one year only display once -->
-    @if (!show.startYear && !show.endYear) {
-      <h3>Air Dates Unknown</h3>
-    } @else if (show.startYear === show.endYear) {
-      <h3>{{show.startYear}}</h3>
-    } @else {
-      <h3>{{ show.startYear }} - {{ show.endYear }}</h3>
-    }
-
-    <!-- Poster images are sized w185, using 2:3 ratio -->
-    <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster Path" width="185" height="278" priority></a>
-    <br>
-    <br>
-  }
-
-  <!-- Navigation by page -->
-  <nav aria-label="Trending shows pagination">
-    <ul class="pagination">
-      <li class="page-item" [class.disabled]="page === 1" (click)="navigateToPage(page - 1)"><a class="page-link">Previous</a></li>
-      <h2 class="mx-3">{{page}} of {{resultData.totalPages}}</h2>
-      <li class="page-item" [class.disabled]="page === resultData.totalPages" (click)="navigateToPage(page + 1)"><a class="page-link">Next</a></li>
-    </ul>
-  </nav>
-}
+</div>

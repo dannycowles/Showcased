@@ -1,0 +1,15 @@
+#show-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem 3rem;
+  justify-content: center;
+}
+
+.page-button {
+  background-color: transparent;
+  border: none;
+}
+
+.page-button:disabled img {
+  opacity: 0.5;
+}
