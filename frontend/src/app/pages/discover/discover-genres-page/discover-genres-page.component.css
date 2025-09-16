@@ -1,0 +1,23 @@
+#show-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 1.5rem;
+  justify-content: center;
+}
+
+.genre-button {
+  background-color: var(--button-color);
+  border: none;
+  padding: 10px 20px;
+  min-width: 200px;
+  transition: background-color 0.3s ease;
+  border-radius: 15px;
+}
+
+.genre-button:hover {
+  background-color: var(--outline-color);
+}
+
+.genre-button.selected {
+  background-color: var(--outline-color);
+}

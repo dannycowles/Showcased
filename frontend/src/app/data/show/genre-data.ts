@@ -1,4 +1,4 @@
 export interface GenreData {
-  readonly id: number;
+  readonly id: string;
   readonly name: string;
 }

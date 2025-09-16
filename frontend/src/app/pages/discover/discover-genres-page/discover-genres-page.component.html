@@ -1,30 +1,46 @@
-@if (resultData) {
-  <h1>{{resultData.genre}}</h1>
+<div class="container text-white d-flex">
+  <div class="d-flex flex-column gap-2" style="margin-top: 3rem">
+    <h4 class="text-reset" style="border-bottom: 2px solid white; padding-bottom: 4px; width: fit-content">Genres</h4>
+    @if (genresData) {
+      @for (genre of genresData.genres; track genre.id) {
+        <button type="button" class="btn btn-primary genre-button" [ngClass]="{ 'selected': genre.id === selectedGenreId }"
+                [routerLink]="[]" [queryParams]="{ 'genre': genre.id, 'page': 1 }" >
+          {{genre.name}}
+        </button>
+      }
+    }
+  </div>
 
-  @for (show of resultData.results; track show.id) {
-    <h2>{{show.title}}</h2>
-
-    <!-- If the show didn't air for more than one year only display once -->
-    @if (!show.startYear && !show.endYear) {
-      <h3>Air Dates Unknown</h3>
-    } @else if (show.startYear === show.endYear) {
-      <h3>{{show.startYear}}</h3>
-    } @else {
-      <h3>{{ show.startYear }} - {{ show.endYear }}</h3>
+  <div>
+    @if (resultData) {
+      <h1 class="fw-bold pt-4 mb-4" style="margin-left: 3rem">{{resultData.genre}} shows</h1>
     }
 
-    <!-- Poster images are sized w185, using 2:3 ratio -->
-    <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" alt="Show Poster Path" width="185" height="278" priority></a>
-    <br>
-    <br>
-  }
+    <div id="show-container">
+      @if (isLoading) {
+        <div class="spinner-border " role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      } @else if (resultData) {
+        @for (show of resultData.results; track show.id) {
+          <!-- Poster images are sized w185, using 2:3 ratio -->
+          <a [routerLink]="['/show', show.id]">
+            <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster Path" width="185" height="278" priority>
+          </a>
+        }
 
-  <!-- Pagination below -->
-  <nav aria-label="Search result navigation">
-    <ul class="pagination">
-      <li class="page-item" [class.disabled]="page === 1"><a class="page-link" (click)="navigateToPage(page - 1)">Previous</a></li>
-      <h2 class="ms-2 me-2">{{page}} of {{resultData.totalPages}}</h2>
-      <li class="page-item disabled" [class.disabled]="page === resultData.totalPages"><a class="page-link" (click)="navigateToPage(page + 1)">Next</a></li>
-    </ul>
-  </nav>
-}
+        <div class="d-flex align-items-center justify-content-center w-100" style="margin-bottom: 15vh">
+          <button class="page-button" [disabled]="page === 1" (click)="navigateToPage(page - 1)">
+            <img ngSrc="chevron-left.svg" alt="Previous page button" width="50" height="50" >
+          </button>
+          <h2 class="mx-3">{{page}} of {{resultData.totalPages}}</h2>
+          <button class="page-button" [disabled]="page === resultData.totalPages" (click)="navigateToPage(page + 1)">
+            <img ngSrc="chevron-right.svg" alt="Next page button" width="50" height="50">
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+

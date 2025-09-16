@@ -127,3 +127,12 @@ hr {
 .poster-image {
   border-radius: 20px;
 }
+
+.page-button {
+  background-color: transparent;
+  border: none;
+}
+
+.page-button:disabled img {
+  opacity: 0.5;
+}
