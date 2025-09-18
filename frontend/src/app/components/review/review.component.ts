@@ -42,6 +42,7 @@ export class ReviewComponent implements OnChanges {
 
   readonly maxCommentLength = 1000;
   commentMessage: string = "";
+  showSpoilers: boolean = false;
 
   constructor(public utilsService: UtilsService,
               private showService: ShowService,
@@ -130,7 +131,10 @@ export class ReviewComponent implements OnChanges {
     if (this.showCommentBox) {
       setTimeout(() => {
         this.commentBoxRef.nativeElement.focus();
-        this.commentBoxRef.nativeElement.scrollIntoView();
+        this.commentBoxRef.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
       });
     }
   }
@@ -222,6 +226,7 @@ export class ReviewComponent implements OnChanges {
 
       if (response.ok) {
         this.review.comments.content = this.review.comments.content.filter(comment => comment.id !== deleteId);
+        this.review.numComments--;
       }
     } catch (error) {
       console.error(error);

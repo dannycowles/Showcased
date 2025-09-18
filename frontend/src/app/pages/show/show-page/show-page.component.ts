@@ -31,7 +31,7 @@ import {
   SafeResourceUrl,
   Title,
 } from '@angular/platform-browser';
-import { NgOptimizedImage } from '@angular/common';
+import {NgOptimizedImage, ViewportScroller} from '@angular/common';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { ReviewComponent } from '../../../components/review/review.component';
 import { ReviewChartComponent } from '../../../components/review-chart/review-chart.component';
@@ -72,13 +72,15 @@ export class ShowPageComponent implements OnInit {
               private authService: AuthenticationService,
               private router: Router,
               private sanitizer: DomSanitizer,
-              private title: Title) {
+              private title: Title,
+              private viewportScroller: ViewportScroller) {
     this.route.params.subscribe((params) => {
       this.showId = params['id'];
       this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
       this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
       history.replaceState({}, document.title, window.location.href);
       this.safeTrailerUrl = null;
+      this.viewportScroller.scrollToPosition([0, 0]);
       this.loadShowData();
     });
   }
@@ -95,6 +97,16 @@ export class ShowPageComponent implements OnInit {
       this.reviews = await this.showService.fetchShowReviews(this.showId, 1, this.selectedSort.value);
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  get showYears(): string {
+    if (!this.show.startYear && !this.show.endYear) {
+      return '';
+    } else if (this.show.startYear === this.show.endYear) {
+      return `(${this.show.startYear})`;
+    } else {
+      return `(${this.show.startYear} - ${this.show.endYear})`;
     }
   }
 
@@ -142,7 +154,7 @@ export class ShowPageComponent implements OnInit {
             if (reviewElement) {
               reviewElement.scrollIntoView({
                 behavior: 'smooth',
-                block: 'start',
+                block: 'center',
               });
 
               reviewElement.classList.add('highlight');
@@ -178,7 +190,7 @@ export class ShowPageComponent implements OnInit {
             if (commentElement) {
               commentElement.scrollIntoView({
                 behavior: 'smooth',
-                block: 'start',
+                block: 'center',
               });
               commentElement.classList.add('highlight');
               setTimeout(

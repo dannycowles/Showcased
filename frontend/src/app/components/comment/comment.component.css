@@ -14,6 +14,38 @@
   transition: background-color 1.75s ease-out;
 }
 
+.comment-box {
+  padding: 10px !important;
+}
+
 .highlight {
   background-color: #e3e3e3;
+}
+
+.save-button {
+  background-color: var(--button-color);
+  border: none;
+}
+
+.username {
+  text-decoration: none;
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.link, .delete {
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.delete {
+  padding-right: 0;
+}
+
+.delete:hover {
+  color: var(--error-color);
+}
+
+.username:hover, .link:hover {
+  color: #d3d3d3;
 }

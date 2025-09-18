@@ -2,44 +2,53 @@
   <img class="profile-picture" [ngSrc]="review.profilePicture" alt="Profile Picture" width="100" height="100">
   <div class="ms-3 w-100">
     <div>
-      <h4><a [routerLink]="['/user', review.username]" class="text-dark">{{review.username}}</a></h4>
+      <h4><a class="username" [routerLink]="['/user', review.username]">{{review.username}}</a></h4>
       <span>{{utilsService.getRelativeDate(review.reviewDate)}}</span>
     </div>
     <div>
-      <div class="d-flex align-items-center mb-2">
+      <div class="d-flex align-items-center gap-2 mt-2 mb-3">
+        <img ngSrc="star.svg" alt="" height="20" width="20">
         <span>{{review.rating}}</span>
-        <i class="bi bi-star-fill ms-1 fs-5" style="color: #f2cb22;"></i>
       </div>
-      @if (review.isOwnReview) {
-        <div class="mb-2">
-          <button type="button" class="btn btn-secondary btn-sm me-1" (click)="openEditReviewModal()">Edit</button>
-          <button type="button" class="btn btn-danger btn-sm" (click)="deleteReviewEvent()">Delete</button>
+
+      @if (review.containsSpoilers && !showSpoilers) {
+        <div class="d-flex align-items-center gap-3 spoiler-container" (click)="showSpoilers = true">
+          <span class="fs-5">Spoiler</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+          </svg>
         </div>
+      } @else {
+        <span class="fs-5">{{review.commentary}}</span>
       }
-      <span>{{review.commentary}}</span>
-      <p>Contains Spoilers: {{review.containsSpoilers}}</p>
     </div>
 
     @if (review.numComments > 0) {
-      <button type="button" class="btn btn-secondary me-2" [hidden]="!areCommentsHidden" (click)="getReviewComments()">View {{review.numComments}} repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
+      <button type="button" class="btn btn-link link ps-0 me-2" [hidden]="!areCommentsHidden" (click)="getReviewComments()">View {{review.numComments}} repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
     }
-    <button type="button" class="btn btn-secondary" (click)="resetCommentBox()">Reply</button>
-    <br>
-    <br>
+    <button type="button" class="btn btn-link link ps-0 my-2" (click)="resetCommentBox()">Reply</button>
   </div>
-  <div class="ms-auto me-5 d-flex align-items-center">
-    <yt-button-heart [isLiked]="review.isLikedByUser" [size]="heartSize" (click)="toggleReviewLikeState()"></yt-button-heart>
-    <div id="like-count">{{review.numLikes}}</div>
+
+  <div class="d-flex flex-column gap-3">
+    <div class="ms-auto d-flex align-items-center">
+      <yt-button-heart [isLiked]="review.isLikedByUser" [size]="heartSize" (click)="toggleReviewLikeState()"></yt-button-heart>
+      <div id="like-count">{{review.numLikes}}</div>
+    </div>
+    @if (review.isOwnReview) {
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-link link" (click)="openEditReviewModal()">Edit</button>
+        <button type="button" class="btn btn-link delete" (click)="deleteReviewEvent()">Delete</button>
+      </div>
+    }
   </div>
 </div>
 <div style="margin-left: 7.8rem">
   <div class="mb-5" [hidden]="!showCommentBox">
-    <label [for]="'commentBox-' + review.id" class="form-label">Add Comment</label>
-    <textarea [id]="'commentBox-' + review.id" #commentBox class="form-control w-50" rows="5" [maxLength]="maxCommentLength" [(ngModel)]="commentText" aria-describedby="commentHelpBlock"></textarea>
-    <div id="commentHelpBlock" class="form-text">{{maxCommentLength - commentText.length}} characters remaining</div>
+    <textarea [id]="'commentBox-' + review.id" #commentBox class="form-control w-50 comment-box" rows="5" [maxLength]="maxCommentLength" [(ngModel)]="commentText" aria-describedby="commentHelpBlock"></textarea>
+    <div id="commentHelpBlock" class="form-text text-reset">{{maxCommentLength - commentText.length}} characters remaining</div>
     <div class="mt-3">
-      <button type="button" class="btn btn-secondary me-3" (click)="resetCommentBox()">Cancel</button>
-      <button type="button" class="btn btn-primary" [disabled]="commentText.trim().length === 0" (click)="addComment()">Add</button>
+      <button type="button" class="btn btn-secondary me-3" style="border: none" (click)="resetCommentBox()">Cancel</button>
+      <button type="button" class="btn btn-primary add-button" [disabled]="commentText.trim().length === 0" (click)="addComment()">Add</button>
     </div>
   </div>
   <div class="my-3" style="color: green">{{commentMessage}}</div>
@@ -56,8 +65,8 @@
     </div>
 
     @if (review.comments.page.number + 1 < review.comments.page.totalPages) {
-      <button type="button" class="btn btn-primary me-3 mb-5" (click)="getMoreReviewComments()">View {{review.comments.page.totalElements - (review.comments.page.number + 1) * review.comments.page.size}} More</button>
+      <button type="button" class="btn btn-link link me-3 mb-5" (click)="getMoreReviewComments()">View {{review.comments.page.totalElements - (review.comments.page.number + 1) * review.comments.page.size}} More</button>
     }
   }
-  <button type="button" [hidden]="areCommentsHidden" (click)="areCommentsHidden = true" class="btn btn-secondary mb-5">Hide Repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
+  <button type="button" [hidden]="areCommentsHidden" (click)="areCommentsHidden = true" class="btn btn-link link mb-5">Hide Repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
 </div>
