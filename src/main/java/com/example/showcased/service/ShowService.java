@@ -425,6 +425,7 @@ public class ShowService {
             // Wait for all API calls to complete
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
             season.setEpisodes(seasonEpisodes);
+            season.setAirYear(season.getEpisodes().getFirst().getAirDate().split("-")[0]);
         }
 
         // If the user is logged in, check whether season is on their ranking list

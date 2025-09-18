@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 public class SeasonDto {
     private String showTitle;
+    private String airYear;
     private Long id;
 
     @JsonAlias("season_number")
@@ -30,6 +31,6 @@ public class SeasonDto {
     }
 
     public void setPosterPath(String posterPath) {
-        this.posterPath = "https://image.tmdb.org/t/p/w342" + posterPath;
+        this.posterPath = "https://image.tmdb.org/t/p/original" + posterPath;
     }
 }

@@ -1,0 +1,41 @@
+#seasons-dropdown {
+  background-color: var(--button-color);
+  border: none;
+  padding: 10px 30px;
+  border-radius: 10px;
+}
+
+#seasons-dropdown:after {
+  display: none;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  background-color: var(--button-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  width: 200px;
+}
+
+.add-button:hover {
+  background-color: var(--outline-color);
+}
+
+#show-link, .episode-link {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+#show-link:hover, .episode-link:hover {
+  color: #d3d3d3;
+}
+
+.episode-image {
+  border-radius: 10px;
+}

@@ -25,6 +25,6 @@ public class SeasonEpisodeDto {
     private String imdbRating;
 
     public void setStillPath(String stillPath) {
-        this.stillPath = "https://image.tmdb.org/t/p/w185" + stillPath;
+        this.stillPath = "https://image.tmdb.org/t/p/original" + stillPath;
     }
 }

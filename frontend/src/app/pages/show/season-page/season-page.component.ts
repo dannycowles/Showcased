@@ -7,13 +7,21 @@ import {ProfileService} from '../../../services/profile.service';
 import {AddToSeasonRankingList} from '../../../data/dto/add-to-list-dto';
 import {Title} from '@angular/platform-browser';
 import {NgOptimizedImage} from '@angular/common';
+import {NgbDropdown, NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle} from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
   selector: 'app-season-page',
   templateUrl: './season-page.component.html',
   styleUrl: './season-page.component.css',
-  imports: [RouterLink, NgOptimizedImage],
+  imports: [
+    RouterLink,
+    NgOptimizedImage,
+    NgbDropdown,
+    NgbDropdownMenu,
+    NgbDropdownItem,
+    NgbDropdownToggle,
+  ],
   standalone: true,
 })
 export class SeasonPageComponent implements OnInit {
@@ -37,8 +45,6 @@ export class SeasonPageComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.retrieveSeasonInfo();
-
     // Retrieve number of seasons from backend
     try {
       this.numSeasons = await this.showService.fetchNumberOfSeasons(
@@ -82,7 +88,7 @@ export class SeasonPageComponent implements OnInit {
     }
   }
 
-  async removeSeasonRankingList() {
+  async removeSeasonFromRankingList() {
     try {
       const response = await this.profileService.removeSeasonFromRankingList(
         this.season.id,

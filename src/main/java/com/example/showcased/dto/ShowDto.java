@@ -74,7 +74,7 @@ public class ShowDto {
 
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {
-            this.backdropPath = "https://image.tmdb.org/t/p/w1280" + backdropPath;
+            this.backdropPath = "https://image.tmdb.org/t/p/original" + backdropPath;
         } else {
             this.backdropPath = "default";
         }
@@ -82,7 +82,7 @@ public class ShowDto {
 
     void setPosterPath(String posterPath) {
         if (posterPath != null) {
-            this.posterPath = "https://image.tmdb.org/t/p/w500" + posterPath;
+            this.posterPath = "https://image.tmdb.org/t/p/original" + posterPath;
         } else {
             this.posterPath = "default";
         }

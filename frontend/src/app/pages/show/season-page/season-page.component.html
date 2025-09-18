@@ -1,38 +1,91 @@
-@if (season) {
-  <button class="btn btn-primary" [routerLink]="['/show', showId]">Return to Show Details</button>
+<div class="container text-white d-flex gap-5 pt-5" style="margin-bottom: 15vh">
+  @if (season) {
+    <!-- Poster images are sized w342, with a 2:3 ratio -->
+    <img [ngSrc]="season.posterPath" alt="Season Poster" width="342" height="513" priority>
 
-  <h2>Season {{seasonNumber}}</h2>
-  <h3>Overview: {{season.overview}}</h3>
+    <div>
+      <a id="show-link" [routerLink]="['/show', showId]">
+        <h5>{{season.showTitle}}</h5>
+      </a>
 
-  <!-- Poster images are sized w342, with a 2:3 ratio -->
-  <img [ngSrc]="season.posterPath" alt="Season Poster" width="342" height="513" priority>
+      <div class="d-flex align-items-center gap-4">
+        <h1 class="fw-bold">Season {{seasonNumber}}</h1>
+        <h4 class="text-reset">({{season.airYear}})</h4>
+      </div>
 
-  <br>
-  @if (season.onRankingList) {
-    <button class="btn btn-outline-danger mt-3 mb-3" (click)="removeSeasonRankingList()">Remove from Ranking List</button>
-  } @else {
-    <button class="btn btn-outline-success mt-3 mb-3" (click)="addSeasonToRankingList()">Add to Ranking List</button>
+      <p class="mb-4 fs-5">{{season.overview}}</p>
+
+      <div class="d-flex gap-3 mb-3">
+        <div ngbDropdown>
+          <button type="button" class="btn btn-primary d-flex gap-4 align-items-center" id="seasons-dropdown" ngbDropdownToggle>
+            Select Season
+            <img ngSrc="chevron-down.svg" width="20" height="20" alt="">
+          </button>
+          <div ngbDropdownMenu aria-labelledby="seasons-dropdown">
+            @for (_ of [].constructor(numSeasons); let season = $index; track season) {
+              <button [routerLink]="['/show', showId, 'season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
+            }
+          </div>
+        </div>
+
+        @if (season.onRankingList) {
+          <button type="button" class="btn btn-primary add-button" (click)="removeSeasonFromRankingList()">
+            <img ngSrc="trophy.svg" width="20" height="20" alt="">
+            <span>Remove from ranking</span>
+          </button>
+        } @else {
+          <button type="button" class="btn btn-primary add-button" (click)="addSeasonToRankingList()">
+            <img ngSrc="trophy.svg" width="20" height="20" alt="">
+            <span>Add to ranking</span>
+          </button>
+        }
+      </div>
+
+      <!-- Navigation tabs -->
+      <ul class="nav nav-tabs custom-tabs" id="season-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="episodes-tab" data-bs-toggle="tab" data-bs-target="#episodes-tab-pane" type="button" role="tab" aria-controls="episodes-tab-pane" aria-selected="true">Episodes ({{season.episodes.length}})</button>
+        </li>
+      </ul>
+
+      <p class="my-4 fs-5 fst-italic">Episode ratings from IMDb</p>
+
+      <div class="tab-content" id="seasons-tab-content">
+        <div class="tab-pane show active" id="episodes-tab-pane" role="tabpanel" aria-labelledby="episodes-tab" tabindex="0">
+          <div class="mt-5 d-flex flex-column gap-5">
+            @for (episode of season.episodes; track episode.episodeNumber) {
+              <div class="d-flex gap-4">
+                <!-- Episode stills are sized w185, with a 16:9 ratio -->
+                <a [routerLink]="['episode', episode.episodeNumber]">
+                  <img class="episode-image" [ngSrc]="episode.stillPath" alt="Episode Still" width="278" height="156">
+                </a>
+
+                <div class="w-100">
+                  <div class="d-flex justify-content-between">
+                    <a class="episode-link" [routerLink]="['episode', episode.episodeNumber]">
+                      <h4 class="text-reset">{{episode.name}}</h4>
+                    </a>
+
+                    <div class="d-flex align-items-center gap-2">
+                      <img ngSrc="star.svg" alt="" height="20" width="20">
+                      <span>{{episode.imdbRating}}</span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-3">
+                    <span>S{{seasonNumber}} E{{episode.episodeNumber}}</span>
+                    <div class="circle-divider"></div>
+                    <span>{{utilsService.getRelativeDate(episode.airDate)}}</span>
+                  </div>
+                  <p>{{episode.plot}}</p>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
   }
+</div>
 
-  @if (numSeasons) {
-    <h3>Season Select:</h3>
-    @for (_ of [].constructor(numSeasons); let season = $index; track season) {
-      <button class="btn btn-secondary me-3" [routerLink]="['/show', showId, 'season', season + 1]">{{season + 1}}</button>
-    }
-  }
-  <br>
-  <br>
 
-  @for (episode of season.episodes; track episode.episodeNumber) {
-    <h4>S{{seasonNumber}} E{{episode.episodeNumber}}</h4>
-    <h4>Name: {{episode.name}}</h4>
-    <h4>Release Date: {{utilsService.getRelativeDate(episode.airDate)}}</h4>
-    <h4>IMDb Rating: {{episode.imdbRating}}</h4>
-    <h4>Plot: {{episode.plot}}</h4>
-
-    <!-- Episode stills are sized w185, with a 16:9 ratio -->
-    <a [routerLink]="['/show', showId, 'season', seasonNumber, 'episode', episode.episodeNumber]"><img [ngSrc]="episode.stillPath" alt="Episode Still" width="185" height="104"></a>
-    <br>
-    <br>
-  }
-}

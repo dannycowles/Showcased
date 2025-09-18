@@ -25,13 +25,6 @@
   pointer-events: none;
 }
 
-.circle-divider {
-  width: 4px;
-  height: 4px;
-  background-color: white;
-  border-radius: 50%;
-}
-
 .watch-logo {
   border-radius: 10px;
 }
@@ -62,52 +55,6 @@
 
 #seasons-dropdown:after, #sort-dropdown:after {
   display: none;
-}
-
-.nav-tabs {
-  border-bottom: none;
-}
-
-.nav-tabs .nav-link {
-  border: none;
-  border-radius: 0;
-  color: var(--outline-color);
-  position: relative;
-  padding: 0.75rem 0;
-  margin-right: 4rem;
-  transition: color 0.3s ease;
-  font-size: 1.5rem;
-}
-
-/* Underline effect */
-.nav-tabs .nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--outline-color);
-  transition: width 0.3s ease;
-}
-
-/* Active tab */
-.nav-tabs .nav-link.active {
-  color: var(--outline-color) !important; /* Active text color */
-  background: none;
-}
-
-.nav-tabs .nav-link.active::after {
-  width: 100%;
-}
-
-/* Hover effect for non-active tabs */
-.nav-tabs .nav-link:not(.active):hover {
-  color: var(--outline-color) !important;
-}
-
-.nav-tabs .nav-link:not(.active):hover::after {
-  width: 100%;
 }
 
 .section-header {
