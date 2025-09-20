@@ -1,66 +1,123 @@
-<div class="content">
+<div class="container text-white" style="margin-top: -0.5rem;">
   @if (episode) {
-    <button class="btn btn-primary" [routerLink]="['/show', showId, 'season', seasonNumber]">Return to Season Details</button>
-
-    <div class="my-3">
-      <button class="btn btn-secondary me-3" [disabled]="!hasPreviousEpisode()" (click)="goPreviousEpisode()">Previous Episode</button>
-      <button class="btn btn-secondary" [disabled]="!hasNextEpisode()" (click)="goNextEpisode()">Next Episode</button>
+    <div class="backdrop-container">
+      <!-- Episode still is size w780, with 16:9 aspect ratio -->
+      <img id="backdrop-image" [ngSrc]="episode.stillPath" alt="Episode poster" width="1280" height="720" priority>
     </div>
 
-    <h2>Season {{seasonNumber}} Episode {{episodeNumber}}: {{episode.episodeTitle}}</h2>
+    <div class="d-flex justify-content-between mt-2">
+      <div class="d-flex align-items-center gap-3 fw-bold fs-5">
+        <a class="link" [routerLink]="['/show', showId]">{{episode.showTitle}}</a>
+        <span class="circle-divider"></span>
+        <a class="link" [routerLink]="['/show', showId, 'season', seasonNumber]">Season {{seasonNumber}}</a>
+        <span class="circle-divider"></span>
+        <span>Episode {{episodeNumber}}</span>
+      </div>
 
-    <h3>IMDb Rating: {{episode.imdbRating}} with {{episode.imdbVotes}} votes</h3>
-    <h3>Release Date: {{utilsService.getRelativeDate(episode.airDate)}}</h3>
-    <h3>Runtime: {{episode.runtime}} minutes</h3>
-    <h3>Plot: {{episode.plot}}</h3>
+      <div class="d-flex align-items-center gap-4">
+        <button class="btn btn-link" [disabled]="!hasPreviousEpisode()" (click)="goPreviousEpisode()">
+          <img ngSrc="chevron-left.svg" alt="Previous episode" height="30" width="30">
+        </button>
+        <span class="fs-4">S{{seasonNumber}} E{{episodeNumber}}</span>
+        <button class="btn btn-link" [disabled]="!hasNextEpisode()" (click)="goNextEpisode()">
+          <img ngSrc="chevron-right.svg" alt="Next episode" height="30" width="30">
+        </button>
+      </div>
+    </div>
 
-    <!-- Episode still is size w780, with 16:9 aspect ratio -->
-    <img [ngSrc]="episode.stillPath" alt="Episode Still" width="780" height="438" priority>
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="flex-grow-1">
+        <div class="d-flex my-2 justify-content-between pe-5">
+          <h1 class="fw-bold">{{episode.episodeTitle}}</h1>
+          <div id="rating-info" class="d-flex gap-3 align-items-center">
+            <div class="d-flex flex-column align-items-center">
+              <div class="d-flex align-items-center gap-2">
+                <img class="star" ngSrc="star.svg" alt="Star icon" width="25" height="25">
+                <h4 class="text-reset mb-0">{{episode.imdbRating}}</h4>
+              </div>
+              <h5 style="font-size: 0.75rem">{{episode.imdbVotes}}</h5>
+            </div>
+            <img ngSrc="imdb.svg" alt="IMDB icon" width="35" height="35">
+          </div>
+        </div>
 
-    <br>
-    <br>
-    @if (episode.isOnRankingList) {
-      <button class="btn btn-outline-danger" (click)="removeFromRankingList()">Remove from Ranking List</button>
-    } @else {
-      <button class="btn btn-outline-success" (click)="addToRankingList()">Add to Ranking List</button>
-    }
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <span>{{utilsService.getRelativeDate(episode.airDate)}}</span>
+          <span class="circle-divider"></span>
+          <span>{{utilsService.getFormattedRuntime(episode.runtime)}}</span>
+        </div>
 
-    <div class="d-flex mt-3 align-items-center">
-      <h2>Reviews</h2>
-      <div class="ms-auto">
-        <div class="dropdown ms-auto">
-          <span class="fs-5 me-2">Sort</span>
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ selectedSort.label }}
+        <p class="fs-5 my-4">{{episode.plot}}</p>
+
+        <div class="d-flex flex-column gap-3">
+          <button type="button" class="btn btn-primary add-button" (click)="openAddReviewModal()">
+            <img ngSrc="pencil.svg" width="20" height="20" alt="">
+            <span>Write a review</span>
           </button>
-          <ul class="dropdown-menu">
-            @for (sortOption of sortReviewOptions; track sortOption.value) {
-              <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
-            }
-          </ul>
+          @if (episode.isOnRankingList) {
+            <button type="button" class="btn btn-primary add-button" (click)="removeFromRankingList()">
+              <img ngSrc="trophy.svg" width="20" height="20" alt="">
+              <span>Remove from ranking</span>
+            </button>
+          } @else {
+            <button type="button" class="btn btn-primary add-button" (click)="addToRankingList()">
+              <img ngSrc="trophy.svg" width="20" height="20" alt="">
+              <span>Add to ranking</span>
+            </button>
+          }
         </div>
       </div>
+
+      <div>
+        <h4 class="text-reset">User ratings</h4>
+        <app-review-chart [reviewDistribution]="episode.reviewDistribution"></app-review-chart>
+      </div>
     </div>
 
-    <app-review-chart [reviewDistribution]="episode.reviewDistribution"></app-review-chart>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs custom-tabs mb-4 mt-2" id="episode-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-tab-pane" type="button" role="tab" aria-controls="reviews-tab-pane" aria-selected="true">Reviews</button>
+      </li>
+    </ul>
 
-    <button type="button" class="btn btn-primary my-4" (click)="openAddReviewModal()">Add Review</button>
+    <div class="tab-content" id="episode-tabs-content" style="margin-bottom: 15vh">
+      <div class="tab-pane show active" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
+        <div class="d-flex my-3 align-items-center">
+          <h3 class="section-header">Reviews</h3>
+          <div class="ms-auto">
+            <div class="dropdown ms-auto">
+              <span class="fs-4 me-4">Sort</span>
+              <button id="sort-dropdown" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="me-3">{{ selectedSort.label }}</span>
+                <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
+              </button>
+              <ul class="dropdown-menu">
+                @for (sortOption of sortReviewOptions; track sortOption.value) {
+                  <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
 
-    @if (reviews?.content.length) {
-      <div class="reviews"
-           infiniteScroll
-           [infiniteScrollDistance]="1"
-           (scrolled)="loadMoreReviews()"
-      >
-        @for (review of reviews.content; track review.id) {
-          <app-review [review]="review" [reviewType]="ReviewType.Episode" [isLoggedIn]="isLoggedIn" (deleteReview)="handleDeleteReview($event)"></app-review>
+        @if (reviews?.content.length) {
+          <div class="reviews"
+               infiniteScroll
+               [infiniteScrollDistance]="1"
+               (scrolled)="loadMoreReviews()"
+          >
+            @for (review of reviews.content; track review.id) {
+              <app-review [review]="review" [reviewType]="ReviewType.Episode" [isLoggedIn]="isLoggedIn" (deleteReview)="handleDeleteReview($event)"></app-review>
+              <hr>
+            }
+          </div>
+        } @else {
+          <h4 class="text-reset">No reviews for this episode</h4>
         }
       </div>
-    } @else {
-      <div>No reviews yet!</div>
-    }
+    </div>
   }
-
 </div>
 
 

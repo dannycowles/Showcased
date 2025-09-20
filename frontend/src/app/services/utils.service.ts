@@ -71,4 +71,15 @@ export class UtilsService {
     // For dates longer than one week, just display the formatted date
     return this.getFormattedDate(actualDate);
   }
+
+  getFormattedRuntime(runtime: number): string {
+    if (runtime < 60) {
+      return `${runtime}m`;
+    }
+
+    const hours = Math.floor(runtime / 60);
+    const minutes = runtime % 60;
+
+    return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
+  }
 }
