@@ -25,5 +25,4 @@ public class ProfileDetailsDto {
 
     private List<CollectionDto> collections;
     private List<ShowReviewDto> reviews;
-    private List<ReviewDistributionDto> reviewDistribution;
 }

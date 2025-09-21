@@ -189,3 +189,16 @@ hr {
 .custom-tabs.nav-tabs .nav-link:not(.active):hover::after {
   width: 100%;
 }
+
+pre {
+  font-family: inherit !important;
+}
+
+.white-link {
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.white-link:hover {
+  color: #d3d3d3;
+}

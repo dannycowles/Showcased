@@ -115,6 +115,7 @@ public class UserService {
         ProfileDetailsDto userDetails = new ProfileDetailsDto();
         UserHeaderDataDto headerData = userMapper.map(user, UserHeaderDataDto.class);
         headerData.setSocialAccounts(getSocialAccounts(username));
+        headerData.setReviewDistribution(userRepository.getReviewDistribution(user.getId()));
 
         // Check if the user is logged in, if so we check they are following this user
         User loggedInUser = authService.retrieveUserFromJwt();
@@ -153,7 +154,6 @@ public class UserService {
         userDetails.setCharacterRankings(getAllUserCharacterRankings(username, numTopEntries));
         userDetails.setDynamicRankingTop(getUserDynamicRankings(username, numTopEntries));
         userDetails.setCollections(getCollections(null, username, PageRequest.of(1, numTopEntries)).getContent());
-        userDetails.setReviewDistribution(userRepository.getReviewDistribution(user.getId()));
         return userDetails;
     }
 

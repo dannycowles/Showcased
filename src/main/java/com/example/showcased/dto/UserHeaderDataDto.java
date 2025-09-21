@@ -19,4 +19,5 @@ public class UserHeaderDataDto {
     private boolean isFollowing = false;
     @JsonProperty("isOwnProfile")
     private boolean isOwnProfile = false;
+    private List<ReviewDistributionDto> reviewDistribution;
 }

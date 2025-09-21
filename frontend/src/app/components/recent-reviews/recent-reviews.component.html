@@ -1,0 +1,36 @@
+<div class="d-flex gap-4 mb-3">
+  <h3 class="fw-bold">Recent reviews</h3>
+  <a routerLink="reviews" class="link-offset-3 white-link">
+    @if (editable) {
+      <span>Manage</span>
+    } @else {
+      <span>View all</span>
+    }
+  </a>
+</div>
+
+@if (reviews.length != 0) {
+  <div class="d-flex flex-column gap-3">
+    @for (review of reviews; track review.id) {
+      <div>
+        <div class="d-flex justify-content-between">
+          @switch (review.type) {
+            @case (ReviewType.Show) {
+              <span class="fw-bold">{{review.showTitle}}</span>
+            }
+            @case (ReviewType.Episode) {
+              <span class="fw-bold">{{review.showTitle}} S{{review.season}} E{{review.episode}}</span>
+            }
+          }
+          <div class="d-flex align-items-center gap-2">
+            <span>{{review.rating}}</span>
+            <img ngSrc="star.svg" alt="" height="20" width="20">
+          </div>
+        </div>
+        <span>{{utilsService.getRelativeDate(review.reviewDate)}}</span>
+      </div>
+    }
+  </div>
+} @else {
+  <p>No reviews</p>
+}

@@ -5,6 +5,7 @@ import {UserService} from '../../services/user.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UtilsService} from '../../services/utils.service';
 import {RouterLink} from '@angular/router';
+import {ReviewChartComponent} from '../review-chart/review-chart.component';
 
 @Component({
   selector: 'app-user-info',
@@ -13,18 +14,21 @@ import {RouterLink} from '@angular/router';
     ReactiveFormsModule,
     FormsModule,
     RouterLink,
+    ReviewChartComponent,
   ],
   templateUrl: './user-info.component.html',
   styleUrl: './user-info.component.css',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UserInfoComponent {
-  @Input({required: true}) headerData: UserHeaderData;
-  @Input({transform: booleanAttribute}) editable: boolean = false; // true for profile page, false for user page
+  @Input({ required: true }) headerData: UserHeaderData;
+  @Input({ transform: booleanAttribute }) editable: boolean = false; // true for profile page, false for user page
 
-  constructor(private userService: UserService,
-              public utilsService: UtilsService) { };
+  constructor(
+    private userService: UserService,
+    public utilsService: UtilsService,
+  ) {}
 
   async followUser() {
     try {
@@ -33,7 +37,7 @@ export class UserInfoComponent {
         this.headerData.isFollowing = true;
         this.headerData.numFollowers += 1;
       }
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }
@@ -45,7 +49,7 @@ export class UserInfoComponent {
         this.headerData.isFollowing = false;
         this.headerData.numFollowers -= 1;
       }
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }

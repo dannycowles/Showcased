@@ -1,17 +1,32 @@
-<h3>{{ title }}</h3>
-@if (shows.length != 0) {
-  <div class="d-flex gap-5">
-    @for (show of shows; track show.showId; let rank = $index) {
-      @if (ranked) {
-        <h2 class="align-self-center fw-bold">{{rank + 1}}</h2>
+<div class="mb-3">
+  <div class="d-flex gap-5 mb-3">
+    <h3 class="fw-bold">{{ title }}</h3>
+    <a routerLink="favorite-shows" class="link-offset-3 white-link">
+      @if (editable) {
+        <span>Manage</span>
+      } @else {
+        <span>View all</span>
       }
-      <div>
-        <h5>{{show.title}}</h5>
-        <!-- Poster images are sized w185, using 2:3 ratio -->
-        <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-      </div>
-    }
+    </a>
   </div>
-} @else {
-  <p>Nothing on list yet!</p>
-}
+
+  @if (shows.length != 0) {
+    <div class="d-flex gap-3 flex-wrap">
+      @for (show of shows; track show.showId; let rank = $index) {
+        <div class="d-flex flex-column align-items-center">
+          <a [routerLink]="['/show', show.showId]">
+            <!-- Poster images are sized w185, using 2:3 ratio -->
+            <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
+          </a>
+
+          @if (ranked) {
+            <p>{{rank + 1}}</p>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <p>No items on list</p>
+  }
+</div>
+

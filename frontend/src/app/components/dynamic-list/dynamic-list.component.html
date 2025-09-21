@@ -1,12 +1,23 @@
-<h3>Favorite Character Dynamics</h3>
-
-@if (dynamics?.length) {
-  @for (dynamic of dynamics; track dynamic.id) {
-    <div class="d-flex align-items-center gap-5 mb-3">
-      <h2 class="fw-bold">{{dynamic.rankNum}}</h2>
-      <h5>{{dynamic.character1Name}} & {{dynamic.character2Name}} - {{dynamic.showTitle}}</h5>
-    </div>
-  }
+<div class="d-flex gap-5 mb-3">
+  <h3 class="fw-bold">Favorite character dynamics</h3>
+  <a routerLink="dynamic-ranking" class="link-offset-3 white-link">
+    @if (editable) {
+      <span>Manage</span>
+    } @else {
+      <span>View all</span>
+    }
+  </a>
+</div>
+@if (dynamics?.length != 0) {
+  <div class="d-flex gap-5 flex-wrap">
+    @for (dynamic of dynamics; track dynamic.id) {
+      <div class="text-center mb-3">
+        <h5 class="mb-0">{{dynamic.character1Name}} & {{dynamic.character2Name}}</h5>
+        <p class="fw-light mb-0">{{dynamic.showTitle}}</p>
+        <p>{{dynamic.rankNum}}</p>
+      </div>
+    }
+  </div>
 } @else {
-  <div>Nothing ranked yet!</div>
+  <p>No items on list</p>
 }

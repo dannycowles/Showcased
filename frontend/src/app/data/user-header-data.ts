@@ -1,4 +1,5 @@
 import {UserSocialData} from './user-social-data';
+import {ReviewBreakdown} from './show/show-data';
 
 export interface UserHeaderData {
   readonly displayName: string;
@@ -11,4 +12,5 @@ export interface UserHeaderData {
   isFollowing: boolean;
   isOwnProfile: boolean;
   numReviews: number;
+  readonly reviewDistribution: ReviewBreakdown[];
 }

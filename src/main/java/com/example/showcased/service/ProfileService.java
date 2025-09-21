@@ -123,6 +123,7 @@ public class ProfileService {
         UserHeaderDataDto headerData = profileMapper.map(user, UserHeaderDataDto.class);
         headerData.setSocialAccounts(getSocialAccounts());
         headerData.setOwnProfile(true);
+        headerData.setReviewDistribution(userRepository.getReviewDistribution(user.getId()));
         profileDetails.setHeaderData(headerData);
 
         profileDetails.setWatchlistTop(getWatchlist(numTopEntries));
@@ -134,7 +135,6 @@ public class ProfileService {
         profileDetails.setCharacterRankings(getAllCharacterRankings(numTopEntries));
         profileDetails.setDynamicRankingTop(getDynamicsRankingList(numTopEntries));
         profileDetails.setCollections(getCollectionList(null, PageRequest.of(1, numTopEntries)).getContent());
-        profileDetails.setReviewDistribution(userRepository.getReviewDistribution(user.getId()));
         return profileDetails;
     }
 

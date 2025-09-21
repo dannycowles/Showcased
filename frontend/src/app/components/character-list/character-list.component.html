@@ -1,11 +1,14 @@
 <h3>{{ title }}</h3>
 @if (characters?.length != 0) {
-  @for (character of characters; track character.name) {
-    <div class="d-flex align-items-center gap-5 mb-3">
-      <h2 class="fw-bold">{{character.rankNum}}</h2>
-      <h5>{{character.name}} - {{character.showName}}</h5>
-    </div>
-  }
+  <div class="d-flex gap-5 flex-wrap">
+    @for (character of characters; track character.name) {
+      <div class="text-center mb-3">
+        <h5 class="mb-0">{{character.name}}</h5>
+        <p class="fw-light mb-0">{{character.showName}}</p>
+        <p>{{character.rankNum}}</p>
+      </div>
+    }
+  </div>
 } @else {
-  <p>Nothing ranked yet!</p>
+  <p>No items on list</p>
 }

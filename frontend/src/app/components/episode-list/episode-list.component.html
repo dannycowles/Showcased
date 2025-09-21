@@ -1,16 +1,27 @@
-<h3>Favorite Episodes</h3>
+<div class="d-flex gap-5 mb-3">
+  <h3 class="fw-bold">Favorite episodes</h3>
+  <a routerLink="favorite-episodes" class="link-offset-3 white-link">
+    @if (editable) {
+      <span>Manage</span>
+    } @else {
+      <span>View all</span>
+    }
+  </a>
+</div>
+
 @if (episodes.length != 0) {
-  <div class="d-flex gap-5">
-    @for (episode of episodes; track episode.episodeId) {
-      <h2 class="align-self-center fw-bold">{{episode.rankNum}}</h2>
-      <div>
-        <h5>{{episode.episodeTitle}}</h5>
-        <h5>{{episode.showTitle}} : S{{episode.season}} E{{episode.episode}}</h5>
-        <!-- Episode stills are sized w185, with a 16:9 ratio -->
-        <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
+  <div class="d-flex gap-3 flex-wrap">
+    @for (episode of episodes; track episode.episodeId; let rank = $index) {
+      <div class="d-flex flex-column align-items-center">
+        <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]">
+          <!-- Episode stills are sized w185, with a 16:9 ratio -->
+          <img class="poster-image" [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority>
+        </a>
+
+        <p>{{rank + 1}}</p>
       </div>
     }
   </div>
 } @else {
-  <p>Nothing ranked yet!</p>
+  <p>No items on list</p>
 }
