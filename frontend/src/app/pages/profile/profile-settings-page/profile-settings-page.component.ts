@@ -114,21 +114,17 @@ export class ProfileSettingsPageComponent implements OnInit {
           await this.profileService.uploadProfilePicture(formData);
 
         if (response.ok) {
-          this.profileSettings.profilePicture =
-            (await response.text()) + '?t=' + new Date().getTime();
+          this.profileSettings.profilePicture = (await response.text()) + '?t=' + new Date().getTime();
           this.avatarMessage = 'Successfully updated your avatar!';
           this.avatarUploadSuccess = true;
         } else if (response.status === 413) {
-          this.avatarMessage =
-            'Uploaded file is too large. Maximum size is 5MB.';
+          this.avatarMessage = 'Uploaded file is too large. Maximum size is 5MB.';
           this.avatarUploadSuccess = false;
         } else if (response.status === 415) {
-          this.avatarMessage =
-            'Invalid file type. The supported types are JPEG & PNG.';
+          this.avatarMessage = 'Invalid file type. The supported types are JPEG & PNG.';
           this.avatarUploadSuccess = false;
         } else {
-          this.avatarMessage =
-            'There was an error updating your avatar. Please try again.';
+          this.avatarMessage = 'There was an error updating your avatar. Please try again.';
           this.avatarUploadSuccess = false;
         }
       } catch (error) {
