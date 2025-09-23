@@ -1,38 +1,55 @@
-<div class="mb-3">
-  <input type="text" class="form-control" id="searchInput" placeholder="Search..." (input)="debouncedSearch()" [(ngModel)]="searchString">
-</div>
+<div class="text-white" style="margin-bottom: 15vh">
+  <div id="searchbar" class="position-relative">
+    <img class="input-icon" ngSrc="search.svg" alt="Search icon" width="20" height="20">
+    <input class="form-control" id="search-input" placeholder="Search" (input)="debouncedSearch()" [(ngModel)]="searchString" name="search">
+  </div>
 
-@if (searchResults) {
-  @if (searchResults.content.length > 0) {
-    <div class="users"
-         infiniteScroll
-         [infiniteScrollDistance]="1"
-         (scrolled)="loadMoreUsers()"
-    >
-      @for (user of searchResults.content; track user.id) {
-        <div class="d-flex align-items-center ms-5 mb-4 me-5">
-          <img [ngSrc]="user.profilePicture" id="profile-picture" alt="User Profile Picture" width="100" height="100">
-          <h3 class="ms-5"><a [routerLink]="['/user', user.displayName]" class="text-dark">{{user.displayName}}</a></h3>
+  @if (searchResults) {
+    @if (searchResults.content.length > 0) {
+      <div class="users"
+           infiniteScroll
+           [infiniteScrollDistance]="1"
+           (scrolled)="loadMoreUsers()"
+      >
+        @for (user of searchResults.content; track user.id) {
+          <div class="d-flex align-items-center my-4">
+            <img style="cursor: pointer" [routerLink]="['/user', user.displayName]" [ngSrc]="user.profilePicture" id="profile-picture" alt="User Profile Picture" width="100" height="100">
+            <a class="white-link text-decoration-none" [routerLink]="['/user', user.displayName]">
+              <h3 class="ms-5">{{user.displayName}}</h3>
+            </a>
 
-          @if (editable) {
-            @if (listType === "followers") {
-              <button class="btn btn-outline-danger ms-auto" (click)="remove(user.id)">Remove</button>
-            } @else {
-              <button class="btn btn-outline-danger ms-auto" (click)="unfollow(user.id)">Unfollow</button>
-            }
-          } @else {
-            @if (!user.isOwnProfile) {
-              @if (user.isFollowing) {
-                <button class="btn btn-outline-danger ms-auto" (click)="unfollow(user.id)">Unfollow</button>
+            @if (editable) {
+              @if (listType === "followers") {
+                <button class="btn btn-primary add-button ms-auto" (click)="remove(user.id)">
+                  <span>Remove</span>
+                  <img ngSrc="x.svg" alt="" height="25" width="25">
+                </button>
               } @else {
-                <button class="btn btn-outline-success ms-auto" (click)="follow(user.id)">Follow</button>
+                <button class="btn btn-primary add-button ms-auto" (click)="unfollow(user.id)">
+                  <span>Unfollow</span>
+                </button>
+              }
+            } @else {
+              @if (!user.isOwnProfile) {
+                @if (user.isFollowing) {
+                  <button class="btn btn-primary add-button ms-auto" (click)="unfollow(user.id)">
+                    <span>Unfollow</span>
+                  </button>
+                } @else {
+                  <button class="btn btn-primary add-button ms-auto" (click)="follow(user.id)">
+                    <span>Follow</span>
+                  </button>
+                }
               }
             }
-          }
+          </div>
+          <hr>
+        }
       </div>
-      }
-    </div>
-  } @else {
-    <p>No Users Found</p>
+    } @else {
+      <p class="text-reset mt-4 fs-4">No users found</p>
+    }
   }
-}
+</div>
+
+

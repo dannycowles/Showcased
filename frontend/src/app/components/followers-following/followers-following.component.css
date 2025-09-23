@@ -5,3 +5,20 @@
   object-position: center;
   border-radius: 50%;
 }
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  background-color: var(--button-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  width: 150px;
+}
+
+.add-button:hover {
+  background-color: var(--outline-color);
+}

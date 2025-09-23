@@ -1,4 +1,17 @@
-<a class="btn btn-primary" routerLink="/profile">Return to Profile</a>
-<h1>Profile Following Page</h1>
+<div class="container text-white pt-5">
+  <a class="d-flex align-items-center gap-3 mb-3 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to profile</h3>
+  </a>
 
-<app-followers-following listType="following"></app-followers-following>
+  <ul class="nav nav-tabs custom-tabs mb-5" id="followers-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button routerLink="/profile/followers" class="nav-link" id="followers-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Followers</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="following-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">Following</button>
+    </li>
+  </ul>
+
+  <app-followers-following listType="following"></app-followers-following>
+</div>

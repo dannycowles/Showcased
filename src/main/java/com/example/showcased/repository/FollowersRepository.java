@@ -56,4 +56,6 @@ public interface FollowersRepository extends JpaRepository<Follower, Long> {
     boolean existsByFollowerIdAndFollowingId(Long followerId, Long followingId);
 
     Optional<Follower> findByFollowerIdAndFollowingId(Long userId, Long unfollowId);
+
+    void deleteByFollowerIdAndFollowingId(Long removeId, Long id);
 }

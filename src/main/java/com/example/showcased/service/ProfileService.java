@@ -710,10 +710,7 @@ public class ProfileService {
     @Transactional
     public void removeFollower(Long removeId) {
         User user =  authService.retrieveUserFromJwt();
-        Follower removeFollower = new Follower();
-        removeFollower.setFollowerId(removeId);
-        removeFollower.setFollowingId(user.getId());
-        followersRepository.delete(removeFollower);
+        followersRepository.deleteByFollowerIdAndFollowingId(removeId, user.getId());
 
         // Decrement the number of followers for the person completing the action, and the number of people following for the user being removed
         userRepository.decrementFollowersCount(user.getId());
