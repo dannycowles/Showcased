@@ -66,6 +66,12 @@ import {
 } from './pages/profile/profile-edit-collection-page/profile-edit-collection-page.component';
 import {ProfileSettingsPageComponent} from './pages/profile/profile-settings-page/profile-settings-page.component';
 import {authGuard} from './guards/auth.guard';
+import {
+  ProfileEditWatchlistPageComponent
+} from './pages/profile/profile-edit-watchlist-page/profile-edit-watchlist-page.component';
+import {
+  ProfileEditWatchingPageComponent
+} from './pages/profile/profile-edit-watching-page/profile-edit-watching-page.component';
 
 export const routes: Routes = [
     {
@@ -101,9 +107,21 @@ export const routes: Routes = [
       canActivate: [authGuard]
     },
     {
+      path: 'profile/watchlist/edit',
+      title: 'Edit Watchlist | Showcased',
+      component: ProfileEditWatchlistPageComponent,
+      canActivate: [authGuard]
+    },
+    {
       path: 'profile/watching',
       title: 'Your Watching List | Showcased',
       component: ProfileWatchingPageComponent,
+      canActivate: [authGuard]
+    },
+    {
+      path: 'profile/watching/edit',
+      title: 'Edit Watching List | Showcased',
+      component: ProfileEditWatchingPageComponent,
       canActivate: [authGuard]
     },
     {

@@ -7,7 +7,7 @@
         <div class="d-flex align-items-center gap-4">
           <h2 class="fw-bold">{{headerData.displayName}}</h2>
           @if (headerData.isOwnProfile) {
-            <button class="btn btn-primary edit-button" [routerLink]="['settings']">Edit profile</button>
+            <button id="edit-profile-button" class="btn btn-primary" [routerLink]="['settings']">Edit profile</button>
           }
         </div>
         <pre class="fs-5">{{headerData.bio}}</pre>

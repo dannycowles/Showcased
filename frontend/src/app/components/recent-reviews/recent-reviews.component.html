@@ -1,12 +1,6 @@
 <div class="d-flex gap-4 mb-3">
   <h3 class="fw-bold">Recent reviews</h3>
-  <a routerLink="reviews" class="link-offset-3 white-link">
-    @if (editable) {
-      <span>Manage</span>
-    } @else {
-      <span>View all</span>
-    }
-  </a>
+  <a routerLink="reviews" class="link-offset-3 white-link">View all</a>
 </div>
 
 @if (reviews.length != 0) {

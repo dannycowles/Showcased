@@ -1,12 +1,6 @@
 <div class="d-flex gap-5 mb-3">
   <h3 class="fw-bold">Favorite seasons</h3>
-  <a routerLink="favorite-seasons" class="link-offset-3 white-link">
-    @if (editable) {
-      <span>Manage</span>
-    } @else {
-      <span>View all</span>
-    }
-  </a>
+  <a routerLink="season-ranking" class="link-offset-3 white-link">View all</a>
 </div>
 
 @if (seasons.length != 0) {

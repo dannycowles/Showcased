@@ -6,7 +6,7 @@
   border-radius: 50%;
 }
 
-.edit-button {
+#edit-profile-button {
   background-color: var(--button-color);
   border: none;
   border-radius: 10px;
@@ -15,7 +15,7 @@
   height: 40px;
 }
 
-.edit-button:hover {
+#edit-profile-button:hover {
   background-color: var(--outline-color);
 }
 

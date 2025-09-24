@@ -15,8 +15,6 @@ import {ShowRankingData} from '../../data/lists/show-ranking-data';
   standalone: true
 })
 export class ShowListComponent {
-  @Input({required : true}) title: string;
   @Input({required : true}) shows: ShowListData[] | ShowRankingData[];
   @Input({transform: booleanAttribute}) ranked: boolean = false;
-  @Input({transform: booleanAttribute}) editable: boolean = false;
 }

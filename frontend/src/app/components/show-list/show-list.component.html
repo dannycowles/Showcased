@@ -1,15 +1,4 @@
 <div class="mb-3">
-  <div class="d-flex gap-5 mb-3">
-    <h3 class="fw-bold">{{ title }}</h3>
-    <a routerLink="favorite-shows" class="link-offset-3 white-link">
-      @if (editable) {
-        <span>Manage</span>
-      } @else {
-        <span>View all</span>
-      }
-    </a>
-  </div>
-
   @if (shows.length != 0) {
     <div class="d-flex gap-3 flex-wrap">
       @for (show of shows; track show.showId; let rank = $index) {

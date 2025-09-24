@@ -4,11 +4,26 @@
 
     <div class="d-flex justify-content-between">
       <div class="flex-grow-1" style="min-width: 300px">
-        <app-show-list title="Favorite shows" [shows]="profileData.showRankingTop" ranked editable></app-show-list>
-        <app-season-list [seasons]="profileData.seasonRankingTop" editable></app-season-list>
+        <div class="d-flex gap-5 mb-3">
+          <h3 class="fw-bold">Favorite shows</h3>
+          <a routerLink="show-ranking" class="link-offset-3 white-link">View all</a>
+        </div>
+        <app-show-list [shows]="profileData.showRankingTop" ranked></app-show-list>
+
+        <app-season-list [seasons]="profileData.seasonRankingTop"></app-season-list>
         <app-episode-list [episodes]="profileData.episodeRankingTop" editable></app-episode-list>
-        <app-show-list title="Currently watching" [shows]="profileData.watchingTop" editable></app-show-list>
-        <app-show-list title="Watchlist" [shows]="profileData.watchlistTop" editable></app-show-list>
+
+        <div class="d-flex gap-5 mb-3">
+          <h3 class="fw-bold">Currently watching</h3>
+          <a routerLink="watching" class="link-offset-3 white-link">View all</a>
+        </div>
+        <app-show-list [shows]="profileData.watchingTop"></app-show-list>
+
+        <div class="d-flex gap-5 mb-3">
+          <h3 class="fw-bold">Watchlist</h3>
+          <a routerLink="watchlist" class="link-offset-3 white-link">View all</a>
+        </div>
+        <app-show-list [shows]="profileData.watchlistTop"></app-show-list>
 
         <div class="d-flex align-items-center gap-5 mb-3">
           <h3 class="fw-bold">Favorite characters</h3>
@@ -25,14 +40,14 @@
             </ul>
           </div>
 
-          <a [routerLink]="['character-ranking', selectedCharacterType]" class="link-offset-3 white-link">Manage</a>
+          <a [routerLink]="['character-ranking', selectedCharacterType]" class="link-offset-3 white-link">View all</a>
         </div>
         <app-character-list title="" [characters]="selectedCharacters"></app-character-list>
         <app-dynamic-list [dynamics]="profileData.dynamicRankingTop" editable></app-dynamic-list>
 
         <div class="d-flex gap-5 mb-3">
           <h3 class="fw-bold">Collections</h3>
-          <a routerLink="collections" class="link-offset-3 white-link">Manage</a>
+          <a routerLink="collections" class="link-offset-3 white-link">View all</a>
         </div>
 
         @if (profileData?.collections?.length != 0) {
@@ -44,7 +59,7 @@
         }
       </div>
 
-      <div >
+      <div>
         <app-recent-reviews [reviews]="profileData.reviews" editable></app-recent-reviews>
       </div>
     </div>

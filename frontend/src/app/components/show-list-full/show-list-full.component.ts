@@ -15,24 +15,5 @@ import {ConfirmationService} from '../../services/confirmation.service';
   standalone: true
 })
 export class ShowListFullComponent {
-  @Input({required : true}) title: string;
   @Input({required : true}) shows: ShowListData[];
-  @Input({transform: booleanAttribute}) editable: boolean = false;
-  @Input() moveTitle: string = "";
-
-  @Output() remove = new EventEmitter<number>();
-  @Output() move = new EventEmitter<number>();
-
-  constructor(private confirmationService: ConfirmationService) {}
-
-  async removeEvent(removeShow: ShowListData) {
-    const confirmation = await this.confirmationService.confirmRemove(removeShow.title);
-    if (confirmation) {
-      this.remove.emit(removeShow.showId);
-    }
-  }
-
-  moveEvent(moveId: number) {
-    this.move.emit(moveId);
-  }
 }

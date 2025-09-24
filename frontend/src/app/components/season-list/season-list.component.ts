@@ -1,4 +1,4 @@
-import {booleanAttribute, Component, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {SeasonRankingData} from '../../data/lists/season-ranking-data';
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
@@ -15,5 +15,4 @@ import {NgOptimizedImage} from '@angular/common';
 })
 export class SeasonListComponent {
   @Input({required: true}) seasons: SeasonRankingData[];
-  @Input({transform: booleanAttribute}) editable: boolean = false;
 }

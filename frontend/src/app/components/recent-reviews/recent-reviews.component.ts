@@ -1,4 +1,4 @@
-import {booleanAttribute, Component, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ProfileReviewData} from '../../data/types';
 import {NgOptimizedImage} from '@angular/common';
@@ -13,7 +13,6 @@ import {UtilsService} from '../../services/utils.service';
   standalone: true,
 })
 export class RecentReviewsComponent {
-  @Input({ transform: booleanAttribute }) editable = false;
   @Input({ required: true }) reviews: ProfileReviewData[];
 
   constructor(public utilsService: UtilsService) {}

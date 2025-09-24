@@ -2,9 +2,11 @@
 :root {
   --background-color: #020207;
   --button-color: #1B263B;
+  --button-hover-color: #2C3E50;
   --outline-color: #778DA9;
   --star-color: #FFD51F;
   --error-color: #DC3545;
+  --error-hover-color: #C82333;
   --success-color: #198754;
   --subheader-color: #575757;
 }
@@ -201,4 +203,43 @@ pre {
 
 .white-link:hover {
   color: #d3d3d3;
+}
+
+#edit-button {
+  background-color: var(--button-color);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 40px;
+  transition: background-color 0.3s ease;
+}
+
+#add-button {
+  background-color: var(--button-color);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+#add-button:hover, #move-button:hover, #edit-button:hover {
+  background-color: var(--button-hover-color);
+}
+
+#delete-button {
+  background-color: var(--error-color);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+}
+
+#move-button {
+  background-color: var(--button-color);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+}
+
+#delete-button:hover {
+  background-color: var(--error-hover-color);
 }
