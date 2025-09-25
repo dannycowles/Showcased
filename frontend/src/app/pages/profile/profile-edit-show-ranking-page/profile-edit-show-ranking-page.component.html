@@ -1,0 +1,23 @@
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to favorite shows</h3>
+  </a>
+
+  <div class="d-flex align-items-center gap-5 mb-5">
+    <h1 class="fw-bold">Edit favorite shows</h1>
+    <button (click)="openSearchShowsModal()" id="add-button" type="button" class="btn btn-primary d-flex align-items-center gap-3 fs-5">
+      <img ngSrc="plus.svg" alt="" height="25" width="25">
+      <span>Add show</span>
+    </button>
+  </div>
+
+  @if (rankingEntries) {
+    <app-ranked-show-list-full [shows]="rankingEntries"
+                               (update)="updateShowRankingList()"
+                               (remove)="removeShowFromRankingList($event)"
+    ></app-ranked-show-list-full>
+  } @else {
+    <p class="fs-4">No shows on list</p>
+  }
+</div>

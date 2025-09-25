@@ -14,7 +14,7 @@
     <h1 class="mb-3">Search</h1>
     <div class="position-relative mb-4">
       <img class="input-icon" ngSrc="search.svg" alt="Search icon" width="20" height="20">
-      <input class="form-control" id="search-input" [(ngModel)]="searchString" placeholder="Search" autofocus (input)="debouncedSearch()">
+      <input class="form-control input-with-icon" id="search-input" [(ngModel)]="searchString" placeholder="Search" autofocus (input)="debouncedSearch()">
     </div>
     @if (isLoading) {
       <div class="spinner-border mt-3" role="status">

@@ -5,7 +5,7 @@
       <label for="email" class="form-label">Email</label>
       <div class="position-relative">
         <img class="input-icon" ngSrc="envelope.svg" alt="Email icon" height="20" width="20">
-        <input id="email" type="email" class="form-control" formControlName="email" placeholder="Enter your email" autocomplete="email"
+        <input id="email" type="email" class="form-control input-with-icon" formControlName="email" placeholder="Enter your email" autocomplete="email"
                [class.is-invalid]="email.invalid && (email.dirty || email.touched)">
       </div>
       @if (email.invalid && (email.dirty || email.touched)) {
@@ -21,7 +21,7 @@
       <label for="username" class="form-label">Username</label>
       <div class="position-relative">
         <img class="input-icon" ngSrc="person.svg" alt="Username icon" height="20" width="20">
-        <input id="username" type="text" class="form-control" formControlName="username" placeholder="Enter your username" autocomplete="username"
+        <input id="username" type="text" class="form-control input-with-icon" formControlName="username" placeholder="Enter your username" autocomplete="username"
                [class.is-invalid]="username.invalid && (username.dirty || username.touched)">
       </div>
     </div>
@@ -45,7 +45,7 @@
       <label for="password" class="form-label">Password</label>
       <div class="position-relative">
         <img class="input-icon" ngSrc="lock.svg" alt="Password icon" height="20" width="20">
-        <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter your password" autocomplete="new-password"
+        <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-control input-with-icon" formControlName="password" placeholder="Enter your password" autocomplete="new-password"
                [class.is-invalid]="password.invalid && (password.dirty || password.touched)" aria-describedby="passwordHelpBlock">
         <i role="button"
            class="bi show-password-icon"
@@ -76,7 +76,7 @@
       <label for="confirmPassword" class="form-label">Confirm password</label>
       <div class="position-relative">
         <img class="input-icon" ngSrc="lock.svg" alt="Confirm password icon" height="20" width="20">
-        <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm your password" autocomplete="new-password"
+        <input id="confirmPassword" type="password" class="form-control input-with-icon" formControlName="confirmPassword" placeholder="Confirm your password" autocomplete="new-password"
                [class.is-invalid]="registerForm.hasError('passwordsDontMatch') && (confirmPassword.dirty || confirmPassword.touched)">
       </div>
     </div>

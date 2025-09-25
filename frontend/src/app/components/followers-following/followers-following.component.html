@@ -1,7 +1,7 @@
 <div class="text-white" style="margin-bottom: 15vh">
   <div id="searchbar" class="position-relative">
     <img class="input-icon" ngSrc="search.svg" alt="Search icon" width="20" height="20">
-    <input class="form-control" id="search-input" placeholder="Search" (input)="debouncedSearch()" [(ngModel)]="searchString" name="search">
+    <input class="form-control input-with-icon" id="search-input" placeholder="Search" (input)="debouncedSearch()" [(ngModel)]="searchString" name="search">
   </div>
 
   @if (searchResults) {

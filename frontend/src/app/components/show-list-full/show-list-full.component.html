@@ -1,9 +1,15 @@
 <div class="d-flex gap-5 flex-wrap mt-5">
   @for (show of shows; track show.showId) {
-    <!-- Poster images are sized w185, using 2:3 ratio -->
-    <a [routerLink]="['/show', show.showId]">
-      <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
-    </a>
+    <div class="d-flex flex-column align-items-center gap-1">
+      <!-- Poster images are sized w185, using 2:3 ratio -->
+      <a [routerLink]="['/show', show.showId]">
+        <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
+      </a>
+
+      @if (ranked && isShowRankingData(show)) {
+        <span class="fs-5">{{show.rankNum}}</span>
+      }
+    </div>
   }
 </div>
 

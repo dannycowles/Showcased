@@ -1,8 +1,8 @@
-import {booleanAttribute, Component, EventEmitter, Input, Output} from '@angular/core';
+import {booleanAttribute, Component, Input} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
-import {ShowListData} from '../../data/lists/show-list-data';
 import {RouterLink} from '@angular/router';
-import {ConfirmationService} from '../../services/confirmation.service';
+import {ProfileShow} from '../../data/types';
+import {ShowRankingData} from '../../data/lists/show-ranking-data';
 
 @Component({
   selector: 'app-show-list-full',
@@ -15,5 +15,10 @@ import {ConfirmationService} from '../../services/confirmation.service';
   standalone: true
 })
 export class ShowListFullComponent {
-  @Input({required : true}) shows: ShowListData[];
+  @Input({required : true}) shows: ProfileShow[];
+  @Input({transform: booleanAttribute}) ranked = false;
+
+  isShowRankingData(show: ProfileShow): show is ShowRankingData {
+    return 'rankNum' in show;
+  }
 }
