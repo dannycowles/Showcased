@@ -1,26 +1,30 @@
-<h1>{{ title }}</h1>
+<div #scrollableContainer class="scrollable-container">
+  <div cdkDropList class="scroll-list" (cdkDropListDropped)="drop($event)">
+    @for (episode of episodes; track episode.episodeId; let rank = $index) {
+      <div class="scroll-box" style="padding: 40px 40px" cdkDrag (cdkDragMoved)="onDragMoved($event)">
+        <div class="d-flex align-items-center gap-5">
+          <input name="rank" type="text" [value]="rank + 1" class="form-control rank-input" (keydown.enter)="moveToPosition($event, rank)">
+          <!-- Poster images are sized w231, using 16:9 ratio -->
+          <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]">
+            <img class="poster-image" [ngSrc]="episode.posterPath" alt="Show Poster" width="231" height="130" priority>
+          </a>
 
-@if (episodes?.length != 0) {
-  <div cdkScrollable #scrollableContainer class="scrollable-container">
-    <div cdkDropList class="episode-list" [cdkDropListDisabled]="!editable" (cdkDropListDropped)="drop($event)">
-      @for (episode of episodes; track episode.episodeId; let rank = $index) {
-        <div class="episode-box" cdkDrag [attr.cdkDrag]="editable" [style.cursor]="editable ? 'move' : 'default'" (cdkDragMoved)="onDragMoved($event)">
-          <h5>{{rank + 1}}</h5>
-          <h5>{{episode.showTitle}}</h5>
-          <h5>{{episode.episodeTitle}}</h5>
-          <h5>S{{episode.season}} E{{episode.episode}}</h5>
-
-          <!-- Episode stills are sized w185, with a 16:9 ratio -->
-          <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]"><img [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority></a>
-
-          @if (editable) {
-            <button class="btn btn-danger" (click)="removeEvent(episode)">Remove Episode</button>
-          }
+          <div class="text-center">
+            <h2 class="fw-bold">{{episode.episodeTitle}}</h2>
+            <span style="font-weight: 300">{{episode.showTitle}} S{{episode.season}} E{{episode.episode}}</span>
+          </div>
         </div>
-      }
-    </div>
+
+        <div class="right-section" style="margin: -40px -40px">
+          <button id="delete-button" class="btn btn-primary d-flex align-item-center" (click)="removeEvent(episode)">
+            <img ngSrc="trash.svg" alt="Remove show" height="20" width="20">
+          </button>
+          <div class="grip-container" cdkDragHandle style="cursor: move">
+            <img class="grip" ngSrc="grip-vertical.svg" alt="Reorder list" height="50" width="50">
+          </div>
+        </div>
+      </div>
+    }
   </div>
-} @else {
-  <div>No episodes ranked yet!</div>
-}
+</div>
 

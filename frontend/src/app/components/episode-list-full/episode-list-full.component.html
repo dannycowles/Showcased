@@ -1,0 +1,12 @@
+<div class="d-flex gap-5 flex-wrap mt-5">
+  @for (episode of episodes; track episode.episodeId) {
+    <div class="d-flex flex-column align-items-center gap-1">
+      <!-- Poster images are sized w231, using 16:9 ratio -->
+      <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]">
+        <img class="poster-image" [ngSrc]="episode.posterPath" alt="Show Poster" width="231" height="130" priority>
+      </a>
+
+      <span class="fs-5">{{episode.rankNum}}</span>
+    </div>
+  }
+</div>
