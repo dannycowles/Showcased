@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
-import {CdkDrag, CdkDragDrop, CdkDragHandle, CdkDragMove, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, CdkDragMove, DragDropModule, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ShowRankingData} from '../../data/lists/show-ranking-data';
 import {ConfirmationService} from '../../services/confirmation.service';
 
@@ -10,9 +10,7 @@ import {ConfirmationService} from '../../services/confirmation.service';
   imports: [
     RouterLink,
     NgOptimizedImage,
-    CdkDropList,
-    CdkDrag,
-    CdkDragHandle
+    DragDropModule
   ],
   templateUrl: './ranked-show-list-full.component.html',
   styleUrl: './ranked-show-list-full.component.css',

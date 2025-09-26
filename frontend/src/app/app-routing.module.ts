@@ -75,6 +75,9 @@ import {
 import {
   ProfileEditShowRankingPageComponent
 } from './pages/profile/profile-edit-show-ranking-page/profile-edit-show-ranking-page.component';
+import {
+  ProfileEditSeasonRankingPageComponent
+} from './pages/profile/profile-edit-season-ranking-page/profile-edit-season-ranking-page.component';
 
 export const routes: Routes = [
     {
@@ -149,6 +152,12 @@ export const routes: Routes = [
       path: 'profile/season-ranking',
       title: 'Your Season Ranking | Showcased',
       component: ProfileSeasonRankingPageComponent,
+      canActivate: [authGuard]
+    },
+    {
+      path: 'profile/season-ranking/edit',
+      title: 'Edit Season Ranking | Showcased',
+      component: ProfileEditSeasonRankingPageComponent,
       canActivate: [authGuard]
     },
     {

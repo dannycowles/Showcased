@@ -1,11 +1,17 @@
-<button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
-<br>
-<button class="btn btn-success mt-3 mb-3" (click)="openSearchShowsModal()">Add Season</button>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to profile</h3>
+  </a>
 
-<app-ranked-season-list-full title="Season Ranking"
-                             [seasons]="rankingEntries"
-                             editable
-                             (update)="updateSeasonRankingList()"
-                             (remove)="removeSeasonFromRankingList($event)"
-></app-ranked-season-list-full>
+  <div class="d-flex align-items-center gap-5">
+    <h1 class="fw-bold">Your favorite seasons</h1>
+    <button id="edit-button" type="button" class="btn btn-primary fs-5" routerLink="edit">Edit</button>
+  </div>
 
+  @if (rankingEntries) {
+    <app-season-list-full [seasons]="rankingEntries"></app-season-list-full>
+  } @else {
+    <p class="fs-4">No seasons on list</p>
+  }
+</div>

@@ -1,23 +1,25 @@
-<h1>{{ title }}</h1>
-
-@if (seasons?.length != 0) {
-  <div cdkScrollable #scrollableContainer class="scrollable-container">
-    <div cdkDropList [cdkDropListDisabled]="!editable" class="season-list" (cdkDropListDropped)="drop($event)">
-      @for (season of seasons; track season.id; let rank = $index) {
-        <div class="season-box" cdkDrag [attr.cdkDrag]="editable" [style.cursor]="editable ? 'move' : 'default'" (cdkDragMoved)="onDragMoved($event)">
-          <h5 class="fs-3 fw-bold">{{rank + 1}}</h5>
-          <h5>{{season.showTitle}} S{{season.season}}</h5>
-
+<div #scrollableContainer class="scrollable-container">
+  <div cdkDropList class="scroll-list" (cdkDropListDropped)="drop($event)">
+    @for (season of seasons; track season.id; let rank = $index) {
+      <div class="scroll-box" cdkDrag (cdkDragMoved)="onDragMoved($event)">
+        <div class="d-flex align-items-center gap-5">
+          <input name="rank" type="text" [value]="rank + 1" class="form-control rank-input" (keydown.enter)="moveToPosition($event, rank)">
           <!-- Poster images are sized w185, using 2:3 ratio -->
-          <a [routerLink]="['/show', season.showId, 'season', season.season]"><img [ngSrc]="season.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-
-          @if (editable) {
-            <button class="btn btn-danger" (click)="removeEvent(season)">Remove Season</button>
-          }
+          <a [routerLink]="['/show', season.showId, 'season', season.season]">
+            <img class="poster-image" [ngSrc]="season.posterPath" alt="Show Poster" width="185" height="278" priority>
+          </a>
+          <h2 class="fw-bold">{{season.showTitle}} S{{season.season}}</h2>
         </div>
-      }
-    </div>
+
+        <div class="right-section">
+          <button id="delete-button" class="btn btn-primary d-flex align-item-center" (click)="removeEvent(season)">
+            <img ngSrc="trash.svg" alt="Remove show" height="20" width="20">
+          </button>
+          <div class="grip-container" cdkDragHandle style="cursor: move">
+            <img class="grip" ngSrc="grip-vertical.svg" alt="Reorder list" height="50" width="50">
+          </div>
+        </div>
+      </div>
+    }
   </div>
-} @else {
-  <p>No seasons ranked yet!</p>
-}
+</div>

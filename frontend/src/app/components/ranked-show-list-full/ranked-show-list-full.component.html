@@ -3,7 +3,7 @@
     @for (show of shows; track show.showId; let rank = $index) {
       <div class="scroll-box" cdkDrag (cdkDragMoved)="onDragMoved($event)">
         <div class="d-flex align-items-center gap-5">
-          <input type="text" [value]="rank + 1" class="form-control rank-input" (keydown.enter)="moveToPosition($event, rank)">
+          <input name="rank" type="text" [value]="rank + 1" class="form-control rank-input" (keydown.enter)="moveToPosition($event, rank)">
           <!-- Poster images are sized w185, using 2:3 ratio -->
           <a [routerLink]="['/show', show.showId]">
             <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
