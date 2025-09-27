@@ -1,50 +1,62 @@
-<button class="btn btn-primary mb-2" type="button" routerLink="/profile">Return to Profile</button>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to profile</h3>
+  </a>
 
-<div class="d-flex align-items-center me-3 mb-5">
-  <h1>Reviews</h1>
-  <div class="d-flex ms-auto gap-5">
-    <div class="dropdown">
-      <span class="fs-5 me-2">Filter</span>
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ selectedReviewType.label }}
-      </button>
-      <ul class="dropdown-menu">
-        @for (reviewType of reviewTypeOptions; track reviewType.value) {
-          <li><a class="dropdown-item" (click)="setReviewType(reviewType)">{{reviewType.label}}</a></li>
-        }
-      </ul>
-    </div>
+  <div class="d-flex align-items-center me-3 mb-5">
+    <h1 class="fw-bold">Your reviews</h1>
+    <div class="d-flex ms-auto gap-5">
 
-    <div class="dropdown">
-      <span class="fs-5 me-2">Sort</span>
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ selectedSortOption.label }}
-      </button>
-      <ul class="dropdown-menu">
-        @for (sortOption of sortReviewOptions; track sortOption.value) {
-          <li><a class="dropdown-item" (click)="setSortOption(sortOption)">{{sortOption.label}}</a></li>
-        }
-      </ul>
+      <div class="dropdown d-flex align-items-center gap-3">
+        <h4 class="text-reset">Filter</h4>
+        <button id="filter-dropdown" class="btn btn-secondary fs-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="d-flex align-items-center gap-3">
+            <span>{{ selectedReviewType.label }}</span>
+            <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
+          </div>
+        </button>
+        <ul class="dropdown-menu">
+          @for (reviewType of reviewTypeOptions; track reviewType.value) {
+            <li><a class="dropdown-item" (click)="setReviewType(reviewType)">{{reviewType.label}}</a></li>
+          }
+        </ul>
+      </div>
+
+      <div class="dropdown d-flex align-items-center gap-3">
+        <h4 class="text-reset">Sort</h4>
+        <button id="sort-dropdown" class="btn btn-secondary fs-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="d-flex align-items-center gap-3">
+            <span>{{ selectedSortOption.label }}</span>
+            <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
+          </div>
+          </button>
+        <ul class="dropdown-menu">
+          @for (sortOption of sortReviewOptions; track sortOption.value) {
+            <li><a class="dropdown-item" (click)="setSortOption(sortOption)">{{sortOption.label}}</a></li>
+          }
+        </ul>
+      </div>
     </div>
   </div>
+
+  @if (isLoadingReviews) {
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  } @else if (reviews?.content?.length != 0) {
+    <div class="reviews"
+         infiniteScroll
+         [infiniteScrollDistance]="1"
+         (scrolled)="loadMoreReviews()">
+      @for (review of reviews.content; track review.id + '-' + review.type) {
+        <app-profile-review [review]="review" editable (delete)="deleteReview($event)"></app-profile-review>
+        <hr>
+      }
+    </div>
+  } @else {
+    <h3>No reviews yet!</h3>
+  }
 </div>
-
-@if (isLoadingReviews) {
-  <div class="d-flex justify-content-center">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-} @else if (reviews?.content?.length != 0) {
-  <div class="reviews"
-       infiniteScroll
-       [infiniteScrollDistance]="1"
-       (scrolled)="loadMoreReviews()">
-    @for (review of reviews.content; track review.id + '-' + review.type) {
-      <app-profile-review [review]="review" editable (delete)="deleteReview($event)"></app-profile-review>
-    }
-  </div>
-} @else {
-  <h3>No reviews yet!</h3>
-}
-

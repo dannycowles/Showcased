@@ -12,7 +12,7 @@
         <button type="button" class="btn btn-primary save-button" [disabled]="editText === comment.commentText" (click)="saveEdit()">Save Changes</button>
       </div>
     } @else {
-      <span class="fs-5">{{comment.commentText}}</span>
+      <span class="fs-5 comment-text">{{comment.commentText}}</span>
     }
   </div>
 

@@ -1,8 +1,28 @@
-.review {
-  transition: background-color 0.75s;
+.link, .delete {
+  color: white;
+  transition: color 0.3s ease;
 }
 
-.review:hover {
-  background-color: #e7e7e7;
-  cursor: pointer;
+.delete {
+  padding-right: 0;
+}
+
+.delete:hover {
+  color: var(--error-color);
+}
+
+#view-button {
+  background-color: var(--button-color);
+  border: none;
+  padding: 10px 30px;
+  transition: background-color 0.3s ease;
+}
+
+#view-button:hover {
+  background-color: var(--button-hover-color);
+}
+
+.review-text {
+  font-size: 1.1rem;
+  white-space: pre-wrap;
 }

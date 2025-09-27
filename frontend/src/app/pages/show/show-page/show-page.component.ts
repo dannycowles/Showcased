@@ -156,47 +156,25 @@ export class ShowPageComponent implements OnInit {
                 behavior: 'smooth',
                 block: 'center',
               });
-
-              reviewElement.classList.add('highlight');
-              setTimeout(
-                () => reviewElement.classList.remove('highlight'),
-                2000,
-              );
             }
           });
         } else {
           // Retrieve the first page of comments, and then fetch the notification comment
-          this.reviews.content[0].comments =
-            await this.showService.getShowReviewComments(this.notifReviewId);
-          const notifComment = await this.showService.getShowReviewComment(
-            this.notifCommentId,
-          );
+          this.reviews.content[0].comments = await this.showService.getShowReviewComments(this.notifReviewId);
+          const notifComment = await this.showService.getShowReviewComment(this.notifCommentId);
 
           // If the comment exists on the first page, filter it out before appending to beginning so no duplicates
-          this.reviews.content[0].comments.content =
-            this.reviews.content[0].comments.content.filter(
-              (comment) => comment.id != notifComment.id,
-            );
+          this.reviews.content[0].comments.content = this.reviews.content[0].comments.content.filter((comment) => comment.id != notifComment.id);
           this.reviews.content[0].comments.content.unshift(notifComment);
-          this.reviews.content[0] = {
-            ...this.reviews.content[0],
-            notifCommentId: this.notifCommentId,
-          };
+          this.reviews.content[0] = {...this.reviews.content[0], notifCommentId: this.notifCommentId};
 
           requestAnimationFrame(() => {
-            const commentElement = document.getElementById(
-              String(this.notifCommentId),
-            );
+            const commentElement = document.getElementById(String(this.notifCommentId));
             if (commentElement) {
               commentElement.scrollIntoView({
                 behavior: 'smooth',
                 block: 'center',
               });
-              commentElement.classList.add('highlight');
-              setTimeout(
-                () => commentElement.classList.remove('highlight'),
-                2000,
-              );
             }
           });
         }
@@ -213,13 +191,10 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      const addReviewModalRef = this.modalService.open(
-        AddReviewModalComponent,
-        {
-          ariaLabelledBy: 'addReviewModal',
-          centered: true,
-        },
-      );
+      const addReviewModalRef = this.modalService.open(AddReviewModalComponent, {
+        ariaLabelledBy: 'addReviewModal',
+        centered: true
+      });
       addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.show.title}`;
 
       const result = await addReviewModalRef.result;
@@ -234,13 +209,10 @@ export class ShowPageComponent implements OnInit {
     }
 
     try {
-      const addToCollectionModalRef = this.modalService.open(
-        AddToCollectionModalComponent,
-        {
-          ariaLabelledBy: 'addToCollectionModal',
-          centered: true,
-        },
-      );
+      const addToCollectionModalRef = this.modalService.open(AddToCollectionModalComponent, {
+        ariaLabelledBy: 'addToCollectionModal',
+        centered: true
+      });
 
       addToCollectionModalRef.componentInstance.show = {
         showId: this.showId,

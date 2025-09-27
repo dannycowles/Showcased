@@ -9,10 +9,11 @@ import {EditReviewModalComponent} from '../edit-review-modal/edit-review-modal.c
 import {UpdateReviewDto} from '../../data/dto/update-review-dto';
 import {Router} from '@angular/router';
 import {ConfirmationService} from '../../services/confirmation.service';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-profile-review',
-  imports: [ButtonHeartComponent],
+  imports: [ButtonHeartComponent, NgOptimizedImage],
   templateUrl: './profile-review.component.html',
   styleUrl: './profile-review.component.css',
   standalone: true,
@@ -22,6 +23,8 @@ export class ProfileReviewComponent implements OnInit {
   @Input({ transform: booleanAttribute }) editable: boolean = false;
   @Output() delete = new EventEmitter<ProfileReviewData>;
   reviewHandler: any = null;
+
+  showSpoilers: boolean = false;
 
   constructor(public utilsService: UtilsService,
               private showService: ShowService,

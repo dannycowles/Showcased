@@ -18,10 +18,6 @@
   transition: background-color 1.75s ease-out;
 }
 
-.highlight {
-  background-color: #e3e3e3;
-}
-
 .username {
   text-decoration: none;
   color: white;
@@ -54,14 +50,4 @@
   border: none;
   padding-left: 20px;
   padding-right: 20px;
-}
-
-.spoiler-container {
-  cursor: pointer;
-  color: var(--error-color);
-  transition: color 0.3s ease;
-}
-
-.spoiler-container:hover {
-  color: #eb091f;
 }

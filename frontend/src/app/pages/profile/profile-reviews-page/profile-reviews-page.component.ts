@@ -6,12 +6,13 @@ import {ProfileReviewData} from '../../../data/types';
 import {RouterLink} from '@angular/router';
 import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-profile-reviews-page',
   templateUrl: './profile-reviews-page.component.html',
   styleUrl: './profile-reviews-page.component.css',
-  imports: [RouterLink, InfiniteScrollDirective, ProfileReviewComponent],
+  imports: [RouterLink, InfiniteScrollDirective, ProfileReviewComponent, NgOptimizedImage],
   standalone: true,
 })
 export class ProfileReviewsPageComponent implements OnInit {
@@ -43,22 +44,13 @@ export class ProfileReviewsPageComponent implements OnInit {
       this.isLoadingReviews = true;
       switch (this.selectedReviewType.value) {
         case 'all':
-          this.reviews = await this.profileService.getCombinedReviews(
-            1,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.profileService.getCombinedReviews(1, this.selectedSortOption.value);
           break;
         case 'show':
-          this.reviews = await this.profileService.getShowReviews(
-            1,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.profileService.getShowReviews(1, this.selectedSortOption.value);
           break;
         case 'episode':
-          this.reviews = await this.profileService.getEpisodeReviews(
-            1,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.profileService.getEpisodeReviews(1, this.selectedSortOption.value);
           break;
       }
     } catch (error) {
@@ -72,35 +64,28 @@ export class ProfileReviewsPageComponent implements OnInit {
     if (this.reviews.page.number + 1 >= this.reviews.page.totalPages) return;
 
     try {
+      let moreReviews: PageData<ProfileReviewData>;
       switch (this.selectedReviewType.value) {
         case 'all':
-          this.reviews = await this.profileService.getCombinedReviews(
-            this.reviews.page.number + 2,
-            this.selectedSortOption.value,
-          );
+          moreReviews = await this.profileService.getCombinedReviews(this.reviews.page.number + 2, this.selectedSortOption.value);
           break;
         case 'show':
-          this.reviews = await this.profileService.getShowReviews(
-            this.reviews.page.number + 2,
-            this.selectedSortOption.value,
-          );
+          moreReviews= await this.profileService.getShowReviews(this.reviews.page.number + 2, this.selectedSortOption.value);
           break;
         case 'episode':
-          this.reviews = await this.profileService.getEpisodeReviews(
-            this.reviews.page.number + 2,
-            this.selectedSortOption.value,
-          );
+          moreReviews = await this.profileService.getEpisodeReviews(this.reviews.page.number + 2, this.selectedSortOption.value);
           break;
       }
+
+      this.reviews.content.push(...moreReviews.content);
+      this.reviews.page = moreReviews.page;
     } catch (error) {
       console.error(error);
     }
   }
 
   deleteReview(deleteItem: ProfileReviewData) {
-    this.reviews.content = this.reviews.content.filter(
-      (review) => review !== deleteItem,
-    );
+    this.reviews.content = this.reviews.content.filter((review) => review !== deleteItem);
   }
 
   protected readonly sortReviewOptions = sortReviewOptions;

@@ -320,3 +320,13 @@ pre {
   border-radius: 10px;
 }
 
+.spoiler-container {
+  cursor: pointer;
+  color: var(--error-color);
+  transition: color 0.3s ease;
+}
+
+.spoiler-container:hover {
+  color: #eb091f;
+}
+
