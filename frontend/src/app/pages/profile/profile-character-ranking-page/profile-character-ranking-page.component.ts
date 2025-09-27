@@ -40,7 +40,8 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
   selectedCharacters: CharacterRankingData[];
 
   constructor(private profileService: ProfileService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private router: Router) {
   }
 
   async ngOnInit() {
@@ -50,6 +51,12 @@ export class ProfileCharacterRankingPageComponent implements OnInit {
 
       this.route.params.subscribe((params) => {
         this.selectedCharacterType = params['type'];
+
+        // Ensure type is valid, if not route them to the 404 page
+        if (!this.validCharacterTypes.includes(this.selectedCharacterType)) {
+          this.router.navigate(['not-found']);
+        }
+
         this.selectedCharacters = this.characterRankings[this.selectedCharacterType];
       });
     } catch (error) {

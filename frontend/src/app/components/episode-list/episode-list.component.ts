@@ -1,4 +1,4 @@
-import {booleanAttribute, Component, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {EpisodeRankingData} from '../../data/lists/episode-ranking-data';
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
@@ -15,5 +15,4 @@ import {NgOptimizedImage} from '@angular/common';
 })
 export class EpisodeListComponent {
   @Input({required: true}) episodes : EpisodeRankingData[];
-  @Input({transform: booleanAttribute}) editable: boolean = false;
 }

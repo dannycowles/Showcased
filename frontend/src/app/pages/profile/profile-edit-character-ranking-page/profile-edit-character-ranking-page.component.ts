@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {CharacterRankingsData} from '../../../data/character-rankings-data';
 import {NgOptimizedImage} from '@angular/common';
-import {ActivatedRoute, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {
   RankedCharacterListFullComponent
 } from '../../../components/ranked-character-list-full/ranked-character-list-full.component';
@@ -51,14 +51,22 @@ export class ProfileEditCharacterRankingPageComponent implements OnInit {
 
   constructor(private profileService: ProfileService,
               private modalService: NgbModal,
-              private route: ActivatedRoute) {}
+              private route: ActivatedRoute,
+              private router: Router) {}
 
   async ngOnInit() {
     try {
       this.rankingEntries = await this.profileService.getCharacterRankingLists();
 
       this.route.params.subscribe((params) => {
-        this.setSelectedCharacterType(params['type']);
+        this.selectedCharacterType = params['type'];
+
+        // Ensure type is valid, if not route them to the 404 page
+        if (!this.validCharacterTypes.includes(this.selectedCharacterType)) {
+          this.router.navigate(['not-found']);
+        }
+
+        this.selectedCharacters = this.rankingEntries[this.selectedCharacterType];
       });
     } catch (error) {
       console.error(error);
@@ -103,11 +111,6 @@ export class ProfileEditCharacterRankingPageComponent implements OnInit {
    */
   get selectedCharacterRankings(): CharacterRankingData[] {
     return this.rankingEntries[this.selectedCharacterType];
-  }
-
-  setSelectedCharacterType(type: string) {
-    this.selectedCharacterType = type;
-    this.selectedCharacters = this.rankingEntries[this.selectedCharacterType];
   }
 
   characterTypeTitle(type?: string): string {

@@ -11,5 +11,4 @@ import {RouterLink} from "@angular/router";
 })
 export class DynamicListComponent {
   @Input({ required: true }) dynamics: DynamicRankingData[];
-  @Input({transform: booleanAttribute}) editable = false;
 }

@@ -1,0 +1,9 @@
+<div class="row gx-5 gy-5 mt-2">
+  @for (dynamic of dynamics; track dynamic.id) {
+    <div class="col-4 text-center">
+      <h3 class="mb-0">{{dynamic.character1Name}} & {{dynamic.character2Name}}</h3>
+      <h5 class="mb-0" style="font-weight: 300">{{dynamic.showTitle}}</h5>
+      <span class="fs-5">{{dynamic.rankNum}}</span>
+    </div>
+  }
+</div>

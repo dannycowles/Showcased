@@ -84,6 +84,9 @@ import {
 import {
   ProfileEditCharacterRankingPageComponent
 } from './pages/profile/profile-edit-character-ranking-page/profile-edit-character-ranking-page.component';
+import {
+  ProfileEditDynamicRankingPageComponent
+} from './pages/profile/profile-edit-dynamic-ranking-page/profile-edit-dynamic-ranking-page.component';
 
 export const routes: Routes = [
     {
@@ -205,6 +208,12 @@ export const routes: Routes = [
       path: 'profile/dynamic-ranking',
       title: 'Your Dynamic Ranking | Showcased',
       component: ProfileDynamicsRankingPageComponent,
+      canActivate: [authGuard]
+    },
+    {
+      path: 'profile/dynamic-ranking/edit',
+      title: 'Edit Dynamic Ranking | Showcased',
+      component: ProfileEditDynamicRankingPageComponent,
       canActivate: [authGuard]
     },
     {

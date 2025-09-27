@@ -18,8 +18,7 @@ export class RankedCharacterListFullComponent {
   @Output() update = new EventEmitter<void>();
   @Output() remove = new EventEmitter<string>();
 
-  @ViewChild('scrollableContainer')
-  scrollableContainer!: ElementRef<HTMLElement>;
+  @ViewChild('scrollableContainer') scrollableContainer!: ElementRef<HTMLElement>;
   private readonly scrollThreshold = 50;
   private readonly scrollSpeed = 10;
 

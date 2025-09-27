@@ -301,10 +301,6 @@ pre {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.scroll-box:last-child {
-  border: none;
-}
-
 .scroll-list.cdk-drop-list-dragging .scroll-box:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
