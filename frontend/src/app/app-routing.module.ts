@@ -81,6 +81,9 @@ import {
 import {
   ProfileEditEpisodeRankingPageComponent
 } from './pages/profile/profile-edit-episode-ranking-page/profile-edit-episode-ranking-page.component';
+import {
+  ProfileEditCharacterRankingPageComponent
+} from './pages/profile/profile-edit-character-ranking-page/profile-edit-character-ranking-page.component';
 
 export const routes: Routes = [
     {
@@ -182,15 +185,21 @@ export const routes: Routes = [
       canActivate: [authGuard]
     },
     {
+      path: 'profile/character-ranking',
+      redirectTo: 'profile/character-ranking/protagonists',
+      pathMatch: 'full'
+    },
+    {
       path: 'profile/character-ranking/:type',
       title: 'Your Character Ranking | Showcased',
       component: ProfileCharacterRankingPageComponent,
       canActivate: [authGuard]
     },
     {
-      path: 'profile/character-ranking',
-      redirectTo: 'profile/character-ranking/protagonists',
-      pathMatch: 'full'
+      path: 'profile/character-ranking/:type/edit',
+      title: 'Edit Character Ranking | Showcased',
+      component: ProfileEditCharacterRankingPageComponent,
+      canActivate: [authGuard]
     },
     {
       path: 'profile/dynamic-ranking',

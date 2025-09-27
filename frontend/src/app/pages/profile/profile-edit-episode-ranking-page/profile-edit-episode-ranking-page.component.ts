@@ -32,8 +32,7 @@ export class ProfileEditEpisodeRankingPageComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.rankingEntries =
-        await this.profileService.getFullEpisodeRankingList();
+      this.rankingEntries = await this.profileService.getFullEpisodeRankingList();
     } catch (error) {
       console.error(error);
     }

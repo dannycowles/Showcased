@@ -1,147 +1,78 @@
-import {booleanAttribute, Component, Input} from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
-import {SearchShowsModalComponent} from '../search-shows-modal/search-shows-modal.component';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {SearchResultData} from '../../data/search-result-data';
-import {SearchCharactersModalComponent} from '../search-characters-modal/search-characters-modal.component';
+import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {CdkDrag, CdkDragDrop, CdkDragHandle, CdkDragMove, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 import {CharacterRankingData} from '../../data/lists/character-ranking-data';
-import {CharacterRankingsData} from '../../data/character-rankings-data';
-import {UpdateCharacterRankingDto} from '../../data/dto/update-list-ranks-dto';
-import {ProfileService} from '../../services/profile.service';
 import {ConfirmationService} from '../../services/confirmation.service';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-ranked-character-list-full',
-  imports: [RouterLink, CdkDropList, CdkDrag],
+  imports: [CdkDropList, CdkDrag, CdkDragHandle, NgOptimizedImage],
   templateUrl: './ranked-character-list-full.component.html',
   styleUrl: './ranked-character-list-full.component.css',
   standalone: true,
 })
 export class RankedCharacterListFullComponent {
-  @Input({transform: booleanAttribute}) editable: boolean = false;
-  @Input({required: true}) characterRankings: CharacterRankingsData;
+  @Input({ required: true }) characters: CharacterRankingData[];
+  @Input({ required: true }) characterType: string;
 
-  readonly typeTitles: string[] = [
-    'Protagonists',
-    'Deuteragonists',
-    'Antagonists',
-    'Tritagonists',
-    'Side Characters',
-  ];
+  @Output() update = new EventEmitter<void>();
+  @Output() remove = new EventEmitter<string>();
 
-  readonly validCharacterTypes: string[] = [
-    'protagonists',
-    'deuteragonists',
-    'antagonists',
-    'tritagonists',
-    'side',
-  ];
+  @ViewChild('scrollableContainer')
+  scrollableContainer!: ElementRef<HTMLElement>;
+  private readonly scrollThreshold = 50;
+  private readonly scrollSpeed = 10;
 
-  selectedShow: SearchResultData | null = null;
-  characterType: string;
-
-  constructor(private modalService: NgbModal,
-              private profileService: ProfileService,
-              private confirmationService: ConfirmationService,
-              private route: ActivatedRoute,
-              private router: Router) {
-    this.route.params.subscribe((params) => {
-      this.characterType = params['type'];
-    });
-
-    // Check to ensure the type in the route is valid, if not redirect to 404
-    if (!this.validCharacterTypes.includes(this.characterType)) {
-      this.router.navigate(['not-found']);
-    }
-  }
-
-  async openSearchShowsModal() {
-    const searchShowsModalRef = this.modalService.open(SearchShowsModalComponent, {
-        ariaLabelledBy: 'searchShowsModal',
-        centered: true,
-    });
-    searchShowsModalRef.componentInstance.modalTitle = 'Add Character to Ranking List';
-
-    this.selectedShow = await searchShowsModalRef.result;
-    await this.openSearchCharactersModal();
-  }
-
-  async openSearchCharactersModal() {
-    try {
-      const searchCharactersModalRef = this.modalService.open(SearchCharactersModalComponent, {
-        ariaLabelledBy: 'searchCharactersModal',
-        centered: true
-      });
-
-      searchCharactersModalRef.componentInstance.selectedShow = this.selectedShow;
-      searchCharactersModalRef.componentInstance.selectedCharacterType = this.characterType;
-      searchCharactersModalRef.componentInstance.onAdd = (character: CharacterRankingData) => {
-        character.rankNum = this.selectedCharacterRankings.length + 1;
-        this.selectedCharacterRankings.push(character);
-      };
-
-      await searchCharactersModalRef.result;
-    } catch (modalDismissReason) {
-      if (modalDismissReason === 'backFromCharacters') {
-        await this.openSearchShowsModal();
-      }
-    }
-  }
-
-  /**
-   * Returns all the rankings for the selected character type
-   */
-  get selectedCharacterRankings(): CharacterRankingData[] {
-    return this.characterRankings[this.characterType];
-  }
-
-  characterTypeTitle(type?: string): string {
-    if (type) {
-      return this.typeTitles[this.validCharacterTypes.indexOf(type)];
-    } else {
-      return this.typeTitles[this.validCharacterTypes.indexOf(this.characterType)];
-    }
-  }
+  constructor(private confirmationService: ConfirmationService) {}
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.characterRankings[this.characterType], event.previousIndex, event.currentIndex,);
+    moveItemInArray(this.characters, event.previousIndex, event.currentIndex);
 
     // Update the rank numbers based on the index within the updated list
-    this.characterRankings[this.characterType].forEach((character, index) => {
+    this.characters.forEach((character, index) => {
       character.rankNum = index + 1;
     });
-    this.updateCharacterRankingList();
+    this.update.emit();
   }
 
-  async updateCharacterRankingList() {
-    try {
-      const data: UpdateCharacterRankingDto = {
-        characterType: this.characterType != 'side' ? this.characterType.slice(0, -1) : this.characterType,
-        updates: this.characterRankings[this.characterType].map((character) => ({
-            id: character.id,
-            rankNum: character.rankNum
-        })
-      )};
+  moveToPosition(event: any, currentIndex: number) {
+    const inputElement = event.target as HTMLInputElement;
+    const newIndex: number = +event.target.value;
 
-      await this.profileService.updateCharacterRankingList(data);
-    } catch (error) {
-      console.error(error);
+    // Validate input aka must be between 1 and size of characters
+    if (isNaN(newIndex) || newIndex < 1 || newIndex > this.characters.length) {
+      // Reset to the current rank number
+      inputElement.value = String(this.characters[currentIndex].rankNum);
+      return;
+    }
+
+    moveItemInArray(this.characters, currentIndex, newIndex - 1);
+
+    // Update the rank numbers based on the index within the updated list
+    this.characters.forEach((character, index) => {
+      character.rankNum = index + 1;
+    });
+    this.update.emit();
+  }
+
+  onDragMoved(event: CdkDragMove) {
+    const scrollElement = this.scrollableContainer.nativeElement;
+    const { y } = event.pointerPosition;
+    const rect = scrollElement.getBoundingClientRect();
+
+    if (y - rect.top < this.scrollThreshold) {
+      scrollElement.scrollTop -= this.scrollSpeed;
+    } else if (rect.bottom - y < this.scrollThreshold) {
+      scrollElement.scrollTop += this.scrollSpeed;
     }
   }
 
-  async removeCharacter(removeCharacter: CharacterRankingData) {
-    try {
-      const confirmation = await this.confirmationService.confirmRemove(removeCharacter.name);
-
-      if (confirmation) {
-        const response = await this.profileService.removeCharacterFromRankingList(removeCharacter.id);
-        if (response.ok) {
-          this.characterRankings[this.characterType] = this.characterRankings[this.characterType].filter((character) => character.id !== removeCharacter.id);
-        }
-      }
-    } catch (error) {
-      console.error(error);
+  async removeEvent(removeCharacter: CharacterRankingData) {
+    const confirmation = await this.confirmationService.confirmRemove(
+      removeCharacter.name,
+    );
+    if (confirmation) {
+      this.remove.emit(removeCharacter.id);
     }
   }
 }

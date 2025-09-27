@@ -1,4 +1,30 @@
-<button class="btn btn-primary" routerLink="/profile">Return to Profile</button>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['/profile']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to profile</h3>
+  </a>
 
-<app-ranked-character-list-full editable [characterRankings]="characterRankings"></app-ranked-character-list-full>
+  <div class="d-flex align-items-center gap-5">
+    <h1 class="fw-bold">Your favorite characters</h1>
+    <div class="dropdown">
+      <button id="characters-dropdown" class="btn btn-secondary dropdown-toggle fs-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{characterTypeTitle()}}
+      </button>
+      <ul class="dropdown-menu">
+        @for (type of validCharacterTypes; track type) {
+          <li>
+            <a class="dropdown-item" [routerLink]="['/profile/character-ranking', type]">{{characterTypeTitle(type)}}</a>
+          </li>
+        }
+      </ul>
+    </div>
+    <button id="edit-button" type="button" class="btn btn-primary fs-5" routerLink="edit">Edit</button>
+  </div>
+
+  @if (selectedCharacters) {
+    <app-character-list-full [characters]="selectedCharacters"></app-character-list-full>
+  } @else {
+    <p class="fs-4">No characters on list</p>
+  }
+</div>
 

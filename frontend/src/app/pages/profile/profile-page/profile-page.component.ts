@@ -72,17 +72,14 @@ export class ProfilePageComponent implements OnInit {
 
   setSelectedCharacterType(type: string) {
     this.selectedCharacterType = type;
-    this.selectedCharacters =
-      this.profileData.characterRankings[this.selectedCharacterType];
+    this.selectedCharacters = this.profileData.characterRankings[this.selectedCharacterType];
   }
 
   characterTypeTitle(type?: string): string {
     if (type) {
       return this.typeTitles[this.validCharacterTypes.indexOf(type)];
     } else {
-      return this.typeTitles[
-        this.validCharacterTypes.indexOf(this.selectedCharacterType)
-      ];
+      return this.typeTitles[this.validCharacterTypes.indexOf(this.selectedCharacterType)];
     }
   }
 

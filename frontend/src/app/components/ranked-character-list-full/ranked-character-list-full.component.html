@@ -1,37 +1,26 @@
-<h1>{{characterTypeTitle()}} Rankings</h1>
+<div #scrollableContainer class="scrollable-container">
+  <div cdkDropList class="scroll-list" (cdkDropListDropped)="drop($event)">
+    @for (character of characters; track character.id; let rank = $index) {
+      <div class="scroll-box" style="padding: 40px 40px" cdkDrag (cdkDragMoved)="onDragMoved($event)">
+        <div class="d-flex align-items-center gap-5 w-100">
+          <input name="rank" type="text" [value]="rank + 1" class="form-control rank-input" (keydown.enter)="moveToPosition($event, rank)">
 
-<div class="dropdown mb-3">
-  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    {{characterTypeTitle()}}
-  </button>
-  <ul class="dropdown-menu">
-    @for (type of validCharacterTypes; track type) {
-      @if (editable) {
-        <li><a class="dropdown-item" [routerLink]="['/profile/character-ranking', type]">{{characterTypeTitle(type)}}</a></li>
-      } @else {
-        <li><a class="dropdown-item" [routerLink]="['../', type]">{{characterTypeTitle(type)}}</a></li>
-      }
-    }
-  </ul>
-</div>
+          <div class="col-4 text-center">
+            <h3 class="mb-0">{{character.name}}</h3>
+            <h5 class="mb-0" style="font-weight: 300">{{character.showName}}</h5>
+            <span class="fs-5">{{character.rankNum}}</span>
+          </div>
+        </div>
 
-@if (editable) {
-  <button class="btn btn-primary mb-5" (click)="openSearchShowsModal()">Add Character</button>
-}
-
-@if (selectedCharacterRankings.length != 0) {
-  <div cdkDropList class="character-list" [cdkDropListDisabled]="!editable" (cdkDropListDropped)="drop($event)">
-    @for (character of selectedCharacterRankings; track character.name; let rank = $index) {
-      <div class="character-box" cdkDrag [style.cursor]="editable ? 'move' : 'default'" >
-        <h3>{{rank + 1}}</h3>
-        <h3>{{character.name}} - {{character.showName}}</h3>
-
-        @if (editable) {
-          <button class="btn btn-danger" (click)="removeCharacter(character)">Remove Character</button>
-        }
+        <div class="right-section" style="margin: -40px -40px">
+          <button id="delete-button" class="btn btn-primary d-flex align-item-center" (click)="removeEvent(character)">
+            <img ngSrc="trash.svg" alt="Remove show" height="20" width="20">
+          </button>
+          <div class="grip-container" cdkDragHandle style="cursor: move">
+            <img class="grip" ngSrc="grip-vertical.svg" alt="Reorder list" height="50" width="50">
+          </div>
+        </div>
       </div>
     }
   </div>
-} @else {
-  <h3>No {{characterTypeTitle()}} ranked yet!</h3>
-}
+</div>

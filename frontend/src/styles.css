@@ -316,3 +316,11 @@ pre {
   font-size: 1.25rem;
   text-align: center;
 }
+
+#characters-dropdown {
+  background-color: var(--button-color);
+  border: none;
+  padding: 10px 30px;
+  border-radius: 10px;
+}
+

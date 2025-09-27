@@ -1,0 +1,9 @@
+<div class="row gx-5 gy-5 mt-2">
+  @for (character of characters; track character.name) {
+    <div class="col-4 text-center">
+      <h3 class="mb-0">{{character.name}}</h3>
+      <h5 class="mb-0" style="font-weight: 300">{{character.showName}}</h5>
+      <span class="fs-5">{{character.rankNum}}</span>
+    </div>
+  }
+</div>

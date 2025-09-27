@@ -1,0 +1,36 @@
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to favorite characters</h3>
+  </a>
+
+  <div class="d-flex align-items-center gap-5 mb-5">
+    <h1 class="fw-bold">Edit favorite characters</h1>
+    <div class="dropdown">
+      <button id="characters-dropdown" class="btn btn-secondary dropdown-toggle fs-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{characterTypeTitle()}}
+      </button>
+      <ul class="dropdown-menu">
+        @for (type of validCharacterTypes; track type) {
+          <li>
+            <a class="dropdown-item" [routerLink]="['/profile/character-ranking', type, 'edit']">{{characterTypeTitle(type)}}</a>
+          </li>
+        }
+      </ul>
+    </div>
+    <button (click)="openSearchShowsModal()" id="add-button" type="button" class="btn btn-primary d-flex align-items-center gap-3 fs-5">
+      <img ngSrc="plus.svg" alt="" height="25" width="25">
+      <span>Add character</span>
+    </button>
+  </div>
+
+  @if (rankingEntries) {
+    <app-ranked-character-list-full [characters]="selectedCharacters"
+                                    [characterType]="selectedCharacterType"
+                                    (update)="updateCharacterRankingList()"
+                                    (remove)="removeFromCharacterRankingList($event)"
+    ></app-ranked-character-list-full>
+  } @else {
+    <p class="fs-4">No characters on list</p>
+  }
+</div>
