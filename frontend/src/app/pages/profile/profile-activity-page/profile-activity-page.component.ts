@@ -7,12 +7,13 @@ import { Router, RouterLink } from '@angular/router';
 import { PageData } from '../../../data/page-data';
 import { query } from '@angular/animations';
 import { NgOptimizedImage } from '@angular/common';
+import {ShowListFullComponent} from '../../../components/show-list-full/show-list-full.component';
 
 @Component({
   selector: 'app-profile-activity-page',
   templateUrl: './profile-activity-page.component.html',
   styleUrl: './profile-activity-page.component.css',
-  imports: [NgOptimizedImage, RouterLink],
+  imports: [NgOptimizedImage, RouterLink, ShowListFullComponent],
   standalone: true,
 })
 export class ProfileActivityPageComponent implements OnInit {
@@ -128,6 +129,7 @@ export class ProfileActivityPageComponent implements OnInit {
   navigateToActivity(activity: ActivityData) {
     switch (activity.activityType) {
       case ActivityType.Follow:
+        this.router.navigate(['/user', activity.user.username]);
         break;
       case ActivityType.LikeShowReview:
         this.router.navigate(['/show', activity.showReviewLike.showId], {

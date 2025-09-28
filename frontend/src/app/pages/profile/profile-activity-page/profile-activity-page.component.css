@@ -2,12 +2,3 @@
   border-radius: 50%;
   object-fit: cover;
 }
-
-.activity-item {
-  transition: 0.5s;
-}
-
-.activity-item:hover {
-  background-color: #e7e7e7;
-  cursor: pointer;
-}
