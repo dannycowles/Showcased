@@ -79,6 +79,9 @@ export class ProfileEditCollectionDetailsPageComponent implements OnInit {
     try {
       const currentValues: UpdateCollectionDetails = this.editCollectionForm.value;
       const updatedData: Partial<UpdateCollectionDetails> = {};
+      updatedData.shows = this.collectionDetails.shows.map((show) => ({
+          id: show.showId
+      }));
 
       // Only add fields that were actually modified
       for (const key in currentValues) {

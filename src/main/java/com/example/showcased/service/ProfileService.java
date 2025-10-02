@@ -806,9 +806,10 @@ public class ProfileService {
         if (collection.getIsRanked() != null) {
             updateCollection.setRanked(collection.getIsRanked());
 
-            // If the collection is ranked, negate all ranks in the collection temporarily, so that the unique constraint is not violate
+            // If the collection is ranked, delete all shows from the collection
             if (updateCollection.isRanked()) {
-                showsInCollectionRepository.negateCollectionRanks(collectionId);
+                showsInCollectionRepository.deleteByCollectionId(collectionId);
+                showsInCollectionRepository.flush();
             }
 
             // Updates the ranks as necessary based on private or not

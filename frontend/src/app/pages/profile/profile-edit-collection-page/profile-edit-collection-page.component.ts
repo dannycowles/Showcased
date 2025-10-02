@@ -9,6 +9,7 @@ import {SearchShowsModalComponent} from '../../../components/search-shows-modal/
 import {AddShowType} from '../../../data/enums';
 import {CollectionShowData} from '../../../data/collection-show-data';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ConfirmationService} from '../../../services/confirmation.service';
 
 @Component({
   selector: 'app-profile-edit-collection-page',
@@ -27,7 +28,8 @@ export class ProfileEditCollectionPageComponent implements OnInit {
 
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private confirmationService: ConfirmationService) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
@@ -49,6 +51,13 @@ export class ProfileEditCollectionPageComponent implements OnInit {
     searchShowsModalRef.componentInstance.addType = AddShowType.Collection;
     searchShowsModalRef.componentInstance.collectionId = this.collectionId;
     searchShowsModalRef.componentInstance.onAddShow = (show: CollectionShowData) => this.collectionDetails.shows.push(show);
+  }
+
+  async removeUnrankedShowFromCollection(removeShow: CollectionShowData) {
+    const confirmation = await this.confirmationService.confirmRemove(removeShow.title);
+    if (confirmation) {
+      await this.removeShowFromCollection(removeShow.showId);
+    }
   }
 
   async removeShowFromCollection(removeId: number) {

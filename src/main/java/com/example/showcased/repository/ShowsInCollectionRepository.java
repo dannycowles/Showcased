@@ -23,6 +23,6 @@ public interface ShowsInCollectionRepository extends JpaRepository<ShowsInCollec
     Long findMaxRankNumByIdCollectionId(@Param("collectionId") Long collectionId);
 
     @Modifying
-    @Query("UPDATE ShowsInCollection s SET s.rankNum = -s.rankNum WHERE s.id.collectionId = :collectionId")
-    void negateCollectionRanks(@Param("collectionId") Long collectionId);
+    @Query("DELETE FROM ShowsInCollection s WHERE s.id.collectionId = :collectionId")
+    void deleteByCollectionId(@Param("collectionId") Long collectionId);
 }
