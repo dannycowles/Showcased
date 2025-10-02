@@ -1,48 +1,25 @@
-<button class="btn btn-primary" routerLink="/profile/collections">Return to Collections</button>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to collections</h3>
+  </a>
 
-@if (collectionData) {
-  <h1>{{collectionData.name}}</h1>
-  <pre>{{collectionData.description}}</pre>
-
-  <div class="d-flex align-items-center">
-    <yt-button-heart [isLiked]="collectionData.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
-    <div id="like-count">{{collectionData.numLikes}}</div>
-  </div>
-
-  <button class="btn btn-primary me-3" routerLink="edit">Edit Collection</button>
-
-  <button class="btn btn-success" (click)="openSearchShowsModal()">Add Show</button>
-  <br>
-  <br>
-
-  @if (collectionData.shows.length != 0) {
-    @if (collectionData.isRanked) {
-      <div cdkDropList class="show-list" (cdkDropListDropped)="drop($event)">
-        @for (show of collectionData.shows; track show.showId; let rank = $index) {
-          <div cdkDrag class="show-box">
-            <h3>{{rank + 1}}</h3>
-            <h3>{{show.title}}</h3>
-
-            <!-- Poster images are sized w185, using 2:3 ratio -->
-            <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-            <button class="btn btn-danger" (click)="removeShowFromCollection(show)">Remove Show</button>
-          </div>
-        }
+  @if (collectionData) {
+    <div class="d-flex align-items-center gap-5 mb-3">
+      <h1 class="fw-bold">{{collectionData.name}}</h1>
+      <div class="d-flex align-items-center">
+        <yt-button-heart [isLiked]="collectionData.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
+        <div id="like-count" class="fs-4">{{collectionData.numLikes}}</div>
       </div>
+      <button id="edit-button" class="btn btn-primary me-3 fs-5" routerLink="edit">Edit</button>
+    </div>
+    <pre class="fs-5">{{collectionData.description}}</pre>
+
+    @if (collectionData.shows.length != 0) {
+      <app-show-list-full [shows]="collectionData.shows" [ranked]="collectionData.isRanked"></app-show-list-full>
     } @else {
-      <div>
-        @for (show of collectionData.shows; track show.showId; let rank = $index) {
-          <div>
-            <h3>{{show.title}}</h3>
-
-            <!-- Poster images are sized w185, using 2:3 ratio -->
-            <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-            <button class="btn btn-danger" (click)="removeShowFromCollection(show)">Remove Show</button>
-          </div>
-        }
-      </div>
+      <p class="fs-4">No shows in collection</p>
     }
-  } @else {
-    <p>No shows in collection yet!</p>
   }
-}
+</div>
+

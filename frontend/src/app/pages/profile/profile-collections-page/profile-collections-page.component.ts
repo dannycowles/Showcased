@@ -7,6 +7,7 @@ import {FormsModule} from '@angular/forms';
 import {CollectionComponent} from '../../../components/collection/collection.component';
 import {PageData} from '../../../data/page-data';
 import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-profile-collections-page',
@@ -17,6 +18,7 @@ import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
     RouterLink,
     CollectionComponent,
     InfiniteScrollDirective,
+    NgOptimizedImage,
   ],
   standalone: true,
 })
@@ -27,8 +29,7 @@ export class ProfileCollectionsPageComponent implements OnInit {
 
   constructor(
     private profileService: ProfileService,
-    public utilsService: UtilsService,
-    private router: Router,
+    public utilsService: UtilsService
   ) {
     this.debouncedSearchCollections = this.utilsService.debounce(() =>
       this.searchCollections(),
@@ -43,15 +44,9 @@ export class ProfileCollectionsPageComponent implements OnInit {
     }
   }
 
-  createNewCollection() {
-    this.router.navigate(['/profile/collections/new']);
-  }
-
   async searchCollections() {
     try {
-      this.collectionData = await this.profileService.getCollections(
-        this.searchCollectionString,
-      );
+      this.collectionData = await this.profileService.getCollections(this.searchCollectionString);
     } catch (error) {
       console.error(error);
     }

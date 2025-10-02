@@ -1,51 +1,29 @@
-<h2>Edit Collection</h2>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to collection</h3>
+  </a>
 
-<form [formGroup]="editCollectionForm" (ngSubmit)="saveEdits()">
-  <div class="mb-3 w-50">
-    <label for="collectionName" class="form-label">Name <span class="required-label">(Required)</span></label>
-    <input type="text"
-           class="form-control"
-           formControlName="collectionName"
-           id="collectionName"
-           placeholder="Enter Collection Name..."
-           aria-describedby="nameHelpBlock"
-           [minLength]="minNameLength"
-           [maxLength]="maxNameLength">
-    <div id="nameHelpBlock" class="form-text">
-      <div>Must be between {{minNameLength}} and {{maxNameLength}} characters.</div>
-      <div>{{maxNameLength - editCollectionForm.get("collectionName").value.length}} characters remaining</div>
+  @if (collectionDetails) {
+    <div class="d-flex align-items-center gap-5 mb-3">
+      <h1 class="fw-bold">{{collectionDetails.name}}</h1>
+      <button id="edit-button" class="btn btn-primary fs-5" routerLink="details">Edit details</button>
+      <button (click)="openSearchShowsModal()" id="add-button" type="button" class="btn btn-primary d-flex align-items-center gap-3 fs-5">
+        <img ngSrc="plus.svg" alt="" height="25" width="25">
+        <span>Add show</span>
+      </button>
     </div>
-  </div>
+    <pre class="fs-5 mb-5">{{collectionDetails.description}}</pre>
 
-  <div class="mb-3 w-50">
-    <label for="collectionDescription" class="form-label">Description</label>
-    <textarea class="form-control"
-              formControlName="description"
-              id="collectionDescription"
-              [maxLength]="maxDescriptionLength"
-              rows="5"
-    ></textarea>
-    <div id="descriptionHelpBlock" class="form-text">
-      {{maxDescriptionLength - editCollectionForm.get("description")?.value?.length}} characters remaining
-    </div>
-  </div>
-
-  <div class="mb-3 w-25">
-    <label for="collectionVisibility" class="form-label">Visibility</label>
-    <select id="collectionVisibility" class="form-select" formControlName="isPrivate">
-      <option selected [ngValue]="false">Public - Anyone can view</option>
-      <option [ngValue]="true">Private - Only you can view</option>
-    </select>
-  </div>
-
-  <div class="form-check mb-5">
-    <input class="form-check-input" type="checkbox" id="collectionRanked" formControlName="isRanked">
-    <label class="form-check-label" for="collectionRanked">Ranked Collection</label>
-  </div>
-
-  <div class="mb-4" [ngClass]="editSuccess ? 'validation-success' : 'validation-error'">{{editMessage}}</div>
-  <button type="button" class="btn btn-secondary me-3 col-2" [routerLink]="['../']">Cancel</button>
-  <button type="submit" [disabled]="isSaveDisabled()" class="btn btn-primary col-2 me-4">Save Changes</button>
-  <button type="button" class="btn btn-danger" (click)="deleteCollection()">Delete</button>
-</form>
-
+    @if (collectionDetails.shows.length == 0) {
+      <p class="fs-4">No shows in collection</p>
+    } @else if (collectionDetails.isRanked) {
+      <app-ranked-show-list-full [shows]="collectionDetails.shows"
+                                 (update)="updateCollectionRanking()"
+                                 (remove)="removeShowFromCollection($event)"
+      ></app-ranked-show-list-full>
+    } @else {
+      <span>TODO</span>
+    }
+  }
+</div>

@@ -1,9 +1,10 @@
-.collection:hover {
+.poster-stack:hover, #collection-name:hover {
   cursor: pointer;
 }
 
 .poster-stack {
   display: flex;
+  width: fit-content;
 }
 
 .poster-stack img {
@@ -14,8 +15,8 @@
 .poster-stack img,
 .poster-stack .poster-placeholder {
   margin-left: -2rem;
-  box-shadow: 6px 0 6px -2px rgba(0, 0, 0, 0.3);
-  border-radius: 0.4rem;
+  box-shadow: 6px 0 6px -2px rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
 }
 
 .poster-stack img:first-child,
@@ -31,7 +32,8 @@
 }
 
 .poster-placeholder {
-  background-color: #eeeeee;
+  background-color: #0f0f15;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0.25;
   width: 185px;
   height: 278px;

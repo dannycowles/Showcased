@@ -1,116 +1,77 @@
 import {Component, OnInit} from '@angular/core';
-import {ProfileService} from '../../../services/profile.service';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {NgOptimizedImage} from '@angular/common';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {SingleCollectionData} from '../../../data/single-collection-data';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ProfileService} from '../../../services/profile.service';
+import {RankedShowListFullComponent} from '../../../components/ranked-show-list-full/ranked-show-list-full.component';
 import {UpdateCollectionDetails} from '../../../data/dto/update-collection-details';
-import {NgClass} from '@angular/common';
-import {ConfirmationService} from '../../../services/confirmation.service';
+import {SearchShowsModalComponent} from '../../../components/search-shows-modal/search-shows-modal.component';
+import {AddShowType} from '../../../data/enums';
+import {CollectionShowData} from '../../../data/collection-show-data';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-profile-edit-collection-page',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, NgClass],
+  imports: [
+    NgOptimizedImage,
+    RouterLink,
+    RankedShowListFullComponent
+  ],
   templateUrl: './profile-edit-collection-page.component.html',
   styleUrl: './profile-edit-collection-page.component.css',
-  standalone: true,
+  standalone: true
 })
 export class ProfileEditCollectionPageComponent implements OnInit {
   readonly collectionId: number;
   collectionDetails: SingleCollectionData;
 
-  readonly maxNameLength = 100;
-  readonly minNameLength = 5;
-
-  readonly maxDescriptionLength = 250;
-
-  editMessage: string = '';
-  editSuccess: boolean;
-
-  editCollectionForm = new FormGroup({
-    collectionName: new FormControl('', [
-      Validators.required,
-      Validators.minLength(this.minNameLength),
-      Validators.maxLength(this.maxNameLength),
-    ]),
-    description: new FormControl('', [
-      Validators.maxLength(this.maxDescriptionLength),
-    ]),
-    isPrivate: new FormControl(false),
-    isRanked: new FormControl(false),
-  });
-  originalCollectionDetails: UpdateCollectionDetails;
-
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
-              private router: Router,
-              private confirmationService: ConfirmationService) {
+              private modalService: NgbModal) {
     this.collectionId = this.route.snapshot.params['id'];
-  }
+  };
 
   async ngOnInit() {
     try {
       this.collectionDetails = await this.profileService.getCollectionDetails(this.collectionId);
+    } catch(error) {
+      console.error(error);
+    }
+  }
 
-      this.editCollectionForm.setValue({
-        collectionName: this.collectionDetails.name,
-        description: this.collectionDetails.description,
-        isPrivate: this.collectionDetails.isPrivate,
-        isRanked: this.collectionDetails.isRanked,
-      });
+  openSearchShowsModal() {
+    const searchShowsModalRef = this.modalService.open(SearchShowsModalComponent, {
+      ariaLabelledBy: 'searchShowsModal',
+      centered: true
+    });
+    searchShowsModalRef.componentInstance.showRanking = true;
+    searchShowsModalRef.componentInstance.modalTitle = 'Add Show to Collection';
+    searchShowsModalRef.componentInstance.addType = AddShowType.Collection;
+    searchShowsModalRef.componentInstance.collectionId = this.collectionId;
+    searchShowsModalRef.componentInstance.onAddShow = (show: CollectionShowData) => this.collectionDetails.shows.push(show);
+  }
 
-      // Store original collection details to use to determine if changes need to be saved
-      this.originalCollectionDetails = { ...this.editCollectionForm.value };
+  async removeShowFromCollection(removeId: number) {
+    try {
+      await this.profileService.removeShowFromCollection(this.collectionId, removeId);
+
+      // Remove the show from entries shown to user
+      this.collectionDetails.shows = this.collectionDetails.shows.filter((show) => show.showId != removeId);
     } catch (error) {
       console.error(error);
     }
   }
 
-  isSaveDisabled(): boolean {
-    return JSON.stringify(this.editCollectionForm.value) === JSON.stringify(this.originalCollectionDetails) || this.editCollectionForm.invalid;
-  }
-
-  async saveEdits() {
+  async updateCollectionRanking() {
     try {
-      const currentValues: UpdateCollectionDetails = this.editCollectionForm.value;
-      const updatedData: Partial<UpdateCollectionDetails> = {};
-
-      // Only add fields that were actually modified
-      for (const key in currentValues) {
-        const typedKey = key as keyof UpdateCollectionDetails;
-
-        if (currentValues[typedKey] !== this.originalCollectionDetails[typedKey]) {
-          (updatedData as any)[typedKey] = currentValues[typedKey];
-        }
-      }
-
-      const response = await this.profileService.updateCollection(this.collectionId, updatedData);
-      if (response.ok) {
-        this.editMessage = 'Changes saved!';
-        this.editSuccess = true;
-        this.originalCollectionDetails = { ...this.editCollectionForm.value };
-      } else {
-        this.editMessage = 'You already have a collection with this name.';
-        this.editSuccess = false;
-      }
+      const data: UpdateCollectionDetails = {
+        isRanked: this.collectionDetails.isRanked,
+        shows: this.collectionDetails.shows.map((show) => ({
+          id: show.showId,
+      }))};
+      await this.profileService.updateCollection(this.collectionId, data);
     } catch (error) {
-      console.error();
-    } finally {
-      setTimeout(() => (this.editMessage = ''), 5000);
-    }
-  }
-
-  async deleteCollection() {
-    const confirmation = await this.confirmationService.confirmDeleteCollection(this.collectionDetails.name);
-    if (confirmation) {
-      try {
-        const response = await this.profileService.deleteCollection(this.collectionId);
-
-        if (response.ok) {
-          this.router.navigate(['/profile/collections']);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+      console.error(error);
     }
   }
 }

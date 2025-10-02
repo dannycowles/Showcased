@@ -8,6 +8,7 @@
   --error-color: #DC3545;
   --error-hover-color: #C82333;
   --success-color: #198754;
+  --success-hover-color: #157347;
   --subheader-color: #575757;
 }
 
@@ -118,7 +119,7 @@ h4 {
 
 .required-label {
   font-size: 0.9rem;
-  opacity: 75%;
+  font-weight: bold;
   color: var(--error-color);
 }
 

@@ -1,18 +1,18 @@
-<div class="collection" (click)="navigateToCollection()">
-  <div class="poster-stack">
+<div class="collection">
+  <div class="poster-stack mt-5" (click)="navigateToCollection()">
     @for (_ of [].constructor(numPosters); let i = $index; track i) {
       <!-- Poster images are sized w185, using 2:3 ratio -->
       @if (collection.showPosters[i]) {
-        <img [ngSrc]="collection.showPosters[i]" alt="Show Poster" width="185" height="278" priority [style.z-index]="numPosters - i">
+        <img class="poster-image" [ngSrc]="collection.showPosters[i]" alt="Show Poster" width="185" height="278" priority [style.z-index]="numPosters - i">
       } @else {
         <div class="poster-placeholder" [style.z-index]="numPosters - i"></div>
       }
     }
   </div>
-  <div class="d-flex align-items-center gap-4 mb-5">
-    <h3>{{collection.name}}</h3>
+  <div class="d-flex align-items-center gap-4 mt-2">
+    <h3 id="collection-name" class="fw-bold white-link" (click)="navigateToCollection()">{{collection.name}}</h3>
     <span class="fs-5 fw-light">{{collection.showCount}} Show{{collection.showCount === 1 ? '' : 's'}}</span>
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center" (click)="navigateToCollection()">
       <yt-button-heart [isLiked]="false" [size]="70" style="margin-right: -0.5rem"></yt-button-heart>
       <span class="fs-5">{{collection.likeCount}}</span>
     </div>

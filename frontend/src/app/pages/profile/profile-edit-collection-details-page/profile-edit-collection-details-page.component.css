@@ -34,17 +34,25 @@
   transition: background-color 0.3s ease;
 }
 
-#create-button {
+#save-button {
   background-color: var(--success-color);
   transition: background-color 0.3s ease;
 }
 
-#create-button:hover {
+#save-button:hover {
   background-color: var(--success-hover-color);
+}
+
+#delete-button {
+  background-color: var(--error-color);
 }
 
 #cancel-button:hover {
   background-color: var(--button-hover-color);
+}
+
+#delete-button:hover {
+  background-color: var(--error-hover-color);
 }
 
 input.form-control.clear, textarea.form-control.clear {

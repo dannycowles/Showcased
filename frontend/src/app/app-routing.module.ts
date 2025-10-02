@@ -62,8 +62,8 @@ import {
   ProfileNewCollectionPageComponent
 } from './pages/profile/profile-new-collection-page/profile-new-collection-page.component';
 import {
-  ProfileEditCollectionPageComponent
-} from './pages/profile/profile-edit-collection-page/profile-edit-collection-page.component';
+  ProfileEditCollectionDetailsPageComponent
+} from './pages/profile/profile-edit-collection-details-page/profile-edit-collection-details-page.component';
 import {ProfileSettingsPageComponent} from './pages/profile/profile-settings-page/profile-settings-page.component';
 import {authGuard} from './guards/auth.guard';
 import {
@@ -87,6 +87,9 @@ import {
 import {
   ProfileEditDynamicRankingPageComponent
 } from './pages/profile/profile-edit-dynamic-ranking-page/profile-edit-dynamic-ranking-page.component';
+import {
+  ProfileEditCollectionPageComponent
+} from './pages/profile/profile-edit-collection-page/profile-edit-collection-page.component';
 
 export const routes: Routes = [
     {
@@ -226,6 +229,11 @@ export const routes: Routes = [
       path: 'profile/collections/new',
       title: 'New Collection | Showcased',
       component: ProfileNewCollectionPageComponent,
+      canActivate: [authGuard]
+    },
+    {
+      path: 'profile/collections/:id/edit/details',
+      component: ProfileEditCollectionDetailsPageComponent,
       canActivate: [authGuard]
     },
     {
