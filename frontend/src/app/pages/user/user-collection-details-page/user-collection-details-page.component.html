@@ -1,40 +1,24 @@
-<button class="btn btn-primary" [routerLink]="['..']">Return to Collections</button>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to collections</h3>
+  </a>
 
-@if (collection) {
-  <h1>{{collection.name}}</h1>
-  <pre>{{collection.description}}</pre>
-
-  <div class="d-flex align-items-center">
-    <yt-button-heart [isLiked]="collection.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
-    <div id="like-count">{{collection.numLikes}}</div>
-  </div>
-
-  @if (collection.shows.length != 0) {
-    @if (collection.isRanked) {
-      <div class="show-list">
-        @for (show of collection.shows; track show.showId; let rank = $index) {
-          <div class="show-box">
-            <h3>{{rank + 1}}</h3>
-            <h3>{{show.title}}</h3>
-
-            <!-- Poster images are sized w185, using 2:3 ratio -->
-            <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-          </div>
-        }
+  @if (collectionData) {
+    <div class="d-flex align-items-center gap-5 mb-3">
+      <h1 class="fw-bold">{{collectionData.name}}</h1>
+      <div class="d-flex align-items-center">
+        <yt-button-heart [isLiked]="collectionData.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
+        <div id="like-count" class="fs-4">{{collectionData.numLikes}}</div>
       </div>
+    </div>
+    <pre class="fs-5">{{collectionData.description}}</pre>
+
+    @if (collectionData.shows.length != 0) {
+      <app-show-list-full [shows]="collectionData.shows" [ranked]="collectionData.isRanked"></app-show-list-full>
     } @else {
-      <div>
-        @for (show of collection.shows; track show.showId; let rank = $index) {
-          <div>
-            <h3>{{show.title}}</h3>
-
-            <!-- Poster images are sized w185, using 2:3 ratio -->
-            <a [routerLink]="['/show', show.showId]"><img [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority></a>
-          </div>
-        }
-      </div>
+      <p class="fs-4">No shows in collection</p>
     }
-  } @else {
-    <p>No shows in collection yet!</p>
   }
-}
+</div>
+

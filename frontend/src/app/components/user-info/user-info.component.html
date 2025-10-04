@@ -6,8 +6,16 @@
       <div class="d-flex flex-column gap-3">
         <div class="d-flex align-items-center gap-4">
           <h2 class="fw-bold">{{headerData.displayName}}</h2>
-          @if (headerData.isOwnProfile) {
+
+          @if (editable) {
             <button id="edit-profile-button" class="btn btn-primary" [routerLink]="['settings']">Edit profile</button>
+          }
+          @else if (!headerData.isOwnProfile) {
+            @if (headerData.isFollowing) {
+              <button class="btn btn-primary follow-button" (click)="unfollowUser()">Unfollow</button>
+            } @else {
+              <button class="btn btn-primary follow-button" (click)="followUser()">Follow</button>
+            }
           }
         </div>
         <pre class="fs-5">{{headerData.bio}}</pre>
@@ -42,12 +50,4 @@
       </div>
     </div>
   </div>
-
-  @if (!headerData.isOwnProfile) {
-    @if (headerData.isFollowing) {
-      <button class="btn btn-outline-danger" (click)="unfollowUser()">Unfollow</button>
-    } @else {
-      <button class="btn btn-outline-success" (click)="followUser()">Follow</button>
-    }
-  }
 </div>

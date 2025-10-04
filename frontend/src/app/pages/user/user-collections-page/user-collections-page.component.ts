@@ -8,6 +8,7 @@ import {FormsModule} from '@angular/forms';
 import {CollectionComponent} from '../../../components/collection/collection.component';
 import {PageData} from '../../../data/page-data';
 import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-user-collections-page',
@@ -18,6 +19,7 @@ import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
     FormsModule,
     CollectionComponent,
     InfiniteScrollDirective,
+    NgOptimizedImage,
   ],
   standalone: true,
 })

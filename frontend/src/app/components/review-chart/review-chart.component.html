@@ -12,10 +12,10 @@
       @if (reviewAverage) {
         <span>{{reviewAverage}}</span>
       } @else {
-        <span>N/A</span>
+        <span>&mdash;</span>
       }
       <i class="bi bi-star-fill ms-1" style="color: #f2cb22;"></i>
     </div>
-    <span class="fs-5"> from {{reviewCount}} user review{{reviewCount > 1 ? 's' : ''}}</span>
+    <span class="fs-5"> from {{reviewCount}} user review{{reviewCount !== 1 ? 's' : ''}}</span>
   </div>
 </div>

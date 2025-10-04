@@ -7,12 +7,13 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Title} from '@angular/platform-browser';
 import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-user-reviews-page',
   templateUrl: './user-reviews-page.component.html',
   styleUrl: './user-reviews-page.component.css',
-  imports: [RouterLink, InfiniteScrollDirective, ProfileReviewComponent],
+  imports: [RouterLink, InfiniteScrollDirective, ProfileReviewComponent, NgOptimizedImage],
   standalone: true,
 })
 export class UserReviewsPageComponent {

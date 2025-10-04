@@ -2,12 +2,13 @@ import {Component} from '@angular/core';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Title} from '@angular/platform-browser';
 import {FollowersFollowingComponent} from '../../../components/followers-following/followers-following.component';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-user-following-page',
   templateUrl: './user-following-page.component.html',
   styleUrl: './user-following-page.component.css',
-  imports: [FollowersFollowingComponent, RouterLink],
+  imports: [FollowersFollowingComponent, RouterLink, NgOptimizedImage],
   standalone: true,
 })
 export class UserFollowingPageComponent {

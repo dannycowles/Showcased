@@ -1,8 +1,14 @@
-<button class="btn btn-primary" [routerLink]="['..']">Return to User Profile</button>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to profile</h3>
+  </a>
+  <h1 class="fw-bold">{{username}}'s watchlist</h1>
 
-@if (watchlistEntries) {
-  <app-show-list-full title="Watchlist" [shows]="watchlistEntries"></app-show-list-full>
-} @else {
-  <p>User has no shows on their watchlist yet!</p>
-}
+  @if (watchlistEntries) {
+    <app-show-list-full [shows]="watchlistEntries"></app-show-list-full>
+  } @else {
+    <p class="fs-4">No shows on list</p>
+  }
+</div>
 

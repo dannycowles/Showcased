@@ -4,12 +4,13 @@ import {UserService} from '../../../services/user.service';
 import {ShowListData} from '../../../data/lists/show-list-data';
 import {Title} from '@angular/platform-browser';
 import {ShowListFullComponent} from '../../../components/show-list-full/show-list-full.component';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-user-watchlist-page',
   templateUrl: './user-watchlist-page.component.html',
   styleUrl: './user-watchlist-page.component.css',
-  imports: [ShowListFullComponent, RouterLink],
+  imports: [ShowListFullComponent, RouterLink, NgOptimizedImage],
   standalone: true,
 })
 export class UserWatchlistPageComponent implements OnInit {

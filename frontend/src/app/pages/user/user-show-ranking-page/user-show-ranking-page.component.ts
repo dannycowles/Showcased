@@ -4,12 +4,14 @@ import {ShowRankingData} from '../../../data/lists/show-ranking-data';
 import {UserService} from '../../../services/user.service';
 import {Title} from '@angular/platform-browser';
 import {RankedShowListFullComponent} from '../../../components/ranked-show-list-full/ranked-show-list-full.component';
+import {NgOptimizedImage} from '@angular/common';
+import {ShowListFullComponent} from '../../../components/show-list-full/show-list-full.component';
 
 @Component({
   selector: 'app-user-show-ranking-page',
   templateUrl: './user-show-ranking-page.component.html',
   styleUrl: './user-show-ranking-page.component.css',
-  imports: [RankedShowListFullComponent, RouterLink],
+  imports: [RankedShowListFullComponent, RouterLink, NgOptimizedImage, ShowListFullComponent],
   standalone: true,
 })
 export class UserShowRankingPageComponent implements OnInit {

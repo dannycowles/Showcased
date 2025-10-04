@@ -18,7 +18,7 @@ import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 })
 export class FollowersFollowingComponent implements OnInit {
   @Input({ required: true }) listType: 'followers' | 'following';
-  @Input() editable: boolean = true; // true for profile page, false for user page
+  @Input() editable: boolean = false; // true for profile page, false for user page
   @Input() username: string;
 
   searchString: string = '';

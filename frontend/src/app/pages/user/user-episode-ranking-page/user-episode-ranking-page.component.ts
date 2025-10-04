@@ -6,12 +6,14 @@ import {Title} from '@angular/platform-browser';
 import {
   RankedEpisodeListFullComponent
 } from '../../../components/ranked-episode-list-full/ranked-episode-list-full.component';
+import {EpisodeListFullComponent} from '../../../components/episode-list-full/episode-list-full.component';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-user-episode-ranking-page',
   templateUrl: './user-episode-ranking-page.component.html',
   styleUrl: './user-episode-ranking-page.component.css',
-  imports: [RankedEpisodeListFullComponent, RouterLink],
+  imports: [RankedEpisodeListFullComponent, RouterLink, EpisodeListFullComponent, NgOptimizedImage],
   standalone: true,
 })
 export class UserEpisodeRankingPageComponent implements OnInit {

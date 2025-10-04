@@ -6,12 +6,14 @@ import {Title} from '@angular/platform-browser';
 import {
   RankedDynamicListFullComponent
 } from '../../../components/ranked-dynamic-list-full/ranked-dynamic-list-full.component';
+import {DynamicListFullComponent} from '../../../components/dynamic-list-full/dynamic-list-full.component';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-user-dynamic-ranking-page',
   templateUrl: './user-dynamic-ranking-page.component.html',
   styleUrl: './user-dynamic-ranking-page.component.css',
-  imports: [RouterLink, RankedDynamicListFullComponent],
+  imports: [RouterLink, RankedDynamicListFullComponent, DynamicListFullComponent, NgOptimizedImage],
   standalone: true,
 })
 export class UserDynamicRankingPageComponent implements OnInit {

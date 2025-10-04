@@ -5,18 +5,19 @@ import {SingleCollectionData} from '../../../data/single-collection-data';
 import {Title} from '@angular/platform-browser';
 import {ButtonHeartComponent} from '../../../components/button-heart.component';
 import {NgOptimizedImage} from '@angular/common';
+import {ShowListFullComponent} from '../../../components/show-list-full/show-list-full.component';
 
 @Component({
   selector: 'app-user-collection-details-page',
   templateUrl: './user-collection-details-page.component.html',
   styleUrl: './user-collection-details-page.component.css',
-  imports: [RouterLink, ButtonHeartComponent, NgOptimizedImage],
+  imports: [RouterLink, ButtonHeartComponent, NgOptimizedImage, ShowListFullComponent],
   standalone: true,
 })
 export class UserCollectionDetailsPageComponent implements OnInit {
   readonly username: string;
   readonly collectionId: number;
-  collection: SingleCollectionData;
+  collectionData: SingleCollectionData;
 
   constructor(
     private userService: UserService,
@@ -24,18 +25,14 @@ export class UserCollectionDetailsPageComponent implements OnInit {
     private router: Router,
     private title: Title,
   ) {
-    this.username = route.snapshot.params['username'];
-    this.collectionId = route.snapshot.params['collectionId'];
+    this.username = this.route.snapshot.params['username'];
+    this.collectionId = this.route.snapshot.params['collectionId'];
   }
 
   async ngOnInit() {
     try {
-      this.collection = await this.userService.getCollectionDetails(
-        this.collectionId,
-      );
-      this.title.setTitle(
-        `${this.collection.name}, ${this.username}'s Collection | Showcased`,
-      );
+      this.collectionData = await this.userService.getCollectionDetails(this.collectionId);
+      this.title.setTitle(`${this.collectionData.name}, ${this.username}'s Collection | Showcased`);
     } catch (error) {
       console.error(error);
       this.router.navigate(['not-found']);
@@ -44,26 +41,22 @@ export class UserCollectionDetailsPageComponent implements OnInit {
 
   async toggleLikeState() {
     try {
-      this.collection.isLikedByUser = !this.collection.isLikedByUser;
-      if (this.collection.isLikedByUser) {
-        const response = await this.userService.likeCollection(
-          this.collectionId,
-        );
+      this.collectionData.isLikedByUser = !this.collectionData.isLikedByUser;
+      if (this.collectionData.isLikedByUser) {
+        const response = await this.userService.likeCollection(this.collectionId);
 
         if (response.status === 401) {
           this.router.navigate(['login']);
         } else {
-          this.collection.numLikes++;
+          this.collectionData.numLikes++;
         }
       } else {
-        const response = await this.userService.unlikeCollection(
-          this.collectionId,
-        );
+        const response = await this.userService.unlikeCollection(this.collectionId);
 
         if (response.status === 401) {
           this.router.navigate(['login']);
         } else {
-          this.collection.numLikes--;
+          this.collectionData.numLikes--;
         }
       }
     } catch (error) {

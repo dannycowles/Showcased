@@ -1,5 +1,13 @@
-<button class="btn btn-primary" [routerLink]="['..']">Return to User Profile</button>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
+    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3>Back to profile</h3>
+  </a>
+  <h1 class="fw-bold">{{username}}'s favorite shows</h1>
 
-<app-ranked-show-list-full title="Favorite Shows"
-                           [shows]="rankingEntries"
-></app-ranked-show-list-full>
+  @if (rankingEntries) {
+    <app-show-list-full [shows]="rankingEntries" ranked></app-show-list-full>
+  } @else {
+    <p class="fs-4">No shows on list</p>
+  }
+</div>

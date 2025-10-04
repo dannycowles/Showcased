@@ -1,68 +1,67 @@
-@if (userDetails) {
-  <app-user-info [headerData]="userDetails.headerData" [editable]="false"></app-user-info>
+<div class="container text-white pt-5" style="margin-bottom: 15vh">
+  @if (userDetails) {
+    <app-user-info [headerData]="userDetails.headerData"></app-user-info>
 
-  <app-show-list title="Watchlist" [shows]="userDetails.watchlistTop"></app-show-list>
-  @if (userDetails.hasMoreWatchlist) {
-    <button class="btn btn-primary mt-3 mb-3" routerLink="watchlist">View Full List</button>
+    <div class="d-flex justify-content-between">
+      <div class="flex-grow-1" style="min-width: 300px">
+        <div class="d-flex gap-5 mb-3">
+          <h3 class="fw-bold">Favorite shows</h3>
+          <a routerLink="show-ranking" class="link-offset-3 white-link">View all</a>
+        </div>
+        <app-show-list [shows]="userDetails.showRankingTop" ranked></app-show-list>
+
+        <app-season-list [seasons]="userDetails.seasonRankingTop"></app-season-list>
+        <app-episode-list [episodes]="userDetails.episodeRankingTop"></app-episode-list>
+
+        <div class="d-flex gap-5 mb-3">
+          <h3 class="fw-bold">Currently watching</h3>
+          <a routerLink="watching" class="link-offset-3 white-link">View all</a>
+        </div>
+        <app-show-list [shows]="userDetails.watchingTop"></app-show-list>
+
+        <div class="d-flex gap-5 mb-3">
+          <h3 class="fw-bold">Watchlist</h3>
+          <a routerLink="watchlist" class="link-offset-3 white-link">View all</a>
+        </div>
+        <app-show-list [shows]="userDetails.watchlistTop"></app-show-list>
+
+        <div class="d-flex align-items-center gap-5 mb-3">
+          <h3 class="fw-bold">Favorite characters</h3>
+          <div class="dropdown">
+            <button id="characters-dropdown" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{characterTypeTitle()}}
+            </button>
+            <ul class="dropdown-menu">
+              @for (type of validCharacterTypes; track type) {
+                <li>
+                  <a class="dropdown-item" (click)="setSelectedCharacterType(type)">{{characterTypeTitle(type)}}</a>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <a [routerLink]="['character-ranking', selectedCharacterType]" class="link-offset-3 white-link">View all</a>
+        </div>
+        <app-character-list title="" [characters]="selectedCharacters"></app-character-list>
+        <app-dynamic-list [dynamics]="userDetails.dynamicRankingTop"></app-dynamic-list>
+
+        <div class="d-flex gap-5 mb-3">
+          <h3 class="fw-bold">Collections</h3>
+          <a routerLink="collections" class="link-offset-3 white-link">View all</a>
+        </div>
+
+        @if (userDetails?.collections?.length != 0) {
+          @for (collection of userDetails.collections; track collection.id) {
+            <app-collection [collection]="collection" onProfilePage></app-collection>
+          }
+        } @else {
+          <p>No collections yet</p>
+        }
+      </div>
+
+      <div>
+        <app-recent-reviews [reviews]="userDetails.reviews"></app-recent-reviews>
+      </div>
+    </div>
   }
-
-  <app-show-list title="Currently Watching" [shows]="userDetails.watchingTop"></app-show-list>
-  @if (userDetails.hasMoreWatching) {
-    <button class="btn btn-primary mt-3 mb-3" routerLink="watching">View Full List</button>
-  }
-
-  <app-show-list title="Favorite Shows" [shows]="userDetails.showRankingTop" ranked></app-show-list>
-  @if (userDetails.hasMoreShowRanking) {
-    <button class="btn btn-primary mt-3 mb-3" routerLink="show-ranking">View Full List</button>
-  }
-
-  <app-season-list [seasons]="userDetails.seasonRankingTop"></app-season-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="season-ranking">View Full List</button>
-
-  <app-episode-list [episodes]="userDetails.episodeRankingTop"></app-episode-list>
-  @if (userDetails.hasMoreEpisodeRanking) {
-    <button class="btn btn-primary mt-3 mb-3" routerLink="episode-ranking">View Full List</button>
-  }
-
-  <app-character-list title="Favorite Protagonists" [characters]="userDetails.characterRankings.protagonists"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/protagonists">View Full List</button>
-
-  <app-character-list title="Favorite Deuteragonists" [characters]="userDetails.characterRankings.deuteragonists"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/deuteragonists">View Full List</button>
-
-  <app-character-list title="Favorite Antagonists" [characters]="userDetails.characterRankings.antagonists"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/antagonists">View Full List</button>
-
-  <app-character-list title="Favorite Tritagonists" [characters]="userDetails.characterRankings.tritagonists"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/tritagonists">View Full List</button>
-
-  <app-character-list title="Favorite Side Characters" [characters]="userDetails.characterRankings.side"></app-character-list>
-  <button class="btn btn-primary mt-3 mb-3" routerLink="character-ranking/side">View Full List</button>
-
-  <app-dynamic-list [dynamics]="userDetails.dynamicRankingTop"></app-dynamic-list>
-  <button class="btn btn-primary my-3" routerLink="dynamic-ranking">View Full List</button>
-  <br>
-
-  <h3>Collections</h3>
-  @if (userDetails?.collections?.length != 0) {
-    @for (collection of userDetails.collections; track collection.id) {
-      <app-collection [collection]="collection" onProfilePage></app-collection>
-    }
-  } @else {
-    <div>No collections yet!</div>
-  }
-  <button class="btn btn-primary mb-4" routerLink="collections">View All</button>
-
-  <h3>Reviews</h3>
-
-<!--  <app-review-chart [reviewDistribution]="userDetails.reviewDistribution"></app-review-chart>-->
-
-  <button type="button" class="btn btn-secondary mb-3" routerLink="reviews">View All</button>
-  @if (userDetails?.reviews?.length != 0) {
-    @for (review of userDetails.reviews; track review.id + '-' + review.type) {
-      <app-profile-review [review]="review"></app-profile-review>
-    }
-  } @else {
-    <div>No reviews yet!</div>
-  }
-}
+</div>

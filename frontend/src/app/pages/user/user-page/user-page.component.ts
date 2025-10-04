@@ -14,6 +14,8 @@ import {DynamicListComponent} from '../../../components/dynamic-list/dynamic-lis
 import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
 import {CollectionComponent} from '../../../components/collection/collection.component';
 import {ReviewChartComponent} from '../../../components/review-chart/review-chart.component';
+import {RecentReviewsComponent} from '../../../components/recent-reviews/recent-reviews.component';
+import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 
 @Component({
   selector: 'app-user-page',
@@ -30,6 +32,7 @@ import {ReviewChartComponent} from '../../../components/review-chart/review-char
     ProfileReviewComponent,
     CollectionComponent,
     ReviewChartComponent,
+    RecentReviewsComponent,
   ],
   standalone: true,
 })
@@ -37,6 +40,25 @@ export class UserPageComponent implements OnInit {
   readonly username: string;
   userDetails: UserData;
   readonly ReviewType = ReviewType;
+
+  readonly typeTitles: string[] = [
+    'Protagonists',
+    'Deuteragonists',
+    'Antagonists',
+    'Tritagonists',
+    'Side Characters',
+  ];
+
+  readonly validCharacterTypes: string[] = [
+    'protagonists',
+    'deuteragonists',
+    'antagonists',
+    'tritagonists',
+    'side',
+  ];
+
+  selectedCharacterType: string = 'protagonists';
+  selectedCharacters: CharacterRankingData[];
 
   constructor(
     private route: ActivatedRoute,
@@ -52,8 +74,22 @@ export class UserPageComponent implements OnInit {
     // Retrieve user details from the backend
     try {
       this.userDetails = await this.userService.getUserDetails(this.username);
+      this.setSelectedCharacterType('protagonists');
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  setSelectedCharacterType(type: string) {
+    this.selectedCharacterType = type;
+    this.selectedCharacters = this.userDetails.characterRankings[this.selectedCharacterType];
+  }
+
+  characterTypeTitle(type?: string): string {
+    if (type) {
+      return this.typeTitles[this.validCharacterTypes.indexOf(type)];
+    } else {
+      return this.typeTitles[this.validCharacterTypes.indexOf(this.selectedCharacterType)];
     }
   }
 }
