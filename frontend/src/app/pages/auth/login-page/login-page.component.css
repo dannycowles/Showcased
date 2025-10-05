@@ -25,5 +25,5 @@
 }
 
 #login-button:hover {
-  background-color: var(--outline-color);
+  background-color: var(--button-hover-color);
 }

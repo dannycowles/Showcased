@@ -16,7 +16,7 @@ import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 export class UserCharacterRankingPageComponent implements OnInit {
   readonly username: string;
   characterRankings: CharacterRankingsData;
-
+  loadingData: boolean = true;
 
   readonly typeTitles: string[] = [
     'Protagonists',
@@ -35,7 +35,7 @@ export class UserCharacterRankingPageComponent implements OnInit {
   ];
 
   selectedCharacterType: string;
-  selectedCharacters: CharacterRankingData[];
+  selectedCharacters: CharacterRankingData[] = [];
 
   constructor(private userService: UserService,
               private route: ActivatedRoute,
@@ -60,6 +60,8 @@ export class UserCharacterRankingPageComponent implements OnInit {
       });
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

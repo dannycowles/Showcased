@@ -10,6 +10,7 @@ import {AddShowType} from '../../../data/enums';
 import {CollectionShowData} from '../../../data/collection-show-data';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfirmationService} from '../../../services/confirmation.service';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile-edit-collection-page',
@@ -25,19 +26,24 @@ import {ConfirmationService} from '../../../services/confirmation.service';
 export class ProfileEditCollectionPageComponent implements OnInit {
   readonly collectionId: number;
   collectionDetails: SingleCollectionData;
+  loadingData: boolean = true;
 
   constructor(private profileService: ProfileService,
               private route: ActivatedRoute,
               private modalService: NgbModal,
-              private confirmationService: ConfirmationService) {
+              private confirmationService: ConfirmationService,
+              private title: Title) {
     this.collectionId = this.route.snapshot.params['id'];
   };
 
   async ngOnInit() {
     try {
       this.collectionDetails = await this.profileService.getCollectionDetails(this.collectionId);
+      this.title.setTitle(`${this.collectionDetails.name}, Your Collection | Showcased`);
     } catch(error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

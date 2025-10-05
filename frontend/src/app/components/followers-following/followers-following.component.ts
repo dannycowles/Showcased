@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {booleanAttribute, Component, Input, OnInit} from '@angular/core';
 import {ProfileService} from '../../services/profile.service';
 import {UtilsService} from '../../services/utils.service';
 import {UserSearchData} from '../../data/user-search-data';
@@ -18,8 +18,9 @@ import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 })
 export class FollowersFollowingComponent implements OnInit {
   @Input({ required: true }) listType: 'followers' | 'following';
-  @Input() editable: boolean = false; // true for profile page, false for user page
+  @Input({ transform: booleanAttribute }) editable = false; // true for profile page, false for user page
   @Input() username: string;
+  loadingData: boolean = true;
 
   searchString: string = '';
   debouncedSearch: () => void;
@@ -64,11 +65,12 @@ export class FollowersFollowingComponent implements OnInit {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 
   async loadMoreUsers() {
-    console.log(this.searchResults.page.number);
     // If all users have been loaded, return
     if (this.searchResults.page.number + 1 >= this.searchResults.page.totalPages) {
       return;
@@ -76,6 +78,7 @@ export class FollowersFollowingComponent implements OnInit {
 
     try {
       let result;
+      this.loadingData = true;
       if (this.listType === "followers") {
         result = await this.followHandlers.getFollowers(this.searchResults.page.number + 2);
       } else {
@@ -85,6 +88,8 @@ export class FollowersFollowingComponent implements OnInit {
       this.searchResults.page = result.page;
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

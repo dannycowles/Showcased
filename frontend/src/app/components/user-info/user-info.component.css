@@ -16,7 +16,7 @@
 }
 
 #edit-profile-button:hover {
-  background-color: var(--outline-color);
+  background-color: var(--button-hover-color);
 }
 
 .white-link {

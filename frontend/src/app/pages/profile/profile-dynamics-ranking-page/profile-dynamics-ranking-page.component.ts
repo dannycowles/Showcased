@@ -19,7 +19,8 @@ import {DynamicListFullComponent} from '../../../components/dynamic-list-full/dy
   ],
 })
 export class ProfileDynamicsRankingPageComponent implements OnInit {
-  dynamics: DynamicRankingData[];
+  dynamics: DynamicRankingData[] = [];
+  loadingData: boolean = true;
   selectedShow: SearchResultData | null = null;
   selectedCharacter1: RoleData | null = null;
 
@@ -30,6 +31,8 @@ export class ProfileDynamicsRankingPageComponent implements OnInit {
       this.dynamics = await this.profileService.getDynamicRankingList();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 }

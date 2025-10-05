@@ -18,6 +18,7 @@ export class UserCollectionDetailsPageComponent implements OnInit {
   readonly username: string;
   readonly collectionId: number;
   collectionData: SingleCollectionData;
+  loadingData: boolean = true;
 
   constructor(
     private userService: UserService,
@@ -36,6 +37,8 @@ export class UserCollectionDetailsPageComponent implements OnInit {
     } catch (error) {
       console.error(error);
       this.router.navigate(['not-found']);
+    } finally {
+      this.loadingData = false;
     }
   }
 

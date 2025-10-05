@@ -24,6 +24,7 @@ import {NgOptimizedImage} from '@angular/common';
 })
 export class ProfileCollectionsPageComponent implements OnInit {
   collectionData: PageData<CollectionData>;
+  loadingData: boolean = true;
   searchCollectionString: string = '';
   debouncedSearchCollections: () => void;
 
@@ -41,14 +42,19 @@ export class ProfileCollectionsPageComponent implements OnInit {
       this.collectionData = await this.profileService.getCollections();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 
   async searchCollections() {
     try {
+      this.loadingData = true;
       this.collectionData = await this.profileService.getCollections(this.searchCollectionString);
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

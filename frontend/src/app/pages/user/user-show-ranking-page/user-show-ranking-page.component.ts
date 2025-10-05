@@ -3,7 +3,6 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ShowRankingData} from '../../../data/lists/show-ranking-data';
 import {UserService} from '../../../services/user.service';
 import {Title} from '@angular/platform-browser';
-import {RankedShowListFullComponent} from '../../../components/ranked-show-list-full/ranked-show-list-full.component';
 import {NgOptimizedImage} from '@angular/common';
 import {ShowListFullComponent} from '../../../components/show-list-full/show-list-full.component';
 
@@ -11,12 +10,13 @@ import {ShowListFullComponent} from '../../../components/show-list-full/show-lis
   selector: 'app-user-show-ranking-page',
   templateUrl: './user-show-ranking-page.component.html',
   styleUrl: './user-show-ranking-page.component.css',
-  imports: [RankedShowListFullComponent, RouterLink, NgOptimizedImage, ShowListFullComponent],
+  imports: [RouterLink, NgOptimizedImage, ShowListFullComponent],
   standalone: true,
 })
 export class UserShowRankingPageComponent implements OnInit {
   readonly username: string;
-  rankingEntries: ShowRankingData[];
+  rankingEntries: ShowRankingData[] = [];
+  loadingData: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -30,11 +30,11 @@ export class UserShowRankingPageComponent implements OnInit {
   async ngOnInit() {
     // Retrieve full show ranking list for user
     try {
-      this.rankingEntries = await this.userService.getFullShowRankingList(
-        this.username,
-      );
+      this.rankingEntries = await this.userService.getFullShowRankingList(this.username);
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 }

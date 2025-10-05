@@ -26,6 +26,7 @@ import {NgOptimizedImage} from '@angular/common';
 export class UserCollectionsPageComponent implements OnInit {
   readonly username: string;
   collectionData: PageData<CollectionData>;
+  loadingData: boolean = true;
   searchCollectionString: string;
   debouncedSearchCollections: () => void;
 
@@ -35,7 +36,7 @@ export class UserCollectionsPageComponent implements OnInit {
     private title: Title,
     private utilsService: UtilsService,
   ) {
-    this.username = route.snapshot.params['username'];
+    this.username = this.route.snapshot.params['username'];
     this.title.setTitle(`${this.username}'s Collections | Showcased`);
   }
 
@@ -44,18 +45,21 @@ export class UserCollectionsPageComponent implements OnInit {
       this.collectionData = await this.userService.getPublicCollections(this.username);
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
 
-    this.debouncedSearchCollections = this.utilsService.debounce(() => {
-      this.searchCollections();
-    });
+    this.debouncedSearchCollections = this.utilsService.debounce(() => this.searchCollections());
   }
 
   async searchCollections() {
     try {
+      this.loadingData = true;
       this.collectionData = await this.userService.getPublicCollections(this.username, this.searchCollectionString);
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

@@ -17,7 +17,8 @@ import {ShowListFullComponent} from '../../../components/show-list-full/show-lis
   ],
 })
 export class ProfileShowRankingPageComponent implements OnInit {
-  rankingEntries: ShowRankingData[];
+  rankingEntries: ShowRankingData[] = [];
+  loadingData: boolean = true;
 
   constructor(private profileService: ProfileService) {};
 
@@ -26,6 +27,8 @@ export class ProfileShowRankingPageComponent implements OnInit {
       this.rankingEntries = await this.profileService.getFullShowRankingList();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 }

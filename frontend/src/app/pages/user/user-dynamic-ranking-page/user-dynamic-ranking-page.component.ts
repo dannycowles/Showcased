@@ -3,9 +3,6 @@ import {DynamicRankingData} from '../../../data/lists/dynamic-ranking-data';
 import {UserService} from '../../../services/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Title} from '@angular/platform-browser';
-import {
-  RankedDynamicListFullComponent
-} from '../../../components/ranked-dynamic-list-full/ranked-dynamic-list-full.component';
 import {DynamicListFullComponent} from '../../../components/dynamic-list-full/dynamic-list-full.component';
 import {NgOptimizedImage} from '@angular/common';
 
@@ -13,12 +10,13 @@ import {NgOptimizedImage} from '@angular/common';
   selector: 'app-user-dynamic-ranking-page',
   templateUrl: './user-dynamic-ranking-page.component.html',
   styleUrl: './user-dynamic-ranking-page.component.css',
-  imports: [RouterLink, RankedDynamicListFullComponent, DynamicListFullComponent, NgOptimizedImage],
+  imports: [RouterLink, DynamicListFullComponent, NgOptimizedImage],
   standalone: true,
 })
 export class UserDynamicRankingPageComponent implements OnInit {
   readonly username: string;
-  dynamics: DynamicRankingData[];
+  dynamics: DynamicRankingData[] = [];
+  loadingData: boolean = true;
 
   constructor(
     private userService: UserService,
@@ -31,11 +29,11 @@ export class UserDynamicRankingPageComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.dynamics = await this.userService.getFullDynamicRankingList(
-        this.username,
-      );
+      this.dynamics = await this.userService.getFullDynamicRankingList(this.username);
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 }

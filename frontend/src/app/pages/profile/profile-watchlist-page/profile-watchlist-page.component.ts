@@ -13,7 +13,8 @@ import {NgOptimizedImage} from '@angular/common';
   standalone: true,
 })
 export class ProfileWatchlistPageComponent implements OnInit {
-  watchlistEntries: ShowListData[];
+  watchlistEntries: ShowListData[] = [];
+  loadingData: boolean = true;
 
   constructor(private profileService: ProfileService) {}
 
@@ -22,6 +23,8 @@ export class ProfileWatchlistPageComponent implements OnInit {
       this.watchlistEntries = await this.profileService.getFullWatchlist();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 }

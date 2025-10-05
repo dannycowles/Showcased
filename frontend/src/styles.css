@@ -64,7 +64,7 @@ nav {
 }
 
 .link:hover {
-  color: var(--outline-color);
+  color: var(--button-hover-color);
 }
 
 .form-control.input-with-icon {

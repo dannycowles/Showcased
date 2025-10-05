@@ -29,7 +29,8 @@ import {
   styleUrl: './profile-edit-dynamic-ranking-page.component.css'
 })
 export class ProfileEditDynamicRankingPageComponent implements OnInit {
-  rankingEntries: DynamicRankingData[];
+  rankingEntries: DynamicRankingData[] = [];
+  loadingData: boolean = true;
   selectedShow: SearchResultData | null = null;
   selectedCharacter1: RoleData | null = null;
 
@@ -41,6 +42,8 @@ export class ProfileEditDynamicRankingPageComponent implements OnInit {
       this.rankingEntries = await this.profileService.getDynamicRankingList();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

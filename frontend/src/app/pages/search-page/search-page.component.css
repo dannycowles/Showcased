@@ -10,13 +10,14 @@
   transition: background-color 0.3s ease;
 }
 
+.search-option:hover {
+  background-color: var(--button-hover-color);
+}
+
 .search-option.selected {
   background-color: var(--outline-color);
 }
 
-.search-option:hover {
-  background-color: var(--outline-color);
-}
 
 h1 {
   font-size: 4rem;

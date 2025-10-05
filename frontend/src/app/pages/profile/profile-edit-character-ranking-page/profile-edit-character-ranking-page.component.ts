@@ -28,6 +28,7 @@ import {UpdateCharacterRankingDto} from '../../../data/dto/update-list-ranks-dto
 })
 export class ProfileEditCharacterRankingPageComponent implements OnInit {
   rankingEntries: CharacterRankingsData;
+  loadingData: boolean = true;
 
   readonly typeTitles: string[] = [
     'Protagonists',
@@ -47,7 +48,7 @@ export class ProfileEditCharacterRankingPageComponent implements OnInit {
 
   selectedShow: SearchResultData | null = null;
   selectedCharacterType: string;
-  selectedCharacters: CharacterRankingData[];
+  selectedCharacters: CharacterRankingData[] = [];
 
   constructor(private profileService: ProfileService,
               private modalService: NgbModal,
@@ -70,6 +71,8 @@ export class ProfileEditCharacterRankingPageComponent implements OnInit {
       });
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

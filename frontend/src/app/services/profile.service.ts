@@ -29,12 +29,12 @@ import {CreateCollectionDto} from '../data/dto/create-collection-dto';
 import {UpdateCollectionDetails} from '../data/dto/update-collection-details';
 import {ActivityData} from '../data/activity-data';
 import {PageData} from '../data/page-data';
-import {UserService} from './user.service';
 import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
 import {ProfileReviewData} from '../data/types';
 import {ProfileSettingsData} from '../data/profile-settings-data';
 import {AuthenticationService} from './auth.service';
 import {ChangePasswordDto} from '../data/dto/change-password-dto';
+import {HttpStatusCode} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -702,6 +702,11 @@ export class ProfileService {
     });
 
     this.checkUnauthorizedUser(response);
+
+    // If the collection with the specified ID was not found redirect to not found
+    if (response.status === HttpStatusCode.NotFound) {
+      this.router.navigate(['/not-found'])
+    }
     return await response.json();
   }
 

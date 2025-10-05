@@ -4,7 +4,13 @@
     <input class="form-control input-with-icon" id="search-input" placeholder="Search" (input)="debouncedSearch()" [(ngModel)]="searchString" name="search">
   </div>
 
-  @if (searchResults) {
+  @if (loadingData) {
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  } @else if (searchResults) {
     @if (searchResults.content.length > 0) {
       <div class="users"
            infiniteScroll
@@ -13,7 +19,7 @@
       >
         @for (user of searchResults.content; track user.id) {
           <div class="d-flex align-items-center my-4">
-            <img style="cursor: pointer" [routerLink]="['/user', user.displayName]" [ngSrc]="user.profilePicture" id="profile-picture" alt="User Profile Picture" width="100" height="100">
+            <img style="cursor: pointer" [routerLink]="['/user', user.displayName]" [ngSrc]="user.profilePicture" id="profile-picture" alt="User Profile Picture" width="100" height="100" priority>
             <a class="white-link text-decoration-none" [routerLink]="['/user', user.displayName]">
               <h3 class="ms-5">{{user.displayName}}</h3>
             </a>

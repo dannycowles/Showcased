@@ -20,11 +20,16 @@ export class DiscoverPageComponent implements OnInit {
   constructor(private showService: ShowService) {}
 
   async ngOnInit() {
-    // Retrieve the show genres from the backend
     try {
-      this.trendingShows = await this.showService.fetchTrendingShows();
-      this.topRatedShows = await this.showService.fetchTopRatedShows();
-      this.showGenres = await this.showService.fetchShowGenres();
+      const [trending, topRated, genres] = await Promise.all([
+        this.showService.fetchTrendingShows(),
+        this.showService.fetchTopRatedShows(),
+        this.showService.fetchShowGenres()
+      ]);
+
+      this.trendingShows = trending;
+      this.topRatedShows = topRated;
+      this.showGenres = genres;
     } catch (error) {
       console.error(error);
     }

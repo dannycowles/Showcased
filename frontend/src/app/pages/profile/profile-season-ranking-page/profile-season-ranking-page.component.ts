@@ -18,7 +18,8 @@ import {SeasonListFullComponent} from '../../../components/season-list-full/seas
   standalone: true,
 })
 export class ProfileSeasonRankingPageComponent implements OnInit {
-  rankingEntries: SeasonRankingData[];
+  rankingEntries: SeasonRankingData[] = [];
+  loadingData: boolean = true;
   selectedSeason: number = 1;
   selectedShow: SearchResultData | null = null;
 
@@ -29,6 +30,8 @@ export class ProfileSeasonRankingPageComponent implements OnInit {
       this.rankingEntries = await this.profileService.getSeasonRankingList();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 }

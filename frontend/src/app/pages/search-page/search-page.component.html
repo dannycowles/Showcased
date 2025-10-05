@@ -1,4 +1,4 @@
-<div class="container text-white d-flex align-items-start gap-5">
+<div class="container text-white d-flex gap-5">
   <div class="d-flex flex-column gap-3 flex-shrink-0" style="width: 200px; padding-top: 95px">
     <button type="button" class="btn btn-primary w-100 search-option" [ngClass]="{'selected': showsSelected}" (click)="selectShows()">
       <img ngSrc="tv.svg" alt="Shows icon" height="20" width="20">
@@ -17,8 +17,10 @@
       <input class="form-control input-with-icon" id="search-input" [(ngModel)]="searchString" placeholder="Search" autofocus (input)="debouncedSearch()">
     </div>
     @if (isLoading) {
-      <div class="spinner-border mt-3" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
       </div>
     } @else if (showsSelected && showResults?.results?.length) {
       @for (show of showResults.results; track show.id) {

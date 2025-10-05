@@ -9,7 +9,13 @@
     <button id="edit-button" type="button" class="btn btn-primary fs-5" routerLink="edit">Edit</button>
   </div>
 
-  @if (rankingEntries) {
+  @if (loadingData) {
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  } @else if (rankingEntries.length > 0) {
     <app-season-list-full [seasons]="rankingEntries"></app-season-list-full>
   } @else {
     <p class="fs-4">No seasons on list</p>

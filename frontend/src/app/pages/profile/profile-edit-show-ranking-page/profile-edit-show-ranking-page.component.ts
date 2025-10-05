@@ -17,7 +17,8 @@ import {RouterLink} from '@angular/router';
   standalone: true,
 })
 export class ProfileEditShowRankingPageComponent implements OnInit {
-  rankingEntries: ShowRankingData[];
+  rankingEntries: ShowRankingData[] = [];
+  loadingData: boolean = true;
 
   constructor(
     private profileService: ProfileService,
@@ -29,6 +30,8 @@ export class ProfileEditShowRankingPageComponent implements OnInit {
       this.rankingEntries = await this.profileService.getFullShowRankingList();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

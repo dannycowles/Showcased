@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {EpisodeRankingData} from '../../../data/lists/episode-ranking-data';
-import {SearchResultData} from '../../../data/search-result-data';
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
 import {EpisodeListFullComponent} from '../../../components/episode-list-full/episode-list-full.component';
@@ -18,9 +17,8 @@ import {EpisodeListFullComponent} from '../../../components/episode-list-full/ep
   standalone: true,
 })
 export class ProfileEpisodeRankingPageComponent implements OnInit {
-  rankingEntries: EpisodeRankingData[];
-  selectedSeason: number = 1;
-  selectedShow: SearchResultData | null = null;
+  rankingEntries: EpisodeRankingData[] = [];
+  loadingData: boolean = true;
 
   constructor(private profileService: ProfileService) {}
 
@@ -30,6 +28,8 @@ export class ProfileEpisodeRankingPageComponent implements OnInit {
       this.rankingEntries = await this.profileService.getFullEpisodeRankingList();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 }

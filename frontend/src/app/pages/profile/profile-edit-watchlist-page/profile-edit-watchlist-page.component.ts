@@ -16,6 +16,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 })
 export class ProfileEditWatchlistPageComponent implements OnInit {
   watchlistEntries: ShowListData[];
+  loadingData: boolean = true;
 
   constructor(private profileService: ProfileService,
               private modalService: NgbModal) {}
@@ -25,6 +26,8 @@ export class ProfileEditWatchlistPageComponent implements OnInit {
       this.watchlistEntries = await this.profileService.getFullWatchlist();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

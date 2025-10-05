@@ -14,7 +14,8 @@ import {RouterLink} from '@angular/router';
   styleUrl: './profile-edit-watching-page.component.css',
 })
 export class ProfileEditWatchingPageComponent implements OnInit {
-  watchingEntries: ShowListData[];
+  watchingEntries: ShowListData[] = [];
+  loadingData: boolean = true;
 
   constructor(private profileService: ProfileService,
               private modalService: NgbModal) {}
@@ -24,6 +25,8 @@ export class ProfileEditWatchingPageComponent implements OnInit {
       this.watchingEntries = await this.profileService.getFullWatchingList();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

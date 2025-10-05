@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {SingleCollectionData} from '../../../data/single-collection-data';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {UtilsService} from '../../../services/utils.service';
 import {UserService} from '../../../services/user.service';
 import {Title} from '@angular/platform-browser';
@@ -23,12 +23,12 @@ import {ShowListFullComponent} from '../../../components/show-list-full/show-lis
 })
 export class ProfileCollectionDetailsPageComponent implements OnInit {
   collectionData: SingleCollectionData;
+  loadingData: boolean = true;
   readonly collectionId: number;
 
   constructor(
     private profileService: ProfileService,
     private route: ActivatedRoute,
-    private router: Router,
     public utils: UtilsService,
     private userService: UserService,
     private title: Title,
@@ -38,13 +38,12 @@ export class ProfileCollectionDetailsPageComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.collectionData = await this.profileService.getCollectionDetails(
-        this.collectionId,
-      );
+      this.collectionData = await this.profileService.getCollectionDetails(this.collectionId);
       this.title.setTitle(`${this.collectionData.name}, Your Collection | Showcased`);
     } catch (error) {
       console.error(error);
-      this.router.navigate(['not-found']);
+    } finally {
+      this.loadingData = false;
     }
   }
 

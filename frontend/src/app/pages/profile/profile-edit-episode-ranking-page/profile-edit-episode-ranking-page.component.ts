@@ -21,7 +21,8 @@ import {
   standalone: true,
 })
 export class ProfileEditEpisodeRankingPageComponent implements OnInit {
-  rankingEntries: EpisodeRankingData[];
+  rankingEntries: EpisodeRankingData[] = [];
+  loadingData: boolean = true;
   selectedSeason: number = 1;
   selectedShow: SearchResultData | null = null;
 
@@ -35,6 +36,8 @@ export class ProfileEditEpisodeRankingPageComponent implements OnInit {
       this.rankingEntries = await this.profileService.getFullEpisodeRankingList();
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 

@@ -15,7 +15,8 @@ import {NgOptimizedImage} from '@angular/common';
 })
 export class UserWatchlistPageComponent implements OnInit {
   readonly username: string;
-  watchlistEntries: ShowListData[];
+  watchlistEntries: ShowListData[] = [];
+  loadingData: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,11 +30,11 @@ export class UserWatchlistPageComponent implements OnInit {
   async ngOnInit() {
     // Retrieve full watchlist for user
     try {
-      this.watchlistEntries = await this.userService.getFullWatchlist(
-        this.username,
-      );
+      this.watchlistEntries = await this.userService.getFullWatchlist(this.username);
     } catch (error) {
       console.error(error);
+    } finally {
+      this.loadingData = false;
     }
   }
 }
