@@ -8,6 +8,8 @@ import java.util.List;
 @Data
 public class SeasonDto {
     private String showTitle;
+
+    @JsonAlias("air_date")
     private String airYear;
     private Long id;
 
@@ -30,7 +32,15 @@ public class SeasonDto {
         }
     }
 
+    public void setAirYear(String airYear) {
+        this.airYear = airYear.split("-")[0];
+    }
+
     public void setPosterPath(String posterPath) {
-        this.posterPath = "https://image.tmdb.org/t/p/original" + posterPath;
+        if (posterPath != null) {
+            this.posterPath = "https://image.tmdb.org/t/p/original" + posterPath;
+        } else {
+            this.posterPath = "no-poster-full.svg";
+        }
     }
 }

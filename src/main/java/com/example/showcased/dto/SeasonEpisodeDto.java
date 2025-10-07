@@ -25,6 +25,10 @@ public class SeasonEpisodeDto {
     private String imdbRating;
 
     public void setStillPath(String stillPath) {
-        this.stillPath = "https://image.tmdb.org/t/p/original" + stillPath;
+        if (stillPath != null) {
+            this.stillPath = "https://image.tmdb.org/t/p/original" + stillPath;
+        } else {
+            this.stillPath = "no-still.svg";
+        }
     }
 }

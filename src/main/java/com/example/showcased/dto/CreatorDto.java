@@ -17,7 +17,7 @@ public class CreatorDto {
         if (profilePath != null) {
             this.profilePath = "https://image.tmdb.org/t/p/w185" + profilePath;
         } else {
-            this.profilePath = "default";
+            this.profilePath = "no-image.svg";
         }
     }
 }

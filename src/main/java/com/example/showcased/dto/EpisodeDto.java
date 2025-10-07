@@ -39,6 +39,8 @@ public class EpisodeDto {
     private List<ReviewDistributionDto> reviewDistribution;
 
     public void setStillPath(String stillPath) {
-        this.stillPath = "https://image.tmdb.org/t/p/original" + stillPath;
+        if (stillPath != null) {
+            this.stillPath = "https://image.tmdb.org/t/p/original" + stillPath;
+        }
     }
 }

@@ -1,8 +1,12 @@
 <div class="container text-white" style="margin-top: -0.5rem;">
   @if (show) {
-    <div class="backdrop-container">
-      <img id="backdrop-image" [ngSrc]="show.backdropPath" alt="Show Backdrop" width="1280" height="720" priority>
-    </div>
+    @if (show.backdropPath) {
+      <div class="backdrop-container">
+        <img id="backdrop-image" [ngSrc]="show.backdropPath" alt="Show Backdrop" width="1280" height="720" priority>
+      </div>
+    } @else {
+      <div class="pt-5"></div>
+    }
 
     <div class="d-flex gap-4 mb-5">
       <div class="d-flex flex-column align-items-start">
@@ -12,7 +16,7 @@
         <div id="watch-options" style="margin-bottom: 2rem">
           @if (show.streamingOptions.length != 0) {
             <h5 class="mt-3">Streaming on</h5>
-            <div class="d-flex gap-2 mb-3">
+            <div class="d-flex flex-wrap gap-2 mb-3">
               @for (service of show.streamingOptions; track service.name) {
                 <img class="watch-logo" [ngSrc]="service.logoPath" alt="Service Logo" width="40" height="40">
               }
@@ -21,7 +25,7 @@
 
           @if (show.buyOptions.length != 0) {
             <h5>Buy on</h5>
-            <div class="d-flex gap-2">
+            <div class="d-flex flex-wrap gap-2">
               @for (service of show.buyOptions; track service.name) {
                 <img class="watch-logo" [ngSrc]="service.logoPath" alt="Service Logo" width="40" height="40">
               }
@@ -52,28 +56,41 @@
 
             <div class="d-flex align-items-center gap-2">
               <span>{{show.numSeasons}} Seasons</span>
-              <div class="circle-divider"></div>
-              <div>
-                @for (genre of show.genres; let last = $last; track genre.id) {
-                  {{genre.name}}
-                  @if (!last) {
-                    <span>, </span>
+              @if (show.genres.length > 0) {
+                <div class="circle-divider"></div>
+                <div>
+                  @for (genre of show.genres; let last = $last; track genre.id) {
+                    {{genre.name}}
+                    @if (!last) {
+                      <span>, </span>
+                    }
                   }
-                }
-              </div>
-              <div class="circle-divider"></div>
-              <span>{{show.rating}}</span>
+                </div>
+              }
+
+              @if (show.rating) {
+                <div class="circle-divider"></div>
+                <span>{{show.rating}}</span>
+              }
             </div>
             <span class="my-3 fst-italic fs-5">{{show.tagline}}</span>
             <span class="fs-5">{{show.plot}}</span>
-            <span class="my-3" style="font-size: 1.1rem">{{show.awards}}</span>
+            <span class="my-3" style="font-size: 1.1rem">
+              @if (show.awards) {
+                {{show.awards}}
+              }
+            </span>
           </div>
 
           <div id="rating-info" class="d-flex gap-3 align-items-center">
             <div class="d-flex flex-column align-items-center">
               <div class="d-flex align-items-center gap-2">
+                @if (show.imdbRating) {
+                  <h4 class="text-reset mb-0">{{show.imdbRating}}</h4>
+                } @else {
+                  <h4 class="text-reset mb-0">&mdash;</h4>
+                }
                 <img class="star" ngSrc="star.svg" alt="Star icon" width="25" height="25">
-                <h4 class="text-reset mb-0">{{show.imdbRating}}</h4>
               </div>
               <h5 style="font-size: 0.75rem">{{show.imdbVotes}}</h5>
             </div>
@@ -160,7 +177,7 @@
         <div class="d-flex my-3 align-items-center">
           <h3 class="section-header">Reviews</h3>
           <div class="ms-auto">
-            <div class="dropdown ms-auto">
+            <div class="dropdown ms-auto d-flex align-items-center">
               <span class="fs-4 me-4">Sort</span>
               <button id="sort-dropdown" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="me-3">{{ selectedSort.label }}</span>
@@ -194,31 +211,35 @@
         <h3 class="section-header">Trailer</h3>
         @if (safeTrailerUrl) {
           <iframe  [src]="safeTrailerUrl" width="560" height="315" allowfullscreen></iframe>
+        } @else {
+         <h4 class="text-reset">No trailer found</h4>
         }
       </div>
 
       <div class="tab-pane" id="cast-tab-pane" role="tabpanel" aria-labelledby="cast-tab" tabindex="0">
         <h3 class="section-header">Cast</h3>
         <div class="mb-3">
-          @if (show.cast.length != 0) {
+          @if (show.cast.length > 0) {
             <div class="d-flex flex-wrap justify-content-start gap-5">
               @for (cast of show.cast; track cast.id) {
                 <div class="text-center lh-1">
                   <!-- Profile images are sized w185, using 2:3 ratio -->
                   <img class="crew-image mb-2" [ngSrc]="cast.profilePath" alt="Actor Picture" width="139" height="209" priority>
                   <h5>{{cast.name}}</h5>
-                  <p>as {{cast.character}}</p>
+                  @if (cast.character) {
+                    <p>as {{cast.character}}</p>
+                  }
                 </div>
               }
             </div>
           } @else {
-            <h4 class="text-reset">No Cast Found</h4>
+            <h4 class="text-reset">No cast found</h4>
           }
         </div>
 
         <h3 class="section-header">Creator(s)</h3>
         <div>
-          @if (show.creators.length != 0) {
+          @if (show.creators.length > 0) {
             <div class="d-flex flex-wrap justify-content-start gap-5">
               @for (creator of show.creators; track creator.id) {
                 <div class="text-center">
@@ -229,20 +250,24 @@
               }
             </div>
           } @else {
-            <h4 class="text-reset">No Creators Found</h4>
+            <h4 class="text-reset">No creators found</h4>
           }
         </div>
       </div>
 
       <div class="tab-pane" id="similar-tab-pane" role="tabpanel" aria-labelledby="similar-tab" tabindex="0">
         <h3 class="section-header">You might like...</h3>
-        <div id="similar-container" class="d-flex flex-wrap">
-          @for (show of show.recommendations; track show.id) {
-            <a [routerLink]="['/show', show.id]">
-              <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Recommendation Picture" width="185" height="278">
-            </a>
-          }
-        </div>
+        @if (show.recommendations.length > 0) {
+          <div id="similar-container" class="d-flex flex-wrap">
+            @for (show of show.recommendations; track show.id) {
+              <a [routerLink]="['/show', show.id]">
+                <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Recommendation Picture" width="185" height="278">
+              </a>
+            }
+          </div>
+        } @else {
+          <h4 class="text-reset">No recommendations found</h4>
+        }
       </div>
     </div>
   }

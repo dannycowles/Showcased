@@ -1,9 +1,13 @@
 <div class="container text-white" style="margin-top: -0.5rem;">
   @if (episode) {
-    <div class="backdrop-container">
-      <!-- Episode still is size w780, with 16:9 aspect ratio -->
-      <img id="backdrop-image" [ngSrc]="episode.stillPath" alt="Episode poster" width="1280" height="720" priority>
-    </div>
+    @if (episode.stillPath) {
+      <div class="backdrop-container">
+        <!-- Episode still is size w780, with 16:9 aspect ratio -->
+        <img id="backdrop-image" [ngSrc]="episode.stillPath" alt="Episode poster" width="1280" height="720" priority>
+      </div>
+    } @else {
+      <div class="pt-5"></div>
+    }
 
     <div class="d-flex justify-content-between mt-2">
       <div class="d-flex align-items-center gap-3 fw-bold fs-5">
@@ -26,14 +30,18 @@
     </div>
 
     <div class="d-flex justify-content-between gap-4 align-items-center">
-      <div>
+      <div class="flex-grow-1">
         <div class="d-flex my-2 justify-content-between pe-5">
           <h1 class="fw-bold">{{episode.episodeTitle}}</h1>
           <div id="rating-info" class="d-flex gap-3 align-items-center">
             <div class="d-flex flex-column align-items-center">
               <div class="d-flex align-items-center gap-2">
+                @if (episode.imdbRating) {
+                  <h4 class="text-reset mb-0">{{episode.imdbRating}}</h4>
+                } @else {
+                  <h4 class="text-reset mb-0">&mdash;</h4>
+                }
                 <img class="star" ngSrc="star.svg" alt="Star icon" width="25" height="25">
-                <h4 class="text-reset mb-0">{{episode.imdbRating}}</h4>
               </div>
               <h5 style="font-size: 0.75rem">{{episode.imdbVotes}}</h5>
             </div>
@@ -86,7 +94,7 @@
         <div class="d-flex my-3 align-items-center">
           <h3 class="section-header">Reviews</h3>
           <div class="ms-auto">
-            <div class="dropdown ms-auto">
+            <div class="dropdown ms-auto d-flex align-items-center">
               <span class="fs-4 me-4">Sort</span>
               <button id="sort-dropdown" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="me-3">{{ selectedSort.label }}</span>

@@ -66,9 +66,14 @@ export class ReviewChartComponent implements OnChanges {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective;
 
   ngOnChanges() {
-    this.barChartData.datasets[0].data = this.reviewDistribution.map(review => review.numReviews);
-    this.computeReviewAverage();
-    this.chart?.update();
+    if (this.reviewDistribution) {
+      this.barChartData.datasets[0].data = this.reviewDistribution.map(review => review.numReviews);
+      this.computeReviewAverage();
+      this.chart?.update();
+    } else {
+      this.barChartData.datasets[0].data = null;
+      this.reviewCount = 0;
+    }
   }
 
   computeReviewAverage() {

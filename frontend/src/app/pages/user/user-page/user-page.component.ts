@@ -11,9 +11,7 @@ import {SeasonListComponent} from '../../../components/season-list/season-list.c
 import {EpisodeListComponent} from '../../../components/episode-list/episode-list.component';
 import {CharacterListComponent} from '../../../components/character-list/character-list.component';
 import {DynamicListComponent} from '../../../components/dynamic-list/dynamic-list.component';
-import {ProfileReviewComponent} from '../../../components/profile-review/profile-review.component';
 import {CollectionComponent} from '../../../components/collection/collection.component';
-import {ReviewChartComponent} from '../../../components/review-chart/review-chart.component';
 import {RecentReviewsComponent} from '../../../components/recent-reviews/recent-reviews.component';
 import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
 
@@ -29,9 +27,7 @@ import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
     EpisodeListComponent,
     CharacterListComponent,
     DynamicListComponent,
-    ProfileReviewComponent,
     CollectionComponent,
-    ReviewChartComponent,
     RecentReviewsComponent,
   ],
   standalone: true,

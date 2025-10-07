@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -26,6 +27,8 @@ public class ShowDto {
     private String title;
 
     private String tagline;
+
+    @JsonAlias("overview")
     private String plot;
     private String rating;
 
@@ -75,8 +78,6 @@ public class ShowDto {
     void setBackdropPath(String backdropPath) {
         if (backdropPath != null) {
             this.backdropPath = "https://image.tmdb.org/t/p/original" + backdropPath;
-        } else {
-            this.backdropPath = "default";
         }
     }
 
@@ -84,7 +85,7 @@ public class ShowDto {
         if (posterPath != null) {
             this.posterPath = "https://image.tmdb.org/t/p/original" + posterPath;
         } else {
-            this.posterPath = "default";
+            this.posterPath = "no-poster-full.svg";
         }
     }
 

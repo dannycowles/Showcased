@@ -5,15 +5,13 @@ import { ActivityType } from '../../../data/enums';
 import { UtilsService } from '../../../services/utils.service';
 import { Router, RouterLink } from '@angular/router';
 import { PageData } from '../../../data/page-data';
-import { query } from '@angular/animations';
 import { NgOptimizedImage } from '@angular/common';
-import {ShowListFullComponent} from '../../../components/show-list-full/show-list-full.component';
 
 @Component({
   selector: 'app-profile-activity-page',
   templateUrl: './profile-activity-page.component.html',
   styleUrl: './profile-activity-page.component.css',
-  imports: [NgOptimizedImage, RouterLink, ShowListFullComponent],
+  imports: [NgOptimizedImage, RouterLink],
   standalone: true,
 })
 export class ProfileActivityPageComponent implements OnInit {

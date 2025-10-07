@@ -201,25 +201,29 @@ public class ShowService {
                 .pathSegment(id, "credits")
                 .toUriString();
         CastResponseDto cast = tmdbClient.get(url, CastResponseDto.class);
+        show.setCast(cast.getCast());
 
-        // Store only the first 5 stars (can modify later)
-        show.setCast(cast.getCast().stream().limit(5).collect(Collectors.toList()));
+        // Make request to OMDB show endpoint using the IMDB id, if it exists
+        if (!imdbId.isEmpty())  {
+            url = UriComponentsBuilder
+                    .fromUriString("https://www.omdbapi.com")
+                    .queryParam("apikey", omdbKey)
+                    .queryParam("i", imdbId)
+                    .toUriString();
+            jsonResponse = new JSONObject(omdbClient.getRaw(url));
 
-        // Make request to OMDB show endpoint using the IMDB id
-        url = UriComponentsBuilder
-                .fromUriString("https://www.omdbapi.com")
-                .queryParam("apikey", omdbKey)
-                .queryParam("i", imdbId)
-                .toUriString();
-        jsonResponse = new JSONObject(omdbClient.getRaw(url));
+            // Parse the response and extract the following information:
+            show.setPlot(jsonResponse.optString("Plot"));
+            show.setRating(jsonResponse.optString("Rated"));
+            show.setAverageRuntime(jsonResponse.optString("Runtime"));
+            show.setImdbRating(jsonResponse.optString("imdbRating"));
+            show.setImdbVotes(jsonResponse.optString("imdbVotes"));
 
-        // Parse the response and extract the following information:
-        show.setPlot(jsonResponse.optString("Plot"));
-        show.setRating(jsonResponse.optString("Rated"));
-        show.setAverageRuntime(jsonResponse.optString("Runtime"));
-        show.setImdbRating(jsonResponse.optString("imdbRating"));
-        show.setImdbVotes(jsonResponse.optString("imdbVotes"));
-        show.setAwards(jsonResponse.optString("Awards"));
+            String awards = jsonResponse.optString("awards");
+            if (!awards.isEmpty() && !awards.equals("N/A")) {
+                show.setAwards(awards);
+            }
+        }
 
         // Check if the user is logged in, if so, check if the show is on watchlist/watching/ranking
         User user = authService.retrieveUserFromJwt();
@@ -362,17 +366,7 @@ public class ShowService {
         JSONObject jsonResponse = new JSONObject(tmdbClient.getRaw(url));
         String imdbId = jsonResponse.optString("imdb_id");
 
-        // Make a request to OMDB endpoint to retrieve IMDB ratings
-        url = UriComponentsBuilder
-                .fromUriString("https://www.omdbapi.com")
-                .queryParam("apikey", omdbKey)
-                .queryParam("i", imdbId)
-                .queryParam("Season", seasonNumber)
-                .toUriString();
-        jsonResponse = new JSONObject(omdbClient.getRaw(url));
-
-        // If the season details were not found (due to occasional mismatch between TMDB and OMDB)
-        if (jsonResponse.getString("Response").equals("False")) {
+        if (imdbId.isEmpty()) {
             // Make request to TMDB series details to fetch show title
             url = UriComponentsBuilder
                     .fromUriString("https://api.themoviedb.org/3/tv")
@@ -381,6 +375,14 @@ public class ShowService {
             jsonResponse = new JSONObject(tmdbClient.getRaw(url));
             season.setShowTitle(jsonResponse.optString("name"));
         } else {
+            // Make a request to OMDB endpoint to retrieve IMDB ratings
+            url = UriComponentsBuilder
+                    .fromUriString("https://www.omdbapi.com")
+                    .queryParam("apikey", omdbKey)
+                    .queryParam("i", imdbId)
+                    .queryParam("Season", seasonNumber)
+                    .toUriString();
+            jsonResponse = new JSONObject(omdbClient.getRaw(url));
             JSONArray episodes = jsonResponse.optJSONArray("Episodes");
             season.setShowTitle(jsonResponse.optString("Title"));
 
