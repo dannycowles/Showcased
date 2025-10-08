@@ -17,6 +17,8 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class AuthService {
@@ -28,6 +30,9 @@ public class AuthService {
     private final RecaptchaService recaptchaService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private static final int MIN_USERNAME_LENGTH = 3;
+    private static final int MAX_USERNAME_LENGTH = 20;
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("[a-zA-Z0-9_-]*");
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
@@ -53,6 +58,19 @@ public class AuthService {
     }
 
     public LoginResponseDto registerUser(RegisterDto registerDto) {
+        // Verify that the username is between the min and max length
+        if (registerDto.getUsername().length() < MIN_USERNAME_LENGTH) {
+            throw new InvalidUsernameException("Username is too short, must be at least " + MIN_USERNAME_LENGTH + " characters.");
+        } else if (registerDto.getUsername().length() > MAX_USERNAME_LENGTH) {
+            throw new InvalidUsernameException("Username is too long, must be at most " + MAX_USERNAME_LENGTH + " characters.");
+        }
+
+        // Verify that the username is of valid form (no spaces or special characters)
+        Matcher matcher = USERNAME_PATTERN.matcher(registerDto.getUsername());
+        if (!matcher.matches()) {
+            throw new InvalidUsernameException("Username is invalid, cannot contain spaces or special characters.");
+        }
+
         // If the username already exists, throw an exception since we cannot have duplicates
         if (userRepository.existsByDisplayName(registerDto.getUsername())) {
             throw new UsernameTakenException("Username is already taken");
@@ -63,6 +81,7 @@ public class AuthService {
             throw new EmailTakenException("Email is already associated with an account");
         }
 
+        // Verify that the recaptcha was successfully completed
         if (!recaptchaService.verifyRecaptcha(registerDto.getRecaptcha())) {
             throw new RecaptchaInvalidException("Recaptcha is invalid, please try again.");
         }

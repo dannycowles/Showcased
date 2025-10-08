@@ -257,7 +257,7 @@ export class EpisodePageComponent implements OnInit {
       ariaLabelledBy: 'addReviewModal',
       centered: true,
     });
-    addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.episode.showTitle} S${this.seasonNumber} E${this.episodeNumber}: ${this.episode.episodeTitle}`;
+    addReviewModalRef.componentInstance.modalTitle = `Add review for ${this.episode.showTitle} S${this.seasonNumber} E${this.episodeNumber}: ${this.episode.episodeTitle}`;
 
     const result = await addReviewModalRef.result;
     const reviewData: AddEpisodeReviewDto = {

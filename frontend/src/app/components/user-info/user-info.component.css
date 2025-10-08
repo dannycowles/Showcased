@@ -15,7 +15,7 @@
   height: 40px;
 }
 
-#edit-profile-button:hover {
+#edit-profile-button:hover, .follow-button:hover {
   background-color: var(--button-hover-color);
 }
 

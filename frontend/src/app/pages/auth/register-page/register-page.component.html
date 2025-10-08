@@ -27,17 +27,24 @@
     </div>
     <div class="mb-3" style="margin-top: 0">
       <div id="usernameHelpBlock" class="form-text">
-        Must be at least {{usernameMinLength}} characters
+        Your username can only contain letters, numbers, hyphens, and underscores
       </div>
 
       @if (username.invalid && (username.dirty || username.touched)) {
         @if (username.hasError('required')) {
           <div class="validation-error">Username is required</div>
         } @else if (username.hasError('minlength')) {
-          <div class="validation-error">Username is too short</div>
+          <div class="validation-error">Username must be at least {{usernameMinLength}} characters</div>
+        } @else if (username.hasError('maxlength')) {
+          <div class="validation-error">Username must be at most {{usernameMaxLength}} characters</div>
+        } @else if (username.hasError('pattern')) {
+          <div class="validation-error">Username cannot contain spaces or special characters</div>
+        } @else {
+          <div [style.color]="usernameMessageColor">{{usernameMessage}}</div>
         }
+      } @else if (username.valid && (username.dirty || username.touched)) {
+        <div [style.color]="usernameMessageColor">{{usernameMessage}}</div>
       }
-      <div [style.color]="usernameMessageColor">{{usernameMessage}}</div>
     </div>
 
 
@@ -46,7 +53,7 @@
       <div class="position-relative">
         <img class="input-icon" ngSrc="lock.svg" alt="Password icon" height="20" width="20">
         <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-control input-with-icon" formControlName="password" placeholder="Enter your password" autocomplete="new-password"
-               [class.is-invalid]="password.invalid && (password.dirty || password.touched)" aria-describedby="passwordHelpBlock">
+               [class.is-invalid]="password.invalid && (password.dirty || password.touched)">
         <i role="button"
            class="bi show-password-icon"
            [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"
@@ -59,15 +66,11 @@
       </div>
     </div>
     <div class="mb-3" style="margin-top: 0">
-      <div id="passwordHelpBlock" class="form-text">
-        Must be at least {{passwordMinLength}} characters
-      </div>
-
       @if (password.invalid && (password.dirty || password.touched)) {
         @if (password.hasError('required')) {
           <div class="validation-error">Password is required</div>
         } @else if (password.hasError('minlength')) {
-          <div class="validation-error">Password is too short</div>
+          <div class="validation-error">Password must be at least {{passwordMinLength}} characters</div>
         }
       }
     </div>

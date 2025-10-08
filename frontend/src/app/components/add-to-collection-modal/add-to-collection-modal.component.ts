@@ -32,9 +32,7 @@ export class AddToCollectionModalComponent implements OnInit {
               public utilsService: UtilsService,
               private profileService: ProfileService,
               private router: Router) {
-    this.debouncedSearchCollections = this.utilsService.debounce(() =>
-      this.searchCollections(),
-    );
+    this.debouncedSearchCollections = this.utilsService.debounce(() => this.searchCollections());
   }
 
   async ngOnInit() {
@@ -44,9 +42,7 @@ export class AddToCollectionModalComponent implements OnInit {
   async searchCollections() {
     this.isLoading = true;
     try {
-      this.collections = await this.profileService.getCollections(
-        this.searchCollectionString,
-      );
+      this.collections = await this.profileService.getCollections(this.searchCollectionString);
     } catch (error) {
       console.error(error);
     } finally {
@@ -67,10 +63,7 @@ export class AddToCollectionModalComponent implements OnInit {
         posterPath: this.show.posterPath,
       };
 
-      const response = await this.profileService.addShowToCollection(
-        this.selectedCollection.id,
-        showData,
-      );
+      const response = await this.profileService.addShowToCollection(this.selectedCollection.id, showData);
       if (response.ok) {
         this.message = `Successfully added to ${this.selectedCollection.name}!`;
         this.messageColor = 'green';

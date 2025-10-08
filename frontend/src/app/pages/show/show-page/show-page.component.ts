@@ -195,7 +195,7 @@ export class ShowPageComponent implements OnInit {
         ariaLabelledBy: 'addReviewModal',
         centered: true
       });
-      addReviewModalRef.componentInstance.modalTitle = `Add New Review for ${this.show.title}`;
+      addReviewModalRef.componentInstance.modalTitle = `Add Review for ${this.show.title}`;
 
       const result = await addReviewModalRef.result;
       await this.reviewSubmitted(result);

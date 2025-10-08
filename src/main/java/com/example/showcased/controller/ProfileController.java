@@ -21,8 +21,7 @@ public class ProfileController {
     private final ProfileService profileService;
     private final FileService fileService;
 
-    private static final int DEFAULT_PAGE_SIZE = 10;
-    private static final int DEFAULT_REVIEWS_PAGE_SIZE = 5;
+    private static final int DEFAULT_PAGE_SIZE = 20;
 
     public ProfileController(ProfileService profileService,
                              FileService fileService) {
@@ -69,7 +68,7 @@ public class ProfileController {
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<Page<ShowReviewDto>> getReviews(@PageableDefault(page = 1, size = DEFAULT_REVIEWS_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Page<ShowReviewDto>> getReviews(@PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<ShowReviewDto> reviews = profileService.getReviews(pageable);
         return ResponseEntity.ok(reviews);
     }
@@ -325,7 +324,7 @@ public class ProfileController {
 
     @GetMapping("/collections")
     public ResponseEntity<Page<CollectionDto>> getCollectionList(@RequestParam(required = false) String name,
-                                                                 @PageableDefault(page = 1, size = 2) Pageable pageable) {
+                                                                 @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
         Page<CollectionDto> collections = profileService.getCollectionList(name, pageable);
         return ResponseEntity.ok(collections);
     }

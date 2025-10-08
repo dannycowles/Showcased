@@ -3,3 +3,11 @@
   object-position: center;
   border-radius: 50%;
 }
+
+#profile-dropdown:after {
+  display: none;
+}
+
+#profile-username {
+  font-size: 1.1rem;
+}

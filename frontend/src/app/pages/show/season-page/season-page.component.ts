@@ -100,11 +100,4 @@ export class SeasonPageComponent implements OnInit {
       console.error(error);
     }
   }
-
-  seasonSelected(seasonNumber: number) {
-    // Check if the user tries to select the same season they are already on
-    if (seasonNumber != this.seasonNumber) {
-      window.location.href = `show/${this.showId}/season/${seasonNumber}`;
-    }
-  }
 }

@@ -12,7 +12,7 @@ import {FormsModule} from '@angular/forms';
 })
 export class AddReviewModalComponent {
   @Input({required: true}) modalTitle: string;
-  rating: number = 0;
+  rating: number = 1;
   commentary: string = "";
   containsSpoilers: boolean = false;
   readonly maxCommentaryLength = 5000;

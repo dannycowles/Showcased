@@ -53,7 +53,7 @@ public class ShowService {
     private final EpisodeReviewCommentRepository episodeReviewCommentRepository;
     private final LikedEpisodeReviewCommentsRepository likedEpisodeReviewCommentsRepository;
     private final AuthService authService;
-    private final int numComments = 2;
+    private final int numComments = 20;
 
     public ShowService(ShowReviewRepository showReviewRepository,
                        ModelMapper modelMapper,

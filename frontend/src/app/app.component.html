@@ -11,7 +11,7 @@
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav gap-5 me-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/discover">Discover</a>
+          <a class="nav-link white-link" routerLink="/discover">Discover</a>
         </li>
         <form (ngSubmit)="navigateToSearch()">
           <div id="nav-searchbar" class="position-relative">
@@ -23,12 +23,13 @@
       <ul class="navbar-nav gap-3 d-flex align-items-center">
         @if (isLoggedIn) {
           <li class="nav-item">
-            <a class="nav-link" routerLink="/profile/activity">Activity</a>
+            <a class="nav-link white-link" routerLink="/profile/activity">Activity</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle me-2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img class="me-2" [ngSrc]="localStorage.getItem('profilePicture')" id="profile-picture" alt="Profile Picture" priority width="35" height="35">
-              {{localStorage.getItem('username')}}
+            <a id="profile-dropdown" class="nav-link dropdown-toggle d-flex align-items-center me-2 white-link" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img class="me-2" [ngSrc]="localStorage.getItem('profilePicture')" id="profile-picture" alt="Profile Picture" priority width="40" height="40">
+              <span class="me-2" id="profile-username">{{localStorage.getItem('username')}}</span>
+              <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>

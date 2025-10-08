@@ -264,4 +264,12 @@ public class GlobalExceptionHandler {
     ProblemDetail invalidFileSizeHandler(InvalidFileSizeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
     }
+
+    /**
+     * Exception handler for invalid username provided during register process
+     */
+    @ExceptionHandler(InvalidUsernameException.class)
+    ProblemDetail invalidUsernameHandler(InvalidUsernameException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 }

@@ -18,7 +18,7 @@ public class ShowController {
 
     private final ShowService showService;
 
-    private static final int DEFAULT_PAGE_SIZE = 2;
+    private static final int DEFAULT_PAGE_SIZE = 20;
 
     public ShowController(ShowService showService) {
         this.showService = showService;

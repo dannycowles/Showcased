@@ -1,10 +1,9 @@
 <div class="modal-header">
-  <h5 class="modal-title" id="addToCollectionModal">Add {{show.title}} to Collection</h5>
+  <h5 class="modal-title" id="addToCollectionModal">Add {{show.title}} to collection</h5>
   <button class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
   <div class="mb-3">
-    <label for="search-bar" class="form-label">Search Collections</label>
     <input ngbAutofocus type="text" id="search-bar" class="form-control" placeholder="Search..." [(ngModel)]="searchCollectionString" (input)="debouncedSearchCollections()">
   </div>
 
@@ -29,5 +28,5 @@
 </div>
 <div class="modal-footer">
   <button class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
-  <button class="btn btn-primary" [disabled]="selectedCollection == null" (click)="addToCollection()">Add to Collection</button>
+  <button class="btn btn-primary" [disabled]="selectedCollection == null" (click)="addToCollection()">Add to collection</button>
 </div>

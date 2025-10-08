@@ -36,6 +36,7 @@ export class RegisterPageComponent {
   registerMessage: string = '';
   registerMessageColor: string = '';
   readonly usernameMinLength: number = 3;
+  readonly usernameMaxLength: number = 20;
   readonly passwordMinLength: number = 8;
 
   showPassword: boolean = false;
@@ -45,8 +46,15 @@ export class RegisterPageComponent {
       email: new FormControl('', [Validators.required, Validators.email]),
       username: new FormControl(
         '',
-        [Validators.required, Validators.minLength(this.usernameMinLength)],
-        [this.usernameAvailableValidator()],
+        [
+          Validators.required,
+          Validators.minLength(this.usernameMinLength),
+          Validators.maxLength(this.usernameMaxLength),
+          Validators.pattern('[a-zA-Z0-9_-]*')
+        ],
+        [
+          this.usernameAvailableValidator()
+        ]
       ),
       password: new FormControl('', [
         Validators.required,
@@ -80,9 +88,7 @@ export class RegisterPageComponent {
   }
 
   passwordsMatchingValidator(): ValidatorFn {
-    return (
-      control: AbstractControl<string, string>,
-    ): ValidationErrors | null => {
+    return (control: AbstractControl<string, string>): ValidationErrors | null => {
       const password: string = control.get('password').value;
       const confirmPassword: string = control.get('confirmPassword').value;
 
@@ -91,9 +97,7 @@ export class RegisterPageComponent {
   }
 
   usernameAvailableValidator(): AsyncValidatorFn {
-    return (
-      control: AbstractControl<string, string>,
-    ): Observable<ValidationErrors | null> => {
+    return (control: AbstractControl<string, string>): Observable<ValidationErrors | null> => {
       const username = control.value.trim();
 
       if (username.length < this.usernameMinLength) {

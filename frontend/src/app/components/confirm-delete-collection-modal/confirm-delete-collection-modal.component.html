@@ -1,11 +1,11 @@
-<div class="modal-header border border-0">
+<div class="modal-header">
   <h4 class="modal-title" id="confirmDeleteCollectionModal">Delete collection?</h4>
   <button type="button" class="btn btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
   Are you sure you want to delete your collection '{{itemName}}'? This action <span class="text-danger">cannot be undone.</span>
 </div>
-<div class="modal-footer border border-0">
-  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Cancel</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Cancel</button>
   <button type="button" class="btn btn-danger" ngbAutofocus (click)="activeModal.close()">Yes, delete it</button>
 </div>

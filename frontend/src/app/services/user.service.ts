@@ -13,6 +13,7 @@ import {DynamicRankingData} from '../data/lists/dynamic-ranking-data';
 import {PageData} from '../data/page-data';
 import {ProfileReviewData} from '../data/types';
 import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
+import {HttpStatusCode} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class UserService {
 
   // If the user is unauthorized, we redirect them to the login page
   checkUnauthorizedUser(response: Response): void {
-    if (response.status === 401) {
+    if (response.status === HttpStatusCode.Forbidden || response.status === HttpStatusCode.Unauthorized) {
       this.router.navigate(['/login']);
     }
   }
@@ -200,6 +201,12 @@ export class UserService {
     const response = await fetch(`${this.baseUrl}/collections/${collectionId}`, {
       headers: this.getHeaders()
     });
+
+    // If access is unauthorized (meaning the collection is private, redirect to not found)
+    if (response.status === HttpStatusCode.Unauthorized) {
+      this.router.navigate(['/not-found']);
+      throw new Error('Unauthorized access');
+    }
     return await response.json();
   }
 

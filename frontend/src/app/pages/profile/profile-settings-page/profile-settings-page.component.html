@@ -50,7 +50,7 @@
           <label for="bioInput" class="form-label">Bio</label>
           <textarea class="form-control ps-2" [formControl]="bio" id="bioInput" rows="5" aria-describedby="bioHelpBlock"></textarea>
           <div id="bioHelpBlock" class="form-text text-reset">
-            {{maxBioLength - bio.value.length}} characters remaining.
+            {{maxBioLength - bio.value?.length}} characters remaining.
           </div>
         </div>
         <p class="validation-success fs-5">{{saveMessage}}</p>
@@ -89,7 +89,7 @@
           <div class="mb-4">
             <label for="new-password" class="form-label">New password</label>
             <div class="position-relative">
-              <input id="new-password" [type]="showNewPassword ? 'text' : 'password'" class="form-control ps-2" placeholder="Enter new password" formControlName="newPassword" aria-describedby="passwordHelpBlock"
+              <input id="new-password" [type]="showNewPassword ? 'text' : 'password'" class="form-control ps-2" placeholder="Enter new password" formControlName="newPassword"
                      [class.is-invalid]="changePasswordForm.invalid && (newPassword.dirty || newPassword.touched)">
               <i role="button"
                  class="bi show-password-icon"
@@ -102,14 +102,11 @@
                 {{showNewPassword ? "Hide" : "Show"}} Password
               </i>
             </div>
-            <div id="passwordHelpBlock" class="form-text text-reset">
-              Must be at least {{passwordMinLength}} characters
-            </div>
             @if (newPassword.invalid && (newPassword.dirty || newPassword.touched)) {
               @if (newPassword.hasError('required')) {
                 <div class="validation-error">New password is required</div>
               } @else if (newPassword.hasError('minlength')) {
-                <div class="validation-error">Password is too short</div>
+                <div class="validation-error">Password must be at least {{passwordMinLength}} characters</div>
               }
             } @else if (changePasswordForm.hasError('passwordsDontMatch') && (newPassword.dirty || newPassword.touched)) {
               <div class="validation-error">Passwords must match</div>

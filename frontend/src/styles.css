@@ -19,11 +19,16 @@ body {
 
 nav {
   background-color: var(--button-color);
-  border-bottom: 2px solid var(--outline-color);
+  border-bottom: 1px solid var(--outline-color);
 }
 
 .nav-link, .nav-logo {
   color: white !important;
+}
+
+.modal-header,
+.modal-footer {
+  border: none !important;
 }
 
 .navbar-toggler-icon {
@@ -198,11 +203,11 @@ pre {
 
 .white-link {
   color: white;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease !important;
 }
 
 .white-link:hover {
-  color: #d3d3d3;
+  color: #d3d3d3 !important;
 }
 
 #edit-button {
