@@ -35,12 +35,13 @@ import {ProfileSettingsData} from '../data/profile-settings-data';
 import {AuthenticationService} from './auth.service';
 import {ChangePasswordDto} from '../data/dto/change-password-dto';
 import {HttpStatusCode} from '@angular/common/http';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileService {
-  readonly baseUrl: string = 'http://localhost:8080/profile';
+  readonly baseUrl: string = `${environment.apiUrl}/profile`;
   private accessToken: string | null = localStorage.getItem("accessToken");
 
   constructor(public router: Router,

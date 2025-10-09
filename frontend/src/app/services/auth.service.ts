@@ -5,12 +5,13 @@ import {ValidateOtpDto} from '../data/dto/validate-otp-dto';
 import {ResetPasswordDto} from '../data/dto/reset-password-dto';
 import {JwtResponseData, LoginResponseData} from '../data/jwt-response-data';
 import {Router} from '@angular/router';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
-  baseUrl: string = 'http://localhost:8080/auth';
+  baseUrl: string = `${environment.apiUrl}/auth`;
   returnUrl: string;
   private accessToken: string | null = localStorage.getItem("accessToken");
   private resetPasswordToken: string | null = localStorage.getItem("resetPasswordToken");

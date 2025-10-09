@@ -14,12 +14,13 @@ import {PageData} from '../data/page-data';
 import {ProfileReviewData} from '../data/types';
 import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
 import {HttpStatusCode} from '@angular/common/http';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  readonly baseUrl: string = "http://localhost:8080/users";
+  readonly baseUrl: string = `${environment.apiUrl}/users`;
   private accessToken: string | null = localStorage.getItem("accessToken");
 
   constructor(public router: Router) {};

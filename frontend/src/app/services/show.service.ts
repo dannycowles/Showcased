@@ -14,12 +14,13 @@ import {AddEpisodeReviewDto, AddShowReviewDto} from '../data/dto/add-review-dto'
 import {PageData} from '../data/page-data';
 import {UpdateReviewDto} from '../data/dto/update-review-dto';
 import {AuthenticationService} from './auth.service';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShowService {
-  baseUrl: string = "http://localhost:8080/shows";
+  baseUrl: string = `${environment.apiUrl}/shows`;
   private accessToken: string | null = localStorage.getItem("accessToken");
 
   constructor(public router: Router,
