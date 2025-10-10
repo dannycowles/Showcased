@@ -110,13 +110,13 @@ export class ProfileSettingsPageComponent implements OnInit {
       formData.append('file', file);
 
       try {
-        const response =
-          await this.profileService.uploadProfilePicture(formData);
+        const response = await this.profileService.uploadProfilePicture(formData);
 
         if (response.ok) {
           this.profileSettings.profilePicture = (await response.text()) + '?t=' + new Date().getTime();
           this.avatarMessage = 'Successfully updated your avatar!';
           this.avatarUploadSuccess = true;
+          localStorage.setItem("profilePicture", this.profileSettings.profilePicture);
         } else if (response.status === 413) {
           this.avatarMessage = 'Uploaded file is too large. Maximum size is 5MB.';
           this.avatarUploadSuccess = false;
