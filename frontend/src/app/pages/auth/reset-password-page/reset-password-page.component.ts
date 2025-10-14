@@ -31,7 +31,7 @@ import {RouterLink} from '@angular/router';
 })
 export class ResetPasswordPageComponent {
   readonly passwordMinLength: number = 8;
-  formNumber: number = 1;
+  formNumber: number = 2;
   invalidOtpMessage: string = '';
   otp: string = '';
 

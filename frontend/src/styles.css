@@ -12,6 +12,23 @@
   --subheader-color: #575757;
 }
 
+@media (max-width: 600px) {
+  html {
+    font-size: 14px;
+  }
+
+  .otp-input {
+    width: 45px !important;
+    height: 51px !important;
+    margin: 0 4px !important;
+    border-radius: 5px !important;
+  }
+}
+
+.n-o-c {
+  justify-content: center;
+}
+
 body {
   font-family: 'Lato', sans-serif !important;
   background-color: var(--background-color) !important;
