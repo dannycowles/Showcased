@@ -23,3 +23,27 @@
 .genre-button:hover {
   background-color: var(--button-hover-color);
 }
+
+@media (max-width: 600px) {
+  .poster-container {
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    pointer-events: auto;
+  }
+
+  #trending-container {
+    margin-bottom: 0 !important;
+  }
+
+  #genre-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .genre-button {
+    min-width: 0;
+    width: 100%;
+  }
+}

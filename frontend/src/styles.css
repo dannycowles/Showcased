@@ -23,6 +23,16 @@
     margin: 0 4px !important;
     border-radius: 5px !important;
   }
+
+  .password-text {
+    display: none;
+  }
+
+  img.poster-image {
+    width: 82px;
+    height: auto;
+    border-radius: 5px;
+  }
 }
 
 .n-o-c {

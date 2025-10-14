@@ -31,7 +31,7 @@ import {RouterLink} from '@angular/router';
 })
 export class ResetPasswordPageComponent {
   readonly passwordMinLength: number = 8;
-  formNumber: number = 2;
+  formNumber: number = 1;
   invalidOtpMessage: string = '';
   otp: string = '';
 
@@ -95,12 +95,12 @@ export class ResetPasswordPageComponent {
   async submitEmail() {
     if (this.emailForm.value) {
       // Call backend to generate OTP and send email
+      this.formNumber = 2;
       try {
         await this.authService.generateOTP(this.emailForm.value);
       } catch (error) {
         console.error(error);
       }
-      this.formNumber = 2;
     }
   }
 

@@ -1,11 +1,11 @@
 <div class="container text-white">
-  <div class="mb-4">
+  <div id="trending-container" class="mb-4">
     <div class="d-flex align-items-center gap-5">
       <h1 class="fw-bold my-4">Trending shows</h1>
       <a routerLink="trending" class="link-offset-3 white-link" [queryParams]="{ page: 1 }">View all</a>
     </div>
     @if (trendingShows) {
-      <div class="d-flex flex-wrap gap-4">
+      <div class="d-flex flex-wrap gap-4 poster-container">
         @for (_ of [].constructor(6); let i = $index; track i) {
           <!-- Poster images are sized w185, using 2:3 ratio -->
           <a [routerLink]="['/show', trendingShows.results[i].id]">
@@ -22,7 +22,7 @@
       <a routerLink="top" class="link-offset-3 white-link" [queryParams]="{ page: 1 }">View all</a>
     </div>
     @if (topRatedShows) {
-      <div class="d-flex flex-wrap gap-4">
+      <div class="d-flex flex-wrap gap-4 poster-container">
         @for (_ of [].constructor(6); let i = $index; track i) {
           <!-- Poster images are sized w185, using 2:3 ratio -->
           <a [routerLink]="['/show', topRatedShows.results[i].id]">
