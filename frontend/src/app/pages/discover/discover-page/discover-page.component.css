@@ -26,10 +26,16 @@
 
 @media (max-width: 600px) {
   .poster-container {
+    display: grid !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: calc(25% - 6px) !important; /* 4 items = 25% each, minus gap */
     gap: 8px !important;
-    flex-wrap: nowrap !important;
     overflow-x: auto;
-    pointer-events: auto;
+  }
+
+  .poster-image {
+    width: 100%;
+    aspect-ratio: 2/3;
   }
 
   #trending-container {

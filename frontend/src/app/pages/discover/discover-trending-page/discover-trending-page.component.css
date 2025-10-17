@@ -4,3 +4,37 @@
   gap: 2rem 3rem;
   justify-content: center;
 }
+
+@media (max-width: 600px) {
+  h1 {
+    margin-left: 0 !important;
+    font-size: 1.49rem;
+    margin-bottom: 0.5rem !important;
+  }
+
+  #show-container {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .poster-image {
+    width: 100%;
+    aspect-ratio: 2/3;
+  }
+
+  .page-button img {
+    width: 2rem;
+    height: 2.5rem;
+  }
+
+  #page-count {
+    line-height: 1;
+    font-size: 1.5rem;
+  }
+
+  #spinner-wrapper {
+    grid-column: 1 / -1;
+  }
+}
+

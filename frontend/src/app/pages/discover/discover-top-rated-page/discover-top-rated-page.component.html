@@ -3,8 +3,10 @@
     <h1 class="fw-bold pt-4 mb-4" style="margin-left: 5rem">Top rated shows</h1>
     <div id="show-container">
       @if (isLoading) {
-        <div class="spinner-border " role="status">
-          <span class="visually-hidden">Loading...</span>
+        <div id="spinner-wrapper" class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
         </div>
       } @else if (resultData) {
         @for (show of resultData.results; track show.id) {
@@ -13,18 +15,20 @@
             <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster Path" width="185" height="278" priority>
           </a>
         }
-
-        <div class="d-flex align-items-center justify-content-center w-100" style="margin-bottom: 15vh">
-          <button class="page-button" [disabled]="page === 1" (click)="navigateToPage(page - 1)">
-            <img ngSrc="chevron-left.svg" alt="Previous page button" width="50" height="50" >
-          </button>
-          <h2 class="mx-3">{{page}} of {{resultData.totalPages}}</h2>
-          <button class="page-button" [disabled]="page === resultData.totalPages" (click)="navigateToPage(page + 1)">
-            <img ngSrc="chevron-right.svg" alt="Next page button" width="50" height="50">
-          </button>
-        </div>
       }
     </div>
+
+    @if (resultData) {
+      <div class="d-flex align-items-center justify-content-center w-100" style="margin-bottom: 15vh">
+        <button class="page-button" [disabled]="page === 1" (click)="navigateToPage(page - 1)">
+          <img ngSrc="chevron-left.svg" alt="Previous page button" width="50" height="50" >
+        </button>
+        <h2 id="page-count" class="mx-3">{{page}} of {{resultData.totalPages}}</h2>
+        <button class="page-button" [disabled]="page === resultData.totalPages" (click)="navigateToPage(page + 1)">
+          <img ngSrc="chevron-right.svg" alt="Next page button" width="50" height="50">
+        </button>
+      </div>
+    }
   </div>
 </div>
 
