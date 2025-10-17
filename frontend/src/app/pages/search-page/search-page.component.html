@@ -1,5 +1,6 @@
-<div class="container text-white d-flex gap-5">
-  <div class="d-flex flex-column gap-3 flex-shrink-0" style="width: 200px; padding-top: 95px">
+<div id="content-container" class="container text-white d-flex gap-5">
+  <h1 id="mobile-title">Search</h1>
+  <div id="button-group" class="d-flex flex-column gap-3 flex-shrink-0" style="width: 200px; padding-top: 95px;">
     <button type="button" class="btn btn-primary w-100 search-option" [ngClass]="{'selected': showsSelected}" (click)="selectShows()">
       <img ngSrc="tv.svg" alt="Shows icon" height="20" width="20">
       <span>Shows</span>
@@ -11,7 +12,7 @@
   </div>
 
   <div class="flex-grow-1">
-    <h1 class="mb-3">Search</h1>
+    <h1 id="desktop-title" class="mb-3">Search</h1>
     <div class="position-relative mb-4">
       <img class="input-icon" ngSrc="search.svg" alt="Search icon" width="20" height="20">
       <input class="form-control input-with-icon" id="search-input" [(ngModel)]="searchString" placeholder="Search" autofocus (input)="debouncedSearch()">
@@ -28,13 +29,13 @@
           <!-- Poster images are sized w185, using 2:3 ratio -->
           <a [routerLink]="['/show', show.id]"><img [ngSrc]="show.posterPath" class="poster-image" alt="Poster Image" priority width="185" height="278"></a>
           <div>
-            <div class="d-flex align-items-center gap-4">
+            <div class="d-flex align-items-center gap-4 show-header">
               <a class="text-decoration-none text-reset" [routerLink]="['/show', show.id]">
-                <h2 class="fw-bold">{{show.title}}</h2>
+                <h2 class="fw-bold show-title">{{show.title}}</h2>
               </a>
-              <h5>({{showYears(show)}})</h5>
+              <h5 class="show-years">({{showYears(show)}})</h5>
             </div>
-            <p>{{show.genreList}}</p>
+            <p class="genre-list">{{show.genreList}}</p>
             <p>{{show.overview}}</p>
           </div>
         </div>

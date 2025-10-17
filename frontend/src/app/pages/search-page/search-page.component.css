@@ -18,7 +18,6 @@
   background-color: var(--outline-color);
 }
 
-
 h1 {
   font-size: 4rem;
   font-weight: bold;
@@ -40,4 +39,59 @@ h1 {
 
 .username:hover {
   color: #d3d3d3;
+}
+
+#mobile-title {
+  display: none;
+
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.49rem;
+    margin-top: 0.5rem;
+  }
+
+  #mobile-title {
+    display: block;
+  }
+
+  #desktop-title {
+    display: none;
+  }
+
+  .search-option {
+    padding: 10px 30px;
+  }
+
+  #content-container {
+    flex-direction: column;
+    gap: 10px !important;
+  }
+
+  #button-group {
+    flex-direction: row !important;
+    padding-top: 0 !important;
+    padding-bottom: 0.5rem;
+  }
+
+  .show-title {
+    font-size: 1.25rem;
+  }
+
+  .show-years {
+    width: 50%;
+  }
+
+  .show-years, .genre-list {
+    font-size: 0.85rem;
+  }
+
+  .show-header {
+    gap: 0.5rem !important;
+  }
+
+  #search-input {
+    border-radius: 10px;
+  }
 }
