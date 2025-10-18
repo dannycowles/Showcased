@@ -43,7 +43,7 @@
       }
     } @else if (!showsSelected && userResults?.length) {
       @for (user of userResults; track user.id) {
-        <div class="d-flex align-items-center gap-5">
+        <div class="d-flex align-items-center gap-5 user-container">
           <a [routerLink]="['/user', user.displayName]">
             <img class="profile-picture" [ngSrc]="user.profilePicture" alt="User profile picture" width="100" height="100">
           </a>

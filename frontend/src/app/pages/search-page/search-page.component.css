@@ -94,4 +94,13 @@ h1 {
   #search-input {
     border-radius: 10px;
   }
+
+  .profile-picture {
+    width: 75px;
+    height: 75px;
+  }
+
+  .user-container {
+    gap: 1rem !important;
+  }
 }

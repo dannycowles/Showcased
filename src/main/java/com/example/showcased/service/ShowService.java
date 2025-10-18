@@ -219,7 +219,7 @@ public class ShowService {
             show.setImdbRating(jsonResponse.optString("imdbRating"));
             show.setImdbVotes(jsonResponse.optString("imdbVotes"));
 
-            String awards = jsonResponse.optString("awards");
+            String awards = jsonResponse.optString("Awards");
             if (!awards.isEmpty() && !awards.equals("N/A")) {
                 show.setAwards(awards);
             }

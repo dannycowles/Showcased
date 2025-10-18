@@ -1,21 +1,21 @@
 <div class="container text-white" style="margin-top: -0.5rem;">
   @if (show) {
     @if (show.backdropPath) {
-      <div class="backdrop-container">
+      <div id="backdrop-container">
         <img id="backdrop-image" [ngSrc]="show.backdropPath" alt="Show Backdrop" width="1280" height="720" priority>
       </div>
     } @else {
       <div class="pt-5"></div>
     }
 
-    <div class="d-flex gap-4 mb-5">
+    <div id="show-info-container" class="d-flex gap-4 mb-5">
       <div class="d-flex flex-column align-items-start">
         <!-- Poster images are sized w500, using 2:3 ratio -->
-        <img class="ms-2" [ngSrc]="show.posterPath" alt="Poster Image" width="250" height="375" priority>
+        <img id="poster-image" [ngSrc]="show.posterPath" alt="Poster Image" width="250" height="375" priority>
 
         <div id="watch-options" style="margin-bottom: 2rem">
           @if (show.streamingOptions.length != 0) {
-            <h5 class="mt-3">Streaming on</h5>
+            <h5 class="mt-3 watch-option">Streaming on</h5>
             <div class="d-flex flex-wrap gap-2 mb-3">
               @for (service of show.streamingOptions; track service.name) {
                 <img class="watch-logo" [ngSrc]="service.logoPath" alt="Service Logo" width="40" height="40">
@@ -24,16 +24,21 @@
           }
 
           @if (show.buyOptions.length != 0) {
-            <h5>Buy on</h5>
+            <h5 class="watch-option">Buy on</h5>
             <div class="d-flex flex-wrap gap-2">
               @for (service of show.buyOptions; track service.name) {
                 <img class="watch-logo" [ngSrc]="service.logoPath" alt="Service Logo" width="40" height="40">
               }
             </div>
           }
+
+          <div id="mobile-user-ratings">
+            <h4 id="user-ratings-title" class="text-reset">User ratings</h4>
+            <app-review-chart [reviewDistribution]="show.reviewDistribution"></app-review-chart>
+          </div>
         </div>
 
-        <div ngbDropdown>
+        <div id="desktop-seasons-dropdown" ngbDropdown>
           <button type="button" class="btn btn-primary d-flex gap-4 align-items-center" id="seasons-dropdown" ngbDropdownToggle>
             Select Season
             <img ngSrc="chevron-down.svg" width="20" height="20" alt="">
@@ -50,11 +55,11 @@
         <div class="d-flex justify-content-between align-items-start">
           <div class="d-flex flex-column">
             <div class="d-flex align-items-center gap-2">
-              <h1 class="fw-bolder mb-0">{{show.title}}</h1>
-              <h5 class="mb-0">{{showYears}}</h5>
+              <h1 id="show-title" class="fw-bolder mb-0">{{show.title}}</h1>
+              <h5 id="show-years" class="mb-0">{{showYears}}</h5>
             </div>
 
-            <div class="d-flex align-items-center gap-2">
+            <div id="show-stats" class="d-flex align-items-center gap-2">
               <span>{{show.numSeasons}} Seasons</span>
               @if (show.genres.length > 0) {
                 <div class="circle-divider"></div>
@@ -73,9 +78,9 @@
                 <span>{{show.rating}}</span>
               }
             </div>
-            <span class="my-3 fst-italic fs-5">{{show.tagline}}</span>
-            <span class="fs-5">{{show.plot}}</span>
-            <span class="my-3" style="font-size: 1.1rem">
+            <span id="show-tagline" class="my-3 fst-italic fs-5">{{show.tagline}}</span>
+            <span id="show-plot" class="fs-5">{{show.plot}}</span>
+            <span id="show-awards" class="my-3" style="font-size: 1.1rem">
               @if (show.awards) {
                 {{show.awards}}
               }
@@ -131,12 +136,12 @@
 
             @if (show.isOnRankingList) {
               <button type="button" class="btn btn-primary add-button" (click)="removeShowFromRankingList()">
-                <img ngSrc="trophy.svg" width="20" height="20" alt="">
+                <img ngSrc="trophy.svg" width="20" height="20" alt="" style="margin-left: -10px">
                 <span>Remove from ranking</span>
               </button>
             } @else {
               <button type="button" class="btn btn-primary add-button" [disabled]="show.isOnWatchlist || show.isOnWatchingList" (click)="addShowToRankingList()">
-                <img ngSrc="trophy.svg" width="20" height="20" alt="">
+                <img ngSrc="trophy.svg" width="20" height="20" alt="" style="margin-left: -10px">
                 <span>Add to ranking</span>
               </button>
             }
@@ -145,9 +150,21 @@
               <img ngSrc="collection.svg" width="20" height="20" alt="">
               <span>Add to collection</span>
             </button>
+
+            <div id="mobile-seasons-dropdown" ngbDropdown>
+              <button type="button" class="btn btn-primary d-flex gap-4 align-items-center add-button" id="seasons-dropdown" ngbDropdownToggle>
+                Select Season
+                <img ngSrc="chevron-down.svg" width="20" height="20" alt="">
+              </button>
+              <div ngbDropdownMenu aria-labelledby="seasons-dropdown">
+                @for (_ of [].constructor(show.numSeasons); let season = $index; track season) {
+                  <button [routerLink]="['season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
+                }
+              </div>
+            </div>
           </div>
 
-          <div>
+          <div id="desktop-user-ratings">
             <h4 class="text-reset">User ratings</h4>
             <app-review-chart [reviewDistribution]="show.reviewDistribution"></app-review-chart>
           </div>
@@ -175,8 +192,7 @@
     <div class="tab-content" id="show-tabs-content" style="margin-bottom: 15vh">
       <div class="tab-pane show active" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
         <div class="d-flex my-3 align-items-center">
-          <h3 class="section-header">Reviews</h3>
-          <div class="ms-auto">
+          <h3 class="section-header mb-0">Reviews</h3>
             <div class="dropdown ms-auto d-flex align-items-center">
               <span class="fs-4 me-4">Sort</span>
               <button id="sort-dropdown" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -189,7 +205,6 @@
                 }
               </ul>
             </div>
-          </div>
         </div>
         @if (reviews?.content.length) {
           <div class="reviews"
@@ -210,7 +225,7 @@
       <div class="tab-pane" id="trailer-tab-pane" role="tabpanel" aria-labelledby="trailer-tab" tabindex="0">
         <h3 class="section-header">Trailer</h3>
         @if (safeTrailerUrl) {
-          <iframe  [src]="safeTrailerUrl" width="560" height="315" allowfullscreen></iframe>
+          <iframe id="show-trailer" [src]="safeTrailerUrl" width="560" height="315" allowfullscreen></iframe>
         } @else {
          <h4 class="text-reset">No trailer found</h4>
         }
@@ -220,14 +235,14 @@
         <h3 class="section-header">Cast</h3>
         <div class="mb-3">
           @if (show.cast.length > 0) {
-            <div class="d-flex flex-wrap justify-content-start gap-5">
+            <div id="cast-container" class="d-flex flex-wrap justify-content-start gap-5">
               @for (cast of show.cast; track cast.id) {
                 <div class="text-center lh-1">
                   <!-- Profile images are sized w185, using 2:3 ratio -->
                   <img class="crew-image mb-2" [ngSrc]="cast.profilePath" alt="Actor Picture" width="139" height="209" priority>
-                  <h5>{{cast.name}}</h5>
+                  <h5 class="cast-name">{{cast.name}}</h5>
                   @if (cast.character) {
-                    <p>as {{cast.character}}</p>
+                    <p class="cast-character">as {{cast.character}}</p>
                   }
                 </div>
               }
@@ -240,12 +255,12 @@
         <h3 class="section-header">Creator(s)</h3>
         <div>
           @if (show.creators.length > 0) {
-            <div class="d-flex flex-wrap justify-content-start gap-5">
+            <div id="creator-container" class="d-flex flex-wrap justify-content-start gap-5">
               @for (creator of show.creators; track creator.id) {
                 <div class="text-center">
                   <!-- Profile images are sized w185, using 2:3 ratio -->
                   <img class="crew-image mb-2" [ngSrc]="creator.profilePath" alt="Actor Picture" width="139" height="209" priority>
-                  <h5>{{creator.name}}</h5>
+                  <h5 class="creator-name">{{creator.name}}</h5>
                 </div>
               }
             </div>

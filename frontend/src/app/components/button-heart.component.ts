@@ -65,6 +65,10 @@ export class ButtonHeartComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    // Check if mobile dimensions
+    if (window.innerWidth <= 600) {
+      this.size = 75;
+    }
     this.scale = Math.round(this.size / 50 * 100) / 100;
   }
 
