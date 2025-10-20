@@ -6,7 +6,7 @@
   display: block;
 }
 
-.backdrop-container {
+#backdrop-container {
   position: relative;
   width: 100%;
   height: 525px;
@@ -14,7 +14,7 @@
   display: inline-block;
 }
 
-.backdrop-container::after {
+#backdrop-container::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -25,9 +25,10 @@
   pointer-events: none;
 }
 
-.link {
+.link, #episode-number {
   color: white;
   transition: color 0.3s ease;
+  font-weight: normal;
 }
 
 .link:hover {
@@ -65,4 +66,74 @@
 .section-header {
   font-weight: bold;
   margin-bottom: 25px;
+}
+
+@media (max-width: 600px) {
+  #backdrop-container {
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    width: 100vw;
+    height: 200px;
+  }
+
+  #episode-breakdown {
+    gap: 10px !important;
+  }
+
+  #episode-title {
+    font-size: 1.3rem;
+  }
+
+  #episode-plot {
+    font-size: 1rem !important;
+  }
+
+  .link, #episode-number, #user-ratings-title {
+    font-size: 1rem;
+  }
+
+  .nav-link {
+    font-size: 1rem !important;
+    margin: 10px 0 0 0 !important;
+    padding: 0 !important;
+    white-space: nowrap;
+  }
+
+  #sort-dropdown {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+
+  #episode-nav {
+    gap: 10px !important;
+  }
+
+  #episode-nav button {
+    padding: 0 !important;
+  }
+
+  #episode-nav button img {
+    width: 18px;
+    height: auto;
+  }
+
+  #episode-nav span {
+    font-size: 1rem !important;
+    line-height: 1;
+  }
+
+  #rating-info {
+    display: none !important;
+  }
+
+  #episode-info {
+    gap: 15px !important;
+  }
+
+  .add-button {
+    max-width: 225px;
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 10px;
+  }
 }

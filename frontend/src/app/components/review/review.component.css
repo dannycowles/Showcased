@@ -45,6 +45,10 @@
   padding: 10px !important;
 }
 
+.review-commentary {
+  white-space: pre-wrap;
+}
+
 .add-button {
   background-color: var(--button-color);
   border: none;
