@@ -33,6 +33,37 @@
     height: auto;
     border-radius: 5px;
   }
+
+  .return-title {
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+
+  .return-arrow {
+    width: 20px;
+    height: auto;
+  }
+
+  .container.pt-5 {
+    padding-top: 25px !important;
+  }
+
+  .nav-tabs {
+    gap: 22px !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .nav-link {
+    font-size: 1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: nowrap;
+  }
+
+  #search-input {
+    border-radius: 10px !important;
+  }
 }
 
 .n-o-c {
