@@ -38,3 +38,32 @@
   width: 185px;
   height: 278px;
 }
+
+@media (max-width: 600px) {
+  .poster-stack img:first-child,
+  .poster-stack .poster-placeholder:first-child,
+  .poster-image,
+  .poster-placeholder {
+    width: 87px;
+    min-width: 87px;
+    height: auto;
+    aspect-ratio: 2/3;
+    border-radius: 5px !important;
+  }
+
+  .poster-stack {
+    margin-top: 10px !important;
+  }
+
+  .collection-name {
+    font-size: 1rem;
+  }
+
+  .collection-details {
+    margin-top: 0 !important;
+  }
+
+  .show-count {
+    font-size: 0.86rem !important;
+  }
+}

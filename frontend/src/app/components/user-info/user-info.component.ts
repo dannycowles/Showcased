@@ -1,4 +1,4 @@
-import {booleanAttribute, Component, CUSTOM_ELEMENTS_SCHEMA, Input} from '@angular/core';
+import {booleanAttribute, Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnInit} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
 import {UserHeaderData} from '../../data/user-header-data';
 import {UserService} from '../../services/user.service';
@@ -21,14 +21,24 @@ import {ReviewChartComponent} from '../review-chart/review-chart.component';
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class UserInfoComponent {
+export class UserInfoComponent implements OnInit {
   @Input({ required: true }) headerData: UserHeaderData;
   @Input({ transform: booleanAttribute }) editable: boolean = false; // true for profile page, false for user page
+  socialIconSize: number = 30;
 
   constructor(
     private userService: UserService,
     public utilsService: UtilsService,
   ) {}
+
+  ngOnInit() {
+    this.updateIconSize();
+  }
+
+  @HostListener('window:resize')
+  updateIconSize() {
+    this.socialIconSize = window.innerWidth <= 600 ? 15 : 30;
+  }
 
   async followUser() {
     try {
