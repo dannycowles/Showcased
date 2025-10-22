@@ -26,7 +26,7 @@ input:disabled {
   cursor: not-allowed;
 }
 
-.button {
+.button, .social-button {
   background-color: var(--button-color);
   color: white;
   border: none;
@@ -37,4 +37,53 @@ input:disabled {
 
 .button:hover {
   background-color: var(--button-hover-color);
+}
+
+input, textarea {
+  padding: 10px 0;
+}
+
+@media (max-width: 600px) {
+  .input-section {
+    width: 100% !important;
+  }
+
+  #settings-title {
+    font-size: 1.29rem;
+    margin-bottom: 25px !important;
+  }
+
+  #return-section {
+    margin-bottom: 25px !important;
+  }
+
+  .nav-tabs {
+    gap: 35px !important;
+  }
+
+  .settings-header {
+    font-size: 1.15rem;
+  }
+
+  #settings-tabs {
+    margin-bottom: 30px !important;
+  }
+
+  #profile-picture {
+    width: 200px;
+    height: 200px;
+  }
+
+  .social-row {
+    gap: 6px;
+  }
+
+  .social-name {
+    min-width: 75px;
+  }
+
+  .social-button {
+    gap: 0 !important;
+    padding: 10px 15px;
+  }
 }
