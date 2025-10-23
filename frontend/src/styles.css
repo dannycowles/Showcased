@@ -64,6 +64,23 @@
   #search-input {
     border-radius: 10px !important;
   }
+
+  a.return-section {
+    margin-bottom: 25px !important;
+  }
+
+  #page-title {
+    font-size: 1.29rem;
+  }
+
+  #edit-button {
+    font-size: 1rem !important;
+    padding: 10px 40px !important;
+  }
+
+  #add-button {
+    font-size: 1rem !important;
+  }
 }
 
 .n-o-c {
