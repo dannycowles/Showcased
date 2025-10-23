@@ -81,6 +81,32 @@
   #add-button {
     font-size: 1rem !important;
   }
+
+  .scroll-box {
+    padding: 10px !important;
+  }
+
+  .scroll-box > :first-child {
+    gap: 10px !important;
+  }
+
+  .scroll-box h2 {
+    font-size: 1.14rem;
+  }
+
+  .grip-container {
+     display: none !important;
+  }
+
+  .right-section {
+    margin: 0 !important;
+    padding-left: 10px;
+  }
+
+  .form-control.rank-input {
+    width: 6ch !important;
+    font-size: 1rem !important;
+  }
 }
 
 .n-o-c {
