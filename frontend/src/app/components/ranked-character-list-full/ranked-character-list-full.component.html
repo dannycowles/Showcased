@@ -5,10 +5,10 @@
         <div class="d-flex align-items-center gap-5 w-100">
           <input name="rank" type="text" [value]="rank + 1" class="form-control rank-input" (keydown.enter)="moveToPosition($event, rank)">
 
-          <div class="col-4 text-center">
-            <h3 class="mb-0">{{character.name}}</h3>
-            <h5 class="mb-0" style="font-weight: 300">{{character.showName}}</h5>
-            <span class="fs-5">{{character.rankNum}}</span>
+          <div class="text-center character-info">
+            <h3 class="mb-0 character-name">{{character.name}}</h3>
+            <h5 class="mb-0 character-show" style="font-weight: 300">{{character.showName}}</h5>
+            <span class="fs-5 rank-num">{{character.rankNum}}</span>
           </div>
         </div>
 

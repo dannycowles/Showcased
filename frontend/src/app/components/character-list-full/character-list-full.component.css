@@ -1,0 +1,33 @@
+.character-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#character-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+@media (min-width: 400px) {
+  #character-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #character-container {
+    margin-top: 20px !important;
+  }
+
+  .character-name, .character-show {
+    font-size: 1rem;
+  }
+
+  .rank-num {
+    font-size: 0.9rem !important;
+  }
+}

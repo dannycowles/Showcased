@@ -107,6 +107,17 @@
     width: 6ch !important;
     font-size: 1rem !important;
   }
+
+  #characters-dropdown {
+    font-size: 1rem !important;
+    gap: 10px !important;
+    width: fit-content;
+    padding: 10px !important;
+  }
+}
+
+#characters-dropdown:after {
+  display: none;
 }
 
 .n-o-c {
