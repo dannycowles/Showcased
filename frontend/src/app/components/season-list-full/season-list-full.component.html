@@ -1,4 +1,4 @@
-<div class="d-flex gap-5 flex-wrap mt-5">
+<div id="season-container" class="d-flex gap-5 flex-wrap mt-5">
   @for (season of seasons; track season.id) {
     <div class="d-flex flex-column align-items-center gap-1">
       <!-- Poster images are sized w185, using 2:3 ratio -->
@@ -6,7 +6,7 @@
         <img class="poster-image" [ngSrc]="season.posterPath" alt="Show Poster" width="185" height="278" priority>
       </a>
 
-      <span class="fs-5">{{season.rankNum}}</span>
+      <span class="fs-5 rank-num">{{season.rankNum}}</span>
     </div>
   }
 </div>
