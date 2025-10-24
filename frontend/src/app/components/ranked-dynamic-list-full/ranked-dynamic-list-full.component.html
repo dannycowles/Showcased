@@ -5,9 +5,9 @@
         <div class="d-flex align-items-center gap-5 w-100">
           <input name="rank" type="text" [value]="rank + 1" class="form-control rank-input" (keydown.enter)="moveToPosition($event, rank)">
 
-          <div class="col-6 text-center">
-            <h3 class="mb-0">{{dynamic.character1Name}} & {{dynamic.character2Name}}</h3>
-            <h5 class="mb-0" style="font-weight: 300">{{dynamic.showTitle}}</h5>
+          <div class="text-center dynamic-info">
+            <h3 class="mb-0 dynamic-names">{{dynamic.character1Name}} & {{dynamic.character2Name}}</h3>
+            <h5 class="mb-0 dynamic-show" style="font-weight: 300">{{dynamic.showTitle}}</h5>
           </div>
         </div>
 

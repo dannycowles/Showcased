@@ -1,0 +1,17 @@
+.dynamic-info {
+  flex: 0 0 50%;
+}
+
+@media (max-width: 600px) {
+  .dynamic-names, .dynamic-show {
+    font-size: 1rem;
+  }
+
+  .rank-num {
+    font-size: 0.9rem !important;
+  }
+
+  .dynamic-info {
+    flex: 1;
+  }
+}
