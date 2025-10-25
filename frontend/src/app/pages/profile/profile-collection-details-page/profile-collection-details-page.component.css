@@ -1,11 +1,22 @@
-#edit-button {
-  background-color: var(--button-color);
-  border: none;
-  border-radius: 10px;
-  padding: 10px 30px;
-  transition: background-color 0.3s ease;
+pre {
+  white-space: pre-wrap;
 }
 
-#edit-button:hover {
-  background-color: var(--button-hover-color);
+#collection-info {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  #collection-info {
+    gap: 15px !important;
+    margin-bottom: 10px !important;
+  }
+
+  #edit-button {
+    padding: 10px 20px !important;
+  }
+
+  pre {
+    font-size: 1rem !important;
+  }
 }

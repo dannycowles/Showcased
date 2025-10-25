@@ -69,3 +69,9 @@ input.form-control.clear:focus {
 input::placeholder, textarea::placeholder {
   color: #cccccc;
 }
+
+@media (max-width: 600px) {
+  #page-title {
+    margin-bottom: 20px !important;
+  }
+}
