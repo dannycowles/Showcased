@@ -1,26 +1,26 @@
-<div class="py-3 ps-2 row review">
+<div class="row review">
     <div class="col-3">
       @switch (review.type) {
         @case (ReviewType.Show) {
-          <h4 class="text-reset fw-bold">{{review.showTitle}}</h4>
+          <h4 class="text-reset fw-bold review-show">{{review.showTitle}}</h4>
         }
         @case (ReviewType.Episode) {
           <div class="mb-1">
-            <h3 class="text-reset fw-bold mb-0">{{review.episodeTitle}}</h3>
-            <span class="fs-5">{{review.showTitle}} S{{review.season}} E{{review.episode}}</span>
+            <h3 class="text-reset fw-bold mb-0 review-episode">{{review.episodeTitle}}</h3>
+            <span class="fs-5 review-episode-info">{{review.showTitle}} S{{review.season}} E{{review.episode}}</span>
           </div>
         }
       }
-      <p class="mb-0">{{utilsService.getRelativeDate(review.reviewDate)}}</p>
-      <div class="d-flex align-items-center gap-2 mt-2">
-        <img ngSrc="star.svg" alt="" height="25" width="25">
-        <span class="fs-5">{{review.rating}}</span>
+      <p class="mb-0 review-date">{{utilsService.getRelativeDate(review.reviewDate)}}</p>
+      <div class="d-flex align-items-center gap-2 mt-2 review-rating-info">
+        <img class="review-star" ngSrc="star.svg" alt="" height="25" width="25">
+        <span class="fs-5 review-rating">{{review.rating}}</span>
       </div>
     </div>
     <div class="col-6">
       @if (review.containsSpoilers && !showSpoilers) {
         <div class="d-flex align-items-center gap-3 spoiler-container" (click)="showSpoilers = true">
-          <span class="fs-5">Spoiler</span>
+          <span class="fs-5 review-spoiler">Spoiler</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
           </svg>
@@ -30,8 +30,8 @@
       }
     </div>
 
-    <div class="d-flex flex-wrap align-items-center justify-content-between col-3">
-      <div class="d-flex flex-column align-items-end">
+    <div class="d-flex flex-wrap align-items-center justify-content-between col-3 review-actions-container">
+      <div class="d-flex flex-column align-items-end review-actions">
         <div class="d-flex align-items-center mb-3">
           <yt-button-heart [isLiked]="review.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
           <span class="fs-4" id="like-count">{{review.numLikes}}</span>
