@@ -6,6 +6,10 @@
   display: none;
 }
 
+.episode-image {
+  border-radius: 20px;
+}
+
 @media (max-width: 600px) {
   #recent-reviews {
     display: none;

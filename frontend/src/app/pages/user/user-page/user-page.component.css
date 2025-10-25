@@ -1,3 +1,15 @@
+.show-container {
+  gap: 14px;
+}
+
+#characters-dropdown:after {
+  display: none;
+}
+
+.episode-image {
+  border-radius: 20px;
+}
+
 @media (max-width: 600px) {
   .show-container {
     gap: 14px;
@@ -7,59 +19,56 @@
     display: none;
   }
 
-  @media (max-width: 600px) {
-    #recent-reviews {
-      display: none;
-    }
-
-    #user-container {
-      padding-top: 10px !important;
-    }
-
-    .section-header {
-      gap: 25px !important;
-      margin-bottom: 10px !important;
-    }
-
-    .section-title {
-      font-size: 1.2rem;
-    }
-
-    .show-container {
-      gap: 8px !important;
-      overflow-x: auto;
-    }
-
-    .rank-num, .character-name, .character-show {
-      font-size: 0.86rem;
-    }
-
-    .character-container {
-      overflow-x: auto;
-      gap: 25px !important;
-    }
-
-    .character-item {
-      flex-shrink: 0;
-    }
-
-    #character-header {
-      gap: 20px !important;
-    }
-
-    #characters-dropdown {
-      font-size: 1rem !important;
-      gap: 10px !important;
-      width: fit-content;
-      padding: 10px;
-    }
-
-    .episode-image {
-      width: 112px;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      border-radius: 5px;
-    }
+  #recent-reviews {
+    display: none;
   }
 
+  #user-container {
+    padding-top: 10px !important;
+  }
+
+  .section-header {
+    gap: 25px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+  }
+
+  .show-container {
+    gap: 8px !important;
+    overflow-x: auto;
+  }
+
+  .rank-num, .character-name, .character-show {
+    font-size: 0.86rem;
+  }
+
+  .character-container {
+    overflow-x: auto;
+    gap: 25px !important;
+  }
+
+  .character-item {
+    flex-shrink: 0;
+  }
+
+  #character-header {
+    gap: 20px !important;
+  }
+
+  #characters-dropdown {
+    font-size: 1rem !important;
+    gap: 10px !important;
+    width: fit-content;
+    padding: 10px;
+  }
+
+  .episode-image {
+    width: 112px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 5px;
+  }
 }

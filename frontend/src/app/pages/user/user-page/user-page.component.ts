@@ -6,11 +6,6 @@ import {UtilsService} from '../../../services/utils.service';
 import {ReviewType} from '../../../data/enums';
 import {Title} from '@angular/platform-browser';
 import {UserInfoComponent} from '../../../components/user-info/user-info.component';
-import {ShowListComponent} from '../../../components/show-list/show-list.component';
-import {SeasonListComponent} from '../../../components/season-list/season-list.component';
-import {EpisodeListComponent} from '../../../components/episode-list/episode-list.component';
-import {CharacterListComponent} from '../../../components/character-list/character-list.component';
-import {DynamicListComponent} from '../../../components/dynamic-list/dynamic-list.component';
 import {CollectionComponent} from '../../../components/collection/collection.component';
 import {RecentReviewsComponent} from '../../../components/recent-reviews/recent-reviews.component';
 import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
@@ -22,12 +17,7 @@ import {NgOptimizedImage} from '@angular/common';
   styleUrl: './user-page.component.css',
   imports: [
     UserInfoComponent,
-    ShowListComponent,
     RouterLink,
-    SeasonListComponent,
-    EpisodeListComponent,
-    CharacterListComponent,
-    DynamicListComponent,
     CollectionComponent,
     RecentReviewsComponent,
     NgOptimizedImage,
