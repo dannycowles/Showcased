@@ -1,20 +1,17 @@
 <div class="container text-white pt-5" style="margin-bottom: 15vh">
-  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
-    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
-    <h3>Back to profile</h3>
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset return-section" [routerLink]="['..']">
+    <img class="return-arrow" ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3 class="return-title">Back to profile</h3>
   </a>
 
-  <div class="d-flex align-items-center me-3 mb-5">
-    <h1 class="fw-bold">{{username}}'s reviews</h1>
-    <div class="d-flex ms-auto gap-5">
-
+  <div id="select-header" class="d-flex align-items-center mb-5">
+    <h1 id="page-title" class="fw-bold">{{username}}'s reviews</h1>
+    <div id="page-header" class="d-flex ms-auto gap-5">
       <div class="dropdown d-flex align-items-center gap-3">
-        <h4 class="text-reset">Filter</h4>
-        <button id="filter-dropdown" class="btn btn-secondary fs-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <div class="d-flex align-items-center gap-3">
-            <span>{{ selectedReviewType.label }}</span>
-            <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
-          </div>
+        <h4 class="text-reset select-option">Filter</h4>
+        <button id="filter-dropdown" class="btn btn-secondary fs-5 d-flex align-items-center gap-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span>{{ selectedReviewType.label }}</span>
+          <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
         </button>
         <ul class="dropdown-menu">
           @for (reviewType of reviewTypeOptions; track reviewType.value) {
@@ -24,12 +21,10 @@
       </div>
 
       <div class="dropdown d-flex align-items-center gap-3">
-        <h4 class="text-reset">Sort</h4>
-        <button id="sort-dropdown" class="btn btn-secondary fs-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <div class="d-flex align-items-center gap-3">
-            <span>{{ selectedSortOption.label }}</span>
-            <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
-          </div>
+        <h4 class="text-reset select-option">Sort</h4>
+        <button id="sort-dropdown" class="btn btn-secondary fs-5 d-flex align-items-center gap-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span>{{ selectedSortOption.label }}</span>
+          <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
         </button>
         <ul class="dropdown-menu">
           @for (sortOption of sortReviewOptions; track sortOption.value) {
@@ -41,7 +36,7 @@
   </div>
 
   @if (isLoadingReviews) {
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mt-3">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
