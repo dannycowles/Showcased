@@ -1,13 +1,13 @@
 <div class="container text-white pt-5" style="margin-bottom: 15vh">
-  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['/profile']">
-    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
-    <h3>Back to profile</h3>
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset return-section" [routerLink]="['/profile']">
+    <img class="return-arrow" ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3 class="return-title">Back to profile</h3>
   </a>
 
-  <div class="d-flex align-items-center gap-5">
-    <h1 class="fw-bold">Your collections</h1>
+  <div id="page-header" class="d-flex align-items-center gap-5">
+    <h1 id="page-title" class="fw-bold">Your collections</h1>
     <button id="create-button" type="button" class="btn btn-primary d-flex align-items-center gap-3 fs-5" routerLink="new">
-      <img ngSrc="plus.svg" alt="" width="25" height="25">
+      <img ngSrc="plus.svg" alt="" width="20" height="20">
       <span>Create collection</span>
     </button>
   </div>
@@ -18,12 +18,12 @@
   </div>
 
   @if (loadingData) {
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mt-3">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-  } @else if (collectionData?.content?.length > 0) {
+  } @else if (collectionData.content.length > 0) {
     <div class="collections"
          infiniteScroll
          [infiniteScrollDistance]="1"

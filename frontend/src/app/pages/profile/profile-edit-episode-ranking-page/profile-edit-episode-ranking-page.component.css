@@ -1,0 +1,6 @@
+@media (max-width: 600px) {
+  #page-header {
+    margin-bottom: 20px !important;
+    gap: 20px !important;
+  }
+}

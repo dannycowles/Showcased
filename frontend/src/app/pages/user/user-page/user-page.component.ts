@@ -14,6 +14,7 @@ import {DynamicListComponent} from '../../../components/dynamic-list/dynamic-lis
 import {CollectionComponent} from '../../../components/collection/collection.component';
 import {RecentReviewsComponent} from '../../../components/recent-reviews/recent-reviews.component';
 import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-user-page',
@@ -29,6 +30,7 @@ import {CharacterRankingData} from '../../../data/lists/character-ranking-data';
     DynamicListComponent,
     CollectionComponent,
     RecentReviewsComponent,
+    NgOptimizedImage,
   ],
   standalone: true,
 })

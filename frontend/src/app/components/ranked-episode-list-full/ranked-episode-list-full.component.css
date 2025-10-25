@@ -1,0 +1,13 @@
+@media (max-width: 600px) {
+  .poster-image {
+    width: 100px;
+  }
+
+  .episode-info {
+    font-size: 0.86rem;
+  }
+
+  .scroll-box {
+    padding: 10px 5px !important;
+  }
+}

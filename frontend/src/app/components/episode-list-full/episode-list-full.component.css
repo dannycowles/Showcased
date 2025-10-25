@@ -1,0 +1,17 @@
+@media (max-width: 600px) {
+  #episode-container {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px !important;
+    margin-top: 20px !important;
+  }
+
+  .poster-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+  }
+
+  .rank-num {
+    font-size: 0.9rem !important;
+  }
+}

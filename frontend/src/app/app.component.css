@@ -11,3 +11,37 @@
 #profile-username {
   font-size: 1.1rem;
 }
+
+.navbar-toggler:focus {
+  border-color: white !important;
+  outline: none !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+}
+
+@media (max-width: 600px) {
+  #nav-searchbar {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  #navbar-left {
+    margin-top: 1rem;
+    gap: 1rem !important;
+  }
+
+  #navbar-right {
+    align-items: flex-start !important;
+  }
+
+  .nav-logo {
+    font-size: 1.29rem !important;
+  }
+
+  #nav-img {
+    width: 30px;
+  }
+
+  .dropdown-menu-end {
+    inset: auto 0 !important;
+  }
+}

@@ -16,9 +16,25 @@
   padding: 10px 20px;
   border-radius: 10px;
   transition: background-color 0.3s ease;
-  width: 150px;
+  width: fit-content;
 }
 
 .add-button:hover {
   background-color: var(--button-hover-color);
+}
+
+@media (max-width: 600px) {
+  #profile-picture {
+    width: 50px;
+    height: auto;
+  }
+
+  .display-name {
+    font-size: 1.14rem;
+    margin-left: 20px !important;
+  }
+
+  .add-button {
+    gap: 10px;
+  }
 }

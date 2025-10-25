@@ -3,6 +3,7 @@
   border: none;
   padding: 10px 30px;
   border-radius: 10px;
+  width: 250px;
 }
 
 #seasons-dropdown:after {
@@ -19,7 +20,7 @@
   padding: 10px 20px;
   border-radius: 10px;
   transition: background-color 0.3s ease;
-  width: 225px;
+  max-width: 250px;
 }
 
 .add-button:hover {
@@ -38,4 +39,83 @@
 
 .episode-image {
   border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+  #season-poster {
+    width: 120px;
+    height: auto;
+  }
+
+  #content-container {
+    padding-top: 15px !important;
+    gap: 10px !important;
+    flex-direction: column;
+  }
+
+  .nav-link {
+    font-size: 1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: nowrap;
+  }
+
+  #rating-header {
+    font-size: 1rem !important;
+    margin: 10px 0 !important;
+  }
+
+  #season-header {
+    gap: 10px !important;
+  }
+
+  #show-title, #season-plot {
+    font-size: 1rem !important;
+  }
+
+  #season-title {
+    font-size: 1.29rem;
+  }
+
+  #season-year {
+    font-size: 0.85rem;
+  }
+
+  #seasons-dropdown {
+    font-size: 0.9rem;
+    max-width: 250px;
+    width: 100%;
+    padding: 10px;
+    gap: 5px !important;
+  }
+
+  .add-button {
+    max-width: 250px;
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+
+  .episode-item {
+    flex-direction: column !important;
+  }
+
+  .episode-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+
+  #episodes-container {
+    gap: 10px !important;
+    margin-top: 0 !important;
+  }
+
+  #season-wrapper {
+    gap: 10px !important;
+  }
+
+  .episode-title {
+    font-size: 1.2rem;
+  }
 }

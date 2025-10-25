@@ -1,0 +1,17 @@
+.character-info {
+  flex: 0 0 33%;
+}
+
+@media (max-width: 600px) {
+  .character-name, .character-show {
+    font-size: 1rem;
+  }
+
+  .rank-num {
+    font-size: 0.9rem !important;
+  }
+
+  .character-info {
+    flex: 1;
+  }
+}

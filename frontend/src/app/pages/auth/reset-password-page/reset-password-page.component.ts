@@ -95,12 +95,12 @@ export class ResetPasswordPageComponent {
   async submitEmail() {
     if (this.emailForm.value) {
       // Call backend to generate OTP and send email
+      this.formNumber = 2;
       try {
         await this.authService.generateOTP(this.emailForm.value);
       } catch (error) {
         console.error(error);
       }
-      this.formNumber = 2;
     }
   }
 

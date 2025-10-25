@@ -1,16 +1,16 @@
 <div class="container text-white pt-5" style="margin-bottom: 15vh">
-  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['/profile']">
-    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
-    <h3>Back to profile</h3>
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset return-section" [routerLink]="['/profile']">
+    <img class="return-arrow" ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3 class="return-title">Back to profile</h3>
   </a>
-  <h1 class="fw-bold">{{username}}'s collections</h1>
+  <h1 id="page-title" class="fw-bold">{{username}}'s collections</h1>
   <div class="position-relative mt-4 mb-5">
     <img class="input-icon" ngSrc="search.svg" alt="Search icon" width="20" height="20">
     <input class="form-control input-with-icon" id="search-input" [(ngModel)]="searchCollectionString" placeholder="Search" autofocus (input)="debouncedSearchCollections()">
   </div>
 
   @if (loadingData) {
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mt-3">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>

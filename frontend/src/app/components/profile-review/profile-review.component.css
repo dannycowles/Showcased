@@ -26,3 +26,52 @@
   font-size: 1.1rem;
   white-space: pre-wrap;
 }
+
+@media (max-width: 600px) {
+  .review {
+    flex-direction: column;
+  }
+
+  .review > div {
+    width: 100% !important;
+  }
+
+  .review-show, .review-episode, .review-rating {
+    font-size: 1.14rem !important;
+  }
+
+  .review-episode-info, .review-date {
+    font-size: 0.86rem !important;
+  }
+
+  .review-show, .review-episode, .review-episode-info {
+    text-wrap: nowrap;
+  }
+
+  .review-star {
+    width: 20px;
+  }
+
+  .review-text, .review-spoiler {
+    font-size: 1rem !important;
+  }
+
+  .review-rating-info {
+    margin-bottom: 10px;
+  }
+
+  .review-actions {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 25px;
+  }
+
+  .review-actions > div {
+    margin-bottom: 0 !important;
+  }
+
+  .review-actions-container {
+    justify-content: start !important;
+    gap: 20px;
+  }
+}

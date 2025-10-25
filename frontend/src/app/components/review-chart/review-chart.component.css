@@ -1,5 +1,24 @@
-.chart-container {
+#chart-container {
   position: relative;
   height: 8rem;
   width: 16rem;
+}
+
+@media (max-width: 600px) {
+  #chart-container {
+    width: 120px;
+  }
+
+  #content-container {
+    flex-direction: column;
+    gap: 0 !important;
+  }
+
+  #review-count {
+    font-size: 0.85rem !important;
+  }
+
+  #rating-average {
+     font-size: 1.14rem;
+  }
 }

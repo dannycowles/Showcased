@@ -45,9 +45,49 @@
   padding: 10px !important;
 }
 
+.review-commentary {
+  white-space: pre-wrap;
+}
+
 .add-button {
   background-color: var(--button-color);
   border: none;
   padding-left: 20px;
   padding-right: 20px;
+}
+
+@media (max-width: 600px) {
+  .profile-picture {
+    width: 50px;
+    height: 50px;
+  }
+
+  .username {
+    font-size: 1.14rem;
+  }
+
+  .review-date {
+    font-size: 0.8rem;
+  }
+
+  .review-star {
+    width: 15px;
+    height: 15px;
+  }
+
+  .review-commentary {
+    font-size: 1rem !important;
+  }
+
+  .comment-container {
+    margin-left: 15vw !important;
+  }
+
+  .comment-box {
+    width: 100% !important;
+  }
+
+  .hide-replies-button {
+    margin-bottom: 10px !important;
+  }
 }

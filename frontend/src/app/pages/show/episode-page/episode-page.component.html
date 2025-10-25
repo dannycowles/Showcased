@@ -1,7 +1,7 @@
 <div class="container text-white" style="margin-top: -0.5rem;">
   @if (episode) {
     @if (episode.stillPath) {
-      <div class="backdrop-container">
+      <div id="backdrop-container">
         <!-- Episode still is size w780, with 16:9 aspect ratio -->
         <img id="backdrop-image" [ngSrc]="episode.stillPath" alt="Episode poster" width="1280" height="720" priority>
       </div>
@@ -10,15 +10,15 @@
     }
 
     <div class="d-flex justify-content-between mt-2">
-      <div class="d-flex align-items-center gap-3 fw-bold fs-5">
+      <div id="episode-breakdown" class="d-flex align-items-center gap-3 fs-5">
         <a class="link" [routerLink]="['/show', showId]">{{episode.showTitle}}</a>
         <span class="circle-divider"></span>
         <a class="link" [routerLink]="['/show', showId, 'season', seasonNumber]">Season {{seasonNumber}}</a>
         <span class="circle-divider"></span>
-        <span>Episode {{episodeNumber}}</span>
+        <span id="episode-number">Episode {{episodeNumber}}</span>
       </div>
 
-      <div class="d-flex align-items-center gap-4">
+      <div id="episode-nav" class="d-flex align-items-center gap-4">
         <button class="btn btn-link" [disabled]="!hasPreviousEpisode()" (click)="goPreviousEpisode()">
           <img ngSrc="chevron-left.svg" alt="Previous episode" height="30" width="30">
         </button>
@@ -29,10 +29,10 @@
       </div>
     </div>
 
-    <div class="d-flex justify-content-between gap-4 align-items-center">
+    <div id="episode-info" class="d-flex justify-content-between gap-4 align-items-center">
       <div class="flex-grow-1">
         <div class="d-flex my-2 justify-content-between pe-5">
-          <h1 class="fw-bold">{{episode.episodeTitle}}</h1>
+          <h1 id="episode-title" class="fw-bold">{{episode.episodeTitle}}</h1>
           <div id="rating-info" class="d-flex gap-3 align-items-center">
             <div class="d-flex flex-column align-items-center">
               <div class="d-flex align-items-center gap-2">
@@ -55,7 +55,7 @@
           <span>{{utilsService.getFormattedRuntime(episode.runtime)}}</span>
         </div>
 
-        <p class="fs-5 my-4">{{episode.plot}}</p>
+        <p id="episode-plot" class="fs-5 my-4">{{episode.plot}}</p>
 
         <div class="d-flex flex-column gap-3">
           <button type="button" class="btn btn-primary add-button" (click)="openAddReviewModal()">
@@ -77,7 +77,7 @@
       </div>
 
       <div>
-        <h4 class="text-reset">User ratings</h4>
+        <h4 id="user-ratings-title" class="text-reset">User ratings</h4>
         <app-review-chart [reviewDistribution]="episode.reviewDistribution"></app-review-chart>
       </div>
     </div>
@@ -92,7 +92,7 @@
     <div class="tab-content" id="episode-tabs-content" style="margin-bottom: 15vh">
       <div class="tab-pane show active" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
         <div class="d-flex my-3 align-items-center">
-          <h3 class="section-header">Reviews</h3>
+          <h3 class="section-header mb-0">Reviews</h3>
           <div class="ms-auto">
             <div class="dropdown ms-auto d-flex align-items-center">
               <span class="fs-4 me-4">Sort</span>

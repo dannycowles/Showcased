@@ -6,7 +6,7 @@
   border-radius: 50%;
 }
 
-#numLikes {
+.numLikes {
   font-size: 1.5rem;
 }
 
@@ -49,4 +49,31 @@
 
 .username:hover, .link:hover {
   color: #d3d3d3;
+}
+
+@media (max-width: 600px) {
+  .profile-picture {
+    width: 50px;
+    height: 50px;
+  }
+
+  .right-container {
+    margin-right: 0 !important;
+  }
+
+  .comment {
+    margin-bottom: 1rem !important;
+  }
+
+  .comment-date {
+    font-size: 0.8rem;
+  }
+
+  .comment-text {
+    font-size: 1rem !important;
+  }
+
+  .comment-box {
+    width: 100% !important;
+  }
 }

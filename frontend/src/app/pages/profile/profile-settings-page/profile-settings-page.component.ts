@@ -1,4 +1,4 @@
-import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
+import {Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, OnInit} from '@angular/core';
 import {ProfileService} from '../../../services/profile.service';
 import {RouterLink} from '@angular/router';
 import {ProfileSettingsData} from '../../../data/profile-settings-data';
@@ -59,16 +59,24 @@ export class ProfileSettingsPageComponent implements OnInit {
   passwordMessage: string = '';
   changePasswordSuccess: boolean = false;
 
+  socialIconSize: number = 40;
+
   constructor(private profileService: ProfileService) {}
 
   async ngOnInit() {
     try {
+      this.updateIconSize();
       this.profileSettings = await this.profileService.getProfileSettings();
       this.bio.setValue(this.profileSettings.bio);
       this.originalSocialAccounts = this.profileSettings.socialAccounts.map(social => ({ ...social }));
     } catch (error) {
       console.error(error);
     }
+  }
+
+  @HostListener('window:resize')
+  updateIconSize() {
+    this.socialIconSize = window.innerWidth <= 600 ? 25 : 40;
   }
 
   isProfileSaveDisabled() {

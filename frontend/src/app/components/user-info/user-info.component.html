@@ -1,53 +1,108 @@
-<div class="mb-5">
-  <div class="d-flex align-items-center gap-5">
+<div id="desktop-user-info-container" class="d-flex align-items-center gap-5 mb-5">
+  <img id="profile-picture" [ngSrc]="headerData.profilePicture" alt="Profile Picture" width="500" height="500" priority>
+
+  <div class="d-flex justify-content-between w-100">
+    <div class="d-flex flex-column gap-3">
+      <div class="d-flex align-items-center gap-4">
+        <h2 id="display-name" class="fw-bold">{{headerData.displayName}}</h2>
+
+        @if (editable) {
+          <button id="edit-profile-button" class="btn btn-primary" [routerLink]="['settings']">Edit profile</button>
+        }
+        @else if (!headerData.isOwnProfile) {
+          @if (headerData.isFollowing) {
+            <button class="btn btn-primary follow-button" (click)="unfollowUser()">Unfollow</button>
+          } @else {
+            <button class="btn btn-primary follow-button" (click)="followUser()">Follow</button>
+          }
+        }
+      </div>
+      <pre id="bio" class="fs-5">{{headerData.bio}}</pre>
+
+      @for (social of headerData.socialAccounts; track social.socialId) {
+        @if (social.handle) {
+          <div class="d-flex align-items-center gap-2">
+            <iconify-icon class="social-icon" [attr.icon]="social.icon" [attr.width]="socialIconSize" [attr.height]="socialIconSize"></iconify-icon>
+            <a class="white-link text-decoration-none social-handle" [href]="social.url.replace('{handle}', social.handle)" target="_blank">{{social.handle}}</a>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="d-flex flex-column gap-3">
+      <div class="d-flex gap-5 justify-content-end">
+        <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['followers']">
+          <span>Followers</span>
+          <h2 class="stat-number">{{headerData.numFollowers}}</h2>
+        </a>
+        <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['following']">
+          <span>Following</span>
+          <h2 class="stat-number">{{headerData.numFollowing}}</h2>
+        </a>
+        <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['reviews']">
+          <span>Reviews</span>
+          <h2 class="stat-number">{{headerData.numReviews}}</h2>
+        </a>
+      </div>
+
+      <app-review-chart [reviewDistribution]="headerData.reviewDistribution"></app-review-chart>
+    </div>
+  </div>
+</div>
+
+
+<div id="mobile-user-info-container">
+  <div class="d-flex align-items-start gap-3 mb-2">
     <img id="profile-picture" [ngSrc]="headerData.profilePicture" alt="Profile Picture" width="500" height="500" priority>
 
-    <div class="d-flex justify-content-between w-100">
-      <div class="d-flex flex-column gap-3">
-        <div class="d-flex align-items-center gap-4">
-          <h2 class="fw-bold">{{headerData.displayName}}</h2>
+    <div class="d-flex flex-column gap-2">
+      <div class="d-flex align-items-center gap-4">
+        <h2 id="display-name" class="fw-bold">{{headerData.displayName}}</h2>
 
-          @if (editable) {
-            <button id="edit-profile-button" class="btn btn-primary" [routerLink]="['settings']">Edit profile</button>
-          }
-          @else if (!headerData.isOwnProfile) {
-            @if (headerData.isFollowing) {
-              <button class="btn btn-primary follow-button" (click)="unfollowUser()">Unfollow</button>
-            } @else {
-              <button class="btn btn-primary follow-button" (click)="followUser()">Follow</button>
-            }
-          }
-        </div>
-        <pre class="fs-5">{{headerData.bio}}</pre>
-
-        @for (social of headerData.socialAccounts; track social.socialId) {
-          @if (social.handle) {
-            <div class="d-flex align-items-center gap-2">
-              <iconify-icon [attr.icon]="social.icon" width="30" height="30"></iconify-icon>
-              <a class="white-link text-decoration-none" [href]="social.url.replace('{handle}', social.handle)" target="_blank">{{social.handle}}</a>
-            </div>
+        @if (editable) {
+          <button id="edit-profile-button" class="btn btn-primary" [routerLink]="['settings']">Edit profile</button>
+        }
+        @else if (!headerData.isOwnProfile) {
+          @if (headerData.isFollowing) {
+            <button class="btn btn-primary follow-button" (click)="unfollowUser()">Unfollow</button>
+          } @else {
+            <button class="btn btn-primary follow-button" (click)="followUser()">Follow</button>
           }
         }
       </div>
 
-      <div class="d-flex flex-column gap-3">
-        <div class="d-flex gap-5 justify-content-end">
-          <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['followers']">
-            <span>Followers</span>
-            <h2 class="stat-number">{{headerData.numFollowers}}</h2>
-          </a>
-          <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['following']">
-            <span>Following</span>
-            <h2 class="stat-number">{{headerData.numFollowing}}</h2>
-          </a>
-          <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['reviews']">
-            <span>Reviews</span>
-            <h2 class="stat-number">{{headerData.numReviews}}</h2>
-          </a>
-        </div>
-
-        <app-review-chart [reviewDistribution]="headerData.reviewDistribution"></app-review-chart>
+      <div id="user-stats" class="d-flex justify-content-end">
+        <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['followers']">
+          <span>Followers</span>
+          <h2 class="stat-number">{{headerData.numFollowers}}</h2>
+        </a>
+        <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['following']">
+          <span>Following</span>
+          <h2 class="stat-number">{{headerData.numFollowing}}</h2>
+        </a>
+        <a class="d-flex flex-column align-items-center text-decoration-none white-link" [routerLink]="['reviews']">
+          <span>Reviews</span>
+          <h2 class="stat-number">{{headerData.numReviews}}</h2>
+        </a>
       </div>
     </div>
   </div>
+
+  <div class="d-flex justify-content-between w-100">
+    <div class="d-flex flex-column gap-2">
+      <pre id="bio" class="fs-5">{{headerData.bio}}</pre>
+
+      @for (social of headerData.socialAccounts; track social.socialId) {
+        @if (social.handle) {
+          <div class="d-flex align-items-center gap-2">
+            <iconify-icon class="social-icon" [attr.icon]="social.icon" [attr.width]="socialIconSize" [attr.height]="socialIconSize"></iconify-icon>
+            <a class="white-link text-decoration-none social-handle" [href]="social.url.replace('{handle}', social.handle)" target="_blank">{{social.handle}}</a>
+          </div>
+        }
+      }
+    </div>
+
+    <app-review-chart [reviewDistribution]="headerData.reviewDistribution"></app-review-chart>
+  </div>
 </div>
+

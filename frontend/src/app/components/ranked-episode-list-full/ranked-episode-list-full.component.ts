@@ -63,7 +63,7 @@ export class RankedEpisodeListFullComponent {
   }
 
   async removeEvent(removeEpisode: EpisodeRankingData) {
-    const confirmation = await this.confirmationService.confirmRemove(`${removeEpisode.showTitle} S${removeEpisode.season}E${removeEpisode.episode}`);
+    const confirmation = await this.confirmationService.confirmRemove(`${removeEpisode.episodeTitle}`);
     if (confirmation) {
       this.remove.emit(removeEpisode.episodeId);
     }

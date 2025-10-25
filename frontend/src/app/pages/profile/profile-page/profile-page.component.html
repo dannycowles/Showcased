@@ -1,35 +1,120 @@
-<div class="container text-white pt-5" style="margin-bottom: 15vh">
+<div id="profile-container" class="container text-white pt-5" style="margin-bottom: 15vh">
   @if (profileData) {
     <app-user-info [headerData]="profileData.headerData" editable></app-user-info>
 
-    <div class="d-flex justify-content-between">
-      <div class="flex-grow-1" style="min-width: 300px">
-        <div class="d-flex gap-5 mb-3">
-          <h3 class="fw-bold">Favorite shows</h3>
+    <div class="d-flex flex-wrap justify-content-between">
+      <div class="flex-grow-1" style="max-width: 100%">
+        <div class="d-flex gap-5 mb-3 section-header">
+          <h3 class="fw-bold section-title">Favorite shows</h3>
           <a routerLink="show-ranking" class="link-offset-3 white-link">View all</a>
         </div>
-        <app-show-list [shows]="profileData.showRankingTop" ranked></app-show-list>
 
-        <app-season-list [seasons]="profileData.seasonRankingTop"></app-season-list>
-        <app-episode-list [episodes]="profileData.episodeRankingTop"></app-episode-list>
+        @if (profileData.showRankingTop.length > 0) {
+          <div class="d-flex show-container">
+            @for (show of profileData.showRankingTop; track show.showId; let rank = $index) {
+              <div class="d-flex flex-column align-items-center">
+                <a [routerLink]="['/show', show.showId]">
+                  <!-- Poster images are sized w185, using 2:3 ratio -->
+                  <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
+                </a>
+                <p class="rank-num">{{rank + 1}}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p>No items on list</p>
+        }
 
-        <div class="d-flex gap-5 mb-3">
-          <h3 class="fw-bold">Currently watching</h3>
+        <div class="d-flex gap-5 mb-3 section-header">
+          <h3 class="fw-bold section-title">Favorite seasons</h3>
+          <a routerLink="season-ranking" class="link-offset-3 white-link">View all</a>
+        </div>
+
+        @if (profileData.seasonRankingTop.length > 0) {
+          <div class="d-flex show-container">
+            @for (season of profileData.seasonRankingTop; track season.showId; let rank = $index) {
+              <div class="d-flex flex-column align-items-center">
+                <a [routerLink]="['/show', season.showId, 'season', season.season]">
+                  <!-- Poster images are sized w185, using 2:3 ratio -->
+                  <img class="poster-image" [ngSrc]="season.posterPath" alt="Season Poster" width="185" height="278" priority>
+                </a>
+                <p class="rank-num">{{rank + 1}}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p>No items on list</p>
+        }
+
+        <div class="d-flex gap-5 mb-3 section-header">
+          <h3 class="fw-bold section-title">Favorite episodes</h3>
+          <a routerLink="episode-ranking" class="link-offset-3 white-link">View all</a>
+        </div>
+
+        @if (profileData.episodeRankingTop.length > 0) {
+          <div class="d-flex show-container">
+            @for (episode of profileData.episodeRankingTop; track episode.showId; let rank = $index) {
+              <div class="d-flex flex-column align-items-center">
+                <a [routerLink]="['/show', episode.showId, 'season', episode.season, 'episode', episode.episode]">
+                  <!-- Episode stills are sized w185, with a 16:9 ratio -->
+                  <img class="episode-image" [ngSrc]="episode.posterPath" alt="Show Poster" width="185" height="104" priority>
+                </a>
+                <p class="rank-num">{{rank + 1}}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p>No items on list</p>
+        }
+
+        <div class="d-flex gap-5 mb-3 section-header">
+          <h3 class="fw-bold section-title">Currently watching</h3>
           <a routerLink="watching" class="link-offset-3 white-link">View all</a>
         </div>
-        <app-show-list [shows]="profileData.watchingTop"></app-show-list>
 
-        <div class="d-flex gap-5 mb-3">
-          <h3 class="fw-bold">Watchlist</h3>
+        @if (profileData.watchingTop.length > 0) {
+          <div class="d-flex show-container">
+            @for (show of profileData.watchingTop; track show.showId; let rank = $index) {
+              <div class="d-flex flex-column align-items-center">
+                <a [routerLink]="['/show', show.showId]">
+                  <!-- Poster images are sized w185, using 2:3 ratio -->
+                  <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
+                </a>
+                <p class="rank-num">{{rank + 1}}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p>No items on list</p>
+        }
+
+        <div class="d-flex gap-5 mb-3 section-header">
+          <h3 class="fw-bold section-title">Watchlist</h3>
           <a routerLink="watchlist" class="link-offset-3 white-link">View all</a>
         </div>
-        <app-show-list [shows]="profileData.watchlistTop"></app-show-list>
 
-        <div class="d-flex align-items-center gap-5 mb-3">
-          <h3 class="fw-bold">Favorite characters</h3>
+        @if (profileData.watchlistTop.length > 0) {
+          <div class="d-flex show-container">
+            @for (show of profileData.watchlistTop; track show.showId; let rank = $index) {
+              <div class="d-flex flex-column align-items-center">
+                <a [routerLink]="['/show', show.showId]">
+                  <!-- Poster images are sized w185, using 2:3 ratio -->
+                  <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
+                </a>
+                <p class="rank-num">{{rank + 1}}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p>No items on list</p>
+        }
+
+        <div id="character-header" class="d-flex align-items-center gap-5 mb-3 section-header">
+          <h3 class="fw-bold section-title">Favorite characters</h3>
           <div class="dropdown">
-            <button id="characters-dropdown" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              {{characterTypeTitle()}}
+            <button id="characters-dropdown" class="btn btn-secondary dropdown-toggle d-flex gap-4 align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span>{{characterTypeTitle()}}</span>
+              <img ngSrc="chevron-down.svg" width="20" height="20" alt="">
             </button>
             <ul class="dropdown-menu">
               @for (type of validCharacterTypes; track type) {
@@ -42,15 +127,46 @@
 
           <a [routerLink]="['character-ranking', selectedCharacterType]" class="link-offset-3 white-link">View all</a>
         </div>
-        <app-character-list title="" [characters]="selectedCharacters"></app-character-list>
-        <app-dynamic-list [dynamics]="profileData.dynamicRankingTop"></app-dynamic-list>
 
-        <div class="d-flex gap-5 mb-3">
-          <h3 class="fw-bold">Collections</h3>
+        @if (selectedCharacters.length > 0) {
+          <div class="d-flex gap-5 character-container">
+            @for (character of selectedCharacters; track character.name) {
+              <div class="text-center mb-3 character-item">
+                <h5 class="mb-0 character-name">{{character.name}}</h5>
+                <p class="fw-light mb-0 character-show">{{character.showName}}</p>
+                <p class="rank-num">{{character.rankNum}}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p>No items on list</p>
+        }
+
+        <div class="d-flex gap-5 mb-3 section-header">
+          <h3 class="fw-bold section-title">Favorite character dynamics</h3>
+          <a routerLink="dynamic-ranking" class="link-offset-3 white-link">View all</a>
+        </div>
+
+        @if (profileData.dynamicRankingTop.length > 0) {
+          <div class="d-flex gap-5 character-container">
+            @for (dynamic of profileData.dynamicRankingTop; track dynamic.id) {
+              <div class="text-center mb-3 character-item">
+                <h5 class="mb-0 character-name">{{dynamic.character1Name}} & {{dynamic.character2Name}}</h5>
+                <p class="fw-light mb-0 character-show">{{dynamic.showTitle}}</p>
+                <p class="rank-num">{{dynamic.rankNum}}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p>No items on list</p>
+        }
+
+        <div class="d-flex gap-5 mb-3 section-header">
+          <h3 class="fw-bold section-title">Collections</h3>
           <a routerLink="collections" class="link-offset-3 white-link">View all</a>
         </div>
 
-        @if (profileData?.collections?.length != 0) {
+        @if (profileData.collections.length > 0) {
           @for (collection of profileData.collections; track collection.id) {
             <app-collection [collection]="collection" onProfilePage></app-collection>
           }
@@ -60,7 +176,7 @@
       </div>
 
       <div>
-        <app-recent-reviews [reviews]="profileData.reviews"></app-recent-reviews>
+        <app-recent-reviews id="recent-reviews" [reviews]="profileData.reviews"></app-recent-reviews>
       </div>
     </div>
   }

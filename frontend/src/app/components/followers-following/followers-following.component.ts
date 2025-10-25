@@ -111,10 +111,7 @@ export class FollowersFollowingComponent implements OnInit {
     try {
       const response = await this.userService.unfollowUser(userId);
       if (response.ok) {
-        const updateUser = this.searchResults.content.find(
-          (user) => user.id === userId,
-        );
-        updateUser.isFollowing = false;
+        this.searchResults.content = this.searchResults.content.filter(user => user.id !== userId);
       }
     } catch (error) {
       console.error(error);
@@ -125,9 +122,7 @@ export class FollowersFollowingComponent implements OnInit {
     try {
       const response = await this.profileService.removeFollower(userId);
       if (response.ok) {
-        this.searchResults.content = this.searchResults.content.filter(
-          (user) => user.id != userId,
-        );
+        this.searchResults.content = this.searchResults.content.filter((user) => user.id != userId);
       }
     } catch (error) {
       console.error(error);

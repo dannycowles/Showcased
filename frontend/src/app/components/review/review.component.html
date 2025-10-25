@@ -1,13 +1,13 @@
-<div [id]="review.id" class="review ms-2 d-flex flex-row align-items-start">
+<div [id]="review.id" class="review d-flex flex-row align-items-start">
   <img class="profile-picture" [ngSrc]="review.profilePicture" alt="Profile Picture" width="100" height="100">
   <div class="ms-3 w-100">
     <div>
       <h4><a class="username" [routerLink]="['/user', review.username]">{{review.username}}</a></h4>
-      <span>{{utilsService.getRelativeDate(review.reviewDate)}}</span>
+      <span class="review-date">{{utilsService.getRelativeDate(review.reviewDate)}}</span>
     </div>
     <div>
-      <div class="d-flex align-items-center gap-2 mt-2 mb-3">
-        <img ngSrc="star.svg" alt="" height="20" width="20">
+      <div class="d-flex align-items-center gap-2 mt-2 mb-3" style="line-height: 1">
+        <img class="review-star" ngSrc="star.svg" alt="" height="20" width="20">
         <span>{{review.rating}}</span>
       </div>
 
@@ -19,7 +19,7 @@
           </svg>
         </div>
       } @else {
-        <pre class="fs-5">{{review.commentary}}</pre>
+        <pre class="fs-5 review-commentary">{{review.commentary}}</pre>
       }
     </div>
 
@@ -42,7 +42,7 @@
     }
   </div>
 </div>
-<div style="margin-left: 7.8rem">
+<div class="comment-container" style="margin-left: 7.8rem">
   <div class="mb-5" [hidden]="!showCommentBox">
     <textarea [id]="'commentBox-' + review.id" #commentBox class="form-control w-50 comment-box" rows="5" [maxLength]="maxCommentLength" [(ngModel)]="commentText" aria-describedby="commentHelpBlock"></textarea>
     <div id="commentHelpBlock" class="form-text text-reset">{{maxCommentLength - commentText.length}} characters remaining</div>
@@ -61,6 +61,7 @@
     <div [hidden]="areCommentsHidden">
       @for (comment of review.comments.content; track comment.id) {
         <app-comment [comment]="comment" [reviewType]="reviewType" (delete)="handleDeleteComment($event)"></app-comment>
+        <hr>
       }
     </div>
 
@@ -68,5 +69,5 @@
       <button type="button" class="btn btn-link link me-3 mb-5" (click)="getMoreReviewComments()">View {{review.comments.page.totalElements - (review.comments.page.number + 1) * review.comments.page.size}} More</button>
     }
   }
-  <button type="button" [hidden]="areCommentsHidden" (click)="areCommentsHidden = true" class="btn btn-link link mb-5">Hide Repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
+  <button type="button" [hidden]="areCommentsHidden" (click)="areCommentsHidden = true" class="btn btn-link link mb-5 ps-0 hide-replies-button">Hide Repl{{review.numComments !== 1 ? 'ies' : 'y'}}</button>
 </div>

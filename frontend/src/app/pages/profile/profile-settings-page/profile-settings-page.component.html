@@ -1,11 +1,11 @@
 <div class="container text-white pt-5" style="margin-bottom: 15vh">
-  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
-    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
-    <h3>Back to profile</h3>
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset return-section" [routerLink]="['..']">
+    <img class="return-arrow" ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3 class="return-title">Back to profile</h3>
   </a>
-  <h2 class="mb-5">Account Settings</h2>
+  <h2 id="settings-title" class="mb-5">Account Settings</h2>
 
-  <ul class="nav nav-tabs custom-tabs mb-5" id="settingsTabs" role="tablist">
+  <ul class="nav nav-tabs custom-tabs mb-5" id="settings-tabs" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
               type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="true">
@@ -34,19 +34,19 @@
 
   <div class="tab-content" id="settingsTabsContent">
     <div class="tab-pane show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-      <h3 class="mb-4">Profile</h3>
+      <h3 class="mb-4 settings-header">Profile</h3>
       @if (profileSettings) {
-        <div class="mb-3 w-50">
+        <div class="mb-3 w-50 input-section">
           <label for="usernameInput" class="form-label">Username</label>
           <input type="text" class="form-control ps-2" id="usernameInput" [value]="profileSettings.displayName" aria-label="Disabled username input" disabled>
         </div>
 
-        <div class="mb-3 w-50">
+        <div class="mb-3 w-50 input-section">
           <label for="emailInput" class="form-label">Email</label>
           <input type="text" class="form-control ps-2" id="emailInput" [value]="profileSettings.email" aria-label="Disabled email input" disabled>
         </div>
 
-        <div class="mb-3 w-50">
+        <div class="mb-3 w-50 input-section">
           <label for="bioInput" class="form-label">Bio</label>
           <textarea class="form-control ps-2" [formControl]="bio" id="bioInput" rows="5" aria-describedby="bioHelpBlock"></textarea>
           <div id="bioHelpBlock" class="form-text text-reset">
@@ -61,7 +61,7 @@
     <div class="tab-pane" id="avatar-tab-pane" role="tabpanel" aria-labelledby="avatar-tab" tabindex="0">
       @if (profileSettings) {
         <div class="d-flex flex-column">
-          <h3 class="mb-4">Avatar</h3>
+          <h3 class="mb-4 settings-header">Avatar</h3>
           <div class="d-flex flex-column align-items-center align-self-start gap-3">
             <img id="profile-picture" [ngSrc]="profileSettings.profilePicture" alt="Profile Picture" width="400" height="400" priority>
             <input type="file" accept="image/jpeg, image/png" required (change)="onFileSelected($event)">
@@ -72,10 +72,10 @@
     </div>
 
     <div class="tab-pane" id="auth-tab-pane" role="tabpanel" aria-labelledby="auth-tab" tabindex="0">
-      <div class="w-50">
-        <h3 class="mb-4">Change password</h3>
+      <div>
+        <h3 class="mb-4 settings-header">Change password</h3>
         <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
-          <div class="mb-4">
+          <div class="mb-4 w-50 input-section">
             <label for="current-password" class="form-label">Current password</label>
             <input id="current-password" type="password" class="form-control ps-2" placeholder="Enter current password" formControlName="currentPassword"
                    [class.is-invalid]="currentPassword.invalid && (currentPassword.dirty || currentPassword.touched)">
@@ -86,7 +86,7 @@
             }
           </div>
 
-          <div class="mb-4">
+          <div class="mb-4 w-50 input-section">
             <label for="new-password" class="form-label">New password</label>
             <div class="position-relative">
               <input id="new-password" [type]="showNewPassword ? 'text' : 'password'" class="form-control ps-2" placeholder="Enter new password" formControlName="newPassword"
@@ -99,7 +99,7 @@
                  (keyup.space)="toggleShowNewPassword()"
                  (keyup.enter)="toggleShowNewPassword()"
                  [attr.aria-label]="showNewPassword ? 'Hide password' : 'Show password'">
-                {{showNewPassword ? "Hide" : "Show"}} Password
+                <span class="password-text">{{showNewPassword ? "Hide" : "Show"}} Password</span>
               </i>
             </div>
             @if (newPassword.invalid && (newPassword.dirty || newPassword.touched)) {
@@ -113,7 +113,7 @@
             }
           </div>
 
-          <div class="mb-4">
+          <div class="mb-4 w-50 input-section">
             <label for="confirm-new-password" class="form-label">Confirm new password</label>
             <input id="confirm-new-password" type="password" class="form-control ps-2" placeholder="Confirm new password" formControlName="confirmNewPassword"
                    [class.is-invalid]="changePasswordForm.invalid && (confirmNewPassword.dirty || confirmNewPassword.touched)">
@@ -131,16 +131,16 @@
     </div>
 
     <div class="tab-pane" id="social-tab-pane" role="tabpanel" aria-labelledby="social-tab" tabindex="0">
-      <h3 class="mb-4">Social</h3>
+      <h3 class="mb-4 settings-header">Social</h3>
       @if (profileSettings) {
         @for (social of profileSettings.socialAccounts; track social.socialId) {
           <div class="social-row">
-            <iconify-icon [attr.icon]="social.icon" width="40" height="40"></iconify-icon>
+            <iconify-icon [attr.icon]="social.icon" [attr.width]="socialIconSize" [attr.height]="socialIconSize"></iconify-icon>
             <span class="social-name">{{social.socialName}}</span>
             <input type="text" class="form-control social-input ps-2" [(ngModel)]="social.handle">
 
             @if (social.handle) {
-              <button type="button" class="btn btn-primary d-flex align-items-center gap-2 button" (click)="removeSocialAccount(social)">
+              <button type="button" class="btn btn-primary d-flex align-items-center gap-2 social-button" (click)="removeSocialAccount(social)">
                 <span>Remove</span>
                 <img ngSrc="x.svg" alt="" height="25" width="25">
               </button>

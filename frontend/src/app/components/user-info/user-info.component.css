@@ -6,6 +6,10 @@
   border-radius: 50%;
 }
 
+#mobile-user-info-container {
+  display: none !important;
+}
+
 #edit-profile-button {
   background-color: var(--button-color);
   border: none;
@@ -38,4 +42,50 @@
   border-radius: 10px;
   transition: background-color 0.3s ease;
   padding: 10px 20px;
+}
+
+@media (max-width: 600px) {
+  #desktop-user-info-container {
+    display: none !important;
+  }
+
+  #mobile-user-info-container {
+    display: block !important;
+  }
+
+  #profile-picture {
+    width: 100px;
+    height: 100px;
+  }
+
+  #display-name, .stat-number {
+    font-size: 1.4rem;
+  }
+
+  #edit-profile-button {
+    font-size: 0.9rem;
+    width: fit-content;
+    padding: 10px 20px;
+  }
+
+  #mobile-user-info-container {
+    gap: 10px !important;
+    align-items: start !important;
+  }
+
+  .social-handle {
+    font-size: 0.8rem;
+  }
+
+  #bio {
+    font-size: 1rem !important;
+  }
+
+  #user-stats {
+    gap: 30px;
+  }
+
+  #user-stats a span {
+    font-size: 1rem;
+  }
 }

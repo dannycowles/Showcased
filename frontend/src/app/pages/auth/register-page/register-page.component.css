@@ -26,3 +26,13 @@
 #register-button:hover {
   background-color: var(--button-hover-color);
 }
+
+@media (max-width: 600px) {
+  #register-container {
+    padding: 0 5%;
+  }
+
+  #register-form {
+    padding: 25px 20px;
+  }
+}

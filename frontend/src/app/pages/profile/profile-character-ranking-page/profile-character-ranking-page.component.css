@@ -1,1 +1,9 @@
+@media (max-width: 600px) {
+  #page-header {
+    gap: 10px !important;
+  }
 
+  #edit-button {
+    padding: 10px 15px !important;
+  }
+}

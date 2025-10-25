@@ -1,56 +1,57 @@
 <nav class="navbar fixed-top navbar-expand-md">
   <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center me-5" routerLink="/">
-      <img ngSrc="logo.svg" alt="Showcased Logo" class="me-4" priority width="45" height="45">
-      <span class="nav-logo fs-3 fw-bold">Showcased</span>
-    </a>
+    <span class="navbar-brand d-flex align-items-center me-5">
+      <img id="nav-img" ngSrc="logo.svg" alt="Showcased Logo" class="me-4" priority width="45" height="45">
+      <a class="nav-logo fs-3 fw-bold text-decoration-none" routerLink="/" (click)="closeMenu()">Showcased</a>
+    </span>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav gap-5 me-auto">
+      <ul id="navbar-left" class="navbar-nav gap-5 me-auto">
         <li class="nav-item">
-          <a class="nav-link white-link" routerLink="/discover">Discover</a>
+          <a class="nav-link white-link" routerLink="/discover" (click)="closeMenu()">Discover</a>
         </li>
         <form (ngSubmit)="navigateToSearch()">
           <div id="nav-searchbar" class="position-relative">
             <img class="input-icon" ngSrc="search.svg" alt="Search icon" width="16" height="16">
             <input class="form-control input-with-icon" id="search-input" placeholder="Search" [(ngModel)]="searchQuery" name="search">
           </div>
+          <button type="submit" style="display: none;" (click)="closeMenu()"></button>
         </form>
       </ul>
-      <ul class="navbar-nav gap-3 d-flex align-items-center">
+      <ul id="navbar-right" class="navbar-nav gap-3 d-flex align-items-center">
         @if (isLoggedIn) {
-          <li class="nav-item">
-            <a class="nav-link white-link" routerLink="/profile/activity">Activity</a>
+          <li class="nav-item w-100">
+            <a class="nav-link white-link" routerLink="/profile/activity" (click)="closeMenu()">Activity</a>
           </li>
           <li class="nav-item dropdown">
             <a id="profile-dropdown" class="nav-link dropdown-toggle d-flex align-items-center me-2 white-link" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img class="me-2" [ngSrc]="localStorage.getItem('profilePicture')" id="profile-picture" alt="Profile Picture" priority width="40" height="40">
-              <span class="me-2" id="profile-username">{{localStorage.getItem('username')}}</span>
+              <img class="me-2" [ngSrc]="profilePicture" id="profile-picture" alt="Profile Picture" priority width="40" height="40">
+              <span class="me-2" id="profile-username">{{username}}</span>
               <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/watchlist">Watchlist</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/watching">Watching</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/show-ranking">Favorite Shows</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/season-ranking">Favorite Seasons</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/episode-ranking">Favorite Episodes</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/character-ranking">Favorite Characters</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/dynamic-ranking">Favorite Dynamics</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/collections">Collections</a></li>
-              <li><a class="dropdown-item" routerLink="/profile/reviews">Reviews</a></li>
+            <ul class="dropdown-menu position-absolute dropdown-menu-end">
+              <li><a class="dropdown-item" routerLink="/profile" (click)="closeMenu()">Profile</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/watchlist" (click)="closeMenu()">Watchlist</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/watching" (click)="closeMenu()">Watching</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/show-ranking" (click)="closeMenu()">Favorite Shows</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/season-ranking" (click)="closeMenu()">Favorite Seasons</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/episode-ranking" (click)="closeMenu()">Favorite Episodes</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/character-ranking" (click)="closeMenu()">Favorite Characters</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/dynamic-ranking" (click)="closeMenu()">Favorite Dynamics</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/collections" (click)="closeMenu()">Collections</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/reviews" (click)="closeMenu()">Reviews</a></li>
 
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" routerLink="/profile/settings">Settings</a></li>
+              <li><a class="dropdown-item" routerLink="/profile/settings" (click)="closeMenu()">Settings</a></li>
               <li><a class="dropdown-item" (click)="logoutUser()">Logout</a></li>
             </ul>
           </li>
         } @else {
           <li class="nav-item">
-            <a class="nav-link" routerLink="/login">Log in</a>
+            <a class="nav-link" routerLink="/login" (click)="closeMenu()">Log in</a>
           </li>
         }
       </ul>

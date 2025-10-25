@@ -1,11 +1,11 @@
 <div class="text-white" style="margin-bottom: 15vh">
-  <div id="searchbar" class="position-relative">
+  <div id="search-bar" class="position-relative">
     <img class="input-icon" ngSrc="search.svg" alt="Search icon" width="20" height="20">
     <input class="form-control input-with-icon" id="search-input" placeholder="Search" (input)="debouncedSearch()" [(ngModel)]="searchString" name="search">
   </div>
 
   @if (loadingData) {
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mt-3">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
@@ -21,7 +21,7 @@
           <div class="d-flex align-items-center my-4">
             <img style="cursor: pointer" [routerLink]="['/user', user.displayName]" [ngSrc]="user.profilePicture" id="profile-picture" alt="User Profile Picture" width="100" height="100" priority>
             <a class="white-link text-decoration-none" [routerLink]="['/user', user.displayName]">
-              <h3 class="ms-5">{{user.displayName}}</h3>
+              <h3 class="ms-5 fw-bold display-name">{{user.displayName}}</h3>
             </a>
 
             @if (editable) {

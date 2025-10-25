@@ -1,18 +1,18 @@
 <div class="container text-white pt-5" style="margin-bottom: 15vh">
-  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
-    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
-    <h3>Back to collections</h3>
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset return-section" [routerLink]="['..']">
+    <img class="return-arrow" ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3 class="return-title">Back to collections</h3>
   </a>
 
   @if (loadingData) {
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mt-3">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
   } @else if (collectionData) {
-    <div class="d-flex align-items-center gap-5 mb-3">
-      <h1 class="fw-bold">{{collectionData.name}}</h1>
+    <div id="collection-info" class="d-flex align-items-center gap-5 mb-3">
+      <h1 id="page-title" class="fw-bold">{{collectionData.name}}</h1>
       <div class="d-flex align-items-center">
         <yt-button-heart [isLiked]="collectionData.isLikedByUser" [size]="100" (click)="toggleLikeState()"></yt-button-heart>
         <div id="like-count" class="fs-4">{{collectionData.numLikes}}</div>

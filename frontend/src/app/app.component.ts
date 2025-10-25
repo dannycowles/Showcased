@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from './services/auth.service';
 import {NgOptimizedImage} from '@angular/common';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
@@ -18,12 +18,19 @@ import {FormsModule} from '@angular/forms';
   ],
   standalone: true,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   readonly isLoggedIn: boolean;
   searchQuery: string = '';
+  profilePicture: string | null = null;
+  username: string | null = null;
 
   constructor(private authService: AuthenticationService, private router: Router) {
     this.isLoggedIn = this.authService.isLoggedIn();
+  }
+
+  ngOnInit() {
+    this.profilePicture = localStorage.getItem('profilePicture');
+    this.username = localStorage.getItem('username');
   }
 
   logoutUser() {
@@ -46,5 +53,8 @@ export class AppComponent {
     }
   }
 
-  protected readonly localStorage = localStorage;
+  closeMenu(): void {
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    navbarCollapse?.classList.remove('show');
+  }
 }

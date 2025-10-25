@@ -1,0 +1,33 @@
+.dynamic-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+}
+
+#dynamic-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+@media (min-width: 400px) {
+  #dynamic-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #dynamic-container {
+    margin-top: 20px !important;
+  }
+
+  .dynamic-names, .dynamic-show {
+    font-size: 1rem;
+  }
+
+  .rank-num {
+    font-size: 0.9rem !important;
+  }
+}

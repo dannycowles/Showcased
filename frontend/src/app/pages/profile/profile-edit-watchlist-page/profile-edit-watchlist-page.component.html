@@ -1,11 +1,11 @@
 <div class="container text-white pt-5" style="margin-bottom: 15vh">
-  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset" [routerLink]="['..']">
-    <img ngSrc="chevron-left.svg" alt="" height="40" width="40">
-    <h3>Back to watchlist</h3>
+  <a class="d-inline-flex align-items-center gap-3 mb-5 text-decoration-none text-reset return-section" [routerLink]="['..']">
+    <img class="return-arrow" ngSrc="chevron-left.svg" alt="" height="40" width="40">
+    <h3 class="return-title">Back to watchlist</h3>
   </a>
 
   <div class="d-flex align-items-center gap-5">
-    <h1 class="fw-bold">Edit watchlist</h1>
+    <h1 id="page-title" class="fw-bold">Edit watchlist</h1>
     <button (click)="openSearchShowsModal()" id="add-button" type="button" class="btn btn-primary d-flex align-items-center gap-3 fs-5">
       <img ngSrc="plus.svg" alt="" height="25" width="25">
       <span>Add show</span>
@@ -13,21 +13,21 @@
   </div>
 
   @if (loadingData) {
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mt-3">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
   } @else if (watchlistEntries) {
-    <div class="d-flex gap-4 flex-wrap mt-5">
+    <div id="show-container" class="d-flex gap-4 flex-wrap mt-5">
       @for (show of watchlistEntries; track show.showId) {
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3 show-row">
           <!-- Poster images are sized w185, using 2:3 ratio -->
           <a [routerLink]="['/show', show.showId]">
             <img class="poster-image" [ngSrc]="show.posterPath" alt="Show Poster" width="185" height="278" priority>
           </a>
 
-          <div class="d-flex flex-column gap-3">
+          <div class="d-flex flex-column gap-3" style="width: fit-content">
             <button id="delete-button" (click)="removeFromWatchlist(show.showId)" type="button" class="btn btn-primary d-flex align-items-center gap-3">
               <img ngSrc="trash.svg" alt="" height="20" width="20">
               <span>Delete</span>
