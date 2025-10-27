@@ -63,6 +63,24 @@
   <router-outlet></router-outlet>
 </main>
 
+<footer class="pt-4 pb-5">
+  <div id="footer-links">
+    <a class="white-link" routerLink="/">Home</a>
+    <div class="circle-divider"></div>
+    <a class="white-link" href="mailto:dannycowless@gmail.com">Contact me</a>
+  </div>
+
+  <div id="footer-legal">
+    <span class="me-1">&copy; 2025 Showcased. All rights reserved. TV data from</span>
+    <div>
+      <a href="https://www.themoviedb.org/" target="_blank" class="me-1">
+        <img id="tmdb-logo" ngSrc="tmdb-logo.svg" alt="TMDB logo" height="50" width="100">
+      </a>
+      <span>and <a class="white-link" href="https://www.omdbapi.com/" target="_blank">OMDB</a></span>
+    </div>
+  </div>
+</footer>
+
 <lib-toastify-toast-container
   [position]="'top-right'"
   [transition]="'bounce'"
