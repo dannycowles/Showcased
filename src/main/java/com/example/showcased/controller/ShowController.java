@@ -166,6 +166,46 @@ public class ShowController {
 
 
 
+    // ========== SEASON REVIEWS ==========
+
+    @PostMapping("/seasons/{seasonId}/reviews")
+    public ResponseEntity<SeasonReviewWithUserInfoDto> addReviewToSeason(@PathVariable Long seasonId, @RequestBody SeasonReviewDto review) {
+        SeasonReviewWithUserInfoDto newReview = showService.addReviewToSeason(seasonId, review);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newReview);
+    }
+
+    @GetMapping("/seasons/{seasonId}/reviews")
+    public ResponseEntity<Page<SeasonReviewWithUserInfoDto>> getSeasonReviews(@PathVariable Long seasonId,
+                                                                              @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<SeasonReviewWithUserInfoDto> reviews = showService.getSeasonReviews(seasonId, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/season-reviews/{reviewId}")
+    public ResponseEntity<SeasonReviewWithUserInfoDto> getSeasonReview(@PathVariable Long reviewId) {
+        SeasonReviewWithUserInfoDto review = showService.getSeasonReview(reviewId);
+        return ResponseEntity.ok(review);
+    }
+
+    @PostMapping("/season-reviews/{reviewId}/likes")
+    public ResponseEntity<Void> likeSeasonReview(@PathVariable Long reviewId) {
+        showService.likeSeasonReview(reviewId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/season-reviews/{reviewId}/likes")
+    public ResponseEntity<Void> unlikeSeasonReview(@PathVariable Long reviewId) {
+        showService.unlikeSeasonReview(reviewId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/season-reviews/{reviewId}")
+    public ResponseEntity<Void> deleteSeasonReview(@PathVariable Long reviewId) {
+        return null;
+    }
+
+
+
     // ========== EPISODE REVIEWS ==========
 
     @PostMapping("/episodes/{episodeId}/reviews")

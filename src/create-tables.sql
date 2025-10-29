@@ -292,3 +292,31 @@ CREATE TABLE IF NOT EXISTS activities (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (activity_type) REFERENCES activity_descriptions(activity_type) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS season_reviews (
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    show_id INT NOT NULL,
+    season_id INT NOT NULL,
+    rating DOUBLE NOT NULL,
+    commentary TEXT DEFAULT NULL,
+    contains_spoilers BOOLEAN DEFAULT false,
+    num_likes INT DEFAULT 0,
+    num_comments INT DEFAULT 0,
+    review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (user_id, show_id, season_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (season_id) REFERENCES season_info(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS liked_season_reviews (
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    review_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (user_id, review_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (review_id) REFERENCES season_reviews(id) ON DELETE CASCADE
+);
