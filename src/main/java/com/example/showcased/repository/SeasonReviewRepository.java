@@ -104,4 +104,12 @@ public interface SeasonReviewRepository extends JpaRepository<SeasonReview, Long
     @Modifying
     @Query("UPDATE SeasonReview r SET r.numLikes = r.numLikes - 1 WHERE r.id = :reviewId")
     void decrementLikes(@Param("reviewId") Long reviewId);
+
+    @Modifying
+    @Query("UPDATE SeasonReview r SET r.numComments = r.numComments + 1 WHERE r.id = :reviewId")
+    void incrementNumComments(@Param("reviewId") Long reviewId);
+
+    @Modifying
+    @Query("UPDATE SeasonReview r SET r.numComments = r.numComments - 1 WHERE r.id = :reviewId")
+    void decrementNumComments(@Param("reviewId") Long reviewId);
 }

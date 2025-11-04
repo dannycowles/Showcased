@@ -320,3 +320,26 @@ CREATE TABLE IF NOT EXISTS liked_season_reviews (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (review_id) REFERENCES season_reviews(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS season_review_comments (
+    id INT AUTO_INCREMENT,
+    review_id INT NOT NULL,
+    user_id INT NOT NULL,
+    comment_text TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    num_likes INT DEFAULT 0,
+    PRIMARY KEY (id),
+    FOREIGN KEY (review_id) REFERENCES season_reviews(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS liked_season_review_comments (
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    comment_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (user_id, comment_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES season_review_comments(id) ON DELETE CASCADE
+);

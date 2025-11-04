@@ -57,6 +57,8 @@ public class ShowService {
     private final AuthService authService;
     private final SeasonReviewRepository seasonReviewRepository;
     private final LikedSeasonReviewsRepository likedSeasonReviewsRepository;
+    private final SeasonReviewCommentRepository seasonReviewCommentRepository;
+    private final LikedSeasonReviewCommentRepository likedSeasonReviewCommentsRepository;
     private final int numComments = 20;
 
     public ShowService(ShowReviewRepository showReviewRepository,
@@ -81,7 +83,10 @@ public class ShowService {
                        AuthService authService,
                        UserRepository userRepository,
                        SeasonReviewRepository seasonReviewRepository,
-                       LikedSeasonReviewsRepository likedSeasonReviewsRepository, SeasonInfoRepository seasonInfoRepository) {
+                       LikedSeasonReviewsRepository likedSeasonReviewsRepository,
+                       SeasonInfoRepository seasonInfoRepository,
+                       SeasonReviewCommentRepository seasonReviewCommentRepository,
+                       LikedSeasonReviewCommentRepository likedSeasonReviewCommentsRepository) {
         this.showReviewRepository = showReviewRepository;
         this.modelMapper = modelMapper;
         this.likedShowReviewsRepository = likedShowReviewsRepository;
@@ -106,6 +111,8 @@ public class ShowService {
         this.seasonReviewRepository = seasonReviewRepository;
         this.likedSeasonReviewsRepository = likedSeasonReviewsRepository;
         this.seasonInfoRepository = seasonInfoRepository;
+        this.seasonReviewCommentRepository = seasonReviewCommentRepository;
+        this.likedSeasonReviewCommentsRepository = likedSeasonReviewCommentsRepository;
     }
 
     // For each of the shows, retrieve the end year
@@ -754,7 +761,77 @@ public class ShowService {
         likedSeasonReviewsRepository.delete(like);
         seasonReviewRepository.decrementLikes(reviewId);
 
-        // TODO: Delete the like season review even from the activities table
+        // TODO: Delete the like season review event from the activities table
+    }
+
+    @Transactional
+    public void deleteSeasonReview(Long reviewId) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Ensure the review exists before attempting to delete it
+        SeasonReview review = seasonReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a season review with ID: " + reviewId));
+
+        // Ensure the review being deleted belongs to the requesting user
+        if (!review.getUserId().equals(user.getId())) {
+            throw new UnauthorizedAccessException("You are not allowed to delete this review");
+        }
+        seasonReviewRepository.delete(review);
+
+        // Delete the number of reviews for the user
+        userRepository.decrementNumReviews(user.getId());
+
+        // TODO: Delete all occurrences of this from the activities table
+        // In this instance it needs to delete the following
+        //  - Episode Review Like Notifications
+        //  - Episode Review Comment Notifications 
+    }
+
+    @Transactional
+    public void updateSeasonReview(Long reviewId, UpdateReviewDto updates) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Ensure the review exists before attempting to modify it
+        SeasonReview review = seasonReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a season review with ID: " + reviewId));
+
+        // Ensure the review being modified belongs to the requesting user
+        if (!review.getUserId().equals(user.getId())) {
+            throw new UnauthorizedAccessException("You are not allowed to update this review");
+        }
+
+        // Map the updates to the review
+        modelMapper.map(updates, review);
+    }
+
+    @Transactional
+    public ReviewCommentWithUserInfoDto addCommentToSeasonReview(Long reviewId, ReviewCommentDto reviewComment) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Ensure the review exists before attempting to add a comment to it
+        SeasonReview review = seasonReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a season review with ID: " + reviewId));
+
+        SeasonReviewComment newComment = new SeasonReviewComment(reviewId, user.getId(), reviewComment.getCommentText());
+        seasonReviewCommentRepository.save(newComment);
+        seasonReviewRepository.incrementNumComments(reviewId);
+
+        // TODO: add the season review comment event to the activities table, except own review
+
+        return seasonReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
+    }
+
+    public Page<ReviewCommentWithUserInfoDto> getSeasonReviewComments(Long reviewId, Pageable pageable) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
+
+        Pageable modifiedPage = PageRequest.of(
+                Math.max(0, pageable.getPageNumber() - 1),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+
+        return seasonReviewCommentRepository.findAllByReviewId(reviewId, userId, modifiedPage);
     }
 
 

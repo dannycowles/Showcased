@@ -201,7 +201,27 @@ public class ShowController {
 
     @DeleteMapping("/season-reviews/{reviewId}")
     public ResponseEntity<Void> deleteSeasonReview(@PathVariable Long reviewId) {
-        return null;
+        showService.deleteSeasonReview(reviewId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/season-reviews/{reviewId}")
+    public ResponseEntity<Void> updateSeasonReview(@PathVariable Long reviewId, @RequestBody UpdateReviewDto updates) {
+        showService.updateSeasonReview(reviewId, updates);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/season-reviews/{reviewId}/comments")
+    public ResponseEntity<ReviewCommentWithUserInfoDto> addCommentToSeasonReview(@PathVariable Long reviewId, @RequestBody ReviewCommentDto reviewComment) {
+        ReviewCommentWithUserInfoDto newComment = showService.addCommentToSeasonReview(reviewId, reviewComment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newComment);
+    }
+
+    @GetMapping("/season-reviews/{reviewId}/comments")
+    public ResponseEntity<Page<ReviewCommentWithUserInfoDto>> getSeasonReviewComments(@PathVariable Long reviewId,
+                                                                                      @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<ReviewCommentWithUserInfoDto> comments = showService.getSeasonReviewComments(reviewId, pageable);
+        return ResponseEntity.ok(comments);
     }
 
 
