@@ -783,8 +783,8 @@ public class ShowService {
 
         // TODO: Delete all occurrences of this from the activities table
         // In this instance it needs to delete the following
-        //  - Episode Review Like Notifications
-        //  - Episode Review Comment Notifications 
+        //  - Season Review Like Notifications
+        //  - Season Review Comment Notifications
     }
 
     @Transactional
@@ -833,6 +833,91 @@ public class ShowService {
 
         return seasonReviewCommentRepository.findAllByReviewId(reviewId, userId, modifiedPage);
     }
+
+    public ReviewCommentWithUserInfoDto getSeasonReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
+        Long userId = (user != null) ? user.getId() : null;
+        return seasonReviewCommentRepository.findById(commentId, userId);
+    }
+
+    @Transactional
+    public void likeSeasonReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Ensure the comment exists before trying to like it
+        SeasonReviewComment comment = seasonReviewCommentRepository.findById(commentId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a season review comment with ID: " + commentId));
+
+        // Check if the user has already liked the comment
+        if (likedSeasonReviewCommentsRepository.existsByUserIdAndCommentId(user.getId(), commentId)) {
+            throw new AlreadyLikedException("You have already liked this season review comment");
+        }
+
+        // Create the like entity and add to DB, as well as increment the number of likes for that comment
+        LikedSeasonReviewComment like = new LikedSeasonReviewComment(user.getId(), commentId);
+        likedSeasonReviewCommentsRepository.save(like);
+        seasonReviewCommentRepository.incrementNumLikes(commentId);
+
+        // TODO: Add the season review comment like event to the activities table, except themselves
+    }
+
+    @Transactional
+    public void unlikeSeasonReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Ensure the comment exists before trying to unlike it
+        SeasonReviewComment comment = seasonReviewCommentRepository.findById(commentId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a season review comment with ID: " + commentId));
+
+        // Check to ensure the user has already liked the comment
+        LikedSeasonReviewComment like = likedSeasonReviewCommentsRepository.findByUserIdAndCommentId(user.getId(), commentId)
+                .orElseThrow(() -> new HaventLikedException("You have not liked this season review comment"));
+
+        // Delete the like entity from the DB and decrement the number of likes for that comment
+        likedSeasonReviewCommentsRepository.delete(like);
+        seasonReviewCommentRepository.decrementNumLikes(commentId);
+
+        // TODO: Delete the season review comment like event from the activities table
+    }
+
+    @Transactional
+    public void deleteSeasonReviewComment(Long commentId) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Ensure the comment exists before trying to delete it
+        SeasonReviewComment comment = seasonReviewCommentRepository.findById(commentId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a season review comment with ID: " + commentId));
+
+        // Ensure the comment belongs to the user requesting to delete it
+        if (!user.getId().equals(comment.getUserId())) {
+            throw new UnauthorizedAccessException("You are not allowed to delete this comment");
+        }
+
+        // Delete the comment and decrement the number of comments on the associated review
+        seasonReviewCommentRepository.delete(comment);
+        seasonReviewRepository.decrementNumComments(comment.getReviewId());
+
+        // TODO: Delete the associated activity events, in this case:
+        // - Season Review comment event
+        // - Season Review comment like events
+    }
+
+    @Transactional
+    public void updateSeasonReviewComment(Long commentId, UpdateCommentDto update) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Ensure the comment exists before trying to modify it
+        SeasonReviewComment comment = seasonReviewCommentRepository.findById(commentId)
+                .orElseThrow(() -> new ItemNotFoundException("Didn't find a season review comment with ID: " + commentId));
+
+        // Ensure the comment belongs to the user requesting to modify it
+        if (!user.getId().equals(comment.getUserId())) {
+            throw new UnauthorizedAccessException("You are not allowed to modify this comment");
+        }
+        modelMapper.map(update, comment);
+    }
+
+
 
 
     @Transactional

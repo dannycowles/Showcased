@@ -224,6 +224,37 @@ public class ShowController {
         return ResponseEntity.ok(comments);
     }
 
+    @GetMapping("/season-reviews/comments/{commentId}")
+    public ResponseEntity<ReviewCommentWithUserInfoDto> getSeasonReviewComment(@PathVariable Long commentId) {
+        ReviewCommentWithUserInfoDto comment = showService.getSeasonReviewComment(commentId);
+        return ResponseEntity.ok(comment);
+    }
+
+    @PostMapping("/season-reviews/comments/{commentId}/likes")
+    public ResponseEntity<Void> likeSeasonReviewComment(@PathVariable Long commentId) {
+        showService.likeSeasonReviewComment(commentId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/season-reviews/comments/{commentId}/likes")
+    public ResponseEntity<Void> unlikeSeasonReviewComment(@PathVariable Long commentId) {
+        showService.unlikeSeasonReviewComment(commentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/season-reviews/comments/{commentId}")
+    public ResponseEntity<Void> deleteSeasonReviewComment(@PathVariable Long commentId) {
+        showService.deleteSeasonReviewComment(commentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/season-reviews/comments/{commentId}")
+    public ResponseEntity<Void> updateSeasonReviewComment(@PathVariable Long commentId, @RequestBody UpdateCommentDto update) {
+        showService.updateSeasonReviewComment(commentId, update);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 
     // ========== EPISODE REVIEWS ==========
