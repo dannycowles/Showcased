@@ -83,7 +83,7 @@ public interface SeasonReviewRepository extends JpaRepository<SeasonReview, Long
             r.reviewDate,
             CASE
                 WHEN EXISTS (
-                    SELECT lr FROM LikedShowReview lr
+                    SELECT lr FROM LikedSeasonReview lr
                     WHERE lr.reviewId = r.id AND lr.userId = :userId
                 ) THEN TRUE ELSE FALSE
             END,

@@ -1011,6 +1011,25 @@ public class ProfileService {
 
     public Page<ActivityDto> getProfileActivity(int pageNum) {
         User user = authService.retrieveUserFromJwt();
-        return activitiesRepository.findByUserId(user.getId(), PageRequest.of(pageNum - 1, numActivities));
+        Page<ActivityDto> activities = activitiesRepository.findByUserId(user.getId(), PageRequest.of(pageNum - 1, numActivities));
+
+        activities.getContent().forEach(this::filterActivityByType);
+
+        return activities;
+    }
+
+    private void filterActivityByType(ActivityDto activity) {
+        int type = activity.getActivityType();
+        
+        if (type != 2) activity.setShowReviewLike(null);
+        if (type != 3) activity.setShowReviewComment(null);
+        if (type != 4) activity.setEpisodeReviewLike(null);
+        if (type != 5) activity.setEpisodeReviewComment(null);
+        if (type != 6) activity.setShowReviewCommentLike(null);
+        if (type != 7) activity.setEpisodeReviewCommentLike(null);
+        if (type != 8) activity.setCollectionLike(null);
+        if (type != 9) activity.setSeasonReviewLike(null);
+        if (type != 10) activity.setSeasonReviewComment(null);
+        if (type != 11) activity.setSeasonReviewCommentLike(null);
     }
 }

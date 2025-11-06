@@ -728,9 +728,8 @@ public class ShowService {
         User user = authService.retrieveUserFromJwt();
 
         // Ensure the season review exists
-        if (seasonReviewRepository.findById(reviewId).isEmpty()) {
-            throw new ItemNotFoundException("Didn't find a season review with ID: " + reviewId);
-        }
+        SeasonReview review = seasonReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ItemNotFoundException("Season review with ID: " + reviewId));
 
         // Check if the user already liked the review, if so throw exception
         if (likedSeasonReviewsRepository.existsByReviewIdAndUserId(reviewId, user.getId())) {
@@ -742,7 +741,14 @@ public class ShowService {
         likedSeasonReviewsRepository.save(like);
         seasonReviewRepository.incrementLikes(reviewId);
 
-        // TODO: Add the like season review event to the activities table, except liking own review
+        // Add the like season review event to the activities table, except liking own review
+        if (!review.getUserId().equals(user.getId())) {
+            Activity likeEvent = new Activity();
+            likeEvent.setUserId(review.getUserId());
+            likeEvent.setActivityType(ActivityType.LIKE_SEASON_REVIEW.getDbValue());
+            likeEvent.setExternalId(like.getId());
+            activitiesRepository.save(likeEvent);
+        }
     }
 
     @Transactional
@@ -761,7 +767,8 @@ public class ShowService {
         likedSeasonReviewsRepository.delete(like);
         seasonReviewRepository.decrementLikes(reviewId);
 
-        // TODO: Delete the like season review event from the activities table
+        // Delete the like season review event from the activities table
+        activitiesRepository.deleteByExternalIdAndActivityType(like.getId(), ActivityType.LIKE_SEASON_REVIEW.getDbValue());
     }
 
     @Transactional
@@ -781,10 +788,11 @@ public class ShowService {
         // Delete the number of reviews for the user
         userRepository.decrementNumReviews(user.getId());
 
-        // TODO: Delete all occurrences of this from the activities table
+        // Delete all occurrences of this from the activities table
         // In this instance it needs to delete the following
         //  - Season Review Like Notifications
         //  - Season Review Comment Notifications
+        activitiesRepository.deleteSeasonReviewActivities(reviewId);
     }
 
     @Transactional
@@ -816,7 +824,14 @@ public class ShowService {
         seasonReviewCommentRepository.save(newComment);
         seasonReviewRepository.incrementNumComments(reviewId);
 
-        // TODO: add the season review comment event to the activities table, except own review
+        // Add the season review comment event to the activities table, except own review
+        if (!review.getUserId().equals(user.getId())) {
+            Activity commentEvent = new Activity();
+            commentEvent.setUserId(review.getUserId());
+            commentEvent.setActivityType(ActivityType.COMMENT_SEASON_REVIEW.getDbValue());
+            commentEvent.setExternalId(newComment.getId());
+            activitiesRepository.save(commentEvent);
+        }
 
         return seasonReviewCommentRepository.findByIdWithUserInfo(newComment.getId());
     }
@@ -858,7 +873,14 @@ public class ShowService {
         likedSeasonReviewCommentsRepository.save(like);
         seasonReviewCommentRepository.incrementNumLikes(commentId);
 
-        // TODO: Add the season review comment like event to the activities table, except themselves
+        // Add the season review comment like event to the activities table, except themselves
+        if (!comment.getUserId().equals(user.getId())) {
+            Activity likeEvent = new Activity();
+            likeEvent.setUserId(comment.getUserId());
+            likeEvent.setActivityType(ActivityType.COMMENT_SEASON_REVIEW.getDbValue());
+            likeEvent.setExternalId(like.getId());
+            activitiesRepository.save(likeEvent);
+        }
     }
 
     @Transactional
@@ -866,8 +888,9 @@ public class ShowService {
         User user = authService.retrieveUserFromJwt();
 
         // Ensure the comment exists before trying to unlike it
-        SeasonReviewComment comment = seasonReviewCommentRepository.findById(commentId)
-                .orElseThrow(() -> new ItemNotFoundException("Didn't find a season review comment with ID: " + commentId));
+        if (seasonReviewCommentRepository.findById(commentId).isEmpty()) {
+            throw new ItemNotFoundException("Didn't find a season review comment with ID: " + commentId);
+        }
 
         // Check to ensure the user has already liked the comment
         LikedSeasonReviewComment like = likedSeasonReviewCommentsRepository.findByUserIdAndCommentId(user.getId(), commentId)
@@ -877,7 +900,8 @@ public class ShowService {
         likedSeasonReviewCommentsRepository.delete(like);
         seasonReviewCommentRepository.decrementNumLikes(commentId);
 
-        // TODO: Delete the season review comment like event from the activities table
+        // Delete the season review comment like event from the activities table
+        activitiesRepository.deleteByExternalIdAndActivityType(like.getId(), ActivityType.COMMENT_SEASON_REVIEW.getDbValue());
     }
 
     @Transactional
@@ -897,9 +921,10 @@ public class ShowService {
         seasonReviewCommentRepository.delete(comment);
         seasonReviewRepository.decrementNumComments(comment.getReviewId());
 
-        // TODO: Delete the associated activity events, in this case:
+        // Delete the associated activity events, in this case:
         // - Season Review comment event
         // - Season Review comment like events
+        activitiesRepository.deleteSeasonReviewCommentActivities(commentId);
     }
 
     @Transactional
