@@ -39,6 +39,7 @@ public class UserService {
     private final DynamicRankingRepository dynamicRankingRepository;
     private final ActivitiesRepository activitiesRepository;
     private final AuthService authService;
+    private final SeasonReviewRepository seasonReviewRepository;
 
     public UserService(ShowRankingRepository showRankingRepository,
                        EpisodeRankingRepository episodeRankingRepository,
@@ -57,7 +58,8 @@ public class UserService {
                        EpisodeReviewRepository episodeReviewRepository,
                        DynamicRankingRepository dynamicRankingRepository,
                        ActivitiesRepository activitiesRepository,
-                       AuthService authService) {
+                       AuthService authService,
+                       SeasonReviewRepository seasonReviewRepository) {
         this.showRankingRepository = showRankingRepository;
         this.episodeRankingRepository = episodeRankingRepository;
         this.watchlistRepository = watchlistRepository;
@@ -76,6 +78,7 @@ public class UserService {
         this.dynamicRankingRepository = dynamicRankingRepository;
         this.activitiesRepository = activitiesRepository;
         this.authService = authService;
+        this.seasonReviewRepository = seasonReviewRepository;
     }
 
     private void ensureUserExists(Long userId) {
@@ -237,6 +240,7 @@ public class UserService {
 
         List<ShowReviewDto> topShowReviews = showReviewRepository.findByUsername(username, loggedInUserId, Pageable.unpaged()).getContent();
         List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUsername(username, loggedInUserId, Pageable.unpaged()).getContent();
+        List<SeasonReviewDto> topSeasonReviews = seasonReviewRepository.findByUsername(username, loggedInUserId, Pageable.unpaged()).getContent();
 
         Sort sort = modifiedPage.getSort();
         Comparator<ShowReviewDto> comparator;
@@ -258,11 +262,16 @@ public class UserService {
             };
         }
 
-        List<ShowReviewDto> combined = Stream.concat(topShowReviews.stream(), topEpisodeReviews.stream())
-                .sorted(comparator)
-                .skip((long) modifiedPage.getPageNumber() * modifiedPage.getPageSize())
-                .limit(modifiedPage.getPageSize())
-                .toList();
+        List<ShowReviewDto> combined = Stream.of(
+            topShowReviews.stream(),
+            topEpisodeReviews.stream(),
+            topSeasonReviews.stream()
+        )
+            .flatMap(s -> s)
+            .sorted(comparator)
+            .skip((long) modifiedPage.getPageNumber() * modifiedPage.getPageSize())
+            .limit(modifiedPage.getPageSize())
+            .collect(Collectors.toList());
 
         return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
     }
@@ -293,6 +302,20 @@ public class UserService {
                 pageable.getSort()
         );
         return episodeReviewRepository.findByUsername(username, loggedInUserId, modifiedPage);
+    }
+
+    public Page<SeasonReviewDto> getUserSeasonReviews(String username, Pageable pageable) {
+        ensureUserExistsByUsername(username);
+        User loggedInUser = authService.retrieveUserFromJwt();
+        Long loggedInUserId = (loggedInUser != null) ? loggedInUser.getId() : null;
+
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                Math.max(0, pageable.getPageNumber() - 1),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+        return seasonReviewRepository.findByUsername(username, loggedInUserId, modifiedPage);
     }
 
     @Transactional

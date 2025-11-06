@@ -85,6 +85,12 @@ public class ProfileController {
         return ResponseEntity.ok(reviews);
     }
 
+    @GetMapping("/season-reviews")
+    public ResponseEntity<Page<SeasonReviewDto>> getSeasonReviews(@PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<SeasonReviewDto> reviews = profileService.getSeasonReviews(pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
     @GetMapping("/followers")
     public ResponseEntity<Page<UserSearchDto>> getFollowers(@RequestParam(required = false) String name,
                                                             @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE) Pageable pageable) {

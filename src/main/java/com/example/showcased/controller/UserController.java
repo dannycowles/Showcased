@@ -58,6 +58,13 @@ public class UserController {
         return ResponseEntity.ok(reviews);
     }
 
+    @GetMapping("/{username}/season-reviews")
+    public ResponseEntity<Page<SeasonReviewDto>> getUserSeasonReviews(@PathVariable String username,
+                                                                      @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE)  Pageable pageable) {
+        Page<SeasonReviewDto> reviews = userService.getUserSeasonReviews(username, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
     @GetMapping("/{username}/following")
     public ResponseEntity<Page<UserSearchDto>> getFollowing(@PathVariable String username,
                                                             @RequestParam(required = false) String name,

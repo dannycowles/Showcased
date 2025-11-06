@@ -452,6 +452,7 @@ public class ShowService {
         if (user != null) {
             season.setOnRankingList(seasonRankingRepository.existsById(new SeasonRankingId(user.getId(), season.getId())));;
         }
+        season.setReviewDistribution(seasonReviewRepository.getSeasonReviewDistribution(season.getId()));
         return season;
     }
 
