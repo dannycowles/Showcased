@@ -8,6 +8,11 @@ export interface BaseAddReviewDto {
 
 export interface AddShowReviewDto extends BaseAddReviewDto {}
 
+export interface AddSeasonReviewDto extends BaseAddReviewDto {
+  showId: number;
+  season: number;
+}
+
 export interface AddEpisodeReviewDto extends BaseAddReviewDto {
   showId: number;
   episodeTitle: string;

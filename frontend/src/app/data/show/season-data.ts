@@ -1,4 +1,5 @@
 import {SeasonEpisodeFull} from './season-episode';
+import {ReviewBreakdown} from './show-data';
 
 export interface SeasonData {
   readonly id: number;
@@ -9,4 +10,5 @@ export interface SeasonData {
   readonly posterPath: string;
   readonly episodes: SeasonEpisodeFull[];
   onRankingList: boolean;
+  readonly reviewDistribution: ReviewBreakdown[];
 }
