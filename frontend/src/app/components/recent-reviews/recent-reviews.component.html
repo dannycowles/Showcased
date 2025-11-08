@@ -12,6 +12,9 @@
             @case (ReviewType.Show) {
               <span class="fw-bold">{{review.showTitle}}</span>
             }
+            @case (ReviewType.Season) {
+              <span class="fw-bold">{{review.showTitle}} S{{review.season}}</span>
+            }
             @case (ReviewType.Episode) {
               <span class="fw-bold">{{review.showTitle}} S{{review.season}} E{{review.episode}}</span>
             }

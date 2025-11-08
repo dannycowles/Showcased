@@ -53,25 +53,16 @@ export class UserReviewsPageComponent {
       this.isLoadingReviews = true;
       switch (this.selectedReviewType.value) {
         case 'all':
-          this.reviews = await this.userService.getCombinedReviews(
-            this.username,
-            1,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.userService.getCombinedReviews(this.username, 1, this.selectedSortOption.value);
           break;
         case 'show':
-          this.reviews = await this.userService.getShowReviews(
-            this.username,
-            1,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.userService.getShowReviews(this.username, 1, this.selectedSortOption.value);
+          break;
+        case 'season':
+          this.reviews = await this.userService.getSeasonReviews(this.username, 1, this.selectedSortOption.value);
           break;
         case 'episode':
-          this.reviews = await this.userService.getEpisodeReviews(
-            this.username,
-            1,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.userService.getEpisodeReviews(this.username, 1, this.selectedSortOption.value);
           break;
       }
     } catch (error) {
@@ -87,25 +78,16 @@ export class UserReviewsPageComponent {
     try {
       switch (this.selectedReviewType.value) {
         case 'all':
-          this.reviews = await this.userService.getCombinedReviews(
-            this.username,
-            this.reviews.page.number + 2,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.userService.getCombinedReviews(this.username, this.reviews.page.number + 2, this.selectedSortOption.value);
           break;
         case 'show':
-          this.reviews = await this.userService.getShowReviews(
-            this.username,
-            this.reviews.page.number + 2,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.userService.getShowReviews(this.username, this.reviews.page.number + 2, this.selectedSortOption.value);
+          break;
+        case 'season':
+          this.reviews = await this.userService.getSeasonReviews(this.username, this.reviews.page.number + 2, this.selectedSortOption.value);
           break;
         case 'episode':
-          this.reviews = await this.userService.getEpisodeReviews(
-            this.username,
-            this.reviews.page.number + 2,
-            this.selectedSortOption.value,
-          );
+          this.reviews = await this.userService.getEpisodeReviews(this.username, this.reviews.page.number + 2, this.selectedSortOption.value);
           break;
       }
     } catch (error) {

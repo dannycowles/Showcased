@@ -6,8 +6,20 @@
   width: 250px;
 }
 
-#seasons-dropdown:after {
+#sort-dropdown {
+  background-color: var(--button-color);
+  border: none;
+  padding: 10px 30px;
+  border-radius: 10px;
+}
+
+#seasons-dropdown:after, #sort-dropdown:after {
   display: none;
+}
+
+.section-header {
+  font-weight: bold;
+  margin-bottom: 25px;
 }
 
 .add-button {
@@ -98,6 +110,17 @@
 
   .episode-item {
     flex-direction: column !important;
+  }
+
+  #sort-dropdown {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+
+  .nav-tabs {
+    gap: 22px !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
   }
 
   .episode-image {

@@ -19,6 +19,7 @@ export interface ProfileShowReviewData extends BaseProfileReviewData {
 
 export interface ProfileSeasonReviewData extends BaseProfileReviewData {
   readonly type: ReviewType.Season;
+  readonly season: number;
 }
 
 export interface ProfileEpisodeReviewData extends BaseProfileReviewData {

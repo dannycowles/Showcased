@@ -43,6 +43,12 @@ export class ProfileReviewComponent implements OnInit {
       delete: () => this.showService.deleteShowReview(this.review.id),
       update: (updates: UpdateReviewDto) => this.showService.updateShowReview(this.review.id, updates)
     },
+    [ReviewType.Season]: {
+      like: () => this.showService.likeSeasonReview(this.review.id),
+      unlike: () => this.showService.unlikeSeasonReview(this.review.id),
+      delete: () => this.showService.deleteSeasonReview(this.review.id),
+      update: (updates: UpdateReviewDto) => this.showService.updateSeasonReview(this.review.id, updates)
+    },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReview(this.review.id),
       unlike: () => this.showService.unlikeEpisodeReview(this.review.id),
@@ -72,6 +78,9 @@ export class ProfileReviewComponent implements OnInit {
     switch (this.review.type) {
       case ReviewType.Show:
         itemName = this.review.showTitle;
+        break;
+      case ReviewType.Season:
+        itemName = `${this.review.showTitle} S${this.review.season}`;
         break;
       case ReviewType.Episode:
         itemName = `${this.review.showTitle} S${this.review.season} E${this.review.episode}`;
@@ -119,6 +128,13 @@ export class ProfileReviewComponent implements OnInit {
     switch(this.review.type) {
       case ReviewType.Show:
         this.router.navigate(['/show', this.review.showId], {
+          state: {
+            reviewId: this.review.id
+          }
+        });
+        break;
+      case ReviewType.Season:
+        this.router.navigate(['/show', this.review.showId, 'season', this.review.season], {
           state: {
             reviewId: this.review.id
           }

@@ -31,7 +31,7 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                 CASE
                     WHEN EXISTS (
                             SELECT lr FROM LikedEpisodeReview lr
-                            WHERE lr.reviewId = :reviewId AND lr.userId = :userId
+                            WHERE lr.reviewId = r.id AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
                 END,

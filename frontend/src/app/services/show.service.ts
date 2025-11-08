@@ -501,7 +501,8 @@ export class ShowService {
   async updateSeasonReviewComment(commentId: number, data: AddCommentDto): Promise<Response> {
     const response = await fetch(`${this.baseUrl}/season-reviews/comments/${commentId}`, {
       method: 'PATCH',
-      headers: this.getHeaders()
+      headers: this.getHeaders(true),
+      body: JSON.stringify(data)
     });
 
     this.checkUnauthorizedUser(response);

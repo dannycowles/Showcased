@@ -36,6 +36,11 @@ export class CommentComponent {
       unlike: () => this.showService.unlikeShowReviewComment(this.comment.id),
       update: (updates: AddCommentDto) => this.showService.updateShowReviewComment(this.comment.id, updates)
     },
+    [ReviewType.Season]: {
+      like: () => this.showService.likeSeasonReviewComment(this.comment.id),
+      unlike: () => this.showService.unlikeSeasonReviewComment(this.comment.id),
+      update: (updates: AddCommentDto) => this.showService.updateSeasonReviewComment(this.comment.id, updates)
+    },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReviewComment(this.comment.id),
       unlike: () => this.showService.unlikeEpisodeReviewComment(this.comment.id),
