@@ -878,7 +878,7 @@ public class ShowService {
         if (!comment.getUserId().equals(user.getId())) {
             Activity likeEvent = new Activity();
             likeEvent.setUserId(comment.getUserId());
-            likeEvent.setActivityType(ActivityType.COMMENT_SEASON_REVIEW.getDbValue());
+            likeEvent.setActivityType(ActivityType.LIKE_SEASON_REVIEW_COMMENT.getDbValue());
             likeEvent.setExternalId(like.getId());
             activitiesRepository.save(likeEvent);
         }
@@ -902,7 +902,7 @@ public class ShowService {
         seasonReviewCommentRepository.decrementNumLikes(commentId);
 
         // Delete the season review comment like event from the activities table
-        activitiesRepository.deleteByExternalIdAndActivityType(like.getId(), ActivityType.COMMENT_SEASON_REVIEW.getDbValue());
+        activitiesRepository.deleteByExternalIdAndActivityType(like.getId(), ActivityType.LIKE_SEASON_REVIEW_COMMENT.getDbValue());
     }
 
     @Transactional

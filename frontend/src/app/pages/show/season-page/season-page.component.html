@@ -2,7 +2,13 @@
   @if (season) {
     <!-- Poster images are sized w342, with a 2:3 ratio -->
     <div id="season-wrapper" class="d-flex align-items-start gap-5">
-      <img id="season-poster" [ngSrc]="season.posterPath" alt="Season Poster" width="342" height="513" priority>
+      <div>
+        <img id="season-poster" [ngSrc]="season.posterPath" alt="Season Poster" width="342" height="513" priority>
+        <div id="mobile-user-ratings">
+          <h4 id="user-ratings-title" class="text-reset">User ratings</h4>
+          <app-review-chart [reviewDistribution]="season.reviewDistribution"></app-review-chart>
+        </div>
+      </div>
 
       <div id="season-info">
         <a id="show-link" [routerLink]="['/show', showId]">
@@ -16,34 +22,41 @@
 
         <p id="season-plot" class="mb-4 fs-5">{{season.overview}}</p>
 
-        <div id="button-group" class="d-flex flex-column gap-3 mb-3">
-          <button type="button" class="btn btn-primary add-button" (click)="openAddReviewModal()">
-            <img ngSrc="pencil.svg" width="20" height="20" alt="">
-            <span>Write a review</span>
-          </button>
+        <div class="d-flex align-items-start gap-5 flex-wrap">
+          <div id="button-group" class="d-flex flex-column gap-3 mb-3">
+            <button type="button" class="btn btn-primary add-button" (click)="openAddReviewModal()">
+              <img ngSrc="pencil.svg" width="20" height="20" alt="">
+              <span>Write a review</span>
+            </button>
 
-          @if (season.onRankingList) {
-            <button type="button" class="btn btn-primary add-button" (click)="removeSeasonFromRankingList()">
-              <img ngSrc="trophy.svg" width="20" height="20" alt="">
-              <span>Remove from ranking</span>
-            </button>
-          } @else {
-            <button type="button" class="btn btn-primary add-button" (click)="addSeasonToRankingList()">
-              <img ngSrc="trophy.svg" width="20" height="20" alt="">
-              <span>Add to ranking</span>
-            </button>
-          }
+            @if (season.onRankingList) {
+              <button type="button" class="btn btn-primary add-button" (click)="removeSeasonFromRankingList()">
+                <img ngSrc="trophy.svg" width="20" height="20" alt="">
+                <span>Remove from ranking</span>
+              </button>
+            } @else {
+              <button type="button" class="btn btn-primary add-button" (click)="addSeasonToRankingList()">
+                <img ngSrc="trophy.svg" width="20" height="20" alt="">
+                <span>Add to ranking</span>
+              </button>
+            }
 
-          <div ngbDropdown>
-            <button type="button" class="btn btn-primary d-flex justify-content-center gap-4 align-items-center" id="seasons-dropdown" ngbDropdownToggle>
-              Select Season
-              <img ngSrc="chevron-down.svg" width="20" height="20" alt="">
-            </button>
-            <div ngbDropdownMenu aria-labelledby="seasons-dropdown">
-              @for (_ of [].constructor(numSeasons); let season = $index; track season) {
-                <button [routerLink]="['/show', showId, 'season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
-              }
+            <div ngbDropdown>
+              <button type="button" class="btn btn-primary d-flex justify-content-center gap-4 align-items-center" id="seasons-dropdown" ngbDropdownToggle>
+                Select Season
+                <img ngSrc="chevron-down.svg" width="20" height="20" alt="">
+              </button>
+              <div ngbDropdownMenu aria-labelledby="seasons-dropdown">
+                @for (_ of [].constructor(numSeasons); let season = $index; track season) {
+                  <button [routerLink]="['/show', showId, 'season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
+                }
+              </div>
             </div>
+          </div>
+
+          <div id="desktop-user-ratings">
+            <h4 class="text-reset">User ratings</h4>
+            <app-review-chart [reviewDistribution]="season.reviewDistribution"></app-review-chart>
           </div>
         </div>
       </div>

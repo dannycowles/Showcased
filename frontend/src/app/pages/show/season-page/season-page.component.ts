@@ -6,7 +6,7 @@ import {UtilsService} from '../../../services/utils.service';
 import {ProfileService} from '../../../services/profile.service';
 import {AddToSeasonRankingList} from '../../../data/dto/add-to-list-dto';
 import {Title} from '@angular/platform-browser';
-import {NgOptimizedImage} from '@angular/common';
+import {NgOptimizedImage, ViewportScroller} from '@angular/common';
 import {NgbDropdown, NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddReviewModalComponent} from '../../../components/add-review-modal/add-review-modal.component';
 import {AuthenticationService} from '../../../services/auth.service';
@@ -17,6 +17,7 @@ import {InfiniteScrollDirective} from 'ngx-infinite-scroll';
 import {ReviewComponent} from '../../../components/review/review.component';
 import {ReviewType} from '../../../data/enums';
 import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
+import {ReviewChartComponent} from '../../../components/review-chart/review-chart.component';
 
 
 @Component({
@@ -32,11 +33,12 @@ import {SortReviewOption, sortReviewOptions} from '../../../data/constants';
     NgbDropdownToggle,
     InfiniteScrollDirective,
     ReviewComponent,
+    ReviewChartComponent,
   ],
   standalone: true,
 })
 export class SeasonPageComponent implements OnInit {
-  readonly showId: number;
+  showId: number;
   seasonNumber: number;
   season: SeasonData;
   numSeasons: number;
@@ -55,11 +57,16 @@ export class SeasonPageComponent implements OnInit {
     private modalService: NgbModal,
     private router: Router,
     private title: Title,
+    private viewportScroller: ViewportScroller
   ) {
-    this.showId = this.route.snapshot.params['id'];
     this.route.params.subscribe((params) => {
-      this.seasonNumber = params['seasonNumber'];
-      this.retrieveSeasonInfo();
+        this.showId = params['id'];
+        this.seasonNumber = params['seasonNumber'];
+        this.notifReviewId = this.router.getCurrentNavigation()?.extras?.state?.['reviewId'];
+        this.notifCommentId = this.router.getCurrentNavigation()?.extras?.state?.['commentId'];
+        history.replaceState({}, document.title, window.location.href);
+        this.viewportScroller.scrollToPosition([0, 0]);
+        this.retrieveSeasonInfo()
     });
   }
 
@@ -88,6 +95,57 @@ export class SeasonPageComponent implements OnInit {
       this.reviews = await this.showService.getSeasonReviews(this.season.id);
     } catch (error) {
       console.error(error);
+    }
+
+    // If there was a notification review in the navigation state, fetch that review and append it to the beginning of the reviews list
+    if (this.notifReviewId != null) {
+      try {
+        const notifReview = await this.showService.getSeasonReview(this.notifReviewId);
+
+        // Filter out the review if it already exists on the first page of results
+        this.reviews.content = this.reviews.content.filter((review) => review.id != this.notifReviewId);
+
+        // Appends the notification review to the beginning of the first page of results
+        this.reviews.content.unshift(notifReview);
+
+        // Switch to the reviews tab
+        const reviewsTab = document.getElementById('reviews-tab') as HTMLButtonElement;
+        reviewsTab.click();
+
+        if (this.notifCommentId == null) {
+          // Scroll to the review itself
+          requestAnimationFrame(() => {
+            const reviewElement = document.getElementById(String(this.notifReviewId));
+            if (reviewElement) {
+              reviewElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+              });
+            }
+          });
+        } else {
+          // Retrieve the first page of comments, and then fetch the notification comment
+          this.reviews.content[0].comments = await this.showService.getSeasonReviewComments(this.notifReviewId);
+          const notifComment = await this.showService.getSeasonReviewComment(this.notifCommentId);
+
+          // If the comment exists on the first page, filter it out before appending to beginning so no duplicates
+          this.reviews.content[0].comments.content = this.reviews.content[0].comments.content.filter((comment) => comment.id != notifComment.id);
+          this.reviews.content[0].comments.content.unshift(notifComment);
+          this.reviews.content[0] = {...this.reviews.content[0], notifCommentId: this.notifCommentId};
+
+          requestAnimationFrame(() => {
+            const commentElement = document.getElementById(String(this.notifCommentId));
+            if (commentElement) {
+              commentElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 

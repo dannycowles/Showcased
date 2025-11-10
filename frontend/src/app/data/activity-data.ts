@@ -12,6 +12,9 @@ export interface ActivityData {
   readonly showReviewCommentLike: ActivityShowReviewCommentLikeData;
   readonly episodeReviewCommentLike: ActivityEpisodeReviewCommentLikeData;
   readonly collectionLike: ActivityCollectionLikeData;
+  readonly seasonReviewLike: ActivitySeasonReviewLikeData;
+  readonly seasonReviewComment: ActivitySeasonReviewCommentData;
+  readonly seasonReviewCommentLike: ActivitySeasonReviewCommentLikeData;
   readonly createdAt: string;
 }
 
@@ -55,3 +58,11 @@ interface ActivityCollectionLikeData {
   readonly collectionId: number;
   readonly collectionName: string;
 }
+
+interface ActivitySeasonReviewLikeData extends ActivityShowReviewLikeData {
+  readonly season: number;
+}
+
+interface ActivitySeasonReviewCommentData extends ActivitySeasonReviewLikeData, CommentData {}
+
+interface ActivitySeasonReviewCommentLikeData extends ActivitySeasonReviewLikeData, CommentData, CommentLikeData {}
