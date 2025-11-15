@@ -12,7 +12,7 @@ import {Router} from '@angular/router';
 import {DynamicRankingData} from '../data/lists/dynamic-ranking-data';
 import {PageData} from '../data/page-data';
 import {ProfileReviewData} from '../data/types';
-import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
+import {ProfileEpisodeReviewData, ProfileSeasonReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
 import {HttpStatusCode} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 
@@ -275,6 +275,25 @@ export class UserService {
    */
   async getShowReviews(username: string, page ?: number, sort ?: string): Promise<PageData<ProfileShowReviewData>>  {
     const url = new URL(`${this.baseUrl}/${username}/show-reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sort != null) url.searchParams.set('sort', sort);
+
+    const response = await fetch(url, {
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Retrieves season reviews for the user with the specified username, paged & sorted as requested
+   * @param username
+   * @param page
+   * @param sort
+   */
+  async getSeasonReviews(username: string, page ?: number, sort ?: string): Promise<PageData<ProfileSeasonReviewData>> {
+    const url = new URL(`${this.baseUrl}/${username}/season-reviews`);
     if (page != null) url.searchParams.set('page', String(page));
     if (sort != null) url.searchParams.set('sort', sort);
 

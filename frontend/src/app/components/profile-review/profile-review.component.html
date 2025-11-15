@@ -4,6 +4,9 @@
         @case (ReviewType.Show) {
           <h4 class="text-reset fw-bold review-show">{{review.showTitle}}</h4>
         }
+        @case (ReviewType.Season) {
+          <h4 class="text-reset fw-bold review-season">{{review.showTitle}} S{{review.season}}</h4>
+        }
         @case (ReviewType.Episode) {
           <div class="mb-1">
             <h3 class="text-reset fw-bold mb-0 review-episode">{{review.episodeTitle}}</h3>

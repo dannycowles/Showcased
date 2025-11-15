@@ -7,11 +7,13 @@ export enum AddShowType {
 
 export enum ReviewType {
   Show = "Show",
+  Season = "Season",
   Episode = "Episode"
 }
 
 export enum ReviewPageType {
   ShowPage = "ShowPage",
+  SeasonPage = "SeasonPage",
   EpisodePage = "EpisodePage"
 }
 
@@ -23,5 +25,8 @@ export enum ActivityType {
   CommentEpisodeReview,
   LikeShowReviewComment,
   LikeEpisodeReviewComment,
-  LikeCollection
+  LikeCollection,
+  LikeSeasonReview,
+  CommentSeasonReview,
+  LikeSeasonReviewComment
 }

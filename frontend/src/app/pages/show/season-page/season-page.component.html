@@ -2,7 +2,13 @@
   @if (season) {
     <!-- Poster images are sized w342, with a 2:3 ratio -->
     <div id="season-wrapper" class="d-flex align-items-start gap-5">
-      <img id="season-poster" [ngSrc]="season.posterPath" alt="Season Poster" width="342" height="513" priority>
+      <div>
+        <img id="season-poster" [ngSrc]="season.posterPath" alt="Season Poster" width="342" height="513" priority>
+        <div id="mobile-user-ratings">
+          <h4 id="user-ratings-title" class="text-reset">User ratings</h4>
+          <app-review-chart [reviewDistribution]="season.reviewDistribution"></app-review-chart>
+        </div>
+      </div>
 
       <div id="season-info">
         <a id="show-link" [routerLink]="['/show', showId]">
@@ -16,47 +22,63 @@
 
         <p id="season-plot" class="mb-4 fs-5">{{season.overview}}</p>
 
-        <div id="button-group" class="d-flex flex-column gap-3 mb-3">
-          @if (season.onRankingList) {
-            <button type="button" class="btn btn-primary add-button" (click)="removeSeasonFromRankingList()">
-              <img ngSrc="trophy.svg" width="20" height="20" alt="">
-              <span>Remove from ranking</span>
+        <div class="d-flex align-items-start gap-5 flex-wrap">
+          <div id="button-group" class="d-flex flex-column gap-3 mb-3">
+            <button type="button" class="btn btn-primary add-button" (click)="openAddReviewModal()">
+              <img ngSrc="pencil.svg" width="20" height="20" alt="">
+              <span>Write a review</span>
             </button>
-          } @else {
-            <button type="button" class="btn btn-primary add-button" (click)="addSeasonToRankingList()">
-              <img ngSrc="trophy.svg" width="20" height="20" alt="">
-              <span>Add to ranking</span>
-            </button>
-          }
 
-          <div ngbDropdown>
-            <button type="button" class="btn btn-primary d-flex justify-content-center gap-4 align-items-center" id="seasons-dropdown" ngbDropdownToggle>
-              Select Season
-              <img ngSrc="chevron-down.svg" width="20" height="20" alt="">
-            </button>
-            <div ngbDropdownMenu aria-labelledby="seasons-dropdown">
-              @for (_ of [].constructor(numSeasons); let season = $index; track season) {
-                <button [routerLink]="['/show', showId, 'season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
-              }
+            @if (season.onRankingList) {
+              <button type="button" class="btn btn-primary add-button" (click)="removeSeasonFromRankingList()">
+                <img ngSrc="trophy.svg" width="20" height="20" alt="">
+                <span>Remove from ranking</span>
+              </button>
+            } @else {
+              <button type="button" class="btn btn-primary add-button" (click)="addSeasonToRankingList()">
+                <img ngSrc="trophy.svg" width="20" height="20" alt="">
+                <span>Add to ranking</span>
+              </button>
+            }
+
+            <div ngbDropdown>
+              <button type="button" class="btn btn-primary d-flex justify-content-center gap-4 align-items-center" id="seasons-dropdown" ngbDropdownToggle>
+                Select Season
+                <img ngSrc="chevron-down.svg" width="20" height="20" alt="">
+              </button>
+              <div ngbDropdownMenu aria-labelledby="seasons-dropdown">
+                @for (_ of [].constructor(numSeasons); let season = $index; track season) {
+                  <button [routerLink]="['/show', showId, 'season', season + 1]" ngbDropdownItem>Season {{season + 1}}</button>
+                }
+              </div>
             </div>
+          </div>
+
+          <div id="desktop-user-ratings">
+            <h4 class="text-reset">User ratings</h4>
+            <app-review-chart [reviewDistribution]="season.reviewDistribution"></app-review-chart>
           </div>
         </div>
       </div>
     </div>
 
 
-    <div id="episodes-wrapper">
+    <div id="episodes-wrapper" class="w-100">
       <!-- Navigation tabs -->
       <ul class="nav nav-tabs custom-tabs mb-4" id="season-tabs" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="episodes-tab" data-bs-toggle="tab" data-bs-target="#episodes-tab-pane" type="button" role="tab" aria-controls="episodes-tab-pane" aria-selected="true">Episodes ({{season.episodes.length}})</button>
         </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-tab-pane" type="button" role="tab" aria-controls="reviews-tab-pane" aria-selected="false">Reviews</button>
+        </li>
       </ul>
-
-      <p id="rating-header" class="my-4 fs-5 fst-italic">Episode ratings from IMDb</p>
 
       <div class="tab-content" id="seasons-tab-content">
         <div class="tab-pane show active" id="episodes-tab-pane" role="tabpanel" aria-labelledby="episodes-tab" tabindex="0">
+          <h3 class="section-header mb-0">Episodes</h3>
+          <p id="rating-header" class="mb-4 mt-3 fs-5 fst-italic">Episode ratings from IMDb</p>
+
           <div id="episodes-container" class="mt-5 d-flex flex-column gap-5">
             @for (episode of season.episodes; track episode.episodeNumber) {
               <div class="d-flex gap-4 episode-item">
@@ -87,6 +109,38 @@
               </div>
             }
           </div>
+        </div>
+
+        <div class="tab-pane" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
+          <div class="d-flex my-3 align-items-center">
+            <h3 class="section-header mb-0">Reviews</h3>
+            <div class="dropdown ms-auto d-flex align-items-center">
+              <span class="fs-4 me-4">Sort</span>
+              <button id="sort-dropdown" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="me-3">{{ selectedSort.label }}</span>
+                <img ngSrc="chevron-down.svg" alt="" height="20" width="20">
+              </button>
+              <ul class="dropdown-menu">
+                @for (sortOption of sortReviewOptions; track sortOption.value) {
+                  <li><a class="dropdown-item" (click)="setSort(sortOption)">{{ sortOption.label }}</a></li>
+                }
+              </ul>
+            </div>
+          </div>
+          @if (reviews?.content.length) {
+            <div class="reviews"
+                 infiniteScroll
+                 [infiniteScrollDistance]="1"
+                 (scrolled)="loadMoreReviews()"
+            >
+              @for (review of reviews.content; track review.id) {
+                <app-review [review]="review" [reviewType]="ReviewType.Season" [isLoggedIn]="isLoggedIn" (deleteReview)="handleDeleteReview($event)"></app-review>
+                <hr>
+              }
+            </div>
+          } @else {
+            <h4 class="text-reset">No reviews for this season</h4>
+          }
         </div>
       </div>
     </div>

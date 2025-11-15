@@ -5,12 +5,12 @@ import {EpisodeData} from '../data/show/episode-data';
 import {ShowGenresData} from '../data/show-genres-data';
 import {GenreResultPageData, ResultPageData} from '../data/show/result-page-data';
 import {RoleData} from '../data/role-data';
-import {EpisodeReviewData, ShowReviewData} from '../data/reviews-data';
+import {EpisodeReviewData, SeasonReviewData, ShowReviewData} from '../data/reviews-data';
 import {SeasonEpisodes} from '../data/show/season-episode';
 import {Router} from '@angular/router';
 import {ReviewCommentData} from '../data/review-comment-data';
 import {AddCommentDto} from '../data/dto/add-comment-dto';
-import {AddEpisodeReviewDto, AddShowReviewDto} from '../data/dto/add-review-dto';
+import {AddEpisodeReviewDto, AddSeasonReviewDto, AddShowReviewDto} from '../data/dto/add-review-dto';
 import {PageData} from '../data/page-data';
 import {UpdateReviewDto} from '../data/dto/update-review-dto';
 import {AuthenticationService} from './auth.service';
@@ -301,6 +301,208 @@ export class ShowService {
       method: 'PATCH',
       headers: this.getHeaders(true),
       body: JSON.stringify(updates)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Adds a review to a season by ID
+   * @param seasonId
+   * @param data
+   */
+  async addSeasonReview(seasonId: number, data: AddSeasonReviewDto): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/seasons/${seasonId}/reviews`, {
+      method: 'POST',
+      headers: this.getHeaders(true),
+      body: JSON.stringify(data)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Retrieves the reviews for a seaon by its ID
+   * @param seasonId
+   * @param page
+   * @param sortOption
+   */
+  async getSeasonReviews(seasonId: number, page ?: number, sortOption ?: string): Promise<PageData<SeasonReviewData>> {
+    const url = new URL(`${this.baseUrl}/seasons/${seasonId}/reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sortOption != null) url.searchParams.set('sort', sortOption);
+
+    const response = await fetch(url, {
+      headers: this.getHeaders()
+    });
+    return response.json();
+  }
+
+  /**
+   * Retrieves a single season review by its ID, main use is for profile notification clicks
+   * @param reviewId
+   */
+  async getSeasonReview(reviewId: number): Promise<SeasonReviewData> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/${reviewId}`, {
+      headers: this.getHeaders()
+    });
+    return response.json();
+  }
+
+  /**
+   * Likes a season review by its ID
+   * @param reviewId
+   */
+  async likeSeasonReview(reviewId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/${reviewId}/likes`, {
+      method: 'POST',
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Unlikes a season review by its ID
+   * @param reviewId
+   */
+  async unlikeSeasonReview(reviewId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/${reviewId}/likes`, {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Deletes a season review by its ID
+   * @param reviewId
+   */
+  async deleteSeasonReview(reviewId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/${reviewId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Updates a season review by its ID
+   * @param reviewId
+   * @param data
+   */
+  async updateSeasonReview(reviewId: number, data: UpdateReviewDto): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/${reviewId}`, {
+      method: 'PATCH',
+      headers: this.getHeaders(true),
+      body: JSON.stringify(data)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Adds a comment to a season review by its ID
+   * @param reviewId
+   * @param data
+   */
+  async addCommentToSeasonReview(reviewId: number, data: AddCommentDto): Promise<ReviewCommentData> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/${reviewId}/comments`, {
+      method: 'POST',
+      headers: this.getHeaders(true),
+      body: JSON.stringify(data)
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Gets comments for a season review by its ID
+   * @param reviewId
+   * @param page
+   */
+  async getSeasonReviewComments(reviewId: number, page ?: number): Promise<PageData<ReviewCommentData>> {
+    const url = new URL(`${this.baseUrl}/season-reviews/${reviewId}/comments`);
+    if (page != null) url.searchParams.set('page', String(page));
+
+    const response = await fetch(url, {
+      headers: this.getHeaders()
+    });
+    return response.json();
+  }
+
+  /**
+   * Retrieves a single season review comment by its ID, used for profile notification clicks
+   * @param commentId
+   */
+  async getSeasonReviewComment(commentId: number): Promise<ReviewCommentData> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/comments/${commentId}`, {
+      headers: this.getHeaders()
+    });
+    return response.json();
+  }
+
+  /**
+   * Likes a season review comment by its ID
+   * @param commentId
+   */
+  async likeSeasonReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/comments/${commentId}/likes`, {
+      method: 'POST',
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Unlikes a season review comment by its ID
+   * @param commentId
+   */
+  async unlikeSeasonReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/comments/${commentId}/likes`, {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Deletes a season review comment by its ID
+   * @param commentId
+   */
+  async deleteSeasonReviewComment(commentId: number): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response;
+  }
+
+  /**
+   * Updates a season review comment by its ID
+   * @param commentId
+   * @param data
+   */
+  async updateSeasonReviewComment(commentId: number, data: AddCommentDto): Promise<Response> {
+    const response = await fetch(`${this.baseUrl}/season-reviews/comments/${commentId}`, {
+      method: 'PATCH',
+      headers: this.getHeaders(true),
+      body: JSON.stringify(data)
     });
 
     this.checkUnauthorizedUser(response);

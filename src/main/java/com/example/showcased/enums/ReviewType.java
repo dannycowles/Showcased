@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ReviewType {
     SHOW("Show"),
-    EPISODE("Episode");
+    EPISODE("Episode"),
+    SEASON("Season");
 
     private final String type;
 

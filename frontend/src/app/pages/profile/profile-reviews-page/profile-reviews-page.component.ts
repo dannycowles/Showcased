@@ -49,6 +49,9 @@ export class ProfileReviewsPageComponent implements OnInit {
         case 'show':
           this.reviews = await this.profileService.getShowReviews(1, this.selectedSortOption.value);
           break;
+        case 'season':
+          this.reviews = await this.profileService.getSeasonReviews(1, this.selectedSortOption.value);
+          break;
         case 'episode':
           this.reviews = await this.profileService.getEpisodeReviews(1, this.selectedSortOption.value);
           break;
@@ -71,6 +74,9 @@ export class ProfileReviewsPageComponent implements OnInit {
           break;
         case 'show':
           moreReviews= await this.profileService.getShowReviews(this.reviews.page.number + 2, this.selectedSortOption.value);
+          break;
+        case 'season':
+          moreReviews = await this.profileService.getSeasonReviews(this.reviews.page.number + 2, this.selectedSortOption.value);
           break;
         case 'episode':
           moreReviews = await this.profileService.getEpisodeReviews(this.reviews.page.number + 2, this.selectedSortOption.value);

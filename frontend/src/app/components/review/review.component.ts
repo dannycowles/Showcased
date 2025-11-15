@@ -66,6 +66,14 @@ export class ReviewComponent implements OnChanges {
       updateReview: (updates: UpdateReviewDto) => this.showService.updateShowReview(this.review.id, updates),
       deleteComment: (commentId: number) => this.showService.deleteShowReviewComment(commentId)
     },
+    [ReviewType.Season]: {
+      like: () => this.showService.likeSeasonReview(this.review.id),
+      unlike: () => this.showService.unlikeSeasonReview(this.review.id),
+      getComments: (page: number) => this.showService.getSeasonReviewComments(this.review.id, page),
+      addComment: (comment: AddCommentDto) => this.showService.addCommentToSeasonReview(this.review.id, comment),
+      updateReview: (updates: UpdateReviewDto) => this.showService.updateSeasonReview(this.review.id, updates),
+      deleteComment: (commentId: number) => this.showService.deleteSeasonReviewComment(commentId)
+    },
     [ReviewType.Episode]: {
       like: () => this.showService.likeEpisodeReview(this.review.id),
       unlike: () => this.showService.unlikeEpisodeReview(this.review.id),
@@ -73,7 +81,7 @@ export class ReviewComponent implements OnChanges {
       addComment: (comment: AddCommentDto) => this.showService.addCommentToEpisodeReview(this.review.id, comment),
       updateReview: (updates: UpdateReviewDto) => this.showService.updateEpisodeReview(this.review.id, updates),
       deleteComment: (commentId: number) => this.showService.deleteEpisodeReviewComment(commentId)
-    },
+    }
   };
 
   async toggleReviewLikeState() {

@@ -16,16 +16,12 @@ import java.util.List;
 public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Long> {
     @Query(""" 
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
-                "EpisodePage",
                 r.id,
                 u.displayName,
                 u.profilePicture,
                 r.userId,
                 e.showId,
-                e.season,
-                e.episode,
                 e.showTitle,
-                e.episodeTitle,
                 r.rating,
                 r.commentary,
                 r.containsSpoilers,
@@ -33,14 +29,16 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                 r.numComments,
                 r.reviewDate,
                 CASE
-                    WHEN :userId IS NULL THEN FALSE
                     WHEN EXISTS (
                             SELECT lr FROM LikedEpisodeReview lr
                             WHERE lr.reviewId = r.id AND lr.userId = :userId
                     ) THEN TRUE
                     ELSE FALSE
-                 END,
-                 CASE WHEN r.userId = :userId THEN TRUE ELSE FALSE END
+                END,
+                CASE WHEN r.userId = :userId THEN TRUE ELSE FALSE END,
+                e.season,
+                e.episode,
+                e.episodeTitle
             )
             FROM EpisodeReview r
             JOIN User u ON r.userId = u.id
@@ -51,16 +49,12 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
 
     @Query(""" 
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
-                "EpisodePage",
                 r.id,
                 u.displayName,
                 u.profilePicture,
                 r.userId,
                 e.showId,
-                e.season,
-                e.episode,
                 e.showTitle,
-                e.episodeTitle,
                 r.rating,
                 r.commentary,
                 r.containsSpoilers,
@@ -74,7 +68,10 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
                     ) THEN TRUE
                     ELSE FALSE
                 END,
-                CASE WHEN r.userId = :userId THEN TRUE ELSE FALSE END
+                CASE WHEN r.userId = :userId THEN TRUE ELSE FALSE END,
+                e.season,
+                e.episode,
+                e.episodeTitle
             )
             FROM EpisodeReview r
             JOIN User u ON r.userId = u.id
@@ -141,24 +138,23 @@ public interface EpisodeReviewRepository extends JpaRepository<EpisodeReview, Lo
 
     @Query("""
         SELECT new com.example.showcased.dto.EpisodeReviewWithUserInfoDto(
-            "EpisodePage",
-            r.id,
-            u.displayName,
-            u.profilePicture,
-            r.userId,
-            e.showId,
-            e.season,
-            e.episode,
-            e.showTitle,
-            e.episodeTitle,
-            r.rating,
-            r.commentary,
-            r.containsSpoilers,
-            r.numLikes,
-            r.numComments,
-            r.reviewDate,
-            FALSE,
-            TRUE
+                r.id,
+                u.displayName,
+                u.profilePicture,
+                r.userId,
+                e.showId,
+                e.showTitle,
+                r.rating,
+                r.commentary,
+                r.containsSpoilers,
+                r.numLikes,
+                r.numComments,
+                r.reviewDate,
+                FALSE,
+                TRUE,
+                e.season,
+                e.episode,
+                e.episodeTitle
         )
         FROM EpisodeReview r
         JOIN EpisodeInfo e ON e.id = r.episodeId

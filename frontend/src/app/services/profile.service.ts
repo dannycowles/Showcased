@@ -29,7 +29,7 @@ import {CreateCollectionDto} from '../data/dto/create-collection-dto';
 import {UpdateCollectionDetails} from '../data/dto/update-collection-details';
 import {ActivityData} from '../data/activity-data';
 import {PageData} from '../data/page-data';
-import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
+import {ProfileEpisodeReviewData, ProfileSeasonReviewData, ProfileShowReviewData} from '../data/profile-reviews-data';
 import {ProfileReviewData} from '../data/types';
 import {ProfileSettingsData} from '../data/profile-settings-data';
 import {AuthenticationService} from './auth.service';
@@ -203,6 +203,24 @@ export class ProfileService {
    */
   async getShowReviews(page ?: number, sort ?: string): Promise<PageData<ProfileShowReviewData>> {
     const url = new URL(`${this.baseUrl}/show-reviews`);
+    if (page != null) url.searchParams.set('page', String(page));
+    if (sort != null) url.searchParams.set('sort', sort);
+
+    const response = await fetch(url, {
+      headers: this.getHeaders()
+    });
+
+    this.checkUnauthorizedUser(response);
+    return response.json();
+  }
+
+  /**
+   * Retrieves season reviews for the logged-in user, paged & sorted as requested
+   * @param page
+   * @param sort
+   */
+  async getSeasonReviews(page ?: number, sort ?: string): Promise<PageData<ProfileSeasonReviewData>> {
+    const url = new URL(`${this.baseUrl}/season-reviews`);
     if (page != null) url.searchParams.set('page', String(page));
     if (sort != null) url.searchParams.set('sort', sort);
 

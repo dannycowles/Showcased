@@ -23,6 +23,7 @@ public class SeasonDto {
     @JsonAlias("episodes")
     private List<SeasonEpisodeDto> episodes;
     private boolean onRankingList = false;
+    private List<ReviewDistributionDto> reviewDistribution;
 
     public void setRating(int episodeNumber, String rating) {
         for (SeasonEpisodeDto seasonEpisodeDto : episodes) {

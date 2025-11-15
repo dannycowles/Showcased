@@ -38,6 +38,15 @@
             @case (ActivityType.LikeCollection) {
               <span class="activity-text">{{getCollectionLikeDescription(activity)[1]}}</span>
             }
+            @case (ActivityType.LikeSeasonReview) {
+              <span class="activity-text">{{getSeasonReviewLikeDescription(activity)[1]}}</span>
+            }
+            @case (ActivityType.CommentSeasonReview) {
+              <span class="activity-text">{{getSeasonReviewCommentDescription(activity)[1]}}</span>
+            }
+            @case (ActivityType.LikeSeasonReviewComment) {
+              <span class="activity-text">{{getSeasonReviewCommentLikeDescription(activity)[1]}}</span>
+            }
         }
         </h5>
         <h5 class="ms-auto text-reset fw-light activity-date">{{utilsService.getRelativeDate(activity.createdAt)}}</h5>

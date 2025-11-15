@@ -166,6 +166,97 @@ public class ShowController {
 
 
 
+    // ========== SEASON REVIEWS ==========
+
+    @PostMapping("/seasons/{seasonId}/reviews")
+    public ResponseEntity<SeasonReviewWithUserInfoDto> addReviewToSeason(@PathVariable Long seasonId, @RequestBody SeasonReviewDto review) {
+        SeasonReviewWithUserInfoDto newReview = showService.addReviewToSeason(seasonId, review);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newReview);
+    }
+
+    @GetMapping("/seasons/{seasonId}/reviews")
+    public ResponseEntity<Page<SeasonReviewWithUserInfoDto>> getSeasonReviews(@PathVariable Long seasonId,
+                                                                              @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = "reviewDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<SeasonReviewWithUserInfoDto> reviews = showService.getSeasonReviews(seasonId, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/season-reviews/{reviewId}")
+    public ResponseEntity<SeasonReviewWithUserInfoDto> getSeasonReview(@PathVariable Long reviewId) {
+        SeasonReviewWithUserInfoDto review = showService.getSeasonReview(reviewId);
+        return ResponseEntity.ok(review);
+    }
+
+    @PostMapping("/season-reviews/{reviewId}/likes")
+    public ResponseEntity<Void> likeSeasonReview(@PathVariable Long reviewId) {
+        showService.likeSeasonReview(reviewId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/season-reviews/{reviewId}/likes")
+    public ResponseEntity<Void> unlikeSeasonReview(@PathVariable Long reviewId) {
+        showService.unlikeSeasonReview(reviewId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/season-reviews/{reviewId}")
+    public ResponseEntity<Void> deleteSeasonReview(@PathVariable Long reviewId) {
+        showService.deleteSeasonReview(reviewId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/season-reviews/{reviewId}")
+    public ResponseEntity<Void> updateSeasonReview(@PathVariable Long reviewId, @RequestBody UpdateReviewDto updates) {
+        showService.updateSeasonReview(reviewId, updates);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/season-reviews/{reviewId}/comments")
+    public ResponseEntity<ReviewCommentWithUserInfoDto> addCommentToSeasonReview(@PathVariable Long reviewId, @RequestBody ReviewCommentDto reviewComment) {
+        ReviewCommentWithUserInfoDto newComment = showService.addCommentToSeasonReview(reviewId, reviewComment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newComment);
+    }
+
+    @GetMapping("/season-reviews/{reviewId}/comments")
+    public ResponseEntity<Page<ReviewCommentWithUserInfoDto>> getSeasonReviewComments(@PathVariable Long reviewId,
+                                                                                      @PageableDefault(page = 1, size = DEFAULT_PAGE_SIZE, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<ReviewCommentWithUserInfoDto> comments = showService.getSeasonReviewComments(reviewId, pageable);
+        return ResponseEntity.ok(comments);
+    }
+
+    @GetMapping("/season-reviews/comments/{commentId}")
+    public ResponseEntity<ReviewCommentWithUserInfoDto> getSeasonReviewComment(@PathVariable Long commentId) {
+        ReviewCommentWithUserInfoDto comment = showService.getSeasonReviewComment(commentId);
+        return ResponseEntity.ok(comment);
+    }
+
+    @PostMapping("/season-reviews/comments/{commentId}/likes")
+    public ResponseEntity<Void> likeSeasonReviewComment(@PathVariable Long commentId) {
+        showService.likeSeasonReviewComment(commentId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/season-reviews/comments/{commentId}/likes")
+    public ResponseEntity<Void> unlikeSeasonReviewComment(@PathVariable Long commentId) {
+        showService.unlikeSeasonReviewComment(commentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/season-reviews/comments/{commentId}")
+    public ResponseEntity<Void> deleteSeasonReviewComment(@PathVariable Long commentId) {
+        showService.deleteSeasonReviewComment(commentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/season-reviews/comments/{commentId}")
+    public ResponseEntity<Void> updateSeasonReviewComment(@PathVariable Long commentId, @RequestBody UpdateCommentDto update) {
+        showService.updateSeasonReviewComment(commentId, update);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
+
     // ========== EPISODE REVIEWS ==========
 
     @PostMapping("/episodes/{episodeId}/reviews")

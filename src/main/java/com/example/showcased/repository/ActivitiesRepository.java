@@ -19,9 +19,9 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
             a.activityType,
             d.description,
             new com.example.showcased.dto.ActivityUserDto(
-                CAST(COALESCE(u1.id, u2.id, u3.id, u4.id, u5.id, u6.id, u7.id, u8.id) AS long),
-                COALESCE(u1.displayName, u2.displayName, u3.displayName, u4.displayName, u5.displayName, u6.displayName, u7.displayName, u8.displayName),
-                COALESCE(u1.profilePicture, u2.profilePicture, u3.profilePicture, u4.profilePicture, u5.profilePicture, u6.profilePicture, u7.profilePicture, u8.profilePicture)
+                CAST(COALESCE(u1.id, u2.id, u3.id, u4.id, u5.id, u6.id, u7.id, u8.id, u9.id, u10.id, u11.id) AS long),
+                COALESCE(u1.displayName, u2.displayName, u3.displayName, u4.displayName, u5.displayName, u6.displayName, u7.displayName, u8.displayName, u9.displayName, u10.displayName, u11.displayName),
+                COALESCE(u1.profilePicture, u2.profilePicture, u3.profilePicture, u4.profilePicture, u5.profilePicture, u6.profilePicture, u7.profilePicture, u8.profilePicture, u9.profilePicture, u10.profilePicture, u11.profilePicture)
             ),
             new com.example.showcased.dto.ActivityShowReviewLikeDto(
                 CASE WHEN a.activityType = 2 THEN lsr.reviewId ELSE NULL END,
@@ -82,7 +82,31 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
                 CASE WHEN a.activityType = 8 THEN lc.collectionId ELSE NULL END,
                 CASE WHEN a.activityType = 8 THEN c.collectionName ELSE NULL END
             ),
-            COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt, lc.createdAt)
+            new com.example.showcased.dto.ActivitySeasonReviewLikeDto(
+                CASE WHEN a.activityType = 9 THEN sesr.id ELSE NULL END,
+                CASE WHEN a.activityType = 9 THEN sesr.showId ELSE NULL END,
+                CASE WHEN a.activityType = 9 THEN si4.showTitle ELSE NULL END,
+                CASE WHEN a.activityType = 9 THEN si4.season ELSE NULL END
+            ),
+            new com.example.showcased.dto.ActivitySeasonReviewCommentDto(
+                CASE WHEN a.activityType = 10 THEN sesr2.id ELSE NULL END,
+                CASE WHEN a.activityType = 10 THEN sesr2.showId ELSE NULL END,
+                CASE WHEN a.activityType = 10 THEN si5.showTitle ELSE NULL END,
+                CASE WHEN a.activityType = 10 THEN si5.season ELSE NULL END,
+                CASE WHEN a.activityType = 10 THEN sesrc.id ELSE NULL END
+            ),
+            new com.example.showcased.dto.ActivitySeasonReviewCommentLikeDto(
+               CASE WHEN a.activityType = 11 THEN sesr3.id ELSE NULL END,
+               CASE WHEN a.activityType = 11 THEN sesr3.showId ELSE NULL END,
+               CASE WHEN a.activityType = 11 THEN si6.showTitle ELSE NULL END,
+               CASE WHEN a.activityType = 11 THEN si6.season ELSE NULL END,
+               CASE WHEN a.activityType = 11 THEN lsrc2.commentId ELSE NULL END,
+               CASE WHEN a.activityType = 11 THEN u11b.id ELSE NULL END,
+               CASE WHEN a.activityType = 11 THEN u11b.displayName ELSE NULL END,
+               CASE WHEN a.activityType = 11 THEN u11b.profilePicture ELSE NULL END,
+               CASE WHEN a.activityType = 11 THEN (u11b.id = :userId) ELSE NULL END
+            ),
+            COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt, lc.createdAt, lsesr.createdAt, sesrc.createdAt, lsrc2.createdAt)
         )
         FROM Activity a
         JOIN ActivityDescription d ON a.activityType = d.activityType
@@ -128,12 +152,29 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
         LEFT JOIN User u8 ON lc.userId = u8.id
         LEFT JOIN Collection c ON lc.collectionId = c.collectionId
         
+        LEFT JOIN LikedSeasonReview lsesr ON a.externalId = lsesr.id AND a.activityType = 9
+        LEFT JOIN User u9 ON lsesr.userId = u9.id
+        LEFT JOIN SeasonReview sesr ON lsesr.reviewId = sesr.id
+        LEFT JOIN SeasonInfo si4 ON sesr.seasonId = si4.id
+        
+        LEFT JOIN SeasonReviewComment sesrc ON a.externalId = sesrc.id AND a.activityType = 10
+        LEFT JOIN User u10 ON sesrc.userId = u10.id
+        LEFT JOIN SeasonReview sesr2 ON sesrc.reviewId = sesr2.id
+        LEFT JOIN SeasonInfo si5 ON sesr2.seasonId = si5.id
+        
+        LEFT JOIN LikedSeasonReviewComment lsrc2 ON a.externalId = lsrc2.id AND a.activityType = 11
+        LEFT JOIN User u11 ON lsrc2.userId = u11.id
+        LEFT JOIN SeasonReviewComment sesrc2 ON lsrc2.commentId = sesrc2.id
+        LEFT JOIN SeasonReview sesr3 ON sesrc2.reviewId = sesr3.id
+        LEFT JOIN SeasonInfo si6 ON sesr3.seasonId = si6.id
+        LEFT JOIN User u11b ON sesr3.userId = u11b.id
+        
         WHERE a.userId = :userId
-        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt, lc.createdAt) DESC
+        ORDER BY COALESCE(f.createdAt, lsr.createdAt, src.createdAt, ler.createdAt, erc.createdAt, lsrc.createdAt, lerc.createdAt, lc.createdAt, lsesr.createdAt, sesrc.createdAt, lsrc2.createdAt) DESC
 """)
     Page<ActivityDto> findByUserId(@Param("userId") Long userId, Pageable page);
 
-    void deleteByExternalIdAndActivityType(Long id, int i);
+    void deleteByExternalIdAndActivityType(Long id, int type);
 
     @Modifying
     @Query("""
@@ -172,6 +213,21 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
         DELETE FROM Activity a
         WHERE (
             a.externalId IN (
+                SELECT lr.id FROM LikedSeasonReview lr WHERE lr.reviewId = :reviewId
+            )
+            OR
+            a.externalId IN (
+                SELECT rc.id FROM SeasonReviewComment rc WHERE rc.reviewId = :reviewId
+            )
+        )
+""")
+    void deleteSeasonReviewActivities(@Param("reviewId") Long reviewId);
+
+    @Modifying
+    @Query("""
+        DELETE FROM Activity a
+        WHERE (
+            a.externalId IN (
                 SELECT lrc.id FROM LikedShowReviewComment lrc WHERE lrc.commentId = :commentId
             )
             OR
@@ -198,4 +254,19 @@ public interface ActivitiesRepository extends JpaRepository<Activity,Long> {
        AND a.activityType IN :activityTypes
 """)
     void deleteEpisodeReviewCommentActivities(@Param("commentId") Long commentId, @Param("activityTypes") List<Integer> activityTypes);
+
+    @Modifying
+    @Query("""
+        DELETE FROM Activity a
+        WHERE (
+            a.externalId IN (
+                SELECT lrc.id FROM LikedSeasonReviewComment lrc WHERE lrc.commentId = :commentId
+            )
+            OR
+            a.externalId IN (
+                SELECT rc.id FROM SeasonReviewComment rc WHERE rc.id = :commentId
+            )
+        )
+""")
+    void deleteSeasonReviewCommentActivities(@Param("commentId") Long commentId);
 }

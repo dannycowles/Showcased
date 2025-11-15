@@ -2,16 +2,17 @@ package com.example.showcased.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @Data
-public class EpisodeReviewWithUserInfoDto extends SeasonReviewWithUserInfoDto {
-    private int episode;
-    private String episodeTitle;
+public class SeasonReviewWithUserInfoDto extends ShowReviewWithUserInfoDto {
+    private int season;
 
-    public EpisodeReviewWithUserInfoDto(
+    public SeasonReviewWithUserInfoDto(
             Long id,
             String username,
             String profilePicture,
@@ -26,13 +27,10 @@ public class EpisodeReviewWithUserInfoDto extends SeasonReviewWithUserInfoDto {
             Date reviewDate,
             boolean isLikedByUser,
             boolean isOwnReview,
-            int season,
-            int episode,
-            String episodeTitle
+            int season
     ) {
-        super(id, username, profilePicture, userId, showId, showTitle, rating, commentary, containsSpoilers, numLikes, numComments, reviewDate, isLikedByUser, isOwnReview, season);
-        setType("EpisodePage");
-        this.episode = episode;
-        this.episodeTitle = episodeTitle;
+        super(id, username, profilePicture, userId, showId, showTitle, rating, commentary, containsSpoilers, numLikes, numComments, reviewDate, isLikedByUser, isOwnReview);
+        setType("SeasonPage");
+        this.season = season;
     }
 }

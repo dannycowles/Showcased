@@ -47,6 +47,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             FROM show_reviews sr
             WHERE sr.user_id = :userId
             UNION ALL
+            SELECT ROUND(sesr.rating, 0) as rating_rounded
+            FROM season_reviews sesr
+            WHERE sesr.user_id = :userId
+            UNION ALL
             SELECT ROUND(er.rating, 0) as rating_rounded
             FROM episode_reviews er
             WHERE er.user_id = :userId

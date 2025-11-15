@@ -43,6 +43,7 @@ public class ProfileService {
     private final DynamicRankingRepository dynamicRankingRepository;
     private final ShowService showService;
     private final ActivitiesRepository activitiesRepository;
+    private final SeasonReviewRepository seasonReviewRepository;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
 
@@ -68,6 +69,7 @@ public class ProfileService {
                           DynamicRankingRepository dynamicRankingRepository,
                           ShowService showService,
                           ActivitiesRepository activitiesRepository,
+                          SeasonReviewRepository seasonReviewRepository,
                           AuthService authService,
                           PasswordEncoder passwordEncoder) {
         this.watchlistRepository = watchlistRepository;
@@ -94,6 +96,7 @@ public class ProfileService {
         this.activitiesRepository = activitiesRepository;
         this.authService = authService;
         this.passwordEncoder = passwordEncoder;
+        this.seasonReviewRepository = seasonReviewRepository;
     }
 
     /**
@@ -621,6 +624,7 @@ public class ProfileService {
 
         List<ShowReviewDto> topShowReviews = showReviewRepository.findByUsername(user.getDisplayName(), user.getId(), Pageable.unpaged()).getContent();
         List<EpisodeReviewDto> topEpisodeReviews = episodeReviewRepository.findByUsername(user.getDisplayName(), user.getId(), Pageable.unpaged()).getContent();
+        List<SeasonReviewDto> topSeasonReviews = seasonReviewRepository.findByUsername(user.getDisplayName(), user.getId(), Pageable.unpaged()).getContent();
 
         Sort sort = modifiedPage.getSort();
         Comparator<ShowReviewDto> comparator;
@@ -642,11 +646,16 @@ public class ProfileService {
             };
         }
 
-        List<ShowReviewDto> combined = Stream.concat(topShowReviews.stream(), topEpisodeReviews.stream())
-                .sorted(comparator)
-                .skip((long) modifiedPage.getPageNumber() * modifiedPage.getPageSize())
-                .limit(modifiedPage.getPageSize())
-                .toList();
+        List<ShowReviewDto> combined = Stream.of(
+            topShowReviews.stream(),
+            topEpisodeReviews.stream(),
+            topSeasonReviews.stream()
+        )
+            .flatMap(s -> s)
+            .sorted(comparator)
+            .skip((long) modifiedPage.getPageNumber() * modifiedPage.getPageSize())
+            .limit(modifiedPage.getPageSize())
+            .collect(Collectors.toList());
 
         return new PageImpl<>(combined, modifiedPage, topShowReviews.size() +  topEpisodeReviews.size());
     }
@@ -673,6 +682,18 @@ public class ProfileService {
                 pageable.getSort()
         );
         return episodeReviewRepository.findByUsername(user.getDisplayName(), user.getId(), modifiedPage);
+    }
+
+    public Page<SeasonReviewDto> getSeasonReviews(Pageable pageable) {
+        User user = authService.retrieveUserFromJwt();
+
+        // Subtract 1 from provided pageable to align with 0-index
+        Pageable modifiedPage = PageRequest.of(
+                Math.max(0, pageable.getPageNumber()) - 1,
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+        return seasonReviewRepository.findByUsername(user.getDisplayName(), user.getId(), modifiedPage);
     }
 
     public Page<UserSearchDto> getFollowers(String name, Pageable pageable) {
@@ -1011,6 +1032,25 @@ public class ProfileService {
 
     public Page<ActivityDto> getProfileActivity(int pageNum) {
         User user = authService.retrieveUserFromJwt();
-        return activitiesRepository.findByUserId(user.getId(), PageRequest.of(pageNum - 1, numActivities));
+        Page<ActivityDto> activities = activitiesRepository.findByUserId(user.getId(), PageRequest.of(pageNum - 1, numActivities));
+
+        activities.getContent().forEach(this::filterActivityByType);
+
+        return activities;
+    }
+
+    private void filterActivityByType(ActivityDto activity) {
+        int type = activity.getActivityType();
+        
+        if (type != 2) activity.setShowReviewLike(null);
+        if (type != 3) activity.setShowReviewComment(null);
+        if (type != 4) activity.setEpisodeReviewLike(null);
+        if (type != 5) activity.setEpisodeReviewComment(null);
+        if (type != 6) activity.setShowReviewCommentLike(null);
+        if (type != 7) activity.setEpisodeReviewCommentLike(null);
+        if (type != 8) activity.setCollectionLike(null);
+        if (type != 9) activity.setSeasonReviewLike(null);
+        if (type != 10) activity.setSeasonReviewComment(null);
+        if (type != 11) activity.setSeasonReviewCommentLike(null);
     }
 }

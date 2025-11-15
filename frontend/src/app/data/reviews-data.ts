@@ -25,6 +25,11 @@ export interface ShowReviewData extends BaseReviewData {
   readonly type: ReviewPageType.ShowPage;
 }
 
+export interface SeasonReviewData extends BaseReviewData {
+  readonly type: ReviewPageType.SeasonPage;
+  readonly season: number;
+}
+
 export interface EpisodeReviewData extends BaseReviewData {
   readonly type: ReviewPageType.EpisodePage;
   readonly season: number;

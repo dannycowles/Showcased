@@ -8,6 +8,7 @@ export const sortReviewOptions = [
 export const reviewTypeOptions = [
   { value: 'all', label: 'All' },
   { value: 'show', label: 'Show' },
+  { value: 'season', label: 'Season' },
   { value: 'episode', label: 'Episode'}
 ] as const;
 

@@ -3,8 +3,12 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ProfileReviewData, ReviewData} from '../../data/types';
 import {ReviewPageType, ReviewType} from '../../data/enums';
-import {ProfileEpisodeReviewData, ProfileShowReviewData} from '../../data/profile-reviews-data';
-import {EpisodeReviewData, ShowReviewData} from '../../data/reviews-data';
+import {
+  ProfileEpisodeReviewData,
+  ProfileSeasonReviewData,
+  ProfileShowReviewData
+} from '../../data/profile-reviews-data';
+import {EpisodeReviewData, SeasonReviewData, ShowReviewData} from '../../data/reviews-data';
 
 @Component({
   selector: 'app-edit-review-modal',
@@ -26,6 +30,10 @@ export class EditReviewModalComponent implements OnInit {
 
   isShowReview(review: ProfileReviewData | ReviewData): review is ProfileShowReviewData | ShowReviewData {
     return review.type === ReviewType.Show || review.type === ReviewPageType.ShowPage;
+  }
+
+  isSeasonReview(review: ProfileReviewData | ReviewData): review is ProfileSeasonReviewData | SeasonReviewData {
+    return review.type === ReviewType.Season || review.type === ReviewPageType.SeasonPage;
   }
 
   isEpisodeReview(review: ProfileReviewData | ReviewData): review is ProfileEpisodeReviewData | EpisodeReviewData {
